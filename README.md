@@ -5,7 +5,7 @@ ____
 
 A CSS parser and minifier written in PHP.
 
-This is a port of https://github.com/reworkcss/css to PHP with following changes:
+This is a PHP port of https://github.com/reworkcss/css with following changes:
 
 - it does not follow the original api
 - it can process @import directive. This improves performance as the number of http requests is reduced
@@ -99,7 +99,7 @@ file_put_contents('style.json', json_encode($ast));
 Load the AST and generate css code 
 ```php
 
-$ast = file_get_contents('style.json');
+$ast = json_decode(file_get_contents('style.json'));
 
 $compiler = new \CSS\Compiler([
     'indent' => ' ', // character used to indent file
