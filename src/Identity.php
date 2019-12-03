@@ -63,7 +63,7 @@ class Identity {
 		return $value;
 	}
 
-	public function onAtrule ($atrule, $declaration, $body, $hasBody) {
+	public function onAtrule ($atrule, $declaration, $body, $hasBody = true) {
 
 		if ($atrule == 'charset') {
 

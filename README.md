@@ -12,7 +12,15 @@ This is a PHP port of https://github.com/reworkcss/css with following changes:
 - it does remove @charset directive
 - source map support has been removed. This produce smaller AST. During my test with a 150Kb css file, the AST with source map was 450Mb while without AST it was only 300Kb. Maybe this was an issue with my implementation but I have no time to verify that hypothesis
 
-### Usage:
+## Installation
+
+install using [Composer](https://getcomposer.org/)
+
+```bash
+$ composer require tbela99/css
+```
+
+## Usage:
 
 ```css
 @import "import-media.css" print;
@@ -97,6 +105,7 @@ file_put_contents('style.json', json_encode($ast));
 ```
 
 Load the AST and generate css code 
+
 ```php
 
 $ast = json_decode(file_get_contents('style.json'));
