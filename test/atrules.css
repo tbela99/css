@@ -1,0 +1,140 @@
+@charset 'utf-8';
+@-moz-document url("https://www.example.com/") {
+    h1 {
+        color: green;
+    }
+}
+@font-feature-values Font One {
+/* On active la caractéristique nice-style 
+   sur Font One */
+  @styleset {
+    nice-style: 12;
+  }
+}
+ 
+@font-feature-values Font Two { 
+/* On active la caractéristique nice-style
+   sur Font Two */
+  @styleset {
+    nice-style: 4;
+  }
+} 
+
+/* Indépendamment de la police */
+.nice-look {
+  font-variant-alternates: styleset(nice-style);
+}
+/*
+@import "import-media.css" print;
+@import url('./css/url-import-media.css') all;
+@import "import.css";
+@import url('css/url-import.css');
+*/
+
+@import url('./css/url-import-media.css') all;
+
+.nav-pills .dropdown-menu {
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.nav .dropdown-toggle .caret {
+    border-top-color: #005e8d;
+    border-bottom-color: #005e8d;
+    margin-top: 6px;
+}
+
+@viewport {
+    min-width: 640px;
+    max-width: 800px;
+}
+
+@viewport {
+    zoom: 0.75;
+    min-zoom: 0.5;
+    max-zoom: 0.9;
+}
+
+@viewport {
+    orientation: landscape;
+}
+
+
+@keyframes slidein {
+    from {
+        transform: translateX(0%);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes identifier {
+    0% {
+        top: 0;
+        left: 0;
+    }
+
+    30% {
+        top: 50px;
+    }
+
+    68%,
+    72% {
+        left: 50px;
+    }
+
+    100% {
+        top: 100px;
+        left: 100%;
+    }
+}
+
+/* removed empty rules */
+/* removed empty rules */
+@keyframes identifier2 {
+
+    /* removed empty rules */
+    0% {}
+
+    30% {}
+
+    68%,
+    72% {}
+
+    100% {}
+}
+
+/* removed empty rules */
+.removable {}
+
+/* removed empty @media */
+
+@media all {
+
+    .removable {}
+
+
+    @media none {
+
+        .removable {}
+    }
+
+}
+
+
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace svg url(http://www.w3.org/2000/svg);
+
+/* Cela correspond à tous les éléments XHTML <a>
+  car XHTML est l'espace de nom par défaut, sans
+  préfixe. */
+a {}
+
+/* Cela correspond à tous les éléments SVG <a> */
+svg|a {}
+
+/* Cela correspond aux éléments <a> XHTML et SVG */
+*|a {}

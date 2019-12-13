@@ -1,7 +1,8 @@
 CSS (A CSS parser and minifier written in PHP)
-____
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) 
+---
+
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser and minifier written in PHP.
 
@@ -24,70 +25,73 @@ $ composer require tbela99/css
 
 ```css
 @import "import-media.css" print;
-@import url('./css/url-import-media.css') all;
+@import url("./css/url-import-media.css") all;
 @import "import.css";
-@import url('css/url-import.css');
+@import url("css/url-import.css");
 
 @charset 'utf-8';
 
 @keyframes slidein {
-	from {
-		transform: translateX(0%);
-	}
+  from {
+    transform: translateX(0%);
+  }
 
-	to {
-		transform: translateX(100%);
-	}
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes identifier {
-	0% {
-		top: 0;
-		left: 0;
-	}
+  0% {
+    top: 0;
+    left: 0;
+  }
 
-	30% {
-		top: 50px;
-	}
+  30% {
+    top: 50px;
+  }
 
-	68%,
-	72% {
-		left: 50px;
-	}
+  68%,
+  72% {
+    left: 50px;
+  }
 
-	100% {
-		top: 100px;
-		left: 100%;
-	}
+  100% {
+    top: 100px;
+    left: 100%;
+  }
 }
 
 /* removed empty rules */
 @keyframes identifier2 {
-	0% {}
+  0% {
+  }
 
-	30% {}
+  30% {
+  }
 
-	68%,
-	72% {}
+  68%,
+  72% {
+  }
 
-	100% {}
+  100% {
+  }
 }
 
 /* removed empty rules */
-.removable {}
+.removable {
+}
 
 /* removed empty @media */
 
 @media all {
+  .removable {
+  }
 
-	.removable {}
-
-
-	@media none {
-
-		.removable {}
-	}
-
+  @media none {
+    .removable {
+    }
+  }
 }
 ```
 
@@ -104,7 +108,7 @@ $ast = $parser->parse(file_get_contents('style.css'));
 file_put_contents('style.json', json_encode($ast));
 ```
 
-Load the AST and generate css code 
+Load the AST and generate css code
 
 ```php
 
@@ -125,75 +129,69 @@ css output
 ```css
 /* @imported import-media.css */
 @media print {
-.imported-from-media {
-outline: 0;
-color: #a1a1a1a1;
-}
-
+  .imported-from-media {
+    outline: 0;
+    color: #a1a1a1a1;
+  }
 }
 /* @imported ./css/url-import-media.css */
 @media all {
-.url-imported-from-media {
-outline: 0;
-color: #a1a1a1a1;
-background-image: url(img/d4ca075023f827d81478565989.png);
-}
-
+  .url-imported-from-media {
+    outline: 0;
+    color: #a1a1a1a1;
+    background-image: url(img/d4ca075023f827d81478565989.png);
+  }
 }
 /* @imported import.css */
 .imported {
-outline: 0;
-color: #a1a1a1a1;
+  outline: 0;
+  color: #a1a1a1a1;
 }
 
 /* @imported css/url-import.css */
 @media print {
-.url-imported {
-outline: 0;
-color: #a1a1a1a1;
-background: url(img/d4ca075023f827d81478565989.png);
-}
-
+  .url-imported {
+    outline: 0;
+    color: #a1a1a1a1;
+    background: url(img/d4ca075023f827d81478565989.png);
+  }
 }
 
 @keyframes slidein {
-from {
-transform: translateX(0%);
-}
+  from {
+    transform: translateX(0%);
+  }
 
-to {
-transform: translateX(100%);
-}
-
+  to {
+    transform: translateX(100%);
+  }
 }
 @keyframes identifier {
-0% {
-top: 0;
-left: 0;
-}
+  0% {
+    top: 0;
+    left: 0;
+  }
 
-30% {
-top: 50px;
-}
+  30% {
+    top: 50px;
+  }
 
-68%, 72% {
-left: 50px;
-}
+  68%,
+  72% {
+    left: 50px;
+  }
 
-100% {
-top: 100px;
-left: 100%;
-}
-
+  100% {
+    top: 100px;
+    left: 100%;
+  }
 }
 /* removed empty rules */
 
 /* removed empty rules */
 
 /* removed empty @media */
-
 ```
-
 
 ## Parser options
 
@@ -207,7 +205,8 @@ left: 100%;
 - compress: produce minified output
 - remove_empty_nodes: remove empty css declaration
 
-## TODO 
+## TODO
 
+- fix css output formatting
 - provide an interface to query css through the AST
 - improve css minification

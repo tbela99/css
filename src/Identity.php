@@ -1,125 +1,245 @@
 <?php 
 
-namespace CSS;
+namespace TBela\CSS;
 
 /**
- * Module dependencies.
+ * Pretty print CSS
+ * @package CSS
  */
+class Identity implements Renderer {
 
-class Identity {
+	protected $indent = ' ';
+	protected $glue = "\n";
+	protected $separator = ' ';
+	protected $charset = false;
+	protected $rgba_hex = false;
+    protected $remove_comments = false;
+	protected $remove_empty_nodes = false;
 
-	/**
-	 * @var Compiler
-	 */
-	protected $compiler;
+    /**
+     * Identity constructor.
+     * @param array $options
+     */
+	public function __construct(array $options) {
 
-	public function __construct(Compiler $compiler) {
+	    if (isset($options['indent'])) {
 
-		$this->compiler = $compiler;
+	        $this->indent = $options['indent'];
+        }
+
+        if (isset($options['charset'])) {
+
+            $this->charset = $options['charset'];
+        }
+
+        if (isset($options['glue'])) {
+
+            $this->glue = $options['glue'];
+        }
+
+        if (isset($options['remove_empty_nodes'])) {
+
+            $this->remove_empty_nodes = $options['remove_empty_nodes'];
+        }
+
+        if (isset($options['remove_comments'])) {
+
+            $this->remove_comments = $options['remove_comments'];
+        }
+
+        if (isset($options['rgba_hex'])) {
+
+            $this->rgba_hex = $options['rgba_hex'];
+        }
 	}
 
-	public function onCompile ($css) {
+    /**
+     * @param Element $element
+     * @param null|int $level
+     * @return string
+     * @throws \Exception
+     */
+	public function render (Element $element, $level = null) {
 
-		return $css;
-	}
+	    if (!$this->shouldRender($element)) {
 
-	public function onMap($nodes, $type) {
+	        return '';
+        }
 
-	//	if ($type == 'rules' || $type == 'declarations') {
+		$indent = str_repeat($this->indent, (int) $level);
 
-			// optimize css properties
-	//	}
+		switch ($element->getType()) {
 
-		return $nodes;
-	}
+			case 'comment':
+				return $this->remove_comments ? '' : $element->getValue();
 
-	public function onSelector($selector) {
+			case 'stylesheet':
 
-		if (empty($selector)) {
+				return $this->renderCollection($element,  $level);
 
-			return '';
+            case 'declaration':
+
+                return $indent.$this->indent.$this->renderDeclaration($element);
+
+            case 'rule':
+
+                return $this->renderRule($element, $level, $indent);
+
+            case 'atrule':
+
+                return $this->renderAtRule($element, $level, $indent);
+
+			default:
+
+				throw new \Exception('Type not supported '.$element->getType());
 		}
 
-		if (!\is_array($selector)) {
-
-			$selector = [$selector];
-		}
-
-		return implode($this->compiler->emit(', '), $selector);
+		return '';
 	}
 
-	public function onEmit ($value) {
+    /**
+     * @param ElementRule $element
+     * @param int $level
+     * @param string $indent
+     * @return string
+     */
+	protected function renderRule(ElementRule $element, $level, $indent) {
 
-		return $value;
-	}
+        $output = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
 
-	public function onComment ($value) {
+        if ($output === '' && $this->remove_empty_nodes) {
 
-		return $value;
-	}
+            return '';
+        }
 
-	public function onCharset ($value) {
+        return $indent.$this->renderSelector($element->getSelector(), (int) $level).$this->indent.'{'.
+                $this->glue.
+                $output.$this->glue.
+                $indent.
+            '}';
+    }
 
-		return $value;
-	}
+    /**
+     * @param ElementAtRule $element
+     * @param int $level
+     * @param string $indent
+     * @return string
+     */
+    protected function renderAtRule(ElementAtRule $element, $level, $indent) {
 
-	public function onAtrule ($atrule, $declaration, $body, $hasBody = true) {
+        if ($element->getName() == 'charset' && !$this->charset) {
 
-		if ($atrule == 'charset') {
+            return '';
+        }
 
-			return '';
-		}
+        $output = $indent.'@'.$this->renderName($element->getName());
 
-		if ($hasBody && !empty($this->compiler->options['remove_empty_nodes']) && trim($body) === '') {
+        $value = $this->renderValue($element->getValue(), $element->getType());
 
-			return '';
-		}
-		
-		$result =  $this->compiler->emit($this->compiler->indent(0).'@'.$atrule).$this->compiler->emit($this->compiler->selector($declaration ? ' '.$declaration : ''));
-		
-		if ($hasBody) {
+        if ($value !== '') {
 
-			$result .= $this->compiler->emit(
-			" {\n".
-				$this->compiler->indent(1)).
-				$this->compiler->emit($body).
-				$this->compiler->emit($this->compiler->indent(-1).
-				"\n".$this->compiler->indent(0)."}");
-		}
+            $output .= $this->separator.$value;
+        }
 
-		else {
+        if ($element->isLeaf()) {
 
-			$result .= ';';
-		}
+            return $output.';';
+        }
 
-		return $result;
-	}
+        $elements = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
 
-	public function onDeclarations ($selector, $body) {
+        if ($elements === '' && $this->remove_empty_nodes) {
 
-		if (!empty($this->compiler->options['remove_empty_nodes']) && trim($body) === '') {
+            return '';
+        }
 
-			return '';
-		}
-		
-		return $this->compiler->emit($this->compiler->indent(1)).
-			$this->compiler->emit($this->compiler->selector($selector))
-			.$this->compiler->emit(
-			" {\n"
-			.$this->compiler->indent(1))
-			.$this->compiler->emit($body)
-			.$this->compiler->emit(
-			$this->compiler->indent(-1)
-			."\n"
-			.$this->compiler->indent(-1) 
-			."}\n");
-	}
+        return $output.$this->indent.'{'.$this->glue.$elements.$this->glue.$indent.'}';
+    }
 
-	public function onDeclaration ($property, $value) {
+    /**
+     * @param ElementDeclaration $element
+     * @return string
+     */
+	protected function renderDeclaration (ElementDeclaration $element) {
 
-		return $this->compiler->emit($this->compiler->indent(0))
-			.$this->compiler->emit($property .$this->compiler->emit(': ') . $value)
-			.$this->compiler->emit(';');
+	    $vendor = $element->getVendor();
+	    $name = $element->getName();
+
+	    if ($vendor !== '') {
+
+            $name = '-'.$vendor.'-'.$name;
+        }
+
+	    return $this->renderName($name).':'.$this->indent.$this->renderValue($element->getValue(), $element->getType());
+    }
+
+	protected function shouldRender (Element $element) {
+
+	    if (is_callable([$element, 'hasChildren'])) {
+
+	        if (is_callable([$element, 'isLeaf']) && $element->isLeaf ()) {
+
+	            return true;
+            }
+
+	        return $element->hasChildren() || !$this->remove_empty_nodes;
+        }
+
+	    return true;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+	protected function renderName ($name) {
+
+	    return $name;
+    }
+
+    /**
+     * @param string $value
+     * @param string $type
+     * @return string
+     */
+    protected function renderValue ($value, $type = null) {
+
+        return $value;
+    }
+
+    /**
+     * @param array $selector
+     * @param integer $level
+     * @return string
+     */
+	protected function renderSelector (array $selector, $level) {
+
+	    return implode(str_repeat($this->indent, $level).','.$this->glue, $selector);
+    }
+
+    /**
+     * @param Elements $element
+     * @param int $level
+     * @return string
+     */
+	protected function renderCollection (Elements $element, $level) {
+
+	    $glue = '';
+	    $type = $element->getType();
+
+	    if ($type == 'rule' || ($type == 'atrule' && $element->hasDeclarations ())) {
+
+	        $glue = ';';
+        }
+
+	//	file_put_contents('debug.txt', var_export($element->getChildren(), true));
+		return implode($glue.$this->glue, array_filter(array_map(function ($element) use($level) {
+
+		    return $this->render($element, $level);
+        }, $element->getChildren()), function ($value) {
+
+		    return trim($value) !== '';
+        }));
 	}
 }
 

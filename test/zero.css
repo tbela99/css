@@ -1,0 +1,19 @@
+body {
+
+    border: 0px;
+}
+
+.short {
+
+    background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #0000;
+}
+
+.element {
+
+    color: rgb(0, 0, 0);
+    background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #00000000;
+    margin: 5px 3px 5px 3px;
+    padding: 5px 3px 5px;
+    border-radius: 5px 5px;
+    -moz-border-radius: 15px 15px;
+}
