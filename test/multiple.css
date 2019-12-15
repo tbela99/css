@@ -1,0 +1,75 @@
+@-moz-document url("https://www.example.com/") {
+    h1 {
+        color: green;
+        color: blue;
+        color: black;
+    }
+
+    h1 {
+        color: #000;
+        color: aliceblue;
+    }
+}
+
+@-moz-document url("https://www.example.com/") {
+    h1 {
+        color: green;
+        color: blue;
+        color: #3a3a3a;
+    }
+
+    h2 {
+        color: #000;
+        color: aliceblue;
+    }
+    h1 {
+        color: green;
+        color: blue;
+        color: #ffffff;
+    }
+
+}
+body {
+
+    border: 0px;
+}
+
+@viewport {
+    min-width: 640px;
+    max-width: 800px;
+}
+
+@viewport {
+    zoom: 0.75;
+    min-zoom: 0.5;
+    max-zoom: 0.9;
+}
+
+.short {
+
+    background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #0000;
+}
+
+.element {
+
+    color: rgb(0, 0, 0);
+    background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #00000000;
+    margin: 5px 3px 5px 3px;
+    padding: 5px 3px 5px;
+    border-radius: 5px 5px;
+    -moz-border-radius: 15px 15px;
+}
+h1 {
+    color: green;
+    color: blue;
+    color: black;
+}
+
+h1 {
+    color: #000;
+    color: aliceblue;
+}
+a {
+
+    text-decoration: underline;
+}

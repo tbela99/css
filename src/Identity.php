@@ -146,7 +146,7 @@ class Identity implements Renderer {
             return $output.';';
         }
 
-        $elements = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
+        $elements = $this->renderCollection($element, $level + 1);
 
         if ($elements === '' && $this->remove_empty_nodes) {
 
@@ -162,13 +162,7 @@ class Identity implements Renderer {
      */
 	protected function renderDeclaration (ElementDeclaration $element) {
 
-	    $vendor = $element->getVendor();
 	    $name = $element->getName();
-
-	    if ($vendor !== '') {
-
-            $name = '-'.$vendor.'-'.$name;
-        }
 
 	    return $this->renderName($name).':'.$this->indent.$this->renderValue($element->getValue(), $element->getType());
     }
@@ -232,7 +226,6 @@ class Identity implements Renderer {
 	        $glue = ';';
         }
 
-	//	file_put_contents('debug.txt', var_export($element->getChildren(), true));
 		return implode($glue.$this->glue, array_filter(array_map(function ($element) use($level) {
 
 		    return $this->render($element, $level);

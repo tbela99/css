@@ -11,38 +11,170 @@ const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 class Parser
 {
 
-    protected $imports = [];
     public $css = '';
-    public $options = [];
+    protected $options = [
+        'source' => '',
+        'silent' => false,
+        'flatten_import' => false,
+        'deduplicate_rules' => true,
+        'deduplicate_declarations' => true
+    ];
+
     public $errorsList = [];
 
-    public function __construct($css, $options = [])
+    public function __construct($css, array $options = [])
     {
 
         $this->_css = $css;
-        $this->options = $options;
 
-        if (!isset($this->options['source'])) {
+        foreach (array_keys($this->options) as $key) {
 
-            $this->options['source'] = '';
-        }
+            if (isset($options[$key])) {
 
-        if (!isset($this->options['silent'])) {
-
-            $this->options['silent'] = false;
+                $this->options[$key] = $options[$key];
+            }
         }
     }
 
-    public function parse() {
+    public function parse()
+    {
 
         $this->css = $this->_css;
+        $this->errorsList = [];
 
         if (!empty($this->options['flatten_import'])) {
 
             $this->css = parse_import($this->css);
         }
 
-        return parse($this);
+        return $this->deduplicate(parse($this));
+    }
+
+    public function deduplicate ($ast) {
+
+        if ((!empty($this->options['deduplicate_rules']) || !empty($this->options['deduplicate_declarations'])) && !empty ($ast)) {
+
+            switch ($ast->type) {
+
+                case 'atrule':
+
+                    return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
+
+                case 'stylesheet':
+
+                    return $this->deduplicateRules($ast);
+
+                case 'rule':
+
+                    return $this->deduplicateDeclarations($ast);
+            }
+        }
+
+        return $ast;
+    }
+
+    protected function computeSignature ($ast) {
+
+        $signature = ['type:'.$ast->type];
+
+        if (isset($ast->name)) {
+
+            $signature[] = 'name:'.$ast->name;
+        }
+
+        if (isset($ast->value)) {
+
+            $signature[] = 'value:'.$ast->value;
+        }
+
+        if (isset($ast->value)) {
+
+            $signature[] = 'value:'.$ast->value;
+        }
+
+        if (isset($ast->selectors)) {
+
+            $signature[] = 'selectors:'.implode(',', $ast->selectors);
+        }
+
+        if (!empty($ast->vendor)) {
+
+            $signature[] = 'vendor:'.$ast->vendor;
+        }
+
+        return implode('', $signature);
+    }
+
+    protected function deduplicateRules ($ast) {
+
+        if (!empty($ast->elements)) {
+
+            if (!empty($this->options['deduplicate_rules'])) {
+
+                $signature = '';
+                $total = count($ast->elements);
+
+                while ($total--) {
+
+                    if ($total > 0) {
+
+                        $next = $ast->elements[$total - 1];
+                        $nextSignature = $this->computeSignature($next);
+
+                        if ($signature === '') {
+
+                            $signature = $this->computeSignature($ast->elements[$total]);
+                        }
+
+                        if ($signature == $nextSignature) {
+
+                            array_splice($ast->elements[$total]->elements, 0, 0, $ast->elements[$total - 1]->elements);
+                            array_splice($ast->elements, $total - 1, 1);
+                        }
+
+                        $signature = $nextSignature;
+                    }
+                }
+            }
+
+
+            foreach ($ast->elements as $element) {
+
+                $this->deduplicate($element);
+            }
+        }
+
+        return $ast;
+    }
+
+    //
+    protected function deduplicateDeclarations ($ast) {
+
+        if (!empty($this->options['deduplicate_declarations']) && !empty($ast->elements)) {
+
+            $elements = $ast->elements;
+
+            $total = count ($elements);
+
+            $hash = [];
+
+            while ($total--) {
+
+                $declaration = $ast->elements[$total];
+
+                $name = (isset($declaration->vendor) ? '-'.$declaration->vendor.'-' : '').$declaration->name;
+
+                if (isset($hash[$name])) {
+
+                    array_splice($ast->elements, $total, 1);
+                    continue;
+                }
+
+                $hash[$name] = 1;
+            }
+        }
+
+        return $ast;
     }
 }
 
@@ -83,7 +215,7 @@ function expand($css, $path = null)
 
             return $matches[0];
         }
-        //	$name = GZipHelper::getName($file);
+
         if ($isRemote) {
 
             if (!preg_match('#^(https?:)?//#i', $file)) {
@@ -187,7 +319,6 @@ function fetch_content($url, $options = [], $curlOptions = [])
 
     if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
 
-        //    error_log('curl error :: ' . $url . ' #' . curl_errno($ch) . ' :: ' . curl_error($ch));
         curl_close($ch);
         return false;
     }
@@ -247,6 +378,490 @@ function parse_import($css)
     return $css;
 }
 
+/**
+ * Update lineno and column based on `str`.
+ */
+
+function updatePosition($str, $context)
+{
+
+    preg_match('/\n/s', $str, $lines);
+
+    if ($lines) $context->lineno += count($lines);
+
+    $i = strrpos($str, '\n');
+
+    if ($i === false) {
+
+        $i = -1;
+    }
+
+    $length = strlen($str);
+
+    $context->column = ~$i ? $length - $i : $context->column + $length;
+}
+
+/**
+ * Error `msg`.
+ */
+
+function error($msg, $context)
+{
+    $err = new stdClass;
+
+    // grab the first line?
+    $source = \substr($context->css, 0, 80);
+    $source = explode("\n", $source, 3);
+
+    unset($source[2]);
+
+    $source = implode("\n", $source);
+
+    $err->message = $context->options['source'] . ':' . $context->lineno . ':' . $context->column . ': ' . $msg
+        . ("\n" . $source . ' ...' . "\n");
+
+    $err->reason = $msg;
+    $err->filename = $context->options['source'];
+    $err->line = $context->lineno;
+    $err->column = $context->column;
+    $err->source = $context->css;
+
+    if ($context->options['silent']) {
+        $context->errorsList[] = $err;
+    } else {
+        throw new \Exception($err->message);
+    }
+}
+
+/**
+ * Parse stylesheet.
+ */
+
+function stylesheet($context)
+{
+
+    $rulesList = rules($context);
+
+    $result = new stdClass;
+
+    $result->type = 'stylesheet';
+    $result->elements = $rulesList;
+    $result->parsingErrors = $context->errorsList;
+
+    return $result;
+}
+
+/**
+ * Opening brace.
+ */
+
+function open($context)
+{
+    return match('/^{\s*/s', $context);
+}
+
+/**
+ * Closing brace.
+ */
+
+function close($context)
+{
+    return match('/^}/', $context);
+}
+
+function parse_vendor($str)
+{
+
+    if (preg_match('/^((-((moz)|(webkit)|(ms)|o)-)(\S+))/', trim($str), $match)) {
+
+        return [
+
+            'name' => $match[7],
+            'vendor' => $match[3]
+        ];
+    }
+
+    return ['name' => $str];
+}
+
+/**
+ * Parse ruleset.
+ */
+
+function rules($context)
+{
+
+    //  $node;
+    $rules = [];
+
+    while ($context->css !== '') {
+
+        //   comments($rules, $context);
+        whitespace($context);
+
+        if ($context->css !== '') {
+
+            if (preg_match('#^/\*#', $context->css)) {
+
+                comments($rules, $context);
+            } else if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
+
+                $node = atanyrule($context);
+
+                if ($node instanceof \Exception) throw $node;
+
+                if ($node !== false) {
+
+                    $rules[] = $node;
+                }
+            } else {
+
+                $node = rule($context);
+
+                if ($node instanceof \Exception) throw $node;
+
+                if ($node !== false) {
+
+                    $rules[] = $node;
+                }
+            }
+        }
+    }
+    return $rules;
+}
+
+/**
+ * Match `re` and return captures.
+ *
+ * @param string $re
+ * @param object $context
+ */
+
+function match($re, $context)
+{
+
+    preg_match($re, $context->css, $m);
+
+    if (!$m) return;
+    $str = $m[0];
+    updatePosition($str, $context);
+
+    $context->css = substr($context->css, strlen($str));
+    return $m;
+}
+
+/**
+ * Parse whitespace.
+ */
+
+function whitespace($context)
+{
+    match('/^\s*/s', $context);
+}
+
+/**
+ * Parse comments;
+ */
+
+function comments(&$rules, $context)
+{
+
+    //  if (empty($rules)) $rules = [];
+    while ($c = comment($context)) {
+        if ($c !== false) {
+            $rules[] = $c;
+        }
+
+        whitespace($context);
+    }
+    return $rules;
+}
+
+/**
+ * Parse comment.
+ */
+
+function comment($context)
+{
+    if ($context->css === '' || '/' != $context->css[0] || '*' != $context->css[1]) return;
+
+    if (!preg_match(COMMENT_REGEXP, $context->css, $m)) {
+
+        return error('End of comment missing', $context);
+    }
+
+    $str = $m[0];
+
+    $i = strlen($str);
+    updatePosition($str, $context);
+    $context->css = substr($context->css, $i);
+
+    $data = new stdClass;
+
+    $data->type = 'comment';
+    $data->value = $m[0];
+
+    return $data;
+}
+
+/**
+ * Parse selector.
+ */
+
+function selector($context)
+{
+
+    $m = match('/^[^@]([^{]+)/s', $context);
+
+    if (!$m) return;
+    /* @fix Remove all comments from selectors
+     * http://ostermiller.org/findcomment.html */
+
+    $map = [];
+
+    return array_map(function ($token) use (&$map) {
+
+        return trim(str_replace(array_values($map), array_keys($map), $token));
+
+    }, explode(',', preg_replace_callback([
+
+        //	'/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s',
+        '/(\([^)]*?\))/s',
+        '/(\[[^\]]*?\])/s'
+    ], function ($matches) use (&$map) {
+
+        if (!isset($matches[1])) {
+
+            return $matches[0];
+        }
+
+        $map[$matches[1]] = '~~~' . md5($matches[1]) . '~~~';
+
+        return str_replace($matches[1], $map[$matches[1]], $matches[0]);
+
+    }, preg_replace(COMMENT_REGEXP, '', $m[0]))));
+}
+
+/**
+ * Parse declaration.
+ */
+
+function declaration($context)
+{
+    whitespace($context);
+
+    if ($context->css !== '' && $context->css[0] == '}') return false;
+
+    // prop
+    $prop = match('/^(\*?[-#\/\*\w]+(\[[0-9a-z_-]+\])?)\s*/si', $context);
+
+    if (!$prop) return false;
+    $prop = trim($prop[0]);
+
+    // :
+    if (!match('/^:\s*/', $context)) return error("property missing ':'", $context);
+
+    // val
+    $val = match('/^((?:\'(?:\\\'|.)*?\'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/s', $context);
+
+    $data = [
+        'type' => 'declaration',
+        'name' => preg_replace(COMMENT_REGEXP, '', $prop),
+        'value' => $val ? preg_replace(COMMENT_REGEXP, '', trim($val[0])) : ''
+    ];
+
+    foreach (parse_vendor($data['name']) as $key => $value) {
+
+        $data[$key] = $value;
+    }
+
+    settype($data, 'object');
+    match('/^[;\s]*/', $context);
+
+    return $data;
+}
+
+/**
+ * Parse any atrule.
+ */
+
+function atanyrule($context)
+{
+
+    $m = match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context);
+
+    if (!$m) return false;
+
+    if ($context->css[0] == ';') {
+
+        match('/^;+/s', $context);
+
+        $data = [
+
+            'type' => 'atrule',
+            'name' => $m[7],
+            'isLeaf' => true,
+            'value' => trim($m[8])
+        ];
+
+        if (!empty($m[2])) {
+
+            $data['vendor'] = $m[3];
+        }
+
+        settype($data, 'object');
+
+        return $data;
+    }
+
+    if ($context->css[0] == '{') {
+
+        $elements = [];
+
+        if (!open($context)) return error("@$m[1] missing '{'", $context);
+
+        $data = [
+
+            'type' => 'atrule',
+            'name' => $m[7],
+            'value' => trim($m[8])
+        ];
+
+        while ($context->css !== '' && $context->css[0] != '}') {
+
+            comments($elements, $context);
+
+            if ($context->css !== '') {
+
+                if ($context->css[0] == '@') {
+
+                    $res = atanyrule($context);
+                } else if (preg_match('#([^;}{]+)([;}{])#s', $context->css, $matches)) {
+
+                    if ($matches[2] == '{') {
+
+                        $res = rule($context);
+                    } else {
+
+                        while ($res = declaration($context)) {
+
+                            $elements[] = $res;
+                            comments($elements, $context);
+                        }
+
+                        $data['hasDeclarations'] = true;
+
+                        continue;
+                    }
+                }
+
+                if ($res) {
+
+                    $elements[] = $res;
+                }
+
+                comments($elements, $context);
+                whitespace($context);
+            }
+        }
+
+        if (!close($context)) return error("@$m[1] missing '}'", $context);
+
+        $data['elements'] = $elements;
+
+        if (!empty($m[2])) {
+
+            $data['vendor'] = $m[3];
+        }
+
+        settype($data, 'object');
+
+        return $data;
+    }
+
+    $style = [];
+    $style = array_merge(comments($style, $context), rules($context));
+
+    if (!close($context)) return error("@host missing '}'", $context);
+
+    $data = [
+
+        'type' => 'host',
+        'rules' => $style
+    ];
+
+    settype($data, 'object');
+
+    return pos($data);
+}
+
+/**
+ * Parse rule.
+ */
+
+function rule($context)
+{
+
+    $c = [];
+    whitespace($context);
+
+    comments($c, $context);
+
+    if ($context->css === '' || $context->css[0] == '}') return empty($c) ? false : $c;
+
+    $sel = selector($context);
+
+    if (!$sel) return error('selector missing', $context);
+
+    comments($c, $context);
+    whitespace($context);
+
+    if (!open($context)) return error(implode(', ', $sel) . " missing '{'", $context);
+
+    whitespace($context);
+    comments($c, $context);
+
+    while ($context->css !== '' && $context->css[0] != '}') {
+
+        comments($c, $context);
+        whitespace($context);
+
+        if ($context->css !== '') {
+
+            if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
+
+                $node = atanyrule($context);
+
+                if ($node !== false) {
+
+                    $c = array_merge($c, $node);
+                    continue;
+                }
+            }
+        }
+
+        $res = declaration($context);
+
+        if ($res !== false && !($res instanceof \Exception)) {
+
+            $c[] = $res;
+        }
+    }
+
+    if (!close($context)) return error(implode(', ', $sel) . " missing '}'", $context);
+
+    $data = [
+
+        'type' => 'rule',
+        'selectors' => $sel,
+        'elements' => $c
+    ];
+
+    settype($data, 'object');
+
+    return $data;
+}
+
 function parse($context)
 {
 
@@ -257,729 +872,5 @@ function parse($context)
     $context->lineno = 1;
     $context->column = 1;
 
-    /**
-     * Update lineno and column based on `str`.
-     */
-
-    function updatePosition($str, $context)
-    {
-
-        preg_match('/\n/s', $str, $lines);
-
-        if ($lines) $context->lineno += count($lines);
-
-        $i = strrpos($str, '\n');
-
-        if ($i === false) {
-
-            $i = -1;
-        }
-
-        $length = strlen($str);
-
-        $context->column = ~$i ? $length - $i : $context->column + $length;
-    }
-
-    /**
-     * Mark position and patch `node.position`.
-     */
-
-    /*
-   function position($context) {
-     $start = new stdClass;
-     $start->line = $context->lineno;
-     $start->column = $context->column;
-
-     return function($node) use($start, $context) {
-
-       whitespace($context);
-       return $node;
-     };
-   }
-   */
-
-    /**
-     * Error `msg`.
-     */
-
-    function error($msg, $context)
-    {
-        $err = new stdClass;
-
-        // grab the first line?
-        $source = \substr($context->css, 0, 80);
-        $source = explode("\n", $source, 3);
-
-        unset($source[2]);
-
-        $source = implode("\n", $source);
-
-        $err->message = $context->options['source'] . ':' . $context->lineno . ':' . $context->column . ': ' . $msg
-            . ("\n" . $source . ' ...' . "\n");
-
-        $err->reason = $msg;
-        $err->filename = $context->options['source'];
-        $err->line = $context->lineno;
-        $err->column = $context->column;
-        $err->source = $context->css;
-
-        if ($context->options['silent']) {
-            $context->errorsList[] = $err;
-        } else {
-            throw new \Exception($err->message);
-        }
-    }
-
-    /**
-     * Parse stylesheet.
-     */
-
-    function stylesheet($context)
-    {
-
-        $rulesList = rules($context);
-
-        $result = new stdClass;
-
-        $result->type = 'stylesheet';
-        //  $result->stylesheet = new stdClass;
-        //  $result->stylesheet->source = $context->options['source'];
-        $result->elements = $rulesList;
-        $result->parsingErrors = $context->errorsList;
-
-    //    var_dump($result);
-
-        return $result;
-    }
-
-    /**
-     * Opening brace.
-     */
-
-    function open($context)
-    {
-        return match('/^{\s*/s', $context);
-    }
-
-    /**
-     * Closing brace.
-     */
-
-    function close($context)
-    {
-        return match('/^}/', $context);
-    }
-
-    function debug($str, $return = false)
-    {
-
-        $str = \explode("\n", substr($str, 0, 80), 3);
-
-        unset($str[2]);
-
-
-        $e = new \Exception();
-        $trace = explode("\n", $e->getTraceAsString());
-
-        // array_shift($trace);
-
-        $result = implode("\n", $str) . "\n" . implode("\n", $trace) . "\n";
-
-        if ($return) {
-
-            return $result;
-        }
-
-        echo $result;
-    }
-
-    function parse_vendor($str)
-    {
-
-        if (preg_match('/^((-((moz)|(webkit)|(ms)|o)-)?(\S+))/', trim($str), $match)) {
-
-            return [
-
-                'name' => $match[7],
-                'vendor' => $match[3]
-            ];
-        }
-
-        return ['value' => $str];
-    }
-
-    /**
-     * Parse ruleset.
-     */
-
-    function rules($context)
-    {
-
-        //  $node;
-        $rules = [];
-
-        while ($context->css !== '') {
-
-            //   comments($rules, $context);
-            whitespace($context);
-
-            if ($context->css !== '') {
-
-                //   comments($rules, $context);
-                //   whitespace($context);
-
-                if (preg_match('#^/\*#', $context->css)) {
-
-                    comments($rules, $context);
-                } else if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
-
-                    $node = atanyrule($context);
-
-                    if ($node instanceof \Exception) throw $node;
-
-                    if ($node !== false) {
-
-                        $rules[] = $node;
-                    }
-                } else {
-
-                    $node = rule($context);
-
-                    if ($node instanceof \Exception) throw $node;
-
-                    if ($node !== false) {
-
-                        $rules[] = $node;
-                    }
-                }
-            }
-        }
-        return $rules;
-    }
-
-    /**
-     * Match `re` and return captures.
-     *
-     * @param string $re
-     * @param object $context
-     */
-
-    function match($re, $context)
-    {
-
-        preg_match($re, $context->css, $m);
-
-        if (!$m) return;
-        $str = $m[0];
-        updatePosition($str, $context);
-
-        $context->css = substr($context->css, strlen($str));
-        return $m;
-    }
-
-    /**
-     * Parse whitespace.
-     */
-
-    function whitespace($context)
-    {
-        match('/^\s*/s', $context);
-    }
-
-    /**
-     * Parse comments;
-     */
-
-    function comments(&$rules, $context)
-    {
-
-        //  if (empty($rules)) $rules = [];
-        while ($c = comment($context)) {
-            if ($c !== false) {
-                $rules[] = $c;
-            }
-
-            whitespace($context);
-        }
-        return $rules;
-    }
-
-    /**
-     * Parse comment.
-     */
-
-    function comment($context)
-    {
-        if ($context->css === '' || '/' != $context->css[0] || '*' != $context->css[1]) return;
-
-        if (!preg_match(COMMENT_REGEXP, $context->css, $m)) {
-
-            return error('End of comment missing', $context);
-        }
-
-        $str = $m[0];
-
-        $i = strlen($str);
-        updatePosition($str, $context);
-        $context->css = substr($context->css, $i);
-
-        $data = new stdClass;
-
-        $data->type = 'comment';
-        $data->value = $m[0];
-
-        return $data;
-    }
-
-    /**
-     * Parse selector.
-     */
-
-    function selector($context)
-    {
-
-        //  if ($context->css !== '' && $context->css[0] == '@') return;
-
-        $m = match('/^[^@]([^{]+)/s', $context);
-
-        if (!$m) return;
-        /* @fix Remove all comments from selectors
-         * http://ostermiller.org/findcomment.html */
-
-        $map = [];
-
-        return array_map(function ($token) use (&$map) {
-
-            return trim(str_replace(array_values($map), array_keys($map), $token));
-
-        }, explode(',', preg_replace_callback([
-
-            //	'/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s',
-            '/(\([^)]*?\))/s',
-            '/(\[[^\]]*?\])/s'
-        ], function ($matches) use (&$map) {
-
-            if (!isset($matches[1])) {
-
-                return $matches[0];
-            }
-
-            $map[$matches[1]] = '~~~' . md5($matches[1]) . '~~~';
-
-            return str_replace($matches[1], $map[$matches[1]], $matches[0]);
-
-        },
-            preg_replace(COMMENT_REGEXP, '', $m[0]))));
-    }
-
-    /**
-     * Parse declaration.
-     */
-
-    function declaration($context)
-    {
-        whitespace($context);
-
-        if ($context->css !== '' && $context->css[0] == '}') return false;
-
-        // prop
-        $prop = match('/^(\*?[-#\/\*\w]+(\[[0-9a-z_-]+\])?)\s*/si', $context);
-
-        if (!$prop) return false;
-        $prop = trim($prop[0]);
-
-        // :
-        if (!match('/^:\s*/', $context)) return error("property missing ':'", $context);
-
-        // val
-        $val = match('/^((?:\'(?:\\\'|.)*?\'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/s', $context);
-
-        $data = [
-            'type' => 'declaration',
-            'name' => preg_replace(COMMENT_REGEXP, '', $prop),
-            'value' => $val ? preg_replace(COMMENT_REGEXP, '', trim($val[0])) : ''
-        ];
-
-        foreach (parse_vendor($data['name']) as $key => $value) {
-
-            $data[$key] = $value;
-        }
-
-        settype($data, 'object');
-        match('/^[;\s]*/', $context);
-
-        return $data;
-    }
-
-    /**
-     * Parse declarations.
-     */
-
-    function declarations($context)
-    {
-
-        $decls = [];
-
-        if (!open($context)) return error("missing '{'", $context);
-
-        comments($decls, $context);
-
-        // declarations
-        //   $decl;
-        while ($decl = declaration($context)) {
-            if ($decl !== false) {
-                $decls[] = $decl;
-                comments($decls, $context);
-            }
-        }
-
-        if (!close($context)) return error("missing '}'", $context);
-        return $decls;
-    }
-
-    /**
-     * Parse keyframe.
-     */
-
-    function keyframe($context)
-    {
-        //  $m;
-        $vals = [];
-        whitespace($context);
-
-        while ($m = match('/^((\d+\.\d+|\.\d+|\d+)%?|[a-z]+)\s*/s', $context)) {
-            $vals[] = $m[1];
-            match('/^,\s*/s', $context);
-        }
-
-        if (!count($vals)) return;
-
-        $data = [
-
-            'type' => 'keyframe',
-            'values' => $vals,
-            'declarations' => declarations($context)
-        ];
-
-        settype($data, 'object');
-
-        return $data;
-    }
-
-    /**
-     * Parse keyframes.
-     */
-
-    function atkeyframes($context)
-    {
-        whitespace($context);
-        $m = match('/^@([-\w]+)?keyframes\s*/s', $context);
-
-        if (!$m) return;
-
-        $vendor = isset($m[1]) ? $m[1] : '';
-
-        // identifier
-        $m = match('/^([-\w]+)\s*/s', $context);
-        if (!$m) return error("@keyframes missing name", $context);
-        $name = $m[1];
-
-        if (!open($context)) return error("@keyframes missing '{'", $context);
-
-        //  $frame;
-        $frames = [];
-        comments($frames, $context);
-        while ($frame = keyframe($context)) {
-            $frames[] = $frame;
-            comments($frame, $context);
-        }
-
-        if (!close($context)) return error("@keyframes missing '}'", $context);
-
-        $data = [
-            'type' => 'keyframes',
-            'name' => $name,
-            'vendor' => $vendor,
-            'keyframes' => $frames
-        ];
-
-        settype($data, 'object');
-
-        return $data;
-    }
-
-    /**
-     * Parse any atrule.
-     */
-
-    function atanyrule($context)
-    {
-
-        $m = match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context);
-
-        if (!$m) return false;
-
-        if ($context->css[0] == ';') {
-
-            match('/^;+/s', $context);
-
-            $data = [
-
-                'type' => 'atrule',
-                'name' => $m[7],
-                'isLeaf' => true,
-                'value' => trim($m[8])
-            ];
-
-            if (!empty($m[2])) {
-
-                $data['vendor'] = $m[3];
-            }
-
-            //   var_dump($data);
-
-            settype($data, 'object');
-
-            return $data;
-        }
-
-        if ($context->css[0] == '{') {
-
-            //  match('/^([^}]+)\{/s', $context);
-
-            $elements = [];
-            //  comments($elements, $context);
-
-            if (!open($context)) return error("@$m[1] missing '{'", $context);
-
-            $data = [
-
-                'type' => 'atrule',
-                'name' => $m[7],
-                'value' => trim($m[8])
-            ];
-
-            /*
-            if (in_array($m[7], ['viewport', 'font-face', 'page', 'counter-style'])) {
-
-                comments($elements, $context);
-
-                while ($res = declaration($context)) {
-
-                    $elements[] = $res;
-                    comments($elements, $context);
-                }
-
-                $data['hasDeclarations'] = true;
-
-            }
-
-            else
-                if ($m[7] == 'keyframes') {
-
-                //  debug($m[7].' '.$context->css);
-
-                comments($elements, $context);
-
-                while ($res = rule($context)) {
-
-                    $elements[] = $res;
-                    comments($elements, $context);
-                }
-                    */
-        //    } else {
-
-                //  echo __LINE__.' '.$m[7].' -> '. debug($context->css, true);
-
-                while ($context->css !== '' && $context->css[0] != '}') {
-                   
-                //    whitespace($context);
-                    comments($elements, $context);
-
-                    if ($context->css !== '') {
-
-                    //    var_dump($context->css[0]);
-                        if ($context->css[0] == '@') {
-
-                            $res = atanyrule($context);
-                        }
-
-                        else if (preg_match('#([^;}{]+)([;}{])#s', $context->css, $matches)) {
-
-                            //    if (trim($matches[1]) !== '' && $matches[2] == ';') {
-
-                                //    $data['hasDeclarations'] = true;
-                            //    }
-
-                             //   var_dump(['$context->css[0]' => $context->css[0], '$matches[2]' => $matches[2]]);
-
-                                if ($matches[2] == '{') {
-
-                                    $res = rule($context);
-                                }
-                                else {
-
-                                    while ($res = declaration ($context)) {
-
-                                        $elements[] = $res;
-                                        comments($elements, $context);
-                                    }
-
-                                    continue;
-                                }
-
-                                /*
-                                if ($context->css[0] == '{') {
-
-                                    while ($res = declarations ($context)) {
-
-                                        $element = array_merge($elements, $res);
-                                        whitespace($context);
-                                        comments($elements, $context);
-                                    }
-                                }
-
-                                else {
-
-                                    while ($res = declaration ($context)) {
-
-                                        $elements[] = $res;
-                                        whitespace($context);
-                                        comments($elements, $context);
-                                    }
-                                }
-
-                            //    continue;
-                                */
-                            }
-
-                        //    else {
-
-                             //   $res = rule($context);
-                        //    }
-                        //    debug($context->css);
-
-                        //    var_dump(['$s' => $s]);
-
-                    //    }
-
-                        if ($res) {
-                                
-                            $elements[] = $res;
-                        }
-
-                        comments($elements, $context);
-                        whitespace($context);
-                    }
-                }
-       //     }
-
-            if (!close($context)) return error("@$m[1] missing '}'", $context);
-
-            $data['elements'] = $elements;
-
-            if (!empty($m[2])) {
-
-                $data['vendor'] = $m[3];
-            }
-
-            settype($data, 'object');
-
-            return $data;
-        }
-
-        //  var_dump($context->css[0], $m[1], $m[3], $m[8]);die;
-
-        $style = [];
-        $style = array_merge(comments($style, $context), rules($context));
-
-        if (!close($context)) return error("@host missing '}'", $context);
-
-        $data = [
-
-            'type' => 'host',
-            'rules' => $style
-        ];
-
-        settype($data, 'object');
-
-        return pos($data);
-    }
-
-    /**
-     * Parse rule.
-     */
-
-    function rule($context)
-    {
-
-        $c = [];
-        whitespace($context);
-
-        comments($c, $context);
-
-        if ($context->css === '' || $context->css[0] == '}') return empty($c) ? false : $c;
-
-        $sel = selector($context);
-
-        if (!$sel) return error('selector missing', $context);
-
-        comments($c, $context);
-        whitespace($context);
-
-        if (!open($context)) return error(implode(', ', $sel) . " missing '{'", $context);
-
-        whitespace($context);
-        comments($c, $context);
-
-        while ($context->css !== '' && $context->css[0] != '}') {
-
-            comments($c, $context);
-            whitespace($context);
-
-            if ($context->css !== '') {
-
-                if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
-
-                    $node = atanyrule($context);
-
-                    if ($node !== false) {
-
-                        $c = array_merge($c, $node);
-                        continue;
-                    }
-                }
-            }
-
-            $res = declaration($context);
-
-            if ($res !== false && !($res instanceof \Exception)) {
-
-                $c[] = $res;
-            }
-        }
-
-        // var_dump(['iscolde' => debug($context->css, true)]);
-
-        // var_dump(['$res' => $res]);
-
-//  debug($context->css);
-
-        if (!close($context)) return error(implode(', ', $sel) . " missing '}'", $context);
-
-        $data = [
-
-            'type' => 'rule',
-            'selectors' => $sel,
-            'elements' => $c
-        ];
-
-        settype($data, 'object');
-
-        return $data;
-    }
-
     return stylesheet($context);
 }
-
-;

@@ -436,6 +436,17 @@ class Color {
     }
 }
 
+$x = [1, 2];
+$y = $x;
+
+unset($y[0]);
+
+var_dump($x);die;
+
+array_splice($x, count($x), 0, $y);
+
+var_dump($x);
+
 $str = '.img-polaroid {
 	padding: 4px;
 	background-color: #fff;

@@ -7,7 +7,7 @@ require 'autoload.php';
 $compiler = new \TBela\CSS\Compiler([
     'charset' => false,
     'compress' => true,
-    'rgba_hex' => false,
+    'rgba_hex' => true,
     'remove_comments' => false,
     'remove_empty_nodes' => true
 ]);

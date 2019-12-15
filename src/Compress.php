@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace TBela\CSS;
 
@@ -16,9 +16,11 @@ const MATCH_WORD = '/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s';
  * Print minified CSS
  * @package CSS
  */
-class Compress extends Identity {
+class Compress extends Identity
+{
 
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
 
         parent::__construct($options);
 
@@ -28,23 +30,22 @@ class Compress extends Identity {
         $this->remove_empty_nodes = true;
     }
 
-    protected function renderValue ($value, $type = null) {
+    protected function renderValue($value, $type = null)
+    {
 
         $replace = [];
 
         if ($type == 'atrule') {
 
             if ($value !== '') {
-               
-                // rewrite atrule @somename url(https://foobar) -> @somename https://foobar
-                $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', '$2', $value);    
-            }         
-        }
 
-        else {
-        
+                // rewrite atrule @somename url(https://foobar) -> @somename https://foobar
+                $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', '$2', $value);
+            }
+        } else {
+
             // remove quotes
-            $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', 'url($2)', $value);    
+            $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', 'url($2)', $value);
         }
 
         if ($type == 'declaration') {
@@ -64,36 +65,43 @@ class Compress extends Identity {
                 $value = Color::parseHSLColor($value, $this->rgba_hex);
             }
 
-        //    else {
-
-                $value = Color::parseNamedColor($value, $this->rgba_hex);
-        //    }
+            $value = Color::parseNamedColor($value, $this->rgba_hex);
         }
 
-        
         // hash quoted words
-        $value = preg_replace_callback(MATCH_WORD, function ($matches) use(&$replace) {
+        $value = preg_replace_callback(MATCH_WORD, function ($matches) use (&$replace) {
 
             if (empty($matches[1])) {
 
                 return $matches[0];
             }
 
-            $replace[$matches[1]] = '~~'.crc32($matches[1]).'~~';
+            $replace[$matches[1]] = '~~' . crc32($matches[1]) . '~~';
 
             return str_replace($matches[1], $replace[$matches[1]], $matches[0]);
 
         }, $value);
 
         // parse numbers
-        $value = preg_replace_callback('#([-+]?)([0-9]*\.[0-9]+|[0-9]+)(\s|([^\d\s\);,\}]*))#s', function ($matches) {
+        $value = preg_replace_callback('#(.?)([-+]?)([0-9]*\.[0-9]+|[0-9]+)(\s|([^\d\s\);,\}]*))#s', function ($matches) {
+
+            if ($matches[1] == '#' || preg_match('#[a-zA-Z]#', $matches[1]) || preg_match('#^[a-zA-Z]#', $matches[4])) {
+
+                return $matches[0];
+            }
+
+            $character = $matches[1];
+
+            array_splice($matches, 1, 1);
+
+            $matches = array_values($matches);
 
             $number = $matches[2];
 
             // remove unit
             if ($number == 0) {
 
-                return ' 0 ';
+                return $character . ' 0 ';
             }
 
             // convert 'ms' to 's'
@@ -117,18 +125,16 @@ class Compress extends Identity {
 
                     $number[0] = '';
                 }
-            }
-
-            else {
+            } else {
 
                 // convert 1000 to 1e3
                 $number[0] = preg_replace_callback('#(0{3,})$#', function ($matches) {
 
-                    return 'e'.strlen($matches[1]);
+                    return 'e' . strlen($matches[1]);
                 }, $number[0]);
             }
 
-            return ' '.$matches[1].implode('.', $number).$matches[3].' ';
+            return ' ' . $matches[1] . implode('.', $number) . $matches[3] . ' ';
         }, $value);
 
         // remove unnecessary space
@@ -140,15 +146,16 @@ class Compress extends Identity {
 
         return trim($value);
     }
-    
+
     /**
      * @param ElementDeclaration $element
      * @return string
      */
-	protected function renderDeclaration (ElementDeclaration $element) {
+    protected function renderDeclaration(ElementDeclaration $element)
+    {
 
-	    $vendor = $element->getVendor();
-	    $name = $element->getName(false);
+        $vendor = $element->getVendor();
+        $name = $element->getName(false);
 
         $value = $this->renderValue($element->getValue(), $element->getType());
 
@@ -171,7 +178,7 @@ class Compress extends Identity {
                         }
                     }
 
-                    if (count ($value) == 3) {
+                    if (count($value) == 3) {
 
                         if ($value[0] == $value[2]) {
 
@@ -179,7 +186,7 @@ class Compress extends Identity {
                         }
                     }
 
-                    if (count ($value) == 2) {
+                    if (count($value) == 2) {
 
                         if ($value[0] == $value[1]) {
 
@@ -188,16 +195,16 @@ class Compress extends Identity {
                     }
                 }
 
-            $value = implode(' ', $value);
-            break;
+                $value = implode(' ', $value);
+                break;
         }
 
         if ($vendor !== '') {
 
-            $vendor = '-'.$vendor.'-';
+            $vendor = '-' . $vendor . '-';
         }
 
-	    return $this->renderName($vendor.$name).':'.$this->indent.$value;
+        return $this->renderName($vendor . $name) . ':' . $this->indent . $value;
     }
 
 }
