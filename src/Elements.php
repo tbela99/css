@@ -34,7 +34,7 @@ class Elements extends Element implements \IteratorAggregate  {
 
     public function getIterator () {
 
-        return new ArrayIterator(isset($this->ast->elements) ? $this->ast->elements : []);
+        return new \ArrayIterator(isset($this->ast->elements) ? $this->ast->elements : []);
     }
 
     public function append (Element $element) {

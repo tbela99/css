@@ -12,7 +12,10 @@ class Parser
 {
 
     public $css = '';
-    protected $options = [
+    protected $options = [];
+    protected $path = '';
+
+    protected $defaultOptions = [
         'source' => '',
         'silent' => false,
         'flatten_import' => false,
@@ -22,10 +25,33 @@ class Parser
 
     public $errorsList = [];
 
-    public function __construct($css, array $options = [])
+    public function __construct($css = '', array $options = [])
+    {
+
+        $this->setContent($css);
+        $this->setOptions($options);
+    }
+
+    public function load($file)
+    {
+
+        $this->path = $file;
+        $this->_css = file_get_contents($file);
+        return $this;
+    }
+
+    public function setContent($css)
     {
 
         $this->_css = $css;
+        $this->path = '';
+        return $this;
+    }
+
+    public function setOptions(array $options)
+    {
+
+        $this->options = $this->defaultOptions;
 
         foreach (array_keys($this->options) as $key) {
 
@@ -34,23 +60,25 @@ class Parser
                 $this->options[$key] = $options[$key];
             }
         }
+
+        return $this;
     }
 
     public function parse()
     {
-
         $this->css = $this->_css;
         $this->errorsList = [];
 
         if (!empty($this->options['flatten_import'])) {
 
-            $this->css = parse_import($this->css);
+            $this->css = parse_import($this->css, dirname($this->path));
         }
 
         return $this->deduplicate(parse($this));
     }
 
-    public function deduplicate ($ast) {
+    protected function deduplicate($ast)
+    {
 
         if ((!empty($this->options['deduplicate_rules']) || !empty($this->options['deduplicate_declarations'])) && !empty ($ast)) {
 
@@ -73,70 +101,84 @@ class Parser
         return $ast;
     }
 
-    protected function computeSignature ($ast) {
+    protected function computeSignature($ast)
+    {
 
-        $signature = ['type:'.$ast->type];
+        $signature = ['type:' . $ast->type];
 
         if (isset($ast->name)) {
 
-            $signature[] = 'name:'.$ast->name;
+            $signature[] = 'name:' . $ast->name;
         }
 
         if (isset($ast->value)) {
 
-            $signature[] = 'value:'.$ast->value;
+            $signature[] = 'value:' . $ast->value;
         }
 
         if (isset($ast->value)) {
 
-            $signature[] = 'value:'.$ast->value;
+            $signature[] = 'value:' . $ast->value;
         }
 
         if (isset($ast->selectors)) {
 
-            $signature[] = 'selectors:'.implode(',', $ast->selectors);
+            $signature[] = 'selectors:' . implode(',', $ast->selectors);
         }
 
         if (!empty($ast->vendor)) {
 
-            $signature[] = 'vendor:'.$ast->vendor;
+            $signature[] = 'vendor:' . $ast->vendor;
         }
 
-        return implode('', $signature);
+        return implode(':', $signature);
     }
 
-    protected function deduplicateRules ($ast) {
+    protected function deduplicateRules($ast)
+    {
 
         if (!empty($ast->elements)) {
 
-            if (!empty($this->options['deduplicate_rules'])) {
+            if (!empty($this->options['deduplicate_rules']) && isset($ast->elements)) {
 
                 $signature = '';
                 $total = count($ast->elements);
+                $el = null;
 
                 while ($total--) {
 
                     if ($total > 0) {
 
+                        $el = $ast->elements[$total];
                         $next = $ast->elements[$total - 1];
-                        $nextSignature = $this->computeSignature($next);
+
+                        if ($el->type == 'comment') {
+
+                            continue;
+                        }
+
+                        while ($total > 0 && $next->type == 'comment') {
+
+                            $next = $ast->elements[--$total - 1];
+                        }
 
                         if ($signature === '') {
 
-                            $signature = $this->computeSignature($ast->elements[$total]);
+                            $signature = $this->computeSignature($el);
                         }
+
+                        $nextSignature = $this->computeSignature($next);
 
                         if ($signature == $nextSignature) {
 
-                            array_splice($ast->elements[$total]->elements, 0, 0, $ast->elements[$total - 1]->elements);
-                            array_splice($ast->elements, $total - 1, 1);
+                                array_splice($ast->elements, $total - 1, 1);
+                                array_splice($el->elements, 0, 0, $next->elements);
                         }
 
                         $signature = $nextSignature;
                     }
                 }
             }
-
 
             foreach ($ast->elements as $element) {
 
@@ -148,13 +190,14 @@ class Parser
     }
 
     //
-    protected function deduplicateDeclarations ($ast) {
+    protected function deduplicateDeclarations($ast)
+    {
 
         if (!empty($this->options['deduplicate_declarations']) && !empty($ast->elements)) {
 
             $elements = $ast->elements;
 
-            $total = count ($elements);
+            $total = count($elements);
 
             $hash = [];
 
@@ -162,7 +205,12 @@ class Parser
 
                 $declaration = $ast->elements[$total];
 
-                $name = (isset($declaration->vendor) ? '-'.$declaration->vendor.'-' : '').$declaration->name;
+                if ($declaration->type == 'comment') {
+
+                    continue;
+                }
+
+                $name = (isset($declaration->vendor) ? '-' . $declaration->vendor . '-' : '') . $declaration->name;
 
                 if (isset($hash[$name])) {
 
@@ -236,23 +284,31 @@ function expand($css, $path = null)
         return 'url(' . $file . ')';
     },
         //resolve import directive, note import directive in imported css will NOT be processed
-        parse_import($css)
+        parse_import($css, $path)
     );
 
     return $css;
 }
 
-function resolvePath($path)
+function resolvePath($file, $path = '')
 {
 
-    if (strpos($path, '../') !== false) {
+    if ($path !== '') {
+
+        if (!preg_match('#^(https?:/)?/#', $file)) {
+
+            $file = $path.'/'.$file;
+        }
+    }
+
+    if (strpos($file, '../') !== false) {
 
         $return = [];
 
-        if (strpos($path, '/') === 0)
+        if (strpos($file, '/') === 0)
             $return[] = '/';
 
-        foreach (explode('/', $path) as $p) {
+        foreach (explode('/', $file) as $p) {
 
             if ($p == '..') {
 
@@ -272,7 +328,7 @@ function resolvePath($path)
         return implode('/', $return);
     }
 
-    return $path;
+    return $file;
 }
 
 function fetch_content($url, $options = [], $curlOptions = [])
@@ -328,7 +384,7 @@ function fetch_content($url, $options = [], $curlOptions = [])
     return $result;
 }
 
-function parse_import($css)
+function parse_import($css, $path = '')
 {
 
     $comments = [];
@@ -340,11 +396,11 @@ function parse_import($css)
         return \str_replace($matches[0], $comments[$matches[0]], $matches[0]);
     }, $css);
 
-    $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) {
+    $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) use ($path) {
 
         if (preg_match('#(url\(\s*((["\'])([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
 
-            $file = empty($match[4]) ? $match[7] : $match[4];
+            $file = resolvePath(empty($match[4]) ? $match[7] : $match[4], $path);
 
             $media = trim($match[8]);
 
@@ -362,7 +418,7 @@ function parse_import($css)
                     $css = '@media ' . $media . " {\n" . $css . "\n}";
                 }
 
-                return '/* @imported ' . resolvePath($file) . ' */' . "\n" . $css;
+                return '/* @imported from ' . $file . ' */' . "\n" . $css;
             }
         }
 

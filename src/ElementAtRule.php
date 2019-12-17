@@ -2,7 +2,7 @@
 
 namespace TBela\CSS;
 
-class ElementAtRule extends Elements implements RuleList {
+class ElementAtRule extends Elements {
 
     use ElementTrait;
 

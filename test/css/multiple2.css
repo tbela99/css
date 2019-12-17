@@ -1,0 +1,14 @@
+h1 {
+        color: green;
+        color: blue;
+    /* unexpected */
+        color: black;
+    }
+
+/* unexpected rule */
+
+    h1 {
+        color: #000;
+        /* unexpected declaration */
+        color: aliceblue;
+    }

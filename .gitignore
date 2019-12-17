@@ -1,2 +1,5 @@
 
 .idea/workspace.xml
+phpunit.phar
+phpunit
+test/debug.txt

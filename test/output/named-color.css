@@ -1,0 +1,10 @@
+body {
+ border: 0px
+}
+.short {
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left navajowhite
+}
+.element {
+ color: rgb(0, 0, 0);
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left mediumvioletred
+}

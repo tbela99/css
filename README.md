@@ -60,7 +60,7 @@ $compiler = new \CSS\Compiler([
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $parser->compile($ast);
+$css = $compiler->compile($ast);
 
 ```
 

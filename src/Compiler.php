@@ -8,7 +8,18 @@ namespace TBela\CSS;
 
 class Compiler {
 
-	protected $options = [];
+    protected $options = [];
+	protected $defaultOptions = [
+	    'indent' => ' ',
+        'glue' => "\n",
+        'separator' => ' ',
+        'charset' => false,
+        'rgba_hex' => false,
+        'compress' => false,
+        'remove_comments' => false,
+        'remove_empty_nodes' => false
+    ];
+
 	protected $data;
 
     /**
@@ -17,8 +28,21 @@ class Compiler {
      */
 	public function __construct (array $options = []) {
 
-		$this->options = $options;
+		$this->setOptions($options);
 	}
+
+	public function setOptions (array $options) {
+
+	    $this->options = $this->defaultOptions;
+
+	    foreach (array_keys($this->options) as $key) {
+
+	        if (isset($options[$key])) {
+
+	            $this->options[$key] = $options[$key];
+            }
+        }
+    }
 
     /**
      * @param string $css

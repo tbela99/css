@@ -2,9 +2,8 @@
 <?php
 
 require 'autoload.php';
-;
 
-$parser = new \TBela\CSS\Parser(file_get_contents('multiple2.css'), [
+$parser = new \TBela\CSS\Parser(file_get_contents('./css/multiple2.css'), [
     'silent' => false,
     'flatten_import' => true
 ]);

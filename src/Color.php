@@ -386,6 +386,11 @@ class Color {
         }, $str);
     }
 
+    public static function parseHSLColor($value, $rgba_hex) {
+
+        return $value;
+    }
+
     public static function expand ($color) {
 
         if ($color[0] != '#' || strlen ($color) > 5) {

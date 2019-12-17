@@ -208,7 +208,7 @@ class Identity implements Renderer {
      */
 	protected function renderSelector (array $selector, $level) {
 
-	    return implode(str_repeat($this->indent, $level).','.$this->glue, $selector);
+	    return str_repeat($this->indent, $level).implode(','.$this->glue, $selector);
     }
 
     /**
@@ -226,13 +226,31 @@ class Identity implements Renderer {
 	        $glue = ';';
         }
 
-		return implode($glue.$this->glue, array_filter(array_map(function ($element) use($level) {
+	    $result = '';
+	    $lastType = '';
 
-		    return $this->render($element, $level);
-        }, $element->getChildren()), function ($value) {
+	    foreach ($element as $el) {
 
-		    return trim($value) !== '';
-        }));
+	        $output = $this->render($el, $level);
+
+	        if ($glue == ';' && trim($output) === '') {
+
+                $lastType = $el->getType();
+	            continue;
+            }
+
+	        if ($result === '') {
+
+	            $result = $output;
+	            $lastType = $el->getType();
+                continue;
+            }
+
+	        $result .= ($el->getType() == 'comment' || $lastType == 'comment' ? '' : $glue).$this->glue.$output;
+            $lastType = $el->getType();
+        }
+
+	    return $result;
 	}
 }
 

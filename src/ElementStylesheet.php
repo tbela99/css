@@ -2,6 +2,6 @@
 
 namespace TBela\CSS;
 
-class ElementStylesheet extends Elements implements RuleList {
+class ElementStylesheet extends Elements {
 
 }
