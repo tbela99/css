@@ -13,9 +13,9 @@ final class DuplicateTest extends TestCase
      * @param Compiler $compiler
      * @param $css
      * @throws Exception
-     * @dataProvider removeDuplicateProvider
+     * @dataProvider beautifyProvider
      */
-    public function testRemoveDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
+    public function testBeautifyDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
     {
 
         $compiler->setData($parser->load($file)->parse());
@@ -26,39 +26,60 @@ final class DuplicateTest extends TestCase
         );
     }
 
-    public function removeDuplicateProvider(): array
+    /**
+     * @param Parser $parser
+     * @param Compiler $compiler
+     * @param $css
+     * @throws Exception
+     * @dataProvider minifiedProvider
+     */
+    public function testMinifyDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
+    {
+
+        $compiler->setData($parser->load($file)->parse());
+
+        $this->assertEquals(
+            $compiler->compile(),
+            $expected
+        );
+    }
+
+    public function beautifyProvider(): array
     {
 
         $data = [];
 
-        foreach ([
-            'multiple',
-             'multiple1',
-             'multiple2'
-         ] as $name) {
+        foreach (glob('css/*.css') as $file) {
 
-            foreach (glob(__DIR__.'/../css/'.$name.'.css') as $file) {
-         //       foreach (glob(__DIR__.'/../css/*.css') as $file) {
+            $data[] = [
 
-                if (strpos($file, 'multiple') !== false) {
-
-                    $data[] = [
-
-                        new Parser(),
-                        new Compiler(),
-                        $file,
-                        file_get_contents(dirname($file).'/../output/'.basename($file))
-                    ];
-                }
-            }
-
+                (new Parser())->setOptions(['flatten_import' => true]),
+                new Compiler(),
+                $file,
+                file_get_contents(dirname($file).'/../output/'.basename($file))
+            ];
         }
 
         return $data;
-     //   return [
-     //       [new Parser(), new Compiler(['compress' => false, 'rgba_hex' => true]), file_get_contents('./css/multiple2.css'), 'h1{color:#f0f8ff}'],
-     //       [new Parser(), new Compiler(['compress' => true, 'rgba_hex' => true]), file_get_contents('./css/multiple2.css'), 'h1{color:#f0f8ff}']
-    //    ];
+    }
+
+    public function minifiedProvider(): array
+    {
+
+        $data = [];
+
+        foreach (glob('css/*.css') as $file) {
+
+            $data[] = [
+
+                (new Parser())->setOptions(['flatten_import' => true]),
+                (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
+                $file,
+                file_get_contents(dirname($file).'/../output/'.str_replace('.css', '.min.css', basename($file)))
+            ];
+        }
+
+        return $data;
     }
 }
 

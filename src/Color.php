@@ -315,29 +315,35 @@ class Color {
 
     public static function parseNamedColor ($str, $parse_rgba = true) {
 
-        if (isset(static::COLORS_NAMES[$str])) {
+        return preg_replace_callback('#\w+#', function ($matches) use($parse_rgba) {
 
-            $name = static::COLORS_NAMES[$str];
+            $str = $matches[0];
 
-            if (!$parse_rgba && strlen($name) == 9) {
+            if (isset(static::COLORS_NAMES[$str])) {
 
-                return $str;
+                $name = static::COLORS_NAMES[$str];
+
+                if (!$parse_rgba && strlen($name) == 9) {
+
+                    return $str;
+                }
+
+                $shortened = static::shorten($name);
+
+                if (strlen($str) > strlen($shortened)) {
+
+                    return $shortened;
+                }
+
+                if (strlen($str) > strlen($name)) {
+
+                    return $name;
+                }
             }
-            
-            $shortened = static::shorten($name);
 
-            if (strlen($str) > strlen($shortened)) {
+            return static::shorten($str);
+        }, $str);
 
-                return $shortened;
-            }
-
-            if (strlen($str) > strlen($name)) {
-
-                return $name;
-            }
-        }
-
-        return $str;
     }
 
     public static function parseHexColor ($str, $rgba_hex = true) {
@@ -364,7 +370,7 @@ class Color {
 
     public static function parseRGBColor ($str, $parse_rgba = true) {
 
-        return preg_replace_callback('#rgb(a)?\s*\(\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*(,\s*(\d*?\.?\d+))?\s*\)#s', function ($matches) use($parse_rgba) {
+        return preg_replace_callback('#rgb(a)?\(\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*(,\s*(\d*?\.?\d+))?\s*\)#s', function ($matches) use($parse_rgba) {
 
             $color = $matches[0];
 

@@ -1,0 +1,101 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node',
+1 verbose cli   '/usr/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'docssify',
+1 verbose cli   '--save-dev' ]
+2 info using npm@3.5.2
+3 info using node@v8.10.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData docssify
+8 silly fetchNamedPackageData docssify
+9 silly mapToRegistry name docssify
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/docssify
+13 verbose request uri https://registry.npmjs.org/docssify
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 3:38:08 PM
+16 verbose request id 95b258d885ae1668
+17 http request GET https://registry.npmjs.org/docssify
+18 http 404 https://registry.npmjs.org/docssify
+19 verbose headers { date: 'Sun, 15 Dec 2019 20:38:07 GMT',
+19 verbose headers   'content-type': 'application/json',
+19 verbose headers   'content-length': '21',
+19 verbose headers   connection: 'keep-alive',
+19 verbose headers   'set-cookie':
+19 verbose headers    [ '__cfduid=de29b47e0b5c608ed4e3883e1b238a3b71576442287; expires=Tue, 14-Jan-20 20:38:07 GMT; path=/; domain=.npmjs.org; HttpOnly' ],
+19 verbose headers   'cf-ray': '545b38260eafca6f-YUL',
+19 verbose headers   age: '23',
+19 verbose headers   vary: 'Accept-Encoding',
+19 verbose headers   'cf-cache-status': 'HIT',
+19 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+19 verbose headers   server: 'cloudflare' }
+20 silly get cb [ 404,
+20 silly get   { date: 'Sun, 15 Dec 2019 20:38:07 GMT',
+20 silly get     'content-type': 'application/json',
+20 silly get     'content-length': '21',
+20 silly get     connection: 'keep-alive',
+20 silly get     'set-cookie':
+20 silly get      [ '__cfduid=de29b47e0b5c608ed4e3883e1b238a3b71576442287; expires=Tue, 14-Jan-20 20:38:07 GMT; path=/; domain=.npmjs.org; HttpOnly' ],
+20 silly get     'cf-ray': '545b38260eafca6f-YUL',
+20 silly get     age: '23',
+20 silly get     vary: 'Accept-Encoding',
+20 silly get     'cf-cache-status': 'HIT',
+20 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+20 silly get     server: 'cloudflare' } ]
+21 silly fetchPackageMetaData Error: Not found : docssify
+21 silly fetchPackageMetaData     at makeError (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+21 silly fetchPackageMetaData     at CachingRegistryClient.<anonymous> (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+21 silly fetchPackageMetaData     at Request._callback (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+21 silly fetchPackageMetaData     at Request.self.callback (/usr/share/npm/node_modules/request/request.js:198:22)
+21 silly fetchPackageMetaData     at emitTwo (events.js:126:13)
+21 silly fetchPackageMetaData     at Request.emit (events.js:214:7)
+21 silly fetchPackageMetaData     at Request.<anonymous> (/usr/share/npm/node_modules/request/request.js:1082:10)
+21 silly fetchPackageMetaData     at emitOne (events.js:121:20)
+21 silly fetchPackageMetaData     at Request.emit (events.js:211:7)
+21 silly fetchPackageMetaData     at IncomingMessage.<anonymous> (/usr/share/npm/node_modules/request/request.js:1009:12)
+21 silly fetchPackageMetaData  error for docssify { Error: Not found : docssify
+21 silly fetchPackageMetaData     at makeError (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+21 silly fetchPackageMetaData     at CachingRegistryClient.<anonymous> (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+21 silly fetchPackageMetaData     at Request._callback (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+21 silly fetchPackageMetaData     at Request.self.callback (/usr/share/npm/node_modules/request/request.js:198:22)
+21 silly fetchPackageMetaData     at emitTwo (events.js:126:13)
+21 silly fetchPackageMetaData     at Request.emit (events.js:214:7)
+21 silly fetchPackageMetaData     at Request.<anonymous> (/usr/share/npm/node_modules/request/request.js:1082:10)
+21 silly fetchPackageMetaData     at emitOne (events.js:121:20)
+21 silly fetchPackageMetaData     at Request.emit (events.js:211:7)
+21 silly fetchPackageMetaData     at IncomingMessage.<anonymous> (/usr/share/npm/node_modules/request/request.js:1009:12) pkgid: 'docssify', statusCode: 404, code: 'E404' }
+22 silly rollbackFailedOptional Starting
+23 silly rollbackFailedOptional Finishing
+24 silly runTopLevelLifecycles Starting
+25 silly runTopLevelLifecycles Finishing
+26 silly install printInstalled
+27 verbose stack Error: Not found : docssify
+27 verbose stack     at makeError (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+27 verbose stack     at CachingRegistryClient.<anonymous> (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+27 verbose stack     at Request._callback (/usr/share/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+27 verbose stack     at Request.self.callback (/usr/share/npm/node_modules/request/request.js:198:22)
+27 verbose stack     at emitTwo (events.js:126:13)
+27 verbose stack     at Request.emit (events.js:214:7)
+27 verbose stack     at Request.<anonymous> (/usr/share/npm/node_modules/request/request.js:1082:10)
+27 verbose stack     at emitOne (events.js:121:20)
+27 verbose stack     at Request.emit (events.js:211:7)
+27 verbose stack     at IncomingMessage.<anonymous> (/usr/share/npm/node_modules/request/request.js:1009:12)
+28 verbose statusCode 404
+29 verbose pkgid docssify
+30 verbose cwd /mnt/c/GitHub/css/test
+31 error Linux 4.4.0-19041-Microsoft
+32 error argv "/usr/bin/node" "/usr/bin/npm" "install" "docssify" "--save-dev"
+33 error node v8.10.0
+34 error npm  v3.5.2
+35 error code E404
+36 error 404 Not found : docssify
+37 error 404
+38 error 404 'docssify' is not in the npm registry.
+39 error 404 You should bug the author to publish it (or use the name yourself!)
+40 error 404 Note that you can also install from a
+41 error 404 tarball, folder, http url, or git url.
+42 verbose exit [ 1, true ]

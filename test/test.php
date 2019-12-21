@@ -2,14 +2,17 @@
 <?php
 
 require 'autoload.php';
+// test builder
 
 $parser = new \TBela\CSS\Parser();
 $compiler = new \TBela\CSS\Compiler();
 
+$parser->setOptions(['flatten_import' => true]);
+$compiler->setOptions(['rgba_hex' => true]);
 
  foreach (
-     //  glob('./css/*.css')
-    ['./css/multiple2.css']
+      glob('css/*.css')
+
          as $file) {
 
      echo $file."\n";

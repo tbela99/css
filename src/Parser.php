@@ -28,6 +28,7 @@ class Parser
     public function __construct($css = '', array $options = [])
     {
 
+        $this->options = $this->defaultOptions;
         $this->setContent($css);
         $this->setOptions($options);
     }
@@ -50,8 +51,6 @@ class Parser
 
     public function setOptions(array $options)
     {
-
-        $this->options = $this->defaultOptions;
 
         foreach (array_keys($this->options) as $key) {
 
@@ -157,7 +156,7 @@ class Parser
                             continue;
                         }
 
-                        while ($total > 0 && $next->type == 'comment') {
+                        while ($total > 1 && $next->type == 'comment') {
 
                             $next = $ast->elements[--$total - 1];
                         }
@@ -418,7 +417,7 @@ function parse_import($css, $path = '')
                     $css = '@media ' . $media . " {\n" . $css . "\n}";
                 }
 
-                return '/* @imported from ' . $file . ' */' . "\n" . $css;
+                return '/* start: @import from ' . $file . ' */' . "\n" . $css . "\n" . '/* end: @import from ' . $file . ' */'. "\n" ;
             }
         }
 

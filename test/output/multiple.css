@@ -10,7 +10,8 @@
  }
 }
 body {
- border: 0px
+ border: 0px;
+ transition: all 200ms
 }
 @viewport {
   min-width: 640px;

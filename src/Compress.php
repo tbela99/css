@@ -26,6 +26,7 @@ class Compress extends Identity
 
         $this->glue = '';
         $this->indent = '';
+        $this->charset = true;
         $this->remove_comments = true;
         $this->remove_empty_nodes = true;
     }
@@ -55,12 +56,12 @@ class Compress extends Identity
                 $value = Color::parseHexColor($value, $this->rgba_hex);
             }
 
-            if (preg_match('#\brgba?#', $value)) {
+            if (strpos($value, 'rgb') !== false) {
 
                 $value = Color::parseRGBColor($value, $this->rgba_hex);
             }
 
-            if (preg_match('#\bhsla?#', $value)) {
+            if (strpos($value, 'hsl') !== false) {
 
                 $value = Color::parseHSLColor($value, $this->rgba_hex);
             }
@@ -83,9 +84,9 @@ class Compress extends Identity
         }, $value);
 
         // parse numbers
-        $value = preg_replace_callback('#(.?)([-+]?)([0-9]*\.[0-9]+|[0-9]+)(\s|([^\d\s\);,\}]*))#s', function ($matches) {
+        $value = preg_replace_callback('#(^|[-+\(\s])([0-9]*\.[0-9]+|[0-9]+)([^\d\s\);,\}]*|\s)#s', function ($matches) {
 
-            if ($matches[1] == '#' || preg_match('#[a-zA-Z]#', $matches[1]) || preg_match('#^[a-zA-Z]#', $matches[4])) {
+            if ($matches[3] != '' && !preg_match('#^[a-zA-Z]+$#', $matches[3])) {
 
                 return $matches[0];
             }
@@ -96,25 +97,35 @@ class Compress extends Identity
 
             $matches = array_values($matches);
 
-            $number = $matches[2];
+            $number = $matches[1];
 
             // remove unit
             if ($number == 0) {
 
-                return $character . ' 0 ';
+                if ($character == '-' || $character == '+') {
+
+                    $character = '';
+                }
+
+                return $character.'0 ';
             }
 
             // convert 'ms' to 's'
-            if ($matches[3] == 'ms') {
+            if ($matches[2] == 'ms') {
 
-                if ($number > 100) {
+                if ($number >= 100) {
 
                     $number /= 1000;
-                    $matches[3] = 's';
+                    $matches[2] = 's';
                 }
             }
 
             $number = explode('.', $number);
+
+            if (isset($number[1]) && $number[1] == 0) {
+
+                unset($number[1]);
+            }
 
             if (isset($number[1])) {
 
@@ -125,6 +136,7 @@ class Compress extends Identity
 
                     $number[0] = '';
                 }
+
             } else {
 
                 // convert 1000 to 1e3
@@ -134,7 +146,7 @@ class Compress extends Identity
                 }, $number[0]);
             }
 
-            return ' ' . $matches[1] . implode('.', $number) . $matches[3] . ' ';
+            return $character. implode('.', $number) . $matches[2] . ' ';
         }, $value);
 
         // remove unnecessary space

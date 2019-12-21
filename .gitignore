@@ -1,5 +1,6 @@
 
-.idea/workspace.xml
 phpunit.phar
 phpunit
 test/debug.txt
+.idea/
+.phpunit.result.cache

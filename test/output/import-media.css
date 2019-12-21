@@ -1,1 +1,9 @@
-@import 'css/url-import-media.css' all;
+/* start: @import from css/css/url-import-media.css */
+@media all {
+  .url-imported-from-media {
+   outline: 0;
+   color: #a1a1a1a1;
+   background-image: url(css/img/d4ca075023f827d81478565989.png)
+ }
+}
+/* end: @import from css/css/url-import-media.css */

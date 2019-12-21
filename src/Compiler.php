@@ -28,12 +28,11 @@ class Compiler {
      */
 	public function __construct (array $options = []) {
 
+        $this->options = $this->defaultOptions;
 		$this->setOptions($options);
 	}
 
 	public function setOptions (array $options) {
-
-	    $this->options = $this->defaultOptions;
 
 	    foreach (array_keys($this->options) as $key) {
 
@@ -42,6 +41,8 @@ class Compiler {
 	            $this->options[$key] = $options[$key];
             }
         }
+
+	    return $this;
     }
 
     /**
@@ -50,6 +51,7 @@ class Compiler {
 	public function setContent ($css) {
 
 	    $this->data = (new Parser($css, $this->options))->parse();
+	    return $this;
     }
 
     /**
@@ -58,6 +60,7 @@ class Compiler {
 	public function setData ($ast) {
 
 		$this->data = Element::getInstance($ast, $this->options);
+		return $this;
 	}
 
     /**
