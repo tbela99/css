@@ -60,8 +60,16 @@ $compiler = new \TBela\CSS\Compiler([
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $parser->compile($ast);
+$css = $compiler->compile($ast);
 
+```
+
+pretty print output
+
+```css
+h1 {
+ color: aliceblue
+}
 ```
 
 minified output
@@ -69,24 +77,3 @@ minified output
 ```css
 h1{color:#f0f8ff}
 ```
-## Parser options
-
-- source: CSS source file. It is only used in the exception error message.
-- silent: throw an exception if false or silently return an error. default to false
-- flatten_import: process @import directive and import the content into the css. default to false.
-- deduplicate_rules: merge duplicate rules
-- deduplicate_declarations: remove duplicate declarations
-
-## Compiler options
-
-- charset: remove @charset
-- glue: the line separator character. default to '\n'
-- indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
-- rgba_hex: convert colors in rgba() and hsla() to hex
-- compress: produce minified output
-- remove_empty_nodes: remove empty css declaration
-
-## TODO
-
-- convert color hsla to hex

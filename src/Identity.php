@@ -102,6 +102,7 @@ class Identity implements Renderer {
      * @param int $level
      * @param string $indent
      * @return string
+     * @throws \Exception
      */
 	protected function renderRule(ElementRule $element, $level, $indent) {
 
@@ -124,6 +125,7 @@ class Identity implements Renderer {
      * @param int $level
      * @param string $indent
      * @return string
+     * @throws \Exception
      */
     protected function renderAtRule(ElementAtRule $element, $level, $indent) {
 
@@ -215,6 +217,7 @@ class Identity implements Renderer {
      * @param Elements $element
      * @param int $level
      * @return string
+     * @throws \Exception
      */
 	protected function renderCollection (Elements $element, $level) {
 

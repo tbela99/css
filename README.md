@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -42,7 +42,7 @@ Parse the css file and generate the AST
 
 ```php
 
-$parser = new \CSS\Parser($css);
+$parser = new \TBela\CSS\Parser($css);
 $ast = $parser->parse();
 
 file_put_contents('style.json', json_encode($ast));
@@ -54,14 +54,22 @@ Load the AST and generate css code
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new \CSS\Compiler([
+$compiler = new \TBela\CSS\Compiler([
     'rgba_hex' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $compiler->compile($ast);
+$css = $parser->compile($ast);
 
+```
+
+pretty print output
+
+```css
+h1 {
+ color: aliceblue
+}
 ```
 
 minified output
@@ -69,6 +77,7 @@ minified output
 ```css
 h1{color:#f0f8ff}
 ```
+
 ## Parser options
 
 - source: CSS source file. It is only used in the exception error message.
@@ -87,6 +96,9 @@ h1{color:#f0f8ff}
 - compress: produce minified output
 - remove_empty_nodes: remove empty css declaration
 
+The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
+
 ## TODO
 
 - convert color hsla to hex
+- CSS manipulation api

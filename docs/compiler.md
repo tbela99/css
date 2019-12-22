@@ -1,63 +1,137 @@
-# Images
+# Compiler
 
-Configure images settings.
+Compile an AST into CSS.
 
-![Images settings](./img/images-settings.PNG)
+## Usage
 
-## Process Images
+Pretty print css 
 
-Turn images feature ON or OFF. Alt attribute is also enforced on HTML images when this setting is enabled
+```php 
 
-## Enforce Width and Height Attributes
+$compiler = new \TBela\CSS\Compiler();
+$compiler->setContent('body { border: 0px; }');
 
-Whether or not enforce width and height attributes for all HTML \<IMG\> tags
-
-## Fetch Remote Images
-
-Fetch images hosted on remote hosts and store them locally.
-
-## Convert Images to Webp
-
-Convert images to Webp. Webp produce smaller images than jpg or png.
-
-## Ignored Images
-
-Images that match any pattern you specify here will be ignored. Example
-
-```markdown
-images/optimized/
-images/thumbnails/
+echo $compiler->compile();
 ```
 
-## Crop Method
+Produce minified output
 
-Algorithm used when resizing images. Values are
+```php 
 
-- Default
-- Center
-- Entropy
-- Face Detection
+$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
 
-## Image Placeholder
+echo $compiler->compile();
+```
 
-Whether or not use an image placeholder. **Choosing a placeholder algorithm will enable images lazyloading**. Values are
+Load AST from a json file
 
-- None: disable lazyloading
-- SVG: use an svg image as the placeholder
-- Low Quality Image: generate a low quality image from the picture.
+```php 
 
-## Responsive Images
+$ast = json_decode(file_get_contents('ast.json'));
 
-Enable or disable automatic generation of responsive images. Responsive images are generated for all the breakpoints you select
+$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
+$compiler->setData($ast);
 
-## Responsive Image Breakpoints
+echo $compiler->compile();
+```
 
-Selected breakpoints from which responsive images will be generated. The algorithm used is whatever you have specified in the _CROP Method_ parameter
+Load a css string
 
-## Responsive CSS background Images
+```php 
 
-Enable or disable automatic generation of css background images. Responsive css are generated for the css breakpoints you select
+$ast = json_decode(file_get_contents('style.json'));
 
-## Responsive CSS Image Breakpoints
+$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
+$compiler->setContent('body { border: 0px; }');
 
-Selected breakpoints from which css background responsive images will be generated. The algorithm used is whatever you have specified in the _CROP Method_ parameter
+echo $compiler->compile();
+```
+
+## Compiler Options
+
+### indent
+
+String. The string used to indent lines. The default value is ' '
+
+### glue
+
+String. The string used as line separator. The default value is "\n"
+
+### separator
+
+String. The character used to tokens. The default value is ' '
+
+### charset
+
+Boolean. If true then remove @charset declaration
+
+### rgba_hex
+
+Boolean. Convert rgba and hsla to hex
+
+### compress
+
+Boolean. If true then compress the css. If false then pretty print the css
+
+### remove_comments
+
+Boolean. If true then remove comments. When compress is set to true then comments are always removed
+
+### remove_empty_nodes
+
+Boolean. If true then remove empty css rules and media queries
+
+## Compiler Methods
+ 
+### Constructor
+
+Constructor
+
+#### Parameters
+
+- $options: array of options. see [compiler options](#compiler-options)
+   
+### Compile
+
+Compile AST into css
+
+#### Parameters
+
+none
+
+#### Return type
+
+String
+  
+### SetOptions
+
+Configure the compiler options. see [compiler options](#compiler-options)
+
+#### Parameters
+
+- $options: array of options
+    
+#### Return type
+
+\TBela\CSS\Compiler instance
+  
+### SetContent
+
+#### Parameters
+
+- $css: string. Parse input css
+    
+#### Return type
+
+\TBela\CSS\Compiler instance
+  
+### SetData
+
+#### Parameters
+
+- $ast: object. Assign an AST object to the compiler
+    
+#### Return type
+
+\TBela\CSS\Compiler instance
+  

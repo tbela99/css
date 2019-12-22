@@ -2,20 +2,23 @@
 
 namespace TBela\CSS;
 
+use Exception;
 use \stdClass;
+use function preg_replace_callback;
+use function str_replace;
+use function substr;
 
 // http://www.w3.org/TR/CSS21/grammar.html
-// https://github.com/visionmedia/css-parse/pull/49#issuecomment-30088027
 const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 
 class Parser
 {
 
     public $css = '';
-    protected $options = [];
+    protected $_css = '';
     protected $path = '';
 
-    protected $defaultOptions = [
+    protected $options = [
         'source' => '',
         'silent' => false,
         'flatten_import' => false,
@@ -25,14 +28,21 @@ class Parser
 
     public $errorsList = [];
 
+    /**
+     * Parser constructor.
+     * @param string $css
+     * @param array $options
+     */
     public function __construct($css = '', array $options = [])
     {
-
-        $this->options = $this->defaultOptions;
         $this->setContent($css);
         $this->setOptions($options);
     }
 
+    /**
+     * @param string $file
+     * @return $this
+     */
     public function load($file)
     {
 
@@ -41,6 +51,10 @@ class Parser
         return $this;
     }
 
+    /**
+     * @param string $css
+     * @return $this
+     */
     public function setContent($css)
     {
 
@@ -49,6 +63,10 @@ class Parser
         return $this;
     }
 
+    /**
+     * @param array $options
+     * @return $this
+     */
     public function setOptions(array $options)
     {
 
@@ -63,6 +81,10 @@ class Parser
         return $this;
     }
 
+    /**
+     * @return object
+     * @throws Exception
+     */
     public function parse()
     {
         $this->css = $this->_css;
@@ -76,6 +98,10 @@ class Parser
         return $this->deduplicate(parse($this));
     }
 
+    /**
+     * @param object $ast
+     * @return object
+     */
     protected function deduplicate($ast)
     {
 
@@ -100,6 +126,10 @@ class Parser
         return $ast;
     }
 
+    /**
+     * @param object $ast
+     * @return string
+     */
     protected function computeSignature($ast)
     {
 
@@ -133,6 +163,10 @@ class Parser
         return implode(':', $signature);
     }
 
+    /**
+     * @param object $ast
+     * @return object
+     */
     protected function deduplicateRules($ast)
     {
 
@@ -188,7 +222,10 @@ class Parser
         return $ast;
     }
 
-    //
+    /**
+     * @param object $ast
+     * @return object
+     */
     protected function deduplicateDeclarations($ast)
     {
 
@@ -388,11 +425,11 @@ function parse_import($css, $path = '')
 
     $comments = [];
 
-    $css = \preg_replace_callback(COMMENT_REGEXP, function ($matches) use (&$comments) {
+    $css = preg_replace_callback(COMMENT_REGEXP, function ($matches) use (&$comments) {
 
         $comments[$matches[0]] = '~~~b' . md5($matches[0]) . 'b~~~';
 
-        return \str_replace($matches[0], $comments[$matches[0]], $matches[0]);
+        return str_replace($matches[0], $comments[$matches[0]], $matches[0]);
     }, $css);
 
     $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) use ($path) {
@@ -427,7 +464,7 @@ function parse_import($css, $path = '')
 
     if (!empty($comments)) {
 
-        $css = \str_replace(array_values($comments), array_keys($comments), $css);
+        $css = str_replace(array_values($comments), array_keys($comments), $css);
     }
 
     return $css;
@@ -435,6 +472,8 @@ function parse_import($css, $path = '')
 
 /**
  * Update lineno and column based on `str`.
+ * @param string $str
+ * @param object $context
  */
 
 function updatePosition($str, $context)
@@ -458,6 +497,10 @@ function updatePosition($str, $context)
 
 /**
  * Error `msg`.
+ * @param string $msg
+ * @param object $context
+ * @return Exception
+ * @throws Exception
  */
 
 function error($msg, $context)
@@ -465,7 +508,7 @@ function error($msg, $context)
     $err = new stdClass;
 
     // grab the first line?
-    $source = \substr($context->css, 0, 80);
+    $source = substr($context->css, 0, 80);
     $source = explode("\n", $source, 3);
 
     unset($source[2]);
@@ -484,12 +527,17 @@ function error($msg, $context)
     if ($context->options['silent']) {
         $context->errorsList[] = $err;
     } else {
-        throw new \Exception($err->message);
+        throw new Exception($err->message);
     }
+
+    return new Exception($err->message);
 }
 
 /**
  * Parse stylesheet.
+ * @param $context
+ * @return stdClass
+ * @throws Exception
  */
 
 function stylesheet($context)
@@ -508,6 +556,8 @@ function stylesheet($context)
 
 /**
  * Opening brace.
+ * @param $context
+ * @return string
  */
 
 function open($context)
@@ -517,6 +567,8 @@ function open($context)
 
 /**
  * Closing brace.
+ * @param object $context
+ * @return string
  */
 
 function close($context)
@@ -541,6 +593,9 @@ function parse_vendor($str)
 
 /**
  * Parse ruleset.
+ * @param object $context
+ * @return array
+ * @throws Exception
  */
 
 function rules($context)
@@ -561,9 +616,9 @@ function rules($context)
                 comments($rules, $context);
             } else if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
 
-                $node = atanyrule($context);
+                $node = atrule($context);
 
-                if ($node instanceof \Exception) throw $node;
+                if ($node instanceof Exception) throw $node;
 
                 if ($node !== false) {
 
@@ -573,7 +628,7 @@ function rules($context)
 
                 $node = rule($context);
 
-                if ($node instanceof \Exception) throw $node;
+                if ($node instanceof Exception) throw $node;
 
                 if ($node !== false) {
 
@@ -590,6 +645,7 @@ function rules($context)
  *
  * @param string $re
  * @param object $context
+ * @return string
  */
 
 function match($re, $context)
@@ -597,7 +653,7 @@ function match($re, $context)
 
     preg_match($re, $context->css, $m);
 
-    if (!$m) return;
+    if (!$m) return '';
     $str = $m[0];
     updatePosition($str, $context);
 
@@ -607,6 +663,7 @@ function match($re, $context)
 
 /**
  * Parse whitespace.
+ * @param object $context
  */
 
 function whitespace($context)
@@ -616,6 +673,10 @@ function whitespace($context)
 
 /**
  * Parse comments;
+ * @param array $rules
+ * @param object $context
+ * @return array
+ * @throws Exception
  */
 
 function comments(&$rules, $context)
@@ -634,11 +695,14 @@ function comments(&$rules, $context)
 
 /**
  * Parse comment.
+ * @param object $context
+ * @return Exception|stdClass|bool
+ * @throws Exception
  */
 
 function comment($context)
 {
-    if ($context->css === '' || '/' != $context->css[0] || '*' != $context->css[1]) return;
+    if ($context->css === '' || '/' != $context->css[0] || '*' != $context->css[1]) return false;
 
     if (!preg_match(COMMENT_REGEXP, $context->css, $m)) {
 
@@ -661,6 +725,8 @@ function comment($context)
 
 /**
  * Parse selector.
+ * @param object $context
+ * @return array
  */
 
 function selector($context)
@@ -668,7 +734,7 @@ function selector($context)
 
     $m = match('/^[^@]([^{]+)/s', $context);
 
-    if (!$m) return;
+    if (!$m) return [];
     /* @fix Remove all comments from selectors
      * http://ostermiller.org/findcomment.html */
 
@@ -699,6 +765,9 @@ function selector($context)
 
 /**
  * Parse declaration.
+ * @param object $context
+ * @return array|bool|Exception
+ * @throws Exception
  */
 
 function declaration($context)
@@ -738,9 +807,11 @@ function declaration($context)
 
 /**
  * Parse any atrule.
+ * @param $context
+ * @return array|bool|Exception|void
+ * @throws Exception
  */
-
-function atanyrule($context)
+function atrule($context)
 {
 
     $m = match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context);
@@ -790,7 +861,7 @@ function atanyrule($context)
 
                 if ($context->css[0] == '@') {
 
-                    $res = atanyrule($context);
+                    $res = atrule($context);
                 } else if (preg_match('#([^;}{]+)([;}{])#s', $context->css, $matches)) {
 
                     if ($matches[2] == '{') {
@@ -810,7 +881,7 @@ function atanyrule($context)
                     }
                 }
 
-                if ($res) {
+                if (!empty($res)) {
 
                     $elements[] = $res;
                 }
@@ -852,6 +923,9 @@ function atanyrule($context)
 
 /**
  * Parse rule.
+ * @param object $context
+ * @return array|bool|Exception
+ * @throws Exception
  */
 
 function rule($context)
@@ -885,7 +959,7 @@ function rule($context)
 
             if (preg_match('/^@((-((moz)|(webkit)|(ms)|o)-)?(\S+))([^;{]+)/s', $context->css)) {
 
-                $node = atanyrule($context);
+                $node = atrule($context);
 
                 if ($node !== false) {
 
@@ -897,7 +971,7 @@ function rule($context)
 
         $res = declaration($context);
 
-        if ($res !== false && !($res instanceof \Exception)) {
+        if ($res !== false && !($res instanceof Exception)) {
 
             $c[] = $res;
         }
@@ -917,6 +991,11 @@ function rule($context)
     return $data;
 }
 
+/**
+ * @param object $context
+ * @return stdClass
+ * @throws Exception
+ */
 function parse($context)
 {
 

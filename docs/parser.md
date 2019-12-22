@@ -1,75 +1,112 @@
-# HTTP Settings
+# Parser
 
-Configure HTTP settings
+Parse CSS and convert it to an AST. An AST is an object representation of the CSS.
 
-![HTTP settings](./img/http-settings.PNG)
+## Usage
 
-## Enable Save-Data support
+Load CSS string
 
-If yes, when the client sends Save-Data headers, optimizations are enforced regardless which settings you have configured. Enforced optimizations are
+```php 
 
-- HTML minification
-- Image processing: conversion, size enforcement, resize css images
-- CSS: Async loading, css minification, fetching remote css files, critical css settings
-- Javascript: merge, minify, fetch remote javascript files
+$parser = new \TBela\CSS\Parser();
+$parser->setContent('
+@import 'css/style.css';
+body { border: 0px; }');
 
-## HTTP Server Timing
+$parser->setOptions([  
+    'flatten_import' => true,
+    'deduplicate_declarations' => true,
+    'deduplicate_rules' => true
+]);
 
-Send HTTP Server Timing headers. They can be viewed in the google chrome network panel. Click on the network panel -> Click on your web page -> Click on the timing tab on the right. It should be turned off on production.
-ps: this helped me spot a [regression in the image processing](https://github.com/tbela99/gzip/issues/38) that has since been fixed
-
-![Server Timing](./images/Server-Timing.PNG)
-
-## DNS Prefetch
-
-Enable or disable DNS prefetch
-
-- Ignore: let the browser decide
-- Enabled: tell the browser to enable DNS prefetch
-- Disabled: tell the browser to turn off DNS prefetch
-
-## HTTP Push
-
-Choose which resource type will be pushed to the browser using HTTP push. Your web server need to use HTTP/2 for this feature to work properly.
-
-## Cache File
-
-If Yes send file with http caching headers. This helps loading the page faster on the next visit because the file will be loaded from the browser cache instead of the network. Whenever a file is modified a new URL is generated so that the user will not see outdated content.
-
-## Hashing Method
-
-Algorithm chosen when generating cached URL.
-
-- Time: use file last modified time
-- Etag: use file content instead of last modified time.
-
-## Cache Prefix
-
-Cached URLs prefix.
-
-## Max Age
-
-Control HTTP caching. If the value is large enough, the files are stored in the browser cache.
-
-## CORS Headers
-
-If yes send CORS headers when cached files are requested.
-
-## Custom Mimetypes
-
-Extend the type of files that support HTTP caching. By default the plugin will cache images, javascript, css, fonts, xml. If you want to add pdf and psd files for example you will add this
-
-```markdown
-pdf application/octetstream
-psd application/octetstream
+echo $compiler->compile();
 ```
 
-## Custom Attributes
+Load CSS file
 
-Extend the list of attributes scanned in order to get urls of resources to cache. If you use lazylaoding, you might want to use custom attributes in order to store full size image. You can specify these here like that
+```php 
 
-```markdown
-data-href
-data-src
-data-srcset
+$parser = new \TBela\CSS\Parser();
+$parser->load($css_file);
+
+$parser->setOptions([  
+    'flatten_import' => true,
+    'deduplicate_declarations' => true,
+    'deduplicate_rules' => true
+]);
+
+echo $compiler->compile();
 ```
+
+## Parser Options
+
+### flatten_import
+
+Boolean. Replace the @import directive with actual content
+
+### deduplicate_rules
+
+Boolean. Merge duplicate rules
+
+### deduplicate_declarations
+
+Boolean. Remove duplicate declarations
+
+### silent
+
+Boolean. By default the parser will throw an exception if an invalid css content is provided. 
+
+## Compiler Methods
+ 
+### Constructor
+
+Constructor
+
+#### Parameters
+
+- $options: array of options. see [parser options](#parser-options)
+   
+### Parse
+
+Parse CSS and return the AST
+
+#### Parameters
+
+none
+
+#### Return type
+
+Object
+  
+### SetOptions
+
+Configure the parser options. see [compiler options](#compiler-options)
+
+#### Parameters
+
+- $options: array of options
+    
+#### Return type
+
+\TBela\CSS\Parser instance
+  
+### Load
+
+#### Parameters
+
+- $file: string. load a css file
+    
+#### Return type
+
+\TBela\CSS\Parser instance
+  
+### SetContent
+
+#### Parameters
+
+- $css: string. Parse input css
+    
+#### Return type
+
+\TBela\CSS\Parser instance
+  

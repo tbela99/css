@@ -2,14 +2,15 @@
 
 namespace TBela\CSS;
 
+use Exception;
+
 /**
  * Expose `Compiler`.
  */
 
 class Compiler {
 
-    protected $options = [];
-	protected $defaultOptions = [
+    protected $options = [
 	    'indent' => ' ',
         'glue' => "\n",
         'separator' => ' ',
@@ -28,7 +29,6 @@ class Compiler {
      */
 	public function __construct (array $options = []) {
 
-        $this->options = $this->defaultOptions;
 		$this->setOptions($options);
 	}
 
@@ -47,6 +47,8 @@ class Compiler {
 
     /**
      * @param string $css
+     * @return Compiler
+     * @throws Exception
      */
 	public function setContent ($css) {
 
@@ -56,6 +58,7 @@ class Compiler {
 
     /**
      * @param $ast
+     * @return Compiler
      */
 	public function setData ($ast) {
 
@@ -65,7 +68,7 @@ class Compiler {
 
     /**
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
 	public function compile () {
 
