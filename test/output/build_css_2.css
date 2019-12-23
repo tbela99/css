@@ -1,0 +1,6 @@
+@media print {
+  div {
+   background-color: white;
+   color: black
+ }
+}

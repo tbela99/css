@@ -21,6 +21,9 @@ class Compiler {
         'remove_empty_nodes' => false
     ];
 
+    /**
+     * @var Element
+     */
 	protected $data;
 
     /**
@@ -52,12 +55,12 @@ class Compiler {
      */
 	public function setContent ($css) {
 
-	    $this->data = (new Parser($css, $this->options))->parse();
+	    $this->data = Element::getInstance((new Parser($css, $this->options))->parse());
 	    return $this;
     }
 
     /**
-     * @param $ast
+     * @param object $ast
      * @return Compiler
      */
 	public function setData ($ast) {
@@ -81,4 +84,12 @@ class Compiler {
 
 		return '';
 	}
+
+    /**
+     * @return Element
+     */
+	public function getData() {
+
+	    return $this->data;
+    }
 }

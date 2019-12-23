@@ -2,6 +2,8 @@
 
 namespace TBela\CSS;
 
+use Exception;
+
 /**
  * Pretty print CSS
  * @package CSS
@@ -20,11 +22,21 @@ class Identity implements Renderer {
      * Identity constructor.
      * @param array $options
      */
-	public function __construct(array $options) {
+	public function __construct(array $options = []) {
 
-	    if (isset($options['indent'])) {
+	    $this->setOptions($options);
+	}
 
-	        $this->indent = $options['indent'];
+    /**
+     * Set output formatting
+     * @param array $options
+     * @return $this
+     */
+	public function setOptions(array $options) {
+
+        if (isset($options['indent'])) {
+
+            $this->indent = $options['indent'];
         }
 
         if (isset($options['charset'])) {
@@ -51,19 +63,27 @@ class Identity implements Renderer {
 
             $this->rgba_hex = $options['rgba_hex'];
         }
-	}
+
+        return $this;
+    }
 
     /**
      * @param Element $element
      * @param null|int $level
+     * @param bool $parent
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
-	public function render (Element $element, $level = null) {
+	public function render (Element $element, $level = null, $parent = false) {
 
 	    if (!$this->shouldRender($element)) {
 
 	        return '';
+        }
+
+	    if ($parent && (is_null($element->getParent()) || !($element instanceof ElementStylesheet))) {
+
+            return $this->render($element->copy(), $level);
         }
 
 		$indent = str_repeat($this->indent, (int) $level);
@@ -71,11 +91,11 @@ class Identity implements Renderer {
 		switch ($element->getType()) {
 
 			case 'comment':
-				return $this->remove_comments ? '' : $element->getValue();
+                return $this->remove_comments ? '' : $element->getValue();
 
 			case 'stylesheet':
 
-				return $this->renderCollection($element,  $level);
+                return $this->renderCollection($element,  $level);
 
             case 'declaration':
 
@@ -91,7 +111,7 @@ class Identity implements Renderer {
 
 			default:
 
-				throw new \Exception('Type not supported '.$element->getType());
+				throw new Exception('Type not supported '.$element->getType());
 		}
 
 		return '';
@@ -102,9 +122,14 @@ class Identity implements Renderer {
      * @param int $level
      * @param string $indent
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
 	protected function renderRule(ElementRule $element, $level, $indent) {
+
+	    if (empty($element['selector'])) {
+
+	        throw new Exception('The selector cannot be empty');
+        }
 
         $output = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
 
@@ -113,7 +138,7 @@ class Identity implements Renderer {
             return '';
         }
 
-        return $indent.$this->renderSelector($element->getSelector(), (int) $level).$this->indent.'{'.
+        return $indent.$this->renderSelector($element['selector'], (int) $level).$this->indent.'{'.
                 $this->glue.
                 $output.$this->glue.
                 $indent.
@@ -125,7 +150,7 @@ class Identity implements Renderer {
      * @param int $level
      * @param string $indent
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function renderAtRule(ElementAtRule $element, $level, $indent) {
 
@@ -214,12 +239,12 @@ class Identity implements Renderer {
     }
 
     /**
-     * @param Elements $element
+     * @param RuleList $element
      * @param int $level
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
-	protected function renderCollection (Elements $element, $level) {
+	protected function renderCollection (RuleList $element, $level) {
 
 	    $glue = '';
 	    $type = $element->getType();

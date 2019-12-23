@@ -2,31 +2,57 @@
 
 namespace TBela\CSS;
 
-abstract class Element implements \JsonSerializable  {
+use Exception;
+use JsonSerializable;
+use ArrayAccess;
+use stdClass;
+use function is_callable;
+use function is_null;
+use function strtolower;
+use function str_ireplace;
 
-    protected $ast;
-    protected $parent;
+abstract class Element implements JsonSerializable, ArrayAccess   {
 
-    public function __construct($ast, $parent = null) {
+    protected $ast = null;
+    /**
+     * @var RuleList
+     */
+    protected $parent = null;
 
-        if (\is_null($ast)) {
+    public function __construct($ast = null, RuleList $parent = null) {
 
-            $ast = new \stdClass;
-            $ast->type = \strtolower(str_replace('Element', '', \get_class($this)));
+        if (is_null($ast)) {
+
+            $ast = new stdClass;
+            $ast->type = strtolower(str_ireplace(__NAMESPACE__.'\Element', '', \get_class($this)));
         }
 
         $this->ast = $ast;
-        $this->setParent($parent);
 
-        if (\is_callable([$this, 'createElements'])) {
+        if (!is_null($parent)) {
+
+            $parent->append($this);
+        }
+
+        if (is_callable([$this, 'createElements'])) {
 
             $this->createElements();
         }
     }
 
-	public static function getInstance($ast, $options = []) {
+	public static function getInstance($ast) {
 
-        $type = isset($ast->type) ? $ast->type : '';
+        $type = '';
+
+        if ($ast instanceof Element) {
+
+            $ast = $ast->ast;
+        }
+
+        if (isset($ast->type)) {
+
+            $type = str_ireplace(__NAMESPACE__, '', $ast->type);
+        }
 
         if ($type === '') {
 
@@ -37,7 +63,25 @@ abstract class Element implements \JsonSerializable  {
         
 		return new $className($ast);
     }
-    
+
+    /**
+     * @return Element
+     */
+    public function getRoot () {
+
+        $element = $this;
+
+        while ($parent = $element->parent) {
+
+            $element = $parent;
+        }
+
+        return $element;
+    }
+
+    /**
+     * @return string
+     */
     public function getValue () {
 
         if (isset($this->ast->value)) {
@@ -48,32 +92,146 @@ abstract class Element implements \JsonSerializable  {
         return '';
     }
 
-    public function setParent($parent) {
+    /**
+     * @param string $value
+     * @return $this
+     */
+    public function setValue ($value) {
 
-        if ($parent == $this->parent) {
-
-            return;
-        }
+        $this->ast->value = $value;
+        return $this;
     }
 
-    public function getType() {
+    /**
+     * @param Element $parent
+     * @return $this
+     */
+    /*
+    public function setParent(RuleList $parent = null) {
 
-        return $this->ast->type;
+     //   if ($parent != $this->parent && $parent != $this) {
+
+            if (!empty($this->parent)) {
+
+                $this->parent->remove($this);
+            }
+
+         //   $this->parent = $parent;
+
+            if (!is_null($parent)) {
+
+                $parent->append($this);
+            }
+    //    }
+
+        return $this;
     }
+    */
 
+    /**
+     * @return RuleList|null
+     */
     public function getParent () {
 
         return $this->parent;
     }
 
+    /**
+     * @return string
+     */
+    public function getType() {
+
+        return $this->ast->type;
+    }
+
+    /**
+     * Clone parents, children and the element itself. Useful when you want to render this element only and its parents.
+     * @return Element
+     */
+    public function copy() {
+
+        $parent = $this;
+        $node = clone $this;
+
+        while ($parent = $parent->parent) {
+
+            $ast = clone $parent->ast;
+
+            if (isset($ast->elements)) {
+
+                $ast->elements = [];
+            }
+
+            $parentNode = Element::getInstance($ast);
+            $parentNode->append($node);
+            $node = $parentNode;
+        }
+
+        return $node;
+    }
+
+    /**
+     * @return stdClass
+     */
     public function jsonSerialize () {
 
         return $this->ast;
     }
 
+    public function offsetSet($offset, $value) {
+
+        if (is_callable([$this, 'set'.$offset])) {
+
+            call_user_func([$this, 'set'.$offset], $value);
+        }
+    }
+
+    public function offsetExists($offset) {
+        return is_callable([$this, 'get'.$offset]) || is_callable([$this, 'set'.$offset]);
+    }
+
+    public function offsetUnset($offset) {
+
+        if (is_callable([$this, 'set'.$offset])) {
+
+            call_user_func([$this, 'set'.$offset], null);
+        }
+    }
+
+    public function offsetGet($offset) {
+
+        return is_callable([$this, 'get'.$offset]) ? call_user_func([$this, 'get'.$offset]): null;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
     public function __toString()
     {
-        // TODO: Implement __toString() method.
-        return (new Identity())->render($this);
+        try {
+
+            return (new Identity())->render($this, null, true);
+        }
+
+        catch (Exception $ex) {
+
+            echo $ex->getTraceAsString();
+        }
+    }
+
+    public function __clone()
+    {
+        $this->ast = clone $this->ast;
+        $this->parent = null;
+
+        if (isset($this->ast->elements)) {
+
+            foreach ($this->ast->elements as $key => $value) {
+
+                $this->ast->elements[$key] = clone $value;
+                $this->ast->elements[$key]->parent = $this;
+            }
+        }
     }
 }

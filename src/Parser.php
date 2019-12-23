@@ -18,12 +18,16 @@ class Parser
     protected $_css = '';
     protected $path = '';
 
-    protected $options = [
+    public $options = [
         'source' => '',
         'silent' => false,
         'flatten_import' => false,
         'deduplicate_rules' => true,
-        'deduplicate_declarations' => true
+        'deduplicate_declarations' => true,
+        'preserve_multiple_declarations' => [
+
+            'font-face' => ['src']
+        ]
     ];
 
     public $errorsList = [];
@@ -95,15 +99,19 @@ class Parser
             $this->css = parse_import($this->css, dirname($this->path));
         }
 
-        return $this->deduplicate(parse($this));
+        return Element::getInstance($this->deduplicate(parse($this)));
     }
 
     /**
-     * @param object $ast
+     * @param object|Element $ast
      * @return object
      */
-    protected function deduplicate($ast)
+    public function deduplicate($ast)
     {
+        if ($ast instanceof Element) {
+
+            $ast = json_decode(json_encode($ast));
+        }
 
         if ((!empty($this->options['deduplicate_rules']) || !empty($this->options['deduplicate_declarations'])) && !empty ($ast)) {
 
@@ -213,7 +221,7 @@ class Parser
                 }
             }
 
-            foreach ($ast->elements as $element) {
+            foreach ($ast->elements as $key => $element) {
 
                 $this->deduplicate($element);
             }
@@ -244,6 +252,12 @@ class Parser
                 if ($declaration->type == 'comment') {
 
                     continue;
+                }
+
+                if (!isset($declaration->name)) {
+
+
+                    echo (new Exception())->getTraceAsString();
                 }
 
                 $name = (isset($declaration->vendor) ? '-' . $declaration->vendor . '-' : '') . $declaration->name;
@@ -579,12 +593,12 @@ function close($context)
 function parse_vendor($str)
 {
 
-    if (preg_match('/^((-((moz)|(webkit)|(ms)|o)-)(\S+))/', trim($str), $match)) {
+    if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($str), $match)) {
 
         return [
 
-            'name' => $match[7],
-            'vendor' => $match[3]
+            'name' => $match[3],
+            'vendor' => $match[2]
         ];
     }
 
@@ -732,7 +746,7 @@ function comment($context)
 function selector($context)
 {
 
-    $m = match('/^[^@]([^{]+)/s', $context);
+    $m = match('/^(?!@)?([^{]+)/s', $context);
 
     if (!$m) return [];
     /* @fix Remove all comments from selectors
@@ -862,6 +876,7 @@ function atrule($context)
                 if ($context->css[0] == '@') {
 
                     $res = atrule($context);
+
                 } else if (preg_match('#([^;}{]+)([;}{])#s', $context->css, $matches)) {
 
                     if ($matches[2] == '{') {

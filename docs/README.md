@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -60,7 +60,7 @@ $compiler = new \TBela\CSS\Compiler([
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $compiler->compile($ast);
+$css = $parser->compile($ast);
 
 ```
 
@@ -76,4 +76,124 @@ minified output
 
 ```css
 h1{color:#f0f8ff}
+```
+
+## CSS manipulation
+
+### Example: Extract Font-src
+
+CSS source
+```css
+@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+
+body{
+background-color: green;
+color: #fff;
+font-family: Arial, Helvetica, sans-serif;
+}
+h1{
+color: #fff;
+font-size: 50px;
+font-family: Arial, Helvetica, sans-serif;
+font-weight: bold;
+}
+
+@media print {
+	@font-face {
+  font-family: MaHelvetica;
+  src: local("Helvetica Neue Bold"),
+       local("HelveticaNeue-Bold"),
+       url(MgOpenModernaBold.ttf);
+  font-weight: bold;
+}
+body {
+  font-family: "Bitstream Vera Serif Bold", serif;
+}
+p{
+font-size: 12px;
+color: #000;
+text-align: left
+}
+
+    @font-face {
+        font-family: Arial, MaHelvetica;
+        src: local("Helvetica Neue Bold"),
+        local("HelveticaNeue-Bold"),
+        url(MgOpenModernaBold.ttf);
+        font-weight: bold;
+    }
+	}
+```
+
+php source
+```php 
+
+use \TBela\CSS\Parser;
+use \TBela\CSS\Element;
+use \TBela\CSS\ElementAtRule;
+use \TBela\CSS\ElementStylesheet;
+
+$parser = new Parser(file_get_contents('./css/manipulate.css'), [
+    'silent' => false,
+    'flatten_import' => true
+]);
+
+$stylesheet = new ElementStylesheet();
+
+function getNodes ($data, $stylesheet) {
+
+    $nodes = [];
+
+    foreach ($data as $node) {
+
+        if ($node instanceof ElementAtRule) {
+
+            switch ($node->getName()) {
+
+                case 'font-face':
+
+                    foreach ($node as $declaration) {
+
+                        if ($declaration['name'] == 'src') {
+
+                            $stylesheet->append($declaration->copy()->getRoot());
+                            break;
+                        }
+                    }
+
+                    break;
+
+                case 'media':
+
+                    getNodes($node, $stylesheet);
+                    break;
+            }
+        }
+    }
+}
+
+getNodes ($parser->parse(), $stylesheet);
+
+// deduplicate rules
+$stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
+
+echo $stylesheet;
+```
+
+result
+
+```css 
+@font-face {
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+}
+@media print {
+ @font-face {
+   src: local("Helvetica Neue Bold"),
+        local("HelveticaNeue-Bold"),
+        url(MgOpenModernaBold.ttf)
+ }
+}
 ```

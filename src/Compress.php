@@ -19,7 +19,7 @@ const MATCH_WORD = '/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s';
 class Compress extends Identity
 {
 
-    public function __construct(array $options)
+    public function __construct(array $options = [])
     {
 
         parent::__construct($options);

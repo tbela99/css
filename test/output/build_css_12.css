@@ -1,0 +1,14 @@
+a,
+b,
+strong,
+.new {
+ max-width: 100%;
+ border-width: 0px;
+ color: green
+}
+@media all {
+  div {
+   background-color: white;
+   color: black
+ }
+}

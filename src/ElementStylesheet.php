@@ -2,6 +2,8 @@
 
 namespace TBela\CSS;
 
-class ElementStylesheet extends Elements {
+use Exception;
+
+class ElementStylesheet extends ElementsRule {
 
 }

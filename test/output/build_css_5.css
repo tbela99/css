@@ -1,0 +1,10 @@
+div {
+ max-width: 100%;
+ border-width: 0px
+}
+@media print {
+  div {
+   background-color: white;
+   color: black
+ }
+}

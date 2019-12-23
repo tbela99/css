@@ -1,0 +1,10 @@
+@font-face {
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+}
+@media print {
+ @font-face {
+   src: local("Helvetica Neue Bold"),
+        local("HelveticaNeue-Bold"),
+        url(MgOpenModernaBold.ttf)
+ }
+}

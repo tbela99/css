@@ -11,7 +11,8 @@ $parser->setOptions(['flatten_import' => true]);
 $compiler->setOptions(['rgba_hex' => true]);
 
  foreach (
-      glob('css/*.css')
+     glob('css/*.css')
+     //  ['./css/manipulate.css']
 
          as $file) {
 
