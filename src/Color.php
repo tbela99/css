@@ -370,31 +370,131 @@ class Color {
 
     public static function parseRGBColor ($str, $parse_rgba = true) {
 
-        return preg_replace_callback('#rgb(a)?\(\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*,\s*(\d*?\.?\d+)\s*(,\s*(\d*?\.?\d+))?\s*\)#s', function ($matches) use($parse_rgba) {
+        return preg_replace_callback('#rgb(a?)\(\s*(\d*(\.\d+)?)(%?)\s*([,\s])\s*(\d*(\.\d+)?)\\4\s*\\5\s*(\d*(\.\d+)?)\\4\s*([,/]\s*(\d*(\.\d+)?)(%?))?\s*\)#s', function ($matches) use($parse_rgba) {
+
+            if ($matches[4] == '%') {
+
+                $matches[2] = round($matches[2] * 255 / 100);
+                $matches[6] = round($matches[6] * 255 / 100);
+                $matches[8] = round($matches[8] * 255 / 100);
+            }
+
+            if (isset($matches[13]) && $matches[13] == '%') {
+
+                $matches[11] /= 100;
+            }
 
             $color = $matches[0];
 
-            if ($matches[1] == 'a') {
-    
-                if (count($matches) == 7 && $parse_rgba) {
+            if (!empty($matches[10])) {
 
-                    $color = sprintf($matches[6] == 1 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $matches[2], $matches[3], $matches[4], 255 * $matches[6]);
+                if ($parse_rgba) {
+
+                    $color = static::rgba2hex($matches[2], $matches[6], $matches[8], $matches[11]);
                 }
             }
-    
-            else if (count ($matches) == 5) {
-    
-                $color = sprintf("#%02x%02x%02x", $matches[2], $matches[3], $matches[4]);
+
+            else {
+
+                $color = static::rgba2hex($matches[2], $matches[6], $matches[8]);
             }
 
-            return static::shorten($color);
+            return $color;
 
         }, $str);
     }
 
-    public static function parseHSLColor($value, $rgba_hex) {
+    public static function parseHSLColor($value, $parse_rgba) {
 
-        return $value;
+        return preg_replace_callback('#hsl(a?)\(\s*(\d*(\.\d+)?)\s*([,\s])\s*(\d*(\.\d+)?)%\s*\\4\s*(\d*(\.\d+)?)%\s*([,/]\s*(\d*(\.\d+)?)(%?))?\s*\)#s', function ($matches) use($parse_rgba) {
+
+            $color = $matches[0];
+
+            $matches[2] /= 360;
+            $matches[5] /= 100;
+            $matches[7] /= 100;
+
+            if (!empty($matches[9])) {
+
+                if ($parse_rgba) {
+
+                    if ($matches[12] == '%') {
+
+                        $matches[10] /= 100;
+                    }
+
+                    $color = static::hsl2hex($matches[2], $matches[5], $matches[7], $matches[10]);
+                }
+            }
+
+            else {
+
+                $color = static::hsl2hex($matches[2], $matches[5], $matches[7]);
+            }
+
+            return $color;
+
+        }, $value);
+    }
+
+    public static function rgba2hex($r, $g, $b, $a = null) {
+
+        return static::shorten(sprintf(is_null($a) || $a == 1 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $r, $g, $b, 255 * $a));
+    }
+
+    public static function hsl2hex($h, $s, $l, $a = null){
+
+        $r = $l;
+        $g = $l;
+        $b = $l;
+        $v = ($l <= 0.5) ? ($l * (1.0 + $s)) : ($l + $s - $l * $s);
+        if ($v > 0){
+
+            $m = $l + $l - $v;
+            $sv = ($v - $m ) / $v;
+            $h *= 6.0;
+            $sextant = floor($h);
+            $fract = $h - $sextant;
+            $vsf = $v * $sv * $fract;
+            $mid1 = $m + $vsf;
+            $mid2 = $v - $vsf;
+
+            switch ($sextant)
+            {
+                case 0:
+                    $r = $v;
+                    $g = $mid1;
+                    $b = $m;
+                    break;
+                case 1:
+                    $r = $mid2;
+                    $g = $v;
+                    $b = $m;
+                    break;
+                case 2:
+                    $r = $m;
+                    $g = $v;
+                    $b = $mid1;
+                    break;
+                case 3:
+                    $r = $m;
+                    $g = $mid2;
+                    $b = $v;
+                    break;
+                case 4:
+                    $r = $mid1;
+                    $g = $m;
+                    $b = $v;
+                    break;
+                case 5:
+                    $r = $v;
+                    $g = $m;
+                    $b = $mid2;
+                    break;
+            }
+        }
+
+        return static::shorten(sprintf(is_null($a) || $a == 1 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", round($r * 255), round($g * 255), round($b * 255), 255 * $a));
     }
 
     public static function expand ($color) {
