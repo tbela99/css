@@ -22,10 +22,10 @@ class ElementRule extends Elements {
 
         if (!is_array($selectors)) {
 
-            $selectors = array_map('trim', explode(',', $selectors));
+            $selectors = array_map(function ($selector) { return trim(strtolower($selector)); }, explode(',', $selectors));
         }
 
-        $this->ast->selectors = $selectors;
+        $this->ast->selectors = array_keys(array_flip($selectors));
 
         return $this;
     }
@@ -66,11 +66,11 @@ class ElementRule extends Elements {
         return $this;
     }
 
-
     /**
      * @param string $name
      * @param string $value
      * @return ElementDeclaration
+     * @throws Exception
      */
     public function addDeclaration ($name, $value) {
 
@@ -85,6 +85,8 @@ class ElementRule extends Elements {
     /**
      * Merge the specified declaration
      * @param ElementRule $rule
+     * @return ElementRule $this
+     * @throws Exception
      */
     public function merge (ElementRule $rule) {
 
@@ -96,5 +98,18 @@ class ElementRule extends Elements {
         }
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function support (Element $child) {
+
+        if ($child instanceof  ElementComment) {
+
+            return true;
+        }
+
+        return $child instanceof ElementDeclaration;
     }
 }

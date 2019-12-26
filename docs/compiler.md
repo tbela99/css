@@ -63,7 +63,7 @@ String. The character used to tokens. The default value is ' '
 
 ### charset
 
-Boolean. If true then remove @charset declaration
+Boolean. If false then remove @charset declaration
 
 ### rgba_hex
 

@@ -1,6 +1,6 @@
 @media print {
-  div {
-   background-color: white;
-   color: black
+ div {
+   background-color: #fff;
+   color: #000;
  }
 }

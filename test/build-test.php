@@ -22,33 +22,24 @@ $compiler->setOptions(['rgba_hex' => true]);
      $parser->load($file);
 
      $compiler->setOptions(['compress' => false]);
-     $compiler->setData($parser->parse());
-    file_put_contents('./output/'.basename($file), $compiler->compile());
 
-    $compiler->setOptions(['compress' => true]);
+     if (basename($file) == 'color.css') {
+
+         $parser->setOptions([
+             'deduplicate_declarations' => ['color']
+         ]);
+     }
+
+     else {
+
+         $parser->setOptions(['deduplicate_declarations' => true]);
+     }
+
+     $compiler->setData($parser->parse());
+     $compiler->setOptions(['compress' => false, 'rgba_hex' => false]);
+
+     file_put_contents('./output/'.basename($file), $compiler->compile());
+
+    $compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
      file_put_contents('./output/'.str_replace('.css', '.min.css', basename($file)), $compiler->compile());
  }
-
-/*
-foreach (
-    //  glob('./css/*.css')
-    [
-            './css/import.css',
-     //       './css/import-media.css'
-    ]
-    as $file) {
-
-    echo $file."\n";
-
-    $parser->setOptions(['flatten_import' => true]);
-    $parser->load($file);
-
-    $compiler->setData($parser->parse());
-    $compiler->setOptions(['compress' => false]);
-    file_put_contents('./output/'.str_replace('.css', '.import.css', basename($file)), $compiler->compile());
-
-    $compiler->setOptions(['compress' => true]);
-   // var_dump($compiler);
-    file_put_contents('./output/'.str_replace('.css', '.import.min.css', basename($file)), $compiler->compile());
-}
-*/

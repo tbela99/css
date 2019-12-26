@@ -9,3 +9,81 @@
 	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+p { color: red; }
+p {
+	/* hex */
+	color: #f00;
+}
+p {
+	/* hex2 */
+	color: #f00F;
+}
+p { color: #ff0000Ff; }
+p { color: #ff0000; }
+p { color: rgb(255,0,0); }
+p { color: rgba(255,0,0,1); }
+p { color: rgb(100%, 0%, 0%); }
+p {
+	/* hsl */
+	color: hsl(0, 100%, 50%);
+}
+
+/* 50% translucent */
+p { color: #ff000080; }
+p { color: rgba(255, 0, 0, 0.5); }
+p {
+
+	/* hsla(0, 100%, 50%, 0.5) */
+	color: hsla(0, 100%, 50%, 0.5);
+}
+
+p {
+
+	/* hsla(0, 100%, 50%, 0.5) */
+	color: hsla(0, 100%, 50%, 0.5);
+}
+/* These examples all specify the same color: a lavender. */
+p {
+	color: hsl(270,60%,70%);
+}
+p {
+	color: hsl(270, 60%, 70%);
+}
+p {
+	color: hsl(270 60% 70%);
+}
+p {
+	/* hsl(270deg, 60%, 70%) */
+	color: hsl(270deg, 60%, 70%);
+}
+p {
+	/* hsl(4.71239rad, 60%, 70%) */
+	color: hsl(4.71239rad, 60%, 70%);
+}
+p {
+	/* hsl(.75turn, 60%, 70%) */
+	color: hsl(.75turn, 60%, 70%);
+}
+
+
+
+
+
+
+/* These examples all specify the same color: a lavender that is 15% opaque. */
+p {
+	color: hsl(270, 60%, 50%, .15);
+}
+p {
+	color: hsl(270, 60%, 50%, 15%);
+}
+p {
+	color: hsl(270 60% 50% / .15);
+}
+p {
+	color: hsl(270 60% 50% / 15%);
+}
+
+
+

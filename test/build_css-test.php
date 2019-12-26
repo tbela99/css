@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
 
-set_time_limit(1);
-
 require 'autoload.php';
 
 use \TBela\CSS\ElementStylesheet;
@@ -65,6 +63,8 @@ $media['value'] = 'all';
 $rule2 = $media->addRule('.new');
 $rule2->addDeclaration('color', 'green');
 
+$namespace = $stylesheet->addAtRule('namespace', 'svg https://google.com/', 2);
+
 echo $stylesheet."\n\n\n";
 file_put_contents('output/build_css_'.(++$step).'.css', $stylesheet);
 
@@ -103,9 +103,10 @@ $rule3->addDeclaration('padding', '5px 3px');
 foreach ($media as $key => $child) {
 
     echo $child."\n\n\n";
-
     file_put_contents('output/build_css_'.(++$step).'.css', $child);
 }
 
+$stylesheet->insert($namespace, 0);
+echo $stylesheet."\n\n\n";
 
 file_put_contents('output/build_css_'.(++$step).'.css', $stylesheet);

@@ -18,7 +18,7 @@ class Compiler {
         'rgba_hex' => false,
         'compress' => false,
         'remove_comments' => false,
-        'remove_empty_nodes' => false
+        'remove_empty_nodes' => true
     ];
 
     /**
@@ -70,6 +70,14 @@ class Compiler {
 	}
 
     /**
+     * @return Element
+     */
+    public function getData () {
+
+        return $this->data;
+    }
+
+    /**
      * @return string
      * @throws Exception
      */
@@ -84,12 +92,4 @@ class Compiler {
 
 		return '';
 	}
-
-    /**
-     * @return Element
-     */
-	public function getData() {
-
-	    return $this->data;
-    }
 }

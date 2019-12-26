@@ -4,11 +4,12 @@ strong,
 .new {
  max-width: 100%;
  border-width: 0px;
- color: green
+ color: green;
 }
 @media all {
-  div {
-   background-color: white;
-   color: black
+ div {
+   background-color: #fff;
+   color: #000;
  }
 }
+@namespace svg https://google.com/;

@@ -304,7 +304,7 @@ div {
 
 ## Compiler options
 
-- charset: remove @charset
+- charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
 - remove_comments: remove comments. If _compress_ is true, comments are always removed

@@ -1,18 +1,19 @@
+@namespace svg https://google.com/;
 a,
 b,
 strong,
 .new {
  max-width: 100%;
  border-width: 0px;
- color: green
+ color: green;
 }
 @media all {
-  div {
-   background-color: white;
-   color: black
+ div {
+   background-color: #fff;
+   color: #000;
  }
-  ul {
+ ul {
    margin: 0px;
-   padding: 5px 3px
+   padding: 5px 3px;
  }
 }
