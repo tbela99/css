@@ -8,7 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 - remove (nested) empty rules
 - merge duplicate rules
-- remove duplicate declarations
+- remove d rules and declarations
 - process @import directive
 - remove @charset directive
 - compute css declarations (margin, padding, border-width, border-radius)

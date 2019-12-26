@@ -35,7 +35,19 @@ class Parser
      */
     public function __construct($css = '', array $options = [])
     {
-        $this->setContent($css);
+        if ($css !== '') {
+
+            if (preg_match('#(^(https?:))//#', $css) || is_file($css)) {
+
+                $this->load($css);
+            }
+
+            else {
+
+                $this->setContent($css);
+            }
+        }
+
         $this->setOptions($options);
     }
 
@@ -47,7 +59,7 @@ class Parser
     {
 
         $this->path = $file;
-        $this->_css = file_get_contents($file);
+        $this->_css = get_content($file);
         return $this;
     }
 
@@ -301,6 +313,17 @@ class Parser
     }
 }
 
+function get_current_directory() {
+
+    if (isset($_SERVER['PWD'])) {
+
+        // when executing viw the cli
+        return $_SERVER['PWD'];
+    }
+
+    return dirname($_SERVER['PHP_SELF']);
+}
+
 function get_content($file)
 {
 
@@ -308,7 +331,7 @@ function get_content($file)
 
         if (is_file($file)) {
 
-            return expand(file_get_contents($file), dirname($file));
+            return expand(file_get_contents($file), preg_replace('#^'.preg_quote(get_current_directory().'/', '#').'#', '', dirname($file)));
         }
 
         return false;
@@ -320,9 +343,9 @@ function get_content($file)
 function expand($css, $path = null)
 {
 
-    if (!is_null($path)) {
+    if (!is_null($path) && $path !== '') {
 
-        if (!preg_match('#/$#', $path)) {
+        if ($path[strlen($path) - 1] != '/') {
 
             $path .= '/';
         }
@@ -346,7 +369,9 @@ function expand($css, $path = null)
                 if ($file[0] == '/') {
 
                     $file = $path . substr($file, 1);
-                } else {
+                } 
+                
+                else {
 
                     $file = resolvePath($path . $file);
                 }
@@ -356,7 +381,7 @@ function expand($css, $path = null)
             $file = resolvePath($path . trim(str_replace(array("'", '"'), "", $matches[1])));
         }
 
-        return 'url(' . $file . ')';
+        return 'url(' . preg_replace('#^'.preg_quote(get_current_directory().'/', '#').'#', '', $file) . ')';
     },
         //resolve import directive, note import directive in imported css will NOT be processed
         parse_import($css, $path)
@@ -372,7 +397,7 @@ function resolvePath($file, $path = '')
 
         if (!preg_match('#^(https?:/)?/#', $file)) {
 
-            $file = $path.'/'.$file;
+            $file = $path.$file;
         }
     }
 
@@ -400,10 +425,15 @@ function resolvePath($file, $path = '')
             }
         }
 
-        return implode('/', $return);
+        $file = implode('/', $return);
     }
 
-    return $file;
+    else {
+
+        $file = preg_replace(['#/\./#', '#^\./#'], ['/', ''], $file);
+    }
+
+    return preg_replace('#^'.preg_quote(get_current_directory().'/', '#').'#', '', $file);
 }
 
 function fetch_content($url, $options = [], $curlOptions = [])

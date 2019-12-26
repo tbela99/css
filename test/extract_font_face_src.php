@@ -8,7 +8,7 @@ use \TBela\CSS\Element;
 use \TBela\CSS\ElementAtRule;
 use \TBela\CSS\ElementStylesheet;
 
-$parser = new Parser(file_get_contents('./css/manipulate.css'), [
+$parser = new Parser('./css/manipulate.css', [
     'silent' => false,
     'flatten_import' => true
 ]);

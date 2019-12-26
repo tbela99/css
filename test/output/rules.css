@@ -1,4 +1,4 @@
-@-moz-document url("https://www.example.com/") {
+@-moz-document https://www.example.com/ {
  h1 {
    color: green;
  }
@@ -19,14 +19,14 @@ body {
 }
 /*
 @import "import-media.css" print;
-@import url('./css/url-import-media.css') all;
+@import url(css/css/url-import-media.css) all;
 @import "import.css";
-@import url('css/url-import.css');
+@import url(css/css/url-import.css);
 */
 /* removed empty rules */
 /* removed empty @media */
-@namespace url(http://www.w3.org/1999/xhtml);
-@namespace svg url(http://www.w3.org/2000/svg);
+@namespace http://www.w3.org/1999/xhtml;
+@namespace svg http://www.w3.org/2000/svg;
 /* Cela correspond à tous les éléments XHTML <a>
   car XHTML est l'espace de nom par défaut, sans
   préfixe. */

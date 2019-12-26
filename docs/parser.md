@@ -42,19 +42,35 @@ echo $compiler->compile();
 
 ### flatten_import
 
-Boolean. Replace the @import directive with actual content
+_boolean_. Replace the @import directive with actual content
 
 ### deduplicate_rules
 
-Boolean. Merge duplicate rules
+_boolean_. Merge duplicate rules
 
 ### deduplicate_declarations
 
-Boolean. Remove duplicate declarations
+_boolean_|_string_|_array_. Default _'background-image'_. Remove duplicate declarations. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
+
+```php
+
+// preserve everything
+$parser->setOptions(['deduplicate_declarations' => false]);
+
+// remove duplicates
+$parser->setOptions(['deduplicate_declarations' => true]);
+
+// preserve multiple declarations for color 
+$parser->setOptions(['deduplicate_declarations' => 'color']);
+
+// preserve multiple declarations for color and background-color
+$parser->setOptions(['deduplicate_declarations' => ['color', 'background-color']);
+
+```
 
 ### silent
 
-Boolean. By default the parser will throw an exception if an invalid css content is provided. 
+_boolean_. By default the parser will throw an exception if an invalid css content is provided. 
 
 ## Compiler Methods
  
@@ -64,11 +80,12 @@ Constructor
 
 #### Parameters
 
-- $options: array of options. see [parser options](#parser-options)
+- $css: _string_. css string or file path or url
+- $options: _array_. see [parser options](#parser-options)
    
 ### Parse
 
-Parse CSS and return the AST
+Parse CSS and return the CSS stylesheet
 
 #### Parameters
 
@@ -76,7 +93,7 @@ none
 
 #### Return type
 
-Object
+\TBela\Element
   
 ### SetOptions
 
@@ -84,7 +101,7 @@ Configure the parser options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $options: array of options
+- $options: _array_. see [parser options](#parser-options)
     
 #### Return type
 
@@ -94,7 +111,7 @@ Configure the parser options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $file: string. load a css file
+- $file: _string_. load a css file
     
 #### Return type
 
@@ -104,7 +121,7 @@ Configure the parser options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $css: string. Parse input css
+- $css: _string_.  css string or file path or url
     
 #### Return type
 

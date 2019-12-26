@@ -21,6 +21,12 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
      */
     protected $parent = null;
 
+    /**
+     * Element constructor.
+     * @param object|null $ast
+     * @param RuleList|null $parent
+     * @throws Exception
+     */
     public function __construct($ast = null, RuleList $parent = null) {
 
         if (is_null($ast)) {
@@ -42,6 +48,11 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
         }
     }
 
+    /**
+     * @param Element|object $ast
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
 	public static function getInstance($ast) {
 
         $type = '';

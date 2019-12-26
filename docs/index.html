@@ -8,8 +8,18 @@
   <meta name="description" content="Description">
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/docsify/lib/themes/dark.css">
+  <link rel="stylesheet" href="https://unpkg.com/docsify/lib/themes/vue.css">
   <style>
+    .anchor span {
+      color: unset;
+    }
+    .markdown-section code, .markdown-section pre, .markdown-section pre > code {
+      background-color: #f6f8fa;
+      color: #24292e;
+    }
+    .markdown-section pre {
+      box-shadow: 0 0 3px 0 #0000002b;
+    }
     .sidebar>h1 {
       margin-left: 15px;
       margin-right: 15px;
@@ -42,12 +52,10 @@
     .sidebar-nav li li a {
       padding-left: 15px;
     }
+    .sidebar ul li.active > a,
     .sidebar-nav ul li>a:hover {
-      background-color: #dedede;
+      background-color: #dbb7b717;
       text-decoration: none;
-    }
-    .sidebar-nav ul li.active>a {
-      background-color: #42b98317;
     }
     .app-sub-sidebar li>a:before {
       content: "-";

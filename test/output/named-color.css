@@ -2,9 +2,9 @@ body {
  border: 0px;
 }
 .short {
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #ffdead;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #ffdead;
 }
 .element {
  color: #000;
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #c71585;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #c71585;
 }

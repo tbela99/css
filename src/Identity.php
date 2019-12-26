@@ -297,6 +297,8 @@ class Identity implements Renderer
         $hash = $this->escape($value);
         $value = $hash[0];
 
+        $value = $this->filter->value($value, $element);
+
         if ($element['type'] == 'declaration') {
 
             $value = $this->filter->color($value, $element);
