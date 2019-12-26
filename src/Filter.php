@@ -41,7 +41,7 @@ class Filter {
             // remove quotes
             $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', 'url($2)', $value);
 
-            if ($type == 'declaration') {
+            if ($type == 'declaration' && $this->renderer->getOptions('compress')) {
 
                 switch ($element['name']) {
 

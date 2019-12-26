@@ -101,7 +101,7 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            $expected
+            file_get_contents($expected)
         );
     }
 
@@ -110,6 +110,7 @@ final class RenderTest extends TestCase
      * @param Renderer $renderer
      * @param string $expected
      * @dataProvider extractDeclarationProvider
+     * @throws Exception
      */
     public function testExtractDeclaration(Element $data, Renderer $renderer, $expected): void
     {
@@ -161,7 +162,7 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            $expected
+            file_get_contents($expected)
         );
     }
 
@@ -323,7 +324,7 @@ final class RenderTest extends TestCase
                 $parser,
                 (new Compiler())->setOptions(['compress' => false, 'rgba_hex' => false]),
                 $file,
-                file_get_contents(dirname($file).'/../output/'.basename($file))
+                file_get_contents(dirname(dirname($file)).'/output/'.basename($file))
             ];
         }
 
@@ -356,7 +357,7 @@ final class RenderTest extends TestCase
                $parser,
                 (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
                 $file,
-                file_get_contents(dirname($file).'/../output/'.str_replace('.css', '.min.css', basename($file)))
+                file_get_contents(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
             ];
         }
 
@@ -365,29 +366,25 @@ final class RenderTest extends TestCase
 
     public function extractAtRule () {
 
-        $parser = new Parser();
-        $parser->setOptions([
+        $parser = new Parser(__DIR__.'/../css/manipulate.css', [
             'silent' => false,
             'flatten_import' => true
         ]);
-        $parser->load(__DIR__.'/../css/manipulate.css');
 
         return [
-            [$parser->parse(), new Identity(), file_get_contents(__DIR__.'/../output/extract_font_face.css')]
+            [$parser->parse(), new Identity(), __DIR__.'/../output/extract_font_face.css']
         ];
     }
 
     public function extractDeclarationProvider () {
 
-        $parser = new Parser();
-        $parser->setOptions([
+        $parser = new Parser(dirname(__DIR__).'/css/manipulate.css', [
             'silent' => false,
             'flatten_import' => true
         ]);
-        $parser->load(__DIR__.'/../css/manipulate.css');
 
         return [
-            [$parser->parse(), new Identity(),file_get_contents( __DIR__.'/../output/extract_font_face_src.css')]
+            [$parser->parse(), new Identity(), dirname(__DIR__) .'/output/extract_font_face_src.css']
         ];
     }
 }

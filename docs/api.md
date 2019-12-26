@@ -1,5 +1,5 @@
 
-## Element Class
+## CSS Api
 
 ## Rendering an Element
 
@@ -9,9 +9,9 @@ The renderer has a _setOptions_ method that accepts the same arguments as [\TBel
 Two renderer classes are provided.
 The pretty print rendering is done using the class _\TBela\CSS\Identity_ while minified printing is done using _\TBela\CSS\Compress_
 
-### Pretty CSS printing
+### Pretty printing CSS
 
-Elements are rendered by default using Pretty print. 
+Elements are rendered by default using Pretty printing. 
 
 Example 
 
@@ -82,7 +82,7 @@ Css output
 ### Minify CSS printing
 
 Minified rendering is done using the class _\TBela\CSS\Compress_. This renderer has additional settings to control minification.
-- convert rgba and hsla colors to hex
+- _rgba_hex_: convert rgba and hsla colors to hex
 
 
 Example 

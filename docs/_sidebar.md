@@ -5,3 +5,4 @@
 - [Compiler](./compiler.md)
 - [CSS Manipulation](./manipulation.md)
 - [CSS API](./api.md)
+- [Element Class](./element.md)

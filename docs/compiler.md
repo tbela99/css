@@ -51,35 +51,35 @@ echo $compiler->compile();
 
 ### indent
 
-String. The string used to indent lines. The default value is ' '
+_string_. The string used to indent lines. The default value is ' '
 
 ### glue
 
-String. The string used as line separator. The default value is "\n"
+_string_. The string used as line separator. The default value is "\n"
 
 ### separator
 
-String. The character used to tokens. The default value is ' '
+_string_. The character used to tokens. The default value is ' '
 
 ### charset
 
-Boolean. If false then remove @charset declaration
+_boolean_. If false then remove @charset declaration
 
 ### rgba_hex
 
-Boolean. Convert rgba and hsla to hex
+_boolean_. Convert rgba and hsla to hex
 
 ### compress
 
-Boolean. If true then compress the css. If false then pretty print the css
+_boolean_. If true then compress the css. If false then pretty print the css
 
 ### remove_comments
 
-Boolean. If true then remove comments. When compress is set to true then comments are always removed
+_boolean_. If true then remove comments. When compress is set to true then comments are always removed
 
 ### remove_empty_nodes
 
-Boolean. If true then remove empty css rules and media queries
+_boolean_. If true then remove empty css rules and media queries
 
 ## Compiler Methods
  
@@ -89,7 +89,7 @@ Constructor
 
 #### Parameters
 
-- $options: array of options. see [compiler options](#compiler-options)
+- $options: _array_. see [compiler options](#compiler-options)
    
 ### Compile
 
@@ -101,7 +101,7 @@ none
 
 #### Return type
 
-String
+_string_.
   
 ### SetOptions
 
@@ -109,7 +109,7 @@ Configure the compiler options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $options: array of options
+- $options: _array_. see [compiler options](#compiler-options)
     
 #### Return type
 
@@ -119,7 +119,7 @@ Configure the compiler options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $css: string. Parse input css
+- $css: _string_. css string or file or url
     
 #### Return type
 
@@ -129,9 +129,19 @@ Configure the compiler options. see [compiler options](#compiler-options)
 
 #### Parameters
 
-- $ast: object. Assign an AST object to the compiler
+- $ast: _\TBela\CSS\Element_. Assign an AST object to the compiler
     
 #### Return type
 
 \TBela\CSS\Compiler instance
+  
+### getData
+
+#### Parameters
+
+none
+    
+#### Return type
+
+\TBela\CSS\Element instance
   

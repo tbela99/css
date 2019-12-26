@@ -1,4 +1,4 @@
-@-moz-document url("https://www.example.com/") {
+@-moz-document https://www.example.com/ {
  h1 {
    color: green;
  }
@@ -23,19 +23,19 @@
 }
 /*
 @import "import-media.css" print;
-@import url('./css/url-import-media.css') all;
+@import url(css/css/url-import-media.css) all;
 @import "import.css";
-@import url('css/url-import.css');
+@import url(css/css/url-import.css);
 */
-/* start: @import from css/./css/url-import-media.css */
+/* start: @import from css/css/url-import-media.css */
 @media all {
  .url-imported-from-media {
    outline: 0;
    color: rgba(161, 161, 161, 0.63);
-   background-image: url(css/img/d4ca075023f827d81478565989.png);
+   background-image: url(css/css/img/d4ca075023f827d81478565989.png);
  }
 }
-/* end: @import from css/./css/url-import-media.css */
+/* end: @import from css/css/url-import-media.css */
 .nav-pills .dropdown-menu {
  -webkit-border-radius: 6px;
  -moz-border-radius: 6px;
@@ -85,8 +85,8 @@
 }
 /* removed empty rules */
 /* removed empty @media */
-@namespace url(http://www.w3.org/1999/xhtml);
-@namespace svg url(http://www.w3.org/2000/svg);
+@namespace http://www.w3.org/1999/xhtml;
+@namespace svg http://www.w3.org/2000/svg;
 /* Cela correspond à tous les éléments XHTML <a>
   car XHTML est l'espace de nom par défaut, sans
   préfixe. */

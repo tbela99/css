@@ -2,13 +2,10 @@
 <?php
 
 require 'autoload.php';
+use \TBela\CSS\Parser;
+use \TBela\CSS\Compiler;
+
 // test builder
-
-$parser = new \TBela\CSS\Parser();
-$compiler = new \TBela\CSS\Compiler();
-
-$parser->setOptions(['flatten_import' => true]);
-$compiler->setOptions(['rgba_hex' => true]);
 
  foreach (
      glob('css/*.css')
@@ -16,10 +13,12 @@ $compiler->setOptions(['rgba_hex' => true]);
 
          as $file) {
 
-     echo $file."\n";
+     $parser = new Parser($file, ['flatten_import' => true]);
+     $compiler = new Compiler();
 
-     $options = [];
-     $parser->load($file);
+     $compiler->setOptions(['rgba_hex' => true]);
+
+     echo $file."\n";
 
      $compiler->setOptions(['compress' => false]);
 
