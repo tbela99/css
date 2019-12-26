@@ -1,14 +1,17 @@
 body {
- border: 0px
+ font-weight: normal;
+ border: 0px;
 }
 .short {
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #0000
+ border: none;
+ font: bold 14px "Bitstream Vera Serif Bold", serif;
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #000;
 }
 .element {
- color: rgb(0, 0, 0);
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #00000000;
+ color: #000;
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #000;
  margin: 5px 3px 5px 3px;
  padding: 5px 3px 5px;
  border-radius: 5px 5px;
- -moz-border-radius: 15px 15px
+ -moz-border-radius: 15px 15px;
 }

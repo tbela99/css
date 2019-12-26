@@ -23,11 +23,7 @@ class Parser
         'silent' => false,
         'flatten_import' => false,
         'deduplicate_rules' => true,
-        'deduplicate_declarations' => true,
-        'preserve_multiple_declarations' => [
-
-            'font-face' => ['src']
-        ]
+        'deduplicate_declarations' => ['background-image']
     ];
 
     public $errorsList = [];
@@ -79,6 +75,19 @@ class Parser
             if (isset($options[$key])) {
 
                 $this->options[$key] = $options[$key];
+
+                if ($key == 'deduplicate_declarations') {
+
+                    if (is_string($this->options[$key])) {
+
+                        $this->options[$key] = [$this->options[$key]];
+                    }
+
+                    if (is_array($this->options[$key])) {
+
+                        $this->options[$key] = array_flip($this->options[$key]);
+                    }
+                }
             }
         }
 
@@ -190,13 +199,15 @@ class Parser
 
                     if ($total > 0) {
 
+                        $index = $total;
                         $el = $ast->elements[$total];
-                        $next = $ast->elements[$total - 1];
 
                         if ($el->type == 'comment') {
 
                             continue;
                         }
+
+                        $next = $ast->elements[$total - 1];
 
                         while ($total > 1 && $next->type == 'comment') {
 
@@ -210,10 +221,24 @@ class Parser
 
                         $nextSignature = $this->computeSignature($next);
 
-                        if ($signature == $nextSignature) {
+                        while ($signature == $nextSignature) {
 
-                                array_splice($ast->elements, $total - 1, 1);
-                                array_splice($el->elements, 0, 0, $next->elements);
+                            array_splice($ast->elements, $total - 1, 1);
+                            array_splice($el->elements, 0, 0, $next->elements);
+
+                            if ($total == 1) {
+
+                                break;
+                            }
+
+                            $next = $ast->elements[--$total - 1];
+
+                            while ($total > 1 && $next->type == 'comment') {
+
+                                $next = $ast->elements[--$total - 1];
+                            }
+
+                            $nextSignature = $this->computeSignature($next);
                         }
 
                         $signature = $nextSignature;
@@ -244,6 +269,7 @@ class Parser
             $total = count($elements);
 
             $hash = [];
+            $exceptions = is_array($this->options['deduplicate_declarations']) ? $this->options['deduplicate_declarations'] : [];
 
             while ($total--) {
 
@@ -254,13 +280,12 @@ class Parser
                     continue;
                 }
 
-                if (!isset($declaration->name)) {
-
-
-                    echo (new Exception())->getTraceAsString();
-                }
-
                 $name = (isset($declaration->vendor) ? '-' . $declaration->vendor . '-' : '') . $declaration->name;
+
+                if (isset($exceptions[$name])) {
+
+                    continue;
+                }
 
                 if (isset($hash[$name])) {
 

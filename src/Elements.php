@@ -3,6 +3,7 @@
 namespace TBela\CSS;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use function in_array;
 
 class Elements extends Element implements RuleList  {
@@ -21,6 +22,17 @@ class Elements extends Element implements RuleList  {
             $this->ast->elements[$key] = $element;
 
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addComment ($value) {
+
+        $comment = new ElementComment();
+        $comment['value'] = '/* '.$value.' */';
+
+        return $this->append($comment);
     }
 
     /**
@@ -65,11 +77,37 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
+    public function support (Element $child) {
+
+        $element = $this;
+
+        // should not append a parent as a child
+        while ($element) {
+
+            if ($element == $child) {
+
+                return false;
+            }
+
+            $element = $element['parent'];
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function append (Element $element) {
 
-        if ($this != $element && $this != $element->getParent()) {
+        if (!$this->support($element)) {
 
-            if (($this instanceof ElementStylesheet) && ($element instanceof ElementStylesheet)) {
+            throw new InvalidArgumentException();
+        }
+
+        if ($this != $element['parent']) {
+
+            if ($element instanceof ElementStylesheet) {
 
                 foreach ($element->getChildren() as $child) {
 
@@ -105,6 +143,11 @@ class Elements extends Element implements RuleList  {
      */
     public function insert(Element $element, $position)
     {
+        if (!$this->support($element) || $position < 0) {
+
+            throw new InvalidArgumentException();
+        }
+
         $parent = $element->parent;
 
         if (isset($this->ast->elements)) {

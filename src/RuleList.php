@@ -17,6 +17,19 @@ interface RuleList extends IteratorAggregate {
     public function getChildren();
 
     /**
+     * @param string $value
+     * @return ElementComment
+     */
+    public function addComment ($value);
+
+    /**
+     * check if this node accepts element as a child
+     * @param Element $child
+     * @return bool
+     */
+    public function support (Element $child);
+
+    /**
      * @param Element $element
      * @return Element
      * @throws Exception

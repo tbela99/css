@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -304,7 +304,7 @@ div {
 
 ## Compiler options
 
-- charset: remove @charset
+- charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
 - remove_comments: remove comments. If _compress_ is true, comments are always removed

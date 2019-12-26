@@ -1,10 +1,13 @@
 body {
 
+    font-weight: normal;
     border: 0px;
 }
 
 .short {
 
+    border: none;
+    font: bold 14px "Bitstream Vera Serif Bold", serif;
     background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #0000;
 }
 

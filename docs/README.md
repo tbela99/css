@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css) 
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -194,6 +194,103 @@ result
    src: local("Helvetica Neue Bold"),
         local("HelveticaNeue-Bold"),
         url(MgOpenModernaBold.ttf)
+ }
+}
+```
+
+## Build a css document
+
+```php
+
+use \TBela\CSS\ElementStylesheet;
+
+$stylesheet = new ElementStylesheet();
+
+$rule = $stylesheet->addRule('div');
+
+$rule->addDeclaration('background-color', 'white');
+$rule->addDeclaration('color', 'black');
+
+echo $stylesheet;
+
+```
+output
+```css
+div {
+ background-color: white;
+ color: black
+}
+```
+```php
+
+$media = $stylesheet->addAtRule('media', 'print');
+$media->append($rule);
+
+```
+output
+```css
+@media print {
+  div {
+   background-color: white;
+   color: black
+ }
+}
+```
+
+```php
+$rule = $stylesheet->addRule('div');
+
+$rule->addDeclaration('max-width', '100%');
+$rule->addDeclaration('border-width', '0px');
+
+```
+output
+```css
+@media print {
+  div {
+   background-color: white;
+   color: black
+ }
+}
+div {
+ max-width: 100%;
+ border-width: 0px
+}
+```
+
+```php
+
+$media->append($rule);
+
+```
+output
+```css
+@media print {
+  div {
+   background-color: white;
+   color: black
+ }
+  div {
+   max-width: 100%;
+   border-width: 0px
+ }
+}
+```
+
+```php
+
+$stylesheet->insert($rule, 0);
+```
+output
+```css
+div {
+ max-width: 100%;
+ border-width: 0px
+}
+@media print {
+  div {
+   background-color: white;
+   color: black
  }
 }
 ```

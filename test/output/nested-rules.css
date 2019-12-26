@@ -1,17 +1,17 @@
 @font-feature-values Font One {
-/* On active la caractéristique nice-style 
+  /* On active la caractéristique nice-style 
        sur Font One */
  @styleset {
-   nice-style: 12
+   nice-style: 12;
  }
 }
 body {
- border: 0px
+ border: 0px;
 }
 .short {
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left navajowhite
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #ffdead;
 }
 .element {
- color: rgb(0, 0, 0);
- background: url('img/d4ca075023f827d81478565989.png') no-repeat top left mediumvioletred
+ color: #000;
+ background: url('img/d4ca075023f827d81478565989.png') no-repeat top left #c71585;
 }

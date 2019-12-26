@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Bitstream Vera Serif Bold";
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff" );
 }
 
 body{
@@ -18,8 +18,8 @@ font-weight: bold;
 @media print {
 	@font-face {
   font-family: MaHelvetica;
-  src: local("Helvetica Neue Bold"),
-       local("HelveticaNeue-Bold"),
+  src: local( "Helvetica Neue Bold"),
+       local( "HelveticaNeue-Bold" ),
        url(MgOpenModernaBold.ttf);
   font-weight: bold;
 }

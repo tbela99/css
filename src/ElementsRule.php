@@ -10,18 +10,14 @@ use InvalidArgumentException;
  */
 class ElementsRule extends Elements {
 
-    const ELEMENT_AT_RULE_LIST = 0;
-    const ELEMENT_AT_DECLARATIONS_LIST = 1;
-    const ELEMENT_AT_NO_LIST = 2;
-
     /**
      * @param string $name
      * @param string|null $value
      * @param int $type the type of the node:
-     * - ElementsRule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
-     * - ElementsRule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
-     * - ElementsRule::ELEMENT_AT_NO_LIST the element does not support children
-     * @return Element
+     * - ElementRule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
+     * - ElementRule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
+     * - ElementRule::ELEMENT_AT_NO_LIST the element does not support children
+     * @return ElementAtRule
      * @throws Exception
      */
     public function addAtRule($name, $value = null, $type = 0) {
@@ -35,15 +31,15 @@ class ElementsRule extends Elements {
 
         switch ($type) {
 
-            case static::ELEMENT_AT_RULE_LIST:
+            case ElementAtRule::ELEMENT_AT_RULE_LIST:
 
                 break;
-            case static::ELEMENT_AT_DECLARATIONS_LIST:
+            case ElementAtRule::ELEMENT_AT_DECLARATIONS_LIST:
 
                 $rule->ast->hasDeclarations = true;
                 break;
 
-            case static::ELEMENT_AT_NO_LIST:
+            case ElementAtRule::ELEMENT_AT_NO_LIST:
 
                 $rule->ast->isLeaf = true;
                 break;

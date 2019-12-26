@@ -3,9 +3,11 @@
 namespace TBela\CSS;
 
 use Exception;
+use InvalidArgumentException;
 use JsonSerializable;
 use ArrayAccess;
 use stdClass;
+use function get_class;
 use function is_callable;
 use function is_null;
 use function strtolower;
@@ -24,7 +26,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
         if (is_null($ast)) {
 
             $ast = new stdClass;
-            $ast->type = strtolower(str_ireplace(__NAMESPACE__.'\Element', '', \get_class($this)));
+            $ast->type = strtolower(str_ireplace(__NAMESPACE__.'\Element', '', get_class($this)));
         }
 
         $this->ast = $ast;
@@ -46,7 +48,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
 
         if ($ast instanceof Element) {
 
-            $ast = $ast->ast;
+            $ast = json_decode(json_encode($ast));
         }
 
         if (isset($ast->type)) {
@@ -56,7 +58,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
 
         if ($type === '') {
 
-            throw new \InvalidArgumentException('Invalid ast provided');
+            throw new InvalidArgumentException('Invalid ast provided');
         }
 
         $className = __NAMESPACE__.'\Element'.$ast->type;
@@ -101,32 +103,6 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
         $this->ast->value = $value;
         return $this;
     }
-
-    /**
-     * @param Element $parent
-     * @return $this
-     */
-    /*
-    public function setParent(RuleList $parent = null) {
-
-     //   if ($parent != $this->parent && $parent != $this) {
-
-            if (!empty($this->parent)) {
-
-                $this->parent->remove($this);
-            }
-
-         //   $this->parent = $parent;
-
-            if (!is_null($parent)) {
-
-                $parent->append($this);
-            }
-    //    }
-
-        return $this;
-    }
-    */
 
     /**
      * @return RuleList|null

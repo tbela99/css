@@ -238,6 +238,8 @@ final class RenderTest extends TestCase
         $rule2 = $media->addRule('.new');
         $rule2->addDeclaration('color', 'green');
 
+        $namespace = $stylesheet->addAtRule('namespace', 'svg https://google.com/', 2);
+
         $this->assertEquals(
             (string) $stylesheet,
             file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
@@ -287,6 +289,8 @@ final class RenderTest extends TestCase
             );
         }
 
+        $stylesheet->insert($namespace, 0);
+
         $this->assertEquals(
             (string) $stylesheet,
             file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
@@ -300,10 +304,24 @@ final class RenderTest extends TestCase
 
         foreach (glob('css/*.css') as $file) {
 
+            $parser = (new Parser())->setOptions(['flatten_import' => true]);
+
+            if (basename($file) == 'color.css') {
+
+                $parser->setOptions([
+                    'deduplicate_declarations' => ['color']
+                ]);
+            }
+
+            else {
+
+                $parser->setOptions(['deduplicate_declarations' => true]);
+            }
+
             $data[] = [
 
-                (new Parser())->setOptions(['flatten_import' => true]),
-                new Compiler(),
+                $parser,
+                (new Compiler())->setOptions(['compress' => false, 'rgba_hex' => false]),
                 $file,
                 file_get_contents(dirname($file).'/../output/'.basename($file))
             ];
@@ -319,9 +337,23 @@ final class RenderTest extends TestCase
 
         foreach (glob('css/*.css') as $file) {
 
+            $parser =  (new Parser())->setOptions(['flatten_import' => true]);
+
+            if (basename($file) == 'color.css') {
+
+                $parser->setOptions([
+                    'deduplicate_declarations' => ['color']
+                ]);
+            }
+
+            else {
+
+                $parser->setOptions(['deduplicate_declarations' => true]);
+            }
+
             $data[] = [
 
-                (new Parser())->setOptions(['flatten_import' => true]),
+               $parser,
                 (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
                 $file,
                 file_get_contents(dirname($file).'/../output/'.str_replace('.css', '.min.css', basename($file)))

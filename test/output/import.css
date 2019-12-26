@@ -1,9 +1,9 @@
 /* start: @import from css/css/url-import.css */
 @media print {
-  .url-imported {
+ .url-imported {
    outline: 0;
-   color: #a1a1a1a1;
-   background: url(css/img/d4ca075023f827d81478565989.png)
+   color: rgba(161, 161, 161, 0.63);
+   background: url(css/img/d4ca075023f827d81478565989.png);
  }
 }
 /* end: @import from css/css/url-import.css */
