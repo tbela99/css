@@ -1,10 +1,10 @@
 @media print {
  div {
    background-color: #fff;
-   color: #000;
+   color: #000
  }
  div {
    max-width: 100%;
-   border-width: 0px;
+   border-width: 0
  }
 }

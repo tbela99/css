@@ -22,8 +22,8 @@ class Parser
         'source' => '',
         'silent' => false,
         'flatten_import' => false,
-        'deduplicate_rules' => true,
-        'deduplicate_declarations' => ['background-image']
+        'allow_duplicate_rules' => false,
+        'allow_duplicate_declarations' => ['background-image']
     ];
 
     public $errorsList = [];
@@ -88,7 +88,7 @@ class Parser
 
                 $this->options[$key] = $options[$key];
 
-                if ($key == 'deduplicate_declarations') {
+                if ($key == 'allow_duplicate_declarations') {
 
                     if (is_string($this->options[$key])) {
 
@@ -134,7 +134,7 @@ class Parser
             $ast = json_decode(json_encode($ast));
         }
 
-        if ((!empty($this->options['deduplicate_rules']) || !empty($this->options['deduplicate_declarations'])) && !empty ($ast)) {
+        if ((empty($this->options['allow_duplicate_rules']) || empty($this->options['allow_duplicate_declarations'])) && !empty ($ast)) {
 
             switch ($ast->type) {
 
@@ -201,7 +201,7 @@ class Parser
 
         if (!empty($ast->elements)) {
 
-            if (!empty($this->options['deduplicate_rules']) && isset($ast->elements)) {
+            if (empty($this->options['allow_duplicate_rules']) && isset($ast->elements)) {
 
                 $signature = '';
                 $total = count($ast->elements);
@@ -211,7 +211,7 @@ class Parser
 
                     if ($total > 0) {
 
-                        $index = $total;
+                     //   $index = $total;
                         $el = $ast->elements[$total];
 
                         if ($el->type == 'comment') {
@@ -236,7 +236,11 @@ class Parser
                         while ($signature == $nextSignature) {
 
                             array_splice($ast->elements, $total - 1, 1);
-                            array_splice($el->elements, 0, 0, $next->elements);
+
+                            if ($el->type != 'declaration') {
+
+                                array_splice($el->elements, 0, 0, $next->elements);
+                            }
 
                             if ($total == 1) {
 
@@ -274,14 +278,14 @@ class Parser
     protected function deduplicateDeclarations($ast)
     {
 
-        if (!empty($this->options['deduplicate_declarations']) && !empty($ast->elements)) {
+        if (!empty($this->options['allow_duplicate_declarations']) && !empty($ast->elements)) {
 
             $elements = $ast->elements;
 
             $total = count($elements);
 
             $hash = [];
-            $exceptions = is_array($this->options['deduplicate_declarations']) ? $this->options['deduplicate_declarations'] : [];
+            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : [];
 
             while ($total--) {
 
@@ -851,6 +855,25 @@ function declaration($context)
     if (!$prop) return false;
     $prop = trim($prop[0]);
 
+    $comments = [];
+
+    $filter = function ($value) use (&$comments) {
+
+        if ($value->type == 'comment') {
+
+            $data = new stdClass;
+
+            $data->type = 'comment';
+            $data->value = (string) $value;
+
+            $comments[] = $data;
+
+            return false;
+        }
+
+        return true;
+    };
+
     // :
     if (!match('/^:\s*/', $context)) return error("property missing ':'", $context);
 
@@ -859,8 +882,8 @@ function declaration($context)
 
     $data = [
         'type' => 'declaration',
-        'name' => preg_replace(COMMENT_REGEXP, '', $prop),
-        'value' => $val ? preg_replace(COMMENT_REGEXP, '', trim($val[0])) : ''
+        'name' => Value::parse($prop)->filter($filter),
+        'value' => Value::parse($val[0])->filter($filter)
     ];
 
     foreach (parse_vendor($data['name']) as $key => $value) {
@@ -871,7 +894,9 @@ function declaration($context)
     settype($data, 'object');
     match('/^[;\s]*/', $context);
 
-    return $data;
+    $comments[] = $data;
+
+    return $comments;
 }
 
 /**
@@ -941,7 +966,7 @@ function atrule($context)
 
                         while ($res = declaration($context)) {
 
-                            $elements[] = $res;
+                            array_splice($elements, count($elements), 0, $res);
                             comments($elements, $context);
                         }
 
@@ -1043,7 +1068,7 @@ function rule($context)
 
         if ($res !== false && !($res instanceof Exception)) {
 
-            $c[] = $res;
+            array_splice($c, count($c), 0, $res);
         }
     }
 

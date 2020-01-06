@@ -5,33 +5,32 @@ require 'autoload.php';
 
 use \TBela\CSS\Parser;
 use \TBela\CSS\Element;
-use \TBela\CSS\ElementAtRule;
-use \TBela\CSS\ElementStylesheet;
+use \TBela\CSS\Element\AtRule;
+use \TBela\CSS\Element\Stylesheet;
 
 $parser = new Parser('./css/manipulate.css', [
     'silent' => false,
     'flatten_import' => true
 ]);
 
-$stylesheet = new ElementStylesheet();
+$stylesheet = new Stylesheet();
 
-function getNodes ($data, $stylesheet) {
+function getNodes (Element $data, $stylesheet) {
 
-    $nodes = [];
+    foreach ($data['children'] as $node) {
 
-    foreach ($data as $node) {
+        if ($node instanceof AtRule) {
 
-        if ($node instanceof ElementAtRule) {
-
-            switch ($node->getName()) {
+            switch ($node['name']) {
 
                 case 'font-face':
 
-                    foreach ($node as $declaration) {
+                    foreach ($node['children'] as $declaration) {
 
                         if ($declaration['name'] == 'src') {
 
-                            $stylesheet->append($declaration->copy()->getRoot());
+                            var_dump($declaration->copy() == $declaration);
+                         //   $stylesheet->append($declaration->copy()->getRoot());
                             break;
                         }
                     }

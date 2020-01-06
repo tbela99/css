@@ -2,8 +2,8 @@
 @media all {
  .url-imported-from-media {
    outline: 0;
-   color: rgba(161, 161, 161, 0.63);
-   background-image: url(css/css/img/d4ca075023f827d81478565989.png);
+   color: rgba(161,161,161,.63);
+   background-image: url(css/css/img/d4ca075023f827d81478565989.png)
  }
 }
 /* end: @import from css/css/url-import-media.css */

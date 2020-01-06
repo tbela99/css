@@ -15,8 +15,8 @@ body { border: 0px; }');
 
 $parser->setOptions([  
     'flatten_import' => true,
-    'deduplicate_declarations' => true,
-    'deduplicate_rules' => true
+    'allow_duplicate_declarations' => true,
+    'allow_duplicate_rules' => true
 ]);
 
 echo $compiler->compile();
@@ -31,8 +31,8 @@ $parser->load($css_file);
 
 $parser->setOptions([  
     'flatten_import' => true,
-    'deduplicate_declarations' => true,
-    'deduplicate_rules' => true
+    'allow_duplicate_declarations' => true,
+    'allow_duplicate_rules' => true
 ]);
 
 echo $compiler->compile();
@@ -44,27 +44,27 @@ echo $compiler->compile();
 
 _boolean_. Replace the @import directive with actual content
 
-### deduplicate_rules
+### allow_duplicate_rules
 
 _boolean_. Merge duplicate rules
 
-### deduplicate_declarations
+### allow_duplicate_declarations
 
 _boolean_|_string_|_array_. Default _'background-image'_. Remove duplicate declarations. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
 
 ```php
 
 // preserve everything
-$parser->setOptions(['deduplicate_declarations' => false]);
+$parser->setOptions(['allow_duplicate_declarations' => false]);
 
 // remove duplicates
-$parser->setOptions(['deduplicate_declarations' => true]);
+$parser->setOptions(['allow_duplicate_declarations' => true]);
 
 // preserve multiple declarations for color 
-$parser->setOptions(['deduplicate_declarations' => 'color']);
+$parser->setOptions(['allow_duplicate_declarations' => 'color']);
 
 // preserve multiple declarations for color and background-color
-$parser->setOptions(['deduplicate_declarations' => ['color', 'background-color']);
+$parser->setOptions(['allow_duplicate_declarations' => ['color', 'background-color']);
 
 ```
 

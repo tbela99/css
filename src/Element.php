@@ -7,13 +7,16 @@ use InvalidArgumentException;
 use JsonSerializable;
 use ArrayAccess;
 use stdClass;
+use TBela\CSS\Element\Declaration;
 use function get_class;
 use function is_callable;
 use function is_null;
 use function strtolower;
 use function str_ireplace;
 
-abstract class Element implements JsonSerializable, ArrayAccess   {
+abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   {
+
+    use ArrayTrait;
 
     protected $ast = null;
     /**
@@ -32,7 +35,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
         if (is_null($ast)) {
 
             $ast = new stdClass;
-            $ast->type = strtolower(str_ireplace(__NAMESPACE__.'\Element', '', get_class($this)));
+            $ast->type = strtolower(str_ireplace(Element::class.'\\', '', get_class($this)));
         }
 
         $this->ast = $ast;
@@ -64,7 +67,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
 
         if (isset($ast->type)) {
 
-            $type = str_ireplace(__NAMESPACE__, '', $ast->type);
+            $type = $ast->type;
         }
 
         if ($type === '') {
@@ -72,7 +75,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
             throw new InvalidArgumentException('Invalid ast provided');
         }
 
-        $className = __NAMESPACE__.'\Element'.$ast->type;
+        $className = Element::class.'\\'.ucfirst($ast->type);
         
 		return new $className($ast);
     }
@@ -165,31 +168,6 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
         return $this->ast;
     }
 
-    public function offsetSet($offset, $value) {
-
-        if (is_callable([$this, 'set'.$offset])) {
-
-            call_user_func([$this, 'set'.$offset], $value);
-        }
-    }
-
-    public function offsetExists($offset) {
-        return is_callable([$this, 'get'.$offset]) || is_callable([$this, 'set'.$offset]);
-    }
-
-    public function offsetUnset($offset) {
-
-        if (is_callable([$this, 'set'.$offset])) {
-
-            call_user_func([$this, 'set'.$offset], null);
-        }
-    }
-
-    public function offsetGet($offset) {
-
-        return is_callable([$this, 'get'.$offset]) ? call_user_func([$this, 'get'.$offset]): null;
-    }
-
     /**
      * @return string
      * @throws Exception
@@ -198,7 +176,7 @@ abstract class Element implements JsonSerializable, ArrayAccess   {
     {
         try {
 
-            return (new Identity())->render($this, null, true);
+            return (new Renderer())->render($this, null, true);
         }
 
         catch (Exception $ex) {

@@ -1,39 +1,39 @@
 @-moz-document https://www.example.com/ {
  h1 {
-   color: #3a3;
+   color: #3a3
  }
  h2 {
-   color: #f0f8ff;
+   color: #f0f
  }
  h1 {
-   color: #fff;
+   color: #fff
  }
 }
 body {
- border: 0px;
- transition: all 200ms;
+ border: 0;
+ transition: all 200ms
 }
 @viewport {
   min-width: 640px;
   max-width: 800px;
   zoom: 0.75;
   min-zoom: 0.5;
-  max-zoom: 0.9;
+  max-zoom: 0.9
 }
 .short {
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #000;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent
 }
 .element {
  color: #000;
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #000;
- margin: 5px 3px 5px 3px;
- padding: 5px 3px 5px;
- border-radius: 5px 5px;
- -moz-border-radius: 15px 15px;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent;
+ margin: 5px 3px;
+ padding: 5px 3px;
+ border-radius: 5px;
+ -moz-border-radius: 15px
 }
 h1 {
- color: #f0f8ff;
+ color: #f0f
 }
 a {
- text-decoration: underline;
+ text-decoration: underline
 }

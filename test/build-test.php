@@ -25,13 +25,13 @@ use \TBela\CSS\Compiler;
      if (basename($file) == 'color.css') {
 
          $parser->setOptions([
-             'deduplicate_declarations' => ['color']
+             'allow_duplicate_declarations' => ['color']
          ]);
      }
 
      else {
 
-         $parser->setOptions(['deduplicate_declarations' => true]);
+         $parser->setOptions(['allow_duplicate_declarations' => true]);
      }
 
      $compiler->setData($parser->parse());

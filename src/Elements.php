@@ -4,6 +4,8 @@ namespace TBela\CSS;
 
 use ArrayIterator;
 use InvalidArgumentException;
+use TBela\CSS\Element\Comment;
+use TBela\CSS\Element\Stylesheet;
 use function in_array;
 
 class Elements extends Element implements RuleList  {
@@ -29,7 +31,7 @@ class Elements extends Element implements RuleList  {
      */
     public function addComment ($value) {
 
-        $comment = new ElementComment();
+        $comment = new Comment();
         $comment['value'] = '/* '.$value.' */';
 
         return $this->append($comment);
@@ -57,7 +59,10 @@ class Elements extends Element implements RuleList  {
 
             foreach ($this->ast->elements as $element) {
 
-                $element->setParent(null);
+                if(!is_null($element->parent)) {
+
+                    $element->parent->remove($element);
+                }
             }
 
             $this->ast->elements = [];
@@ -105,16 +110,21 @@ class Elements extends Element implements RuleList  {
             throw new InvalidArgumentException();
         }
 
-        if ($this != $element['parent']) {
+    //    if ($this != $element['parent']) {
 
-            if ($element instanceof ElementStylesheet) {
+            if ($element instanceof Stylesheet) {
 
                 foreach ($element->getChildren() as $child) {
 
-                    if (!empty($child->parent)) {
+                    if (!$this->support($child)) {
+
+                        throw new InvalidArgumentException();
+                    }
+
+                 //   if (!empty($child->parent)) {
 
                         $child->parent->remove($child);
-                    }
+                //    }
 
                     $this->append($child);
                 }
@@ -122,6 +132,7 @@ class Elements extends Element implements RuleList  {
 
             else {
 
+                echo (new \Exception())->getTraceAsString()."\n\n";
                 if (!in_array($element, $this->ast->elements)) {
 
                     if (!empty($element->parent)) {
@@ -133,7 +144,7 @@ class Elements extends Element implements RuleList  {
                     $element->parent = $this;
                 }
             }
-        }
+    //    }
 
         return $element;
     }

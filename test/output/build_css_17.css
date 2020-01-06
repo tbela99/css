@@ -4,16 +4,16 @@ b,
 strong,
 .new {
  max-width: 100%;
- border-width: 0px;
- color: green;
+ border-width: 0;
+ color: green
 }
 @media all {
  div {
    background-color: #fff;
-   color: #000;
+   color: #000
  }
  ul {
-   margin: 0px;
-   padding: 5px 3px;
+   margin: 0;
+   padding: 5px 3px 3px
  }
 }

@@ -299,8 +299,8 @@ div {
 - source: CSS source file. It is only used in the exception error message.
 - silent: throw an exception if false or silently return an error. default to false
 - flatten_import: process @import directive and import the content into the css. default to false.
-- deduplicate_rules: merge duplicate rules
-- deduplicate_declarations: remove duplicate declarations
+- allow_duplicate_rules: merge duplicate rules
+- allow_duplicate_declarations: remove duplicate declarations
 
 ## Compiler options
 

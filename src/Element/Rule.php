@@ -1,10 +1,14 @@
 <?php 
 
-namespace TBela\CSS;
+namespace TBela\CSS\Element;
 
 use Exception;
+use TBela\CSS\Element;
+use TBela\CSS\Elements;
+use TBela\CSS\Element\Comment;
+use TBela\CSS\Element\Declaration;
 
-class ElementRule extends Elements {
+class Rule extends Elements {
 
     /**
      * @return array
@@ -69,12 +73,12 @@ class ElementRule extends Elements {
     /**
      * @param string $name
      * @param string $value
-     * @return ElementDeclaration
+     * @return Declaration
      * @throws Exception
      */
     public function addDeclaration ($name, $value) {
 
-        $declaration = new ElementDeclaration();
+        $declaration = new Declaration();
 
         $declaration['name'] = $name;
         $declaration['value'] = $value;
@@ -84,11 +88,11 @@ class ElementRule extends Elements {
 
     /**
      * Merge the specified declaration
-     * @param ElementRule $rule
-     * @return ElementRule $this
+     * @param Rule $rule
+     * @return Rule $this
      * @throws Exception
      */
-    public function merge (ElementRule $rule) {
+    public function merge (Rule $rule) {
 
         $this->addSelector($rule['selector']);
 
@@ -105,11 +109,11 @@ class ElementRule extends Elements {
      */
     public function support (Element $child) {
 
-        if ($child instanceof  ElementComment) {
+        if ($child instanceof Comment) {
 
             return true;
         }
 
-        return $child instanceof ElementDeclaration;
+        return $child instanceof Declaration;
     }
 }

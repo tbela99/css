@@ -18,7 +18,7 @@ interface RuleList extends IteratorAggregate {
 
     /**
      * @param string $value
-     * @return ElementComment
+     * @return Comment
      */
     public function addComment ($value);
 
