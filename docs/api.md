@@ -7,7 +7,7 @@ Every Element instance implement a \_\_toString() method which means they are au
 However you can control how the element is rendered by using a _Renderer_. 
 The renderer has a _setOptions_ method that accepts the same arguments as [\TBela\CSS\Compiler::setOptions](./compiler.md#compiler-options)
 Two renderer classes are provided.
-The pretty print rendering is done using the class _\TBela\CSS\Renderer_ while minified printing is done using _\TBela\CSS\Compress_
+The pretty print rendering is done using the class _\TBela\CSS\Renderer_ 
 
 ### Pretty printing CSS
 
