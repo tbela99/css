@@ -59,7 +59,7 @@ $config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius
         ]
     ]]));
 
-file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config, JSON_PRETTY_PRINT));
+file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config));
 
 function addAlias($property)
 {
