@@ -43,7 +43,7 @@ $compiler = new Compiler();
 $compiler->load('template.css');
 // or
 
-$stylesheet = $parser->parse();
+$stylesheet = $compiler->getData();
 ```
 
 ## Manipulating the AST
@@ -75,6 +75,14 @@ $children = $element->getChildren();
 $name = $element['name'];
 // or
 $name = $element->getName();
+
+$element['value'] = 'bold';
+// or
+$element->setValue('bold');
+
+$element['name'] = 'src';
+// or
+$element->setName('src');
 ```
 
 
