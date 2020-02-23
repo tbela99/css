@@ -2,15 +2,15 @@ a,
 b,
 strong {
  max-width: 100%;
- border-width: 0px;
+ border-width: 0
 }
 @media all {
  div {
    background-color: #fff;
-   color: #000;
+   color: #000
  }
  .new {
-   color: green;
+   color: green
  }
 }
 @namespace svg https://google.com/;

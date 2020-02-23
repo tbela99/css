@@ -1,0 +1,5 @@
+p { color: red; }
+p {
+	/* hex */
+	color: #f00 /* this is a comment */;
+}

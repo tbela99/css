@@ -3,6 +3,6 @@ b,
 strong,
 .new {
  max-width: 100%;
- border-width: 0px;
- color: green;
+ border-width: 0;
+ color: green
 }

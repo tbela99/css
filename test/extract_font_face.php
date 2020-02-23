@@ -5,29 +5,25 @@ set_time_limit(1);
 
 require 'autoload.php';
 
-use \TBela\CSS\Parser;
-use \TBela\CSS\Element;
-use \TBela\CSS\ElementStylesheet;
-use \TBela\CSS\ElementAtRule;
-use \TBela\CSS\Identity;
+use TBela\CSS\Element;
+use TBela\CSS\Element\AtRule;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+use TBela\CSS\Element\Stylesheet;
 
-$renderer = new Identity();
+$renderer = new Renderer();
 $parser = new Parser('./css/manipulate.css', [
     'silent' => false,
     'flatten_import' => true
 ]);
 
-$stylesheet = new ElementStylesheet();
+$stylesheet = new Stylesheet();
 
 function getNodes ($data, $stylesheet) {
 
-    $stack = [$data];
+        foreach ($data as $node) {
 
-    while ($current = array_shift($stack)) {
-
-        foreach ($current as $node) {
-
-            if ($node instanceof ElementAtRule) {
+            if ($node instanceof AtRule) {
 
                 switch ($node->getName()) {
 
@@ -43,7 +39,6 @@ function getNodes ($data, $stylesheet) {
                 }
             }
         }
-    }
 }
 
 getNodes ($parser->parse(), $stylesheet);

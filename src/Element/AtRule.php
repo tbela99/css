@@ -1,10 +1,15 @@
 <?php 
 
-namespace TBela\CSS;
+namespace TBela\CSS\Element;
 
 use Exception;
+use TBela\CSS\Element;
+use TBela\CSS\Element\Comment;
+use TBela\CSS\Element\Declaration;
+use TBela\CSS\ElementTrait;
+use TBela\CSS\Elements\Rules;
 
-class ElementAtRule extends ElementsRule {
+class AtRule extends Rules {
 
     /**
      * Type of @at-rule that contains other rules like @media
@@ -41,14 +46,14 @@ class ElementAtRule extends ElementsRule {
             return false;
         }
 
-        if ($child instanceof  ElementComment) {
+        if ($child instanceof Comment) {
 
             return true;
         }
 
         if (!empty($this->ast->hasDeclarations)) {
 
-            if (!($child instanceof ElementDeclaration)) {
+            if (!($child instanceof Declaration)) {
 
                 return false;
             }
@@ -56,7 +61,7 @@ class ElementAtRule extends ElementsRule {
 
         else {
 
-            if ($child instanceof ElementDeclaration) {
+            if ($child instanceof Declaration) {
 
                 return false;
             }
@@ -68,17 +73,16 @@ class ElementAtRule extends ElementsRule {
     /**
      * @param string $name
      * @param string $value
-     * @return ElementDeclaration
+     * @return Declaration
      * @throws Exception
      */
     public function addDeclaration ($name, $value) {
 
-        $declaration = new ElementDeclaration();
+        $declaration = new Declaration();
 
         $declaration['name'] = $name;
         $declaration['value'] = $value;
 
         return $this->append($declaration);
     }
-
 }

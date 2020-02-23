@@ -3,9 +3,9 @@
 
 require 'autoload.php';
 
-use \TBela\CSS\ElementStylesheet;
+use \TBela\CSS\Element\Stylesheet;
 $step = 0;
-$stylesheet = new ElementStylesheet();
+$stylesheet = new Stylesheet();
 
 $rule = $stylesheet->addRule('div');
 

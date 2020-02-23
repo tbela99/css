@@ -18,7 +18,8 @@ class Compiler {
         'rgba_hex' => false,
         'compress' => false,
         'remove_comments' => false,
-        'remove_empty_nodes' => true
+        'remove_empty_nodes' => true,
+        'allow_duplicate_declarations' => true
     ];
 
     /**
@@ -65,7 +66,7 @@ class Compiler {
      */
 	public function setData ($ast) {
 
-		$this->data = Element::getInstance($ast, $this->options);
+		$this->data = Element::getInstance($ast);
 		return $this;
 	}
 
@@ -85,9 +86,7 @@ class Compiler {
 
 		if (isset($this->data)) {
 
-		    $renderer = !empty($this->options['compress']) ? new Compress($this->options) : new Identity($this->options);
-
-			return $renderer->render($this->data);
+			return (new Renderer($this->options))->render($this->data);
 		}
 
 		return '';

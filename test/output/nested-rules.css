@@ -2,16 +2,16 @@
   /* On active la caractéristique nice-style 
        sur Font One */
  @styleset {
-   nice-style: 12;
+   nice-style: 12
  }
 }
 body {
- border: 0px;
+ border: 0
 }
 .short {
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #ffdead;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #ffd
 }
 .element {
  color: #000;
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #c71585;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #c71
 }

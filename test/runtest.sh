@@ -6,4 +6,8 @@ DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR"
 #
 #
-../phpunit.phar --bootstrap autoload.php src/Render.php
+#../phpunit.phar --bootstrap autoload.php src/*.php
+# legacy test display
+# for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php $file; done
+# pretty print test
+for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php --testdox $file; done

@@ -3,15 +3,20 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
-use TBela\CSS\ElementAtRule;
-use TBela\CSS\ElementStylesheet;
+use TBela\CSS\Element\AtRule;
+use TBela\CSS\Element\Stylesheet;
 use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
-use TBela\CSS\Identity;
+
+// because git changes \n to \r\n at some point, this causes test failure
+function get_content($file) {
+
+    return str_replace("\r\n", "\n", file_get_contents($file));
+}
 
 
-final class RenderTest extends TestCase
+final class Render extends TestCase
 {
     /**
      * @param Parser $parser
@@ -55,9 +60,10 @@ final class RenderTest extends TestCase
      * @param Element $data
      * @param Renderer $renderer
      * @param string $expected
-     * @dataProvider extractAtRule
+     * @dataProvider extractAtRuleProvider
+     * @throws Exception
      */
-    public function testExtractAtRule(Element $data, Renderer $renderer, $expected): void
+    public function testExtractAtRule(Element $data, Renderer $renderer, $expected)
     {
 
         $fontFace = [];
@@ -67,7 +73,7 @@ final class RenderTest extends TestCase
 
             foreach ($current as $node) {
 
-                if ($node instanceof ElementAtRule) {
+                if ($node instanceof AtRule) {
 
                     switch ($node->getName()) {
 
@@ -88,7 +94,7 @@ final class RenderTest extends TestCase
         }
 
         // deduplicate ast
-        $stylesheet = new ElementStylesheet();
+        $stylesheet = new Stylesheet();
 
         foreach ($fontFace as $font) {
 
@@ -101,18 +107,19 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents($expected)
+            get_content($expected)
         );
     }
 
-    /**
+    /*
      * @param Element $data
      * @param Renderer $renderer
      * @param string $expected
-     * @dataProvider extractDeclarationProvider
+     * @dataProvider extractDeclarationsProvider
      * @throws Exception
      */
-    public function testExtractDeclaration(Element $data, Renderer $renderer, $expected): void
+/*
+    public function testExtractDeclarations(Element $data, Renderer $renderer, $expected)
     {
 
         $fontFaceSrc = [];
@@ -122,7 +129,7 @@ final class RenderTest extends TestCase
 
             foreach ($current as $node) {
 
-                if ($node instanceof ElementAtRule) {
+                if ($node instanceof AtRule) {
 
                     switch ($node->getName()) {
 
@@ -149,7 +156,7 @@ final class RenderTest extends TestCase
         }
 
         // deduplicate ast
-        $stylesheet = new ElementStylesheet();
+        $stylesheet = new Stylesheet();
 
         foreach ($fontFaceSrc as $font) {
 
@@ -162,14 +169,14 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents($expected)
+            get_content($expected)
         );
     }
-
-    public function testBuildCSS() {
+*/
+    public function testBuildCss() {
 
         $step = 0;
-        $stylesheet = new ElementStylesheet();
+        $stylesheet = new Stylesheet();
 
         $rule = $stylesheet->addRule('div');
 
@@ -178,7 +185,7 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-           file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+           get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $media = $stylesheet->addAtRule('media', 'print');
@@ -186,7 +193,7 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule = $stylesheet->addRule('div');
@@ -196,42 +203,42 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $media->append($rule);
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $stylesheet->insert($rule, 0);
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule->addSelector('.name, .general');
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule->removeSelector('div, .general');
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule['selector'] = 'a,b,strong';
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $media['value'] = 'all';
@@ -243,38 +250,38 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $stylesheet->insert($rule2, 1);
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule->merge($rule2);
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule2['parent']->remove($rule2);
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $this->assertEquals(
             (string) $rule2,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $this->assertEquals(
             (string) $rule,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
 
         $rule3 = $media->addRule('ul');
@@ -286,7 +293,7 @@ final class RenderTest extends TestCase
 
             $this->assertEquals(
                 (string) $child,
-                file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+                get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
             );
         }
 
@@ -294,7 +301,7 @@ final class RenderTest extends TestCase
 
         $this->assertEquals(
             (string) $stylesheet,
-            file_get_contents(__DIR__.'/../output/build_css_'.(++$step).'.css')
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
         );
     }
 
@@ -310,13 +317,13 @@ final class RenderTest extends TestCase
             if (basename($file) == 'color.css') {
 
                 $parser->setOptions([
-                    'deduplicate_declarations' => ['color']
+                    'allow_duplicate_declarations' => ['color']
                 ]);
             }
 
             else {
 
-                $parser->setOptions(['deduplicate_declarations' => true]);
+                $parser->setOptions(['allow_duplicate_declarations' => true]);
             }
 
             $data[] = [
@@ -324,7 +331,7 @@ final class RenderTest extends TestCase
                 $parser,
                 (new Compiler())->setOptions(['compress' => false, 'rgba_hex' => false]),
                 $file,
-                file_get_contents(dirname(dirname($file)).'/output/'.basename($file))
+                get_content(dirname(dirname($file)).'/output/'.basename($file))
             ];
         }
 
@@ -343,13 +350,13 @@ final class RenderTest extends TestCase
             if (basename($file) == 'color.css') {
 
                 $parser->setOptions([
-                    'deduplicate_declarations' => ['color']
+                    'allow_duplicate_declarations' => ['color']
                 ]);
             }
 
             else {
 
-                $parser->setOptions(['deduplicate_declarations' => true]);
+                $parser->setOptions(['allow_duplicate_declarations' => true]);
             }
 
             $data[] = [
@@ -357,26 +364,19 @@ final class RenderTest extends TestCase
                $parser,
                 (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
                 $file,
-                file_get_contents(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
+                get_content(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
             ];
         }
 
         return $data;
     }
 
-    public function extractAtRule () {
-
-        $parser = new Parser(__DIR__.'/../css/manipulate.css', [
-            'silent' => false,
-            'flatten_import' => true
-        ]);
-
-        return [
-            [$parser->parse(), new Identity(), __DIR__.'/../output/extract_font_face.css']
-        ];
-    }
-
-    public function extractDeclarationProvider () {
+    /**
+     * @return array
+     * @throws Exception
+     */
+    /*
+    public function extractDeclarationsProvider () {
 
         $parser = new Parser(dirname(__DIR__).'/css/manipulate.css', [
             'silent' => false,
@@ -384,7 +384,21 @@ final class RenderTest extends TestCase
         ]);
 
         return [
-            [$parser->parse(), new Identity(), dirname(__DIR__) .'/output/extract_font_face_src.css']
+            [$parser->parse(), new Renderer(), __DIR__ .'/../output/extract_font_face_src.css']
+        ];
+    }
+    */
+/*
+*/
+    public function extractAtRuleProvider () {
+
+        $parser = new Parser(__DIR__.'/../css/manipulate.css', [
+            'silent' => false,
+            'flatten_import' => true
+        ]);
+
+        return [
+            [$parser->parse(), new Renderer(), __DIR__.'/../output/extract_font_face.css']
         ];
     }
 }

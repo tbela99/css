@@ -1,6 +1,7 @@
 <?php
 
 namespace TBela\CSS;
+use TBela\CSS\Value\Number as ValueNumber;
 
 /**
  * Class Color
@@ -313,6 +314,10 @@ class Color {
         '#00000000' => 'transparent'
     ];
 
+    const COLOR_HEX = '\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})'; // /i
+    const COLOR_RGBA = 'rgb(a?)\(\s*(\d*(\.?\d+)?)(%?)\s*([,\s])\s*(\d*(\.?\d+)?)\\4\s*\\5\s*(\d*(\.?\d+)?)\\4\s*([,/]\s*(\d*(\.?\d+)?)(%?))?\s*\)'; // /s
+    const COLOR_HSLA = 'hsl(a?)\(\s*(\d*(\.?\d+)?)([a-z]*)\s*([,\s])\s*(\d*(\.?\d+)?)%\s*\\5\s*(\d*(\.?\d+)?)%\s*([,/]\s*(\d*(\.?\d+)?)(%?))?\s*\)'; // /s
+
     public static function parseNamedColor ($str, $rgba_hex) {
 
         return preg_replace_callback('#\w+#', function ($matches) use ($rgba_hex) {
@@ -347,7 +352,7 @@ class Color {
 
     public static function parseHexColor ($str, $rgba_hex) {
 
-        return preg_replace_callback('#(\#[a-f0-9]+)#is', function ($matches) use ($rgba_hex) {
+        return preg_replace_callback('#(?=\W?)'.static::COLOR_HEX.'(?=\W|$)#i', function ($matches) use ($rgba_hex) {
 
             $color = static::expand($matches[0]);
             $short = static::shorten($color);
@@ -373,10 +378,11 @@ class Color {
 
     public static function parseRGBColor ($str, $rgba_hex) {
 
-        return preg_replace_callback('#rgb(a?)\(\s*(\d*(\.\d+)?)(%?)\s*([,\s])\s*(\d*(\.\d+)?)\\4\s*\\5\s*(\d*(\.\d+)?)\\4\s*([,/]\s*(\d*(\.\d+)?)(%?))?\s*\)#s', function ($matches) use ($rgba_hex) {
+        return preg_replace_callback('#(?=\W?)'.static::COLOR_RGBA.'(?=\W|$)#s', function ($matches) use ($rgba_hex) {
 
             $hex = $matches[0];
 
+            /*
             if ($matches[4] == '%') {
 
                 $matches[2] = round($matches[2] * 255 / 100);
@@ -388,15 +394,16 @@ class Color {
 
                 $matches[11] /= 100;
             }
+            */
 
             if (!empty($matches[10])) {
 
-                $hex = static::rgba2hex($matches[2], $matches[6], $matches[8], $matches[11]);
+                $hex = static::rgba2hex($matches[2].$matches[4], $matches[6].$matches[4], $matches[8].$matches[4], $matches[11].$matches[13]);
             }
 
             else {
 
-                $hex = static::rgba2hex($matches[2], $matches[6], $matches[8]);
+                $hex = static::rgba2hex($matches[2].$matches[4], $matches[6].$matches[4], $matches[8].$matches[4]);
             }
 
             if (!$rgba_hex) {
@@ -416,10 +423,11 @@ class Color {
 
     public static function parseHSLColor($value, $rgba_hex) {
 
-        return preg_replace_callback('#hsl(a?)\(\s*(\d*(\.\d+)?)([a-z]*)\s*([,\s])\s*(\d*(\.\d+)?)%\s*\\5\s*(\d*(\.\d+)?)%\s*([,/]\s*(\d*(\.\d+)?)(%?))?\s*\)#s', function ($matches) use ($rgba_hex) {
+        return preg_replace_callback('#(?=\W?)'.static::COLOR_HSLA.'(?=\W|$)#s', function ($matches) use ($rgba_hex) {
 
             $hex = $matches[0];
 
+            /*
             $matches[6] /= 100;
             $matches[8] /= 100;
 
@@ -440,21 +448,24 @@ class Color {
                     // do nothing
                     break;
             }
+            */
 
 
             if (!empty($matches[10])) {
 
+                /*
                 if ($matches[13] == '%') {
 
                     $matches[11] /= 100;
                 }
+                */
 
-                $hex = static::hsl2hex($matches[2], $matches[6], $matches[8], $matches[11]);
+                $hex = static::hsl2hex($matches[2].$matches[4], $matches[6], $matches[8], $matches[11].$matches[13]);
             }
 
             else {
 
-                $hex = static::hsl2hex($matches[2], $matches[6], $matches[8]);
+                $hex = static::hsl2hex($matches[2].$matches[4], $matches[6], $matches[8]);
             }
 
             if (!$rgba_hex) {
@@ -489,7 +500,7 @@ class Color {
 
             case 5;
 
-                return 'rgba('.hexdec($hex[1].$hex[1]).','. hexdec($hex[2].$hex[2]).','. hexdec($hex[3].$hex[3]).','. round(hexdec($hex[4].$hex[4]) / 255, 2).')';
+                return 'rgba('.hexdec($hex[1].$hex[1]).','. hexdec($hex[2].$hex[2]).','. hexdec($hex[3].$hex[3]).','. ValueNumber::compress(round(hexdec($hex[4].$hex[4]) / 255, 2)).')';
 
             case 7;
 
@@ -497,7 +508,7 @@ class Color {
 
             case 9;
 
-                return 'rgba('.hexdec($hex[1].$hex[2]).','. hexdec($hex[3].$hex[4]).','. hexdec($hex[5].$hex[6]).','. round(hexdec($hex[7].$hex[8]) / 255, 2).')';
+                return 'rgba('.hexdec($hex[1].$hex[2]).','. hexdec($hex[3].$hex[4]).','. hexdec($hex[5].$hex[6]).','. ValueNumber::compress(round(hexdec($hex[7].$hex[8]) / 255, 2)).')';
         }
 
         return $hex;
@@ -537,16 +548,16 @@ class Color {
             $h /= 6;
         }
 
-        $h = round($h * 360);
-        $s = round($s * 100);
-        $l = round($l * 100);
+        $h = ValueNumber::compress(round($h * 360));
+        $s = ValueNumber::compress(round($s * 100));
+        $l = ValueNumber::compress(round($l * 100));
 
         if (is_null($a) || $a === '' || $a == 1) {
 
-            return 'hsl(' . $h . ', ' . $s . '%, ' . $l . '%)';
+            return 'hsl(' . $h . ',' . $s . '%,' . $l . '%)';
         }
 
-        return 'hsla(' . $h . ', ' . $s . '%, ' . $l . '%, ' . $a . ')';
+        return 'hsla(' . $h . ',' . $s . '%,' . $l . '%,' . ValueNumber::compress($a) . ')';
     }
 
     public static function hex2hsla($hex) {
@@ -570,6 +581,33 @@ class Color {
 
     public static function rgba2hex($r, $g, $b, $a = null) {
 
+        $r = (string) $r;
+        $g = (string) $g;
+        $b = (string) $b;
+
+        if (substr($r, -1) == '%') {
+
+            $r = floatval($r) * 255 / 100;
+        }
+
+        if (substr($g, -1) == '%') {
+
+            $g = floatval($g) * 255 / 100;
+        }
+
+        if (substr($b, -1) == '%') {
+
+            $b = floatval($b) * 255 / 100;
+        }
+
+        if (!is_null($a) && $a !== '') {
+
+            if ($a[strlen($a) - 1] == '%') {
+
+                $a = floatval($a) / 100;
+            }
+        }
+
         $color = sprintf(is_null($a) || $a == 1 || $a === '' ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $r, $g, $b, 255 * $a);
 
         $short = static::shorten($color);
@@ -582,12 +620,43 @@ class Color {
         return $short;
     }
 
-    public static function hsl2hex($h, $s, $l, $a = null){
+    public static function hsl2hex($h, $s, $l, $a = null) {
+
+        switch (preg_replace('#^(\d*(\.?\d+)?)+#', '', $h)) {
+
+            case 'rad':
+
+                $h = floatval($h) / (2 * pi());
+                break;
+
+            case '':
+            case 'deg':
+
+                $h = floatval($h) / 360;
+                break;
+
+            case 'turn':
+                // do nothing
+                $h = floatval($h);
+                break;
+        }
+
+        $s = floatval($s) / 100;
+        $l = floatval($l) / 100;
+
+        if (!is_null($a) && $a !== '') {
+
+            if (substr($a, -1) == '%') {
+
+                $a = floatval($a) / 100;
+            }
+        }
 
         $r = $l;
         $g = $l;
         $b = $l;
         $v = ($l <= 0.5) ? ($l * (1.0 + $s)) : ($l + $s - $l * $s);
+
         if ($v > 0){
 
             $m = $l + $l - $v;
@@ -693,7 +762,7 @@ class Color {
 
             $color = '#'.$matches[1].$matches[2].$matches[3];
 
-            if (isset($matches[4]) && $matches[4] != 'f' && $color != '#000') {
+            if (isset($matches[4]) && $matches[4] != 'f') {
 
                 $color .= $matches[4];
             }

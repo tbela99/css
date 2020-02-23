@@ -20,12 +20,12 @@ class Filter {
     /**
      * parse value
      * @param string $value
-     * @param Element $element
+     * @param Rendererable $element
      * @return string
      */
-    public function value ($value, Element $element) {
+    public function value ($value, Rendererable $element) {
 
-        $type = $element['type'];
+        $type = (string) $element['type'];
 
         if ($type == 'atrule') {
 
@@ -41,9 +41,11 @@ class Filter {
             // remove quotes
             $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', 'url($2)', $value);
 
-            if ($type == 'declaration' && $this->renderer->getOptions('compress')) {
+            if (in_array($type, ['declaration', 'property']) && $this->renderer->getOptions('compress')) {
 
-                switch ($element['name']) {
+                $name = (string) $element['name'];
+
+                switch ($name) {
 
                     case 'border':
                     case 'border-top':
@@ -82,8 +84,8 @@ class Filter {
      */
     public function whitespace($value) {
 
-        $value = preg_replace('#\s*([\[\]\(\),])\s*#s', '$1', $value);
-        $value = preg_replace('#\s*([\),])(?![;,])#s', '$1 ', $value);
+        $value = preg_replace('#\s*([\[\](),])\s*#s', '$1', $value);
+        $value = preg_replace('#\s*([),])(?![;,])#s', '$1 ', $value);
 
         // separate values with a single space character?
         return preg_replace('#\s+#sm', ' ', $value);
@@ -134,7 +136,7 @@ class Filter {
             return $value;
         }
 
-        return preg_replace_callback('#(^|[-+\(\s])([0-9]*\.[0-9]+|[0-9]+)([^\d\s\);,\}]*|\s)#s', function ($matches) {
+        return preg_replace_callback('#(^|[-+(\s])([0-9]*\.?[0-9]+)([^\d\s);,}]*|\s)#s', function ($matches) {
 
             if ($matches[3] != '' && !preg_match('#^[a-zA-Z]+$#', $matches[3])) {
 

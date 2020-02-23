@@ -2,11 +2,14 @@
 
 namespace TBela\CSS;
 
+use Exception;
+
 trait ElementTrait  {
 
     /**
      * @param bool $getVendor
      * @return string
+     * @throws Exception
      */
     public function getName($getVendor = true) {
 
@@ -19,7 +22,7 @@ trait ElementTrait  {
 
         if (!isset($this->ast->name)) {
 
-            echo (new \Exception())->getTraceAsString();
+            throw new Exception("The name cannot be empty");
         }
 
         return $this->ast->name;

@@ -2,11 +2,11 @@ a,
 b,
 strong {
  max-width: 100%;
- border-width: 0px;
+ border-width: 0
 }
 @media print {
  div {
    background-color: #fff;
-   color: #000;
+   color: #000
  }
 }

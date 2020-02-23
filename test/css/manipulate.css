@@ -18,8 +18,7 @@ font-weight: bold;
 @media print {
 	@font-face {
   font-family: MaHelvetica;
-  src: local( "Helvetica Neue Bold"),
-       local( "HelveticaNeue-Bold" ),
+  src: local( "Helvetica Neue Bold"), local( "HelveticaNeue-Bold" ),
        url(MgOpenModernaBold.ttf);
   font-weight: bold;
 }

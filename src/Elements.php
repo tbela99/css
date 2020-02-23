@@ -3,7 +3,10 @@
 namespace TBela\CSS;
 
 use ArrayIterator;
+use Exception;
 use InvalidArgumentException;
+use TBela\CSS\Element\Comment;
+use TBela\CSS\Element\Stylesheet;
 use function in_array;
 
 class Elements extends Element implements RuleList  {
@@ -26,10 +29,11 @@ class Elements extends Element implements RuleList  {
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function addComment ($value) {
 
-        $comment = new ElementComment();
+        $comment = new Comment();
         $comment['value'] = '/* '.$value.' */';
 
         return $this->append($comment);
@@ -57,7 +61,10 @@ class Elements extends Element implements RuleList  {
 
             foreach ($this->ast->elements as $element) {
 
-                $element->setParent(null);
+                if(!is_null($element->parent)) {
+
+                    $element->parent->remove($element);
+                }
             }
 
             $this->ast->elements = [];
@@ -84,7 +91,7 @@ class Elements extends Element implements RuleList  {
         // should not append a parent as a child
         while ($element) {
 
-            if ($element == $child) {
+            if ($element === $child) {
 
                 return false;
             }
@@ -105,16 +112,21 @@ class Elements extends Element implements RuleList  {
             throw new InvalidArgumentException();
         }
 
-        if ($this != $element['parent']) {
+    //    if ($this != $element['parent']) {
 
-            if ($element instanceof ElementStylesheet) {
+            if ($element instanceof Stylesheet) {
 
                 foreach ($element->getChildren() as $child) {
 
-                    if (!empty($child->parent)) {
+                    if (!$this->support($child)) {
+
+                        throw new InvalidArgumentException();
+                    }
+
+                 //   if (!empty($child->parent)) {
 
                         $child->parent->remove($child);
-                    }
+                //    }
 
                     $this->append($child);
                 }
@@ -122,7 +134,7 @@ class Elements extends Element implements RuleList  {
 
             else {
 
-                if (!in_array($element, $this->ast->elements)) {
+                if (!in_array($element, $this->ast->elements, true)) {
 
                     if (!empty($element->parent)) {
 
@@ -133,7 +145,7 @@ class Elements extends Element implements RuleList  {
                     $element->parent = $this;
                 }
             }
-        }
+    //    }
 
         return $element;
     }
@@ -172,7 +184,7 @@ class Elements extends Element implements RuleList  {
      */
     public function remove (Element $element) {
 
-       if ($element->getParent() == $this) {
+       if ($element->getParent() === $this) {
 
         $index = array_search ($element, $this->ast->elements);
 

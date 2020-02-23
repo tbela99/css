@@ -1,28 +1,32 @@
 <?php 
 
-namespace TBela\CSS;
+namespace TBela\CSS\Elements;
+
 use Exception;
 use InvalidArgumentException;
+use TBela\CSS\Elements;
+use TBela\CSS\Element\AtRule;
+use TBela\CSS\Element\Rule;
 
 /**
  * Rules container
  * @package TBela\CSS
  */
-class ElementsRule extends Elements {
+class Rules extends Elements {
 
     /**
      * @param string $name
      * @param string|null $value
      * @param int $type the type of the node:
-     * - ElementRule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
-     * - ElementRule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
-     * - ElementRule::ELEMENT_AT_NO_LIST the element does not support children
-     * @return ElementAtRule
+     * - Rule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
+     * - Rule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
+     * - Rule::ELEMENT_AT_NO_LIST the element does not support children
+     * @return AtRule
      * @throws Exception
      */
     public function addAtRule($name, $value = null, $type = 0) {
 
-        $rule = new ElementAtRule();
+        $rule = new AtRule();
 
         if ($type < 0 || $type > 2) {
 
@@ -31,15 +35,15 @@ class ElementsRule extends Elements {
 
         switch ($type) {
 
-            case ElementAtRule::ELEMENT_AT_RULE_LIST:
+            case AtRule::ELEMENT_AT_RULE_LIST:
 
                 break;
-            case ElementAtRule::ELEMENT_AT_DECLARATIONS_LIST:
+            case AtRule::ELEMENT_AT_DECLARATIONS_LIST:
 
                 $rule->ast->hasDeclarations = true;
                 break;
 
-            case ElementAtRule::ELEMENT_AT_NO_LIST:
+            case AtRule::ELEMENT_AT_NO_LIST:
 
                 $rule->ast->isLeaf = true;
                 break;
@@ -53,12 +57,12 @@ class ElementsRule extends Elements {
 
     /**
      * @param $selectors
-     * @return ElementRule
+     * @return Rule
      * @throws Exception
      */
     public function addRule ($selectors) {
 
-        $rule = new ElementRule();
+        $rule = new Rule();
         $rule['selector'] = $selectors;
 
         return $this->append($rule);

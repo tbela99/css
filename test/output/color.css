@@ -1,26 +1,21 @@
-.img-polaroid {
- padding: 4px;
- background-color: #000;
- border: 1px solid #000;
- -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
- -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
- box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
 /* 50% translucent */
 /* These examples all specify the same color: a lavender. */
 /* These examples all specify the same color: a lavender that is 15% opaque. */
 p {
  /* hex */
  /* hex2 */
+ color: #f00F;
+ color: #ff0000Ff;
  color: #ff0;
+ color: rgb(100%,0,0);
  /* hsl */
  color: red;
- color: rgba(255, 0, 0, 0.5);
+ color: rgba(255,0,0,.5);
  /* hsla(0, 100%, 50%, 0.5) */
- color: hsla(0, 100%, 50%, 0.5);
+ color: hsla(0,100%,50%,.5);
  /* hsl(270deg, 60%, 70%) */
  /* hsl(4.71239rad, 60%, 70%) */
  /* hsl(.75turn, 60%, 70%) */
- color: #b385e0;
- color: hsla(270, 60%, 50%, 0.15);
+ color: #b38;
+ color: hsla(270,60%,50%,.15)
 }
