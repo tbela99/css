@@ -57,9 +57,6 @@ class Value
 
         if (!isset($data->type)) {
 
-            var_dump(get_class($data));
-            var_dump(gettype($data));
-            var_dump(gettype($data));
             throw new InvalidArgumentException('Type property is required: '.gettype($data).':'.var_export($data, true), 400);
         }
 
