@@ -119,11 +119,6 @@ final class Config {
             return static::$config;
         }
 
-        if (is_array($name)) {
-
-            echo (new \Exception())->getTraceAsString();
-        }
-
         if (isset(static::$config['properties'][$name])) {
 
             return static::$config['properties'][$name];

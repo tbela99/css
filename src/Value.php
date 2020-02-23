@@ -327,11 +327,6 @@ function is_separator($char) {
 
 function reduce ($tokens) {
 
-  //  if ($tokens instanceof Set) {
-
-  //      echo (new \Exception())->getTraceAsString();
-  //  }
-
     $count = count ($tokens) - 1;
 
     if ($count > 1) {
