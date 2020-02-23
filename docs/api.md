@@ -7,7 +7,7 @@ Every Element instance implement a \_\_toString() method which means they are au
 However you can control how the element is rendered by using a _Renderer_. 
 The renderer has a _setOptions_ method that accepts the same arguments as [\TBela\CSS\Compiler::setOptions](./compiler.md#compiler-options)
 Two renderer classes are provided.
-The pretty print rendering is done using the class _\TBela\CSS\Identity_ while minified printing is done using _\TBela\CSS\Compress_
+The pretty print rendering is done using the class _\TBela\CSS\Renderer_ while minified printing is done using _\TBela\CSS\Compress_
 
 ### Pretty printing CSS
 
@@ -32,10 +32,10 @@ Example
 ```php
 
 use \TBela\CSS\Parser;
-use \TBela\CSS\Identity;
+use \TBela\CSS\Renderer;
 
 $parser = new Parser();
-$renderer = new Identity();
+$renderer = new Renderer();
 
 $parser->setContent($css);
 
@@ -81,8 +81,9 @@ Css output
 
 ### Minify CSS printing
 
-Minified rendering is done using the class _\TBela\CSS\Compress_. This renderer has additional settings to control minification.
-- _rgba_hex_: convert rgba and hsla colors to hex
+There are additional settings to control minification.
+- _compress_: true/false. Enable minification
+- _rgba_hex_: true/false. Convert rgba and hsla colors to hex
 
 
 Example 
@@ -104,13 +105,13 @@ Example
 ```php
 
 use \TBela\CSS\Parser;
-use \TBela\CSS\Compress;
+use \TBela\CSS\Renderer;
 
 $parser = new Parser();
-$compressor = new Compress();
+$compressor = new Renderer();
 
 // convert rgba to hex, not required here
-$compressor->setOptions(['rgba_hex' => true]);
+$compressor->setOptions(['rgba_hex' => true, 'compress' => true]);
 
 $parser->setContent($css);
 
