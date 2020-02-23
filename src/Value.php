@@ -34,6 +34,8 @@ class Value
 
             return call_user_func([$this, 'get'.$name]);
         }
+
+        return null;
     }
 
     public function match ($type) {
@@ -65,13 +67,12 @@ class Value
 
         if (!class_exists($className)) {
 
-            var_dump('missing data type? '.$className);
+            error_log(__METHOD__.' missing data type? '.$className);
             $className = static::class;
         }
 
         if(!$className::validate($data)) {
 
-            var_dump($data);
             throw new InvalidArgumentException('Invalid argument: $className:'.$className.' data:'.var_export($data, true), 400);
         }
 
@@ -140,7 +141,7 @@ class Value
                             }
 
                             $i = $k - 1;
-                            continue 2;
+                            break 2;
                         }
                     }
 
@@ -286,8 +287,9 @@ class Value
 
                             $i = $k;
                             $buffer = $string[$k];
-                            continue 2;
+                            break 2;
                         }
+
                         break;
                     }
 

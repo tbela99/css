@@ -133,15 +133,15 @@ php source
 
 use \TBela\CSS\Parser;
 use \TBela\CSS\Element;
-use \TBela\CSS\ElementAtRule;
-use \TBela\CSS\ElementStylesheet;
+use \TBela\CSS\Element\AtRule;
+use \TBela\CSS\Element\Stylesheet;
 
 $parser = new Parser(file_get_contents('./css/manipulate.css'), [
     'silent' => false,
     'flatten_import' => true
 ]);
 
-$stylesheet = new ElementStylesheet();
+$stylesheet = new Stylesheet();
 
 function getNodes ($data, $stylesheet) {
 
@@ -149,7 +149,7 @@ function getNodes ($data, $stylesheet) {
 
     foreach ($data as $node) {
 
-        if ($node instanceof ElementAtRule) {
+        if ($node instanceof AtRule) {
 
             switch ($node->getName()) {
 
@@ -201,9 +201,9 @@ result
 
 ```php
 
-use \TBela\CSS\ElementStylesheet;
+use \TBela\CSS\Element\Stylesheet;
 
-$stylesheet = new ElementStylesheet();
+$stylesheet = new Stylesheet();
 
 $rule = $stylesheet->addRule('div');
 
@@ -313,8 +313,3 @@ div {
 - remove_empty_nodes: remove empty css declaration
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
-
-## TODO
-
-- convert hsla color to hex
-- allow multiple specific declarations

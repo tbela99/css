@@ -16,7 +16,7 @@ function get_content($file) {
 }
 
 
-final class RenderTest extends TestCase
+final class Render extends TestCase
 {
     /**
      * @param Parser $parser
@@ -60,9 +60,10 @@ final class RenderTest extends TestCase
      * @param Element $data
      * @param Renderer $renderer
      * @param string $expected
-     * @dataProvider extractAtRule
+     * @dataProvider extractAtRuleProvider
+     * @throws Exception
      */
-    public function testExtractAtRule(Element $data, Renderer $renderer, $expected): void
+    public function testExtractAtRule(Element $data, Renderer $renderer, $expected)
     {
 
         $fontFace = [];
@@ -114,11 +115,11 @@ final class RenderTest extends TestCase
      * @param Element $data
      * @param Renderer $renderer
      * @param string $expected
-     * @dataProvider extractDeclarationProvider
+     * @dataProvider extractDeclarationsProvider
      * @throws Exception
      */
-    /*
-    public function testExtractDeclaration(Element $data, Renderer $renderer, $expected): void
+/*
+    public function testExtractDeclarations(Element $data, Renderer $renderer, $expected)
     {
 
         $fontFaceSrc = [];
@@ -172,7 +173,7 @@ final class RenderTest extends TestCase
         );
     }
 */
-    public function testBuildCSS() {
+    public function testBuildCss() {
 
         $step = 0;
         $stylesheet = new Stylesheet();
@@ -370,7 +371,26 @@ final class RenderTest extends TestCase
         return $data;
     }
 
-    public function extractAtRule () {
+    /**
+     * @return array
+     * @throws Exception
+     */
+    /*
+    public function extractDeclarationsProvider () {
+
+        $parser = new Parser(dirname(__DIR__).'/css/manipulate.css', [
+            'silent' => false,
+            'flatten_import' => true
+        ]);
+
+        return [
+            [$parser->parse(), new Renderer(), __DIR__ .'/../output/extract_font_face_src.css']
+        ];
+    }
+    */
+/*
+*/
+    public function extractAtRuleProvider () {
 
         $parser = new Parser(__DIR__.'/../css/manipulate.css', [
             'silent' => false,
@@ -381,19 +401,5 @@ final class RenderTest extends TestCase
             [$parser->parse(), new Renderer(), __DIR__.'/../output/extract_font_face.css']
         ];
     }
-
-    /*
-    public function extractDeclarationProvider () {
-
-        $parser = new Parser(dirname(__DIR__).'/css/manipulate.css', [
-            'silent' => false,
-            'flatten_import' => true
-        ]);
-
-        return [
-            [$parser->parse(), new Renderer(), dirname(__DIR__) .'/output/extract_font_face_src.css']
-        ];
-    }
-    */
 }
 

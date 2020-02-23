@@ -7,7 +7,6 @@ use InvalidArgumentException;
 use JsonSerializable;
 use ArrayAccess;
 use stdClass;
-use TBela\CSS\Element\Declaration;
 use function get_class;
 use function is_callable;
 use function is_null;
@@ -181,8 +180,10 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
         catch (Exception $ex) {
 
-            echo $ex->getTraceAsString();
+            error_log($ex->getTraceAsString());
         }
+
+        return '';
     }
 
     public function __clone()

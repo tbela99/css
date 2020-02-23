@@ -3,6 +3,7 @@
 namespace TBela\CSS;
 
 use ArrayIterator;
+use Exception;
 use InvalidArgumentException;
 use TBela\CSS\Element\Comment;
 use TBela\CSS\Element\Stylesheet;
@@ -28,6 +29,7 @@ class Elements extends Element implements RuleList  {
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function addComment ($value) {
 
@@ -89,7 +91,7 @@ class Elements extends Element implements RuleList  {
         // should not append a parent as a child
         while ($element) {
 
-            if ($element == $child) {
+            if ($element === $child) {
 
                 return false;
             }
@@ -132,8 +134,7 @@ class Elements extends Element implements RuleList  {
 
             else {
 
-                echo (new \Exception())->getTraceAsString()."\n\n";
-                if (!in_array($element, $this->ast->elements)) {
+                if (!in_array($element, $this->ast->elements, true)) {
 
                     if (!empty($element->parent)) {
 
@@ -183,7 +184,7 @@ class Elements extends Element implements RuleList  {
      */
     public function remove (Element $element) {
 
-       if ($element->getParent() == $this) {
+       if ($element->getParent() === $this) {
 
         $index = array_search ($element, $this->ast->elements);
 

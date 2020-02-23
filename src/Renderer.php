@@ -169,7 +169,7 @@ class Renderer
             return '';
         }
 
-        if ($parent && !is_null($element['parent'])) {
+        if ($parent && ($element instanceof Element) && !is_null($element['parent'])) {
 
             return $this->render($element->copy()->getRoot(), $level);
         }
@@ -467,7 +467,7 @@ class Renderer
         if ($this->remove_empty_nodes && $count == 0) {
 
             return '';
-        };
+        }
 
         $hash = [];
 

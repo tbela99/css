@@ -7,4 +7,7 @@ cd "$DIR"
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
-for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php $file; done
+# legacy test display
+# for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php $file; done
+# pretty print test
+for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php --testdox $file; done

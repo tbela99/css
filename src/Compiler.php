@@ -66,7 +66,7 @@ class Compiler {
      */
 	public function setData ($ast) {
 
-		$this->data = Element::getInstance($ast, $this->options);
+		$this->data = Element::getInstance($ast);
 		return $this;
 	}
 

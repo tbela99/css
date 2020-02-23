@@ -4,7 +4,7 @@
 require '../test/autoload.php';
 
 /**
- * Utility file to build css properties configuration
+ * Utility file to build css properties dependency
  */
 
 // properties order is important!
@@ -47,7 +47,7 @@ $config['alias'] = array_merge($config['alias'], addAlias('-moz-border-radius',
             '-moz-border-radius-bottomleft'
         ]]]));
 
-    $config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius',
+$config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius',
     ['-webkit-border-radius' => [
         'alias' => 'border-radius',
         'properties' => [
@@ -58,18 +58,6 @@ $config['alias'] = array_merge($config['alias'], addAlias('-moz-border-radius',
             '-webkit-border-bottom-left-radius'
         ]
     ]]));
-
-$config['alias'] = array_merge($config['alias'], addAlias('-moz-border-radius',
-        ['-moz-border-radius-topleft' => ['alias' => 'border-top-left-radius']],
-        ['-moz-border-radius-topright'=> ['alias' => 'border-top-right-radius']],
-        ['-moz-border-radius-bottomright'=> ['alias' => 'border-bottom-right-radius']],
-        ['-moz-border-radius-bottomleft'=> ['alias' => 'border-bottom-left-radius']]));
-
-$config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius',
-        ['-webkit-border-top-left-radius' => ['alias' => 'border-top-left-radius']],
-        ['-webkit-border-top-right-radius'=> ['alias' => 'border-top-right-radius']],
-        ['-webkit-border-bottom-right-radius'=> ['alias' => 'border-bottom-right-radius']],
-        ['-webkit-border-bottom-left-radius'=> ['alias' => 'border-bottom-left-radius']]));
 
 file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config, JSON_PRETTY_PRINT));
 

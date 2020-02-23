@@ -72,11 +72,6 @@ final class Config {
      */
     public static function alias ($property, $default = null) {
 
-        if (is_array($property)) {
-
-            echo (new \Exception())->getTraceAsString();
-        }
-
         if (strpos($property, '.') > 0) {
 
             return static::getPath('alias.'.$property, $default);

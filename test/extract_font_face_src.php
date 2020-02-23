@@ -29,8 +29,8 @@ function getNodes (Element $data, $stylesheet) {
 
                         if ($declaration['name'] == 'src') {
 
-                            var_dump($declaration->copy() == $declaration);
-                         //   $stylesheet->append($declaration->copy()->getRoot());
+                            //   var_dump($declaration->copy() == $declaration);
+                            $stylesheet->append($declaration->copy()->getRoot());
                             break;
                         }
                     }

@@ -12,14 +12,17 @@ function get_content($file)
 }
 
 
-final class PropertiesTest extends TestCase
+final class Properties extends TestCase
 {
 
     /**
-     * @param array $set
+     * @param PropertyList $property
+     * @param $name
+     * @param $value
+     * @param $expected
      * @dataProvider propertySetProvider
      */
-    public function testPropertySet(PropertyList $property, $name, $value, $expected): void
+    public function testPropertySet(PropertyList $property, $name, $value, $expected)
     {
 
         $property->set($name, $value);

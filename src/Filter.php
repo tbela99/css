@@ -20,7 +20,7 @@ class Filter {
     /**
      * parse value
      * @param string $value
-     * @param Element $element
+     * @param Rendererable $element
      * @return string
      */
     public function value ($value, Rendererable $element) {
@@ -84,8 +84,8 @@ class Filter {
      */
     public function whitespace($value) {
 
-        $value = preg_replace('#\s*([\[\]\(\),])\s*#s', '$1', $value);
-        $value = preg_replace('#\s*([\),])(?![;,])#s', '$1 ', $value);
+        $value = preg_replace('#\s*([\[\](),])\s*#s', '$1', $value);
+        $value = preg_replace('#\s*([),])(?![;,])#s', '$1 ', $value);
 
         // separate values with a single space character?
         return preg_replace('#\s+#sm', ' ', $value);
@@ -136,7 +136,7 @@ class Filter {
             return $value;
         }
 
-        return preg_replace_callback('#(^|[-+\(\s])([0-9]*\.?[0-9]+)([^\d\s\);,\}]*|\s)#s', function ($matches) {
+        return preg_replace_callback('#(^|[-+(\s])([0-9]*\.?[0-9]+)([^\d\s);,}]*|\s)#s', function ($matches) {
 
             if ($matches[3] != '' && !preg_match('#^[a-zA-Z]+$#', $matches[3])) {
 

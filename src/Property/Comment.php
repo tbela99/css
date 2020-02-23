@@ -58,8 +58,6 @@ class Comment implements ArrayAccess, Rendererable {
      */
     public function render ($compress = false, array $options = []) {
 
-        echo (new \Exception())->getTraceAsString();
-
         if ($compress || !empty($options['remove_comments'])) {
 
             return '';
