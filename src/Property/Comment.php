@@ -13,7 +13,7 @@ class Comment implements ArrayAccess, Rendererable {
 
     protected $value;
 
-    protected $type = 'comment';
+    protected $type = 'Comment';
 
     /**
      * PropertyComment constructor.

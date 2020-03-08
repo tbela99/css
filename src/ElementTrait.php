@@ -54,7 +54,7 @@ trait ElementTrait  {
 
         else {
 
-            $this->ast->name = $name;
+            $this->ast->name = (string) $name;
         }
 
         return $this;
@@ -73,7 +73,7 @@ trait ElementTrait  {
 
         else {
 
-            $this->ast->vendor = $prefix;
+            $this->ast->vendor = (string) $prefix;
         }
 
         return $this;

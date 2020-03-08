@@ -1,4 +1,4 @@
-@-moz-document https://www.example.com/ {
+@-moz-document url(https://www.example.com/) {
  h1 {
    color: green
  }
@@ -25,8 +25,8 @@ body {
 */
 /* removed empty rules */
 /* removed empty @media */
-@namespace http://www.w3.org/1999/xhtml;
-@namespace svg http://www.w3.org/2000/svg;
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace svg url(http://www.w3.org/2000/svg);
 /* Cela correspond à tous les éléments XHTML <a>
   car XHTML est l'espace de nom par défaut, sans
   préfixe. */

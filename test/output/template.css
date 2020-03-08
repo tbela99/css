@@ -2056,7 +2056,7 @@ table th[class*="span"],
  background-color: #005;
  background-image: linear-gradient(to bottom,#005,#004);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d','#ff004c73',GradientType=0)
 }
 .dropdown-menu>.active>a,
 .dropdown-menu>.active>a:hover,
@@ -2067,7 +2067,7 @@ table th[class*="span"],
  background-color: #005;
  background-image: linear-gradient(to bottom,#005,#004);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d','#ff004c73',GradientType=0)
 }
 .dropdown-menu>.disabled>a,
 .dropdown-menu>.disabled>a:hover,
@@ -3226,7 +3226,7 @@ input[type="submit"].btn.btn-mini {
  background-color: #faf;
  background-image: linear-gradient(to bottom,#fff,#f2f);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ffffffff',',GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient('#ffffffff','#fff2f2f2',GradientType=0);
  border: 1px solid #d4d;
  -webkit-border-radius: 4px;
  -moz-border-radius: 4px;
@@ -3579,7 +3579,7 @@ input[type="submit"].btn.btn-mini {
  background-color: #1b1;
  background-image: linear-gradient(to bottom,#222,#111);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff222222',',GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff222222','#ff111111',GradientType=0);
  border-color: #252
 }
 .navbar-inverse .brand,
@@ -4357,7 +4357,7 @@ a.badge:focus {
  background-color: #f7f;
  background-image: linear-gradient(to bottom,#f5f,#f9f);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#fff5f5f5',',GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient('#fff5f5f5','#fff9f9f9',GradientType=0);
  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
@@ -4376,7 +4376,7 @@ a.badge:focus {
  background-color: #0e9;
  background-image: linear-gradient(to bottom,#149,#048);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff149bdf',',GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff149bdf','#ff0480be',GradientType=0);
  -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
  -moz-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
  box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
@@ -4413,7 +4413,7 @@ a.badge:focus {
  background-color: #dd5;
  background-image: linear-gradient(to bottom,#ee5,#c43);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ffee5f5b',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ffee5f5b','#ffc43c35',GradientType=0)
 }
 .progress-danger.progress-striped .bar,
 .progress-striped .bar-danger {
@@ -4425,7 +4425,7 @@ a.badge:focus {
  background-color: #5eb;
  background-image: linear-gradient(to bottom,#62c,#57a);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff62c462',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff62c462','#ff57a957',GradientType=0)
 }
 .progress-success.progress-striped .bar,
 .progress-striped .bar-success {
@@ -4437,7 +4437,7 @@ a.badge:focus {
  background-color: #4bb;
  background-image: linear-gradient(to bottom,#5bc,#339);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff5bc0de',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff5bc0de','#ff339bb9',GradientType=0)
 }
 .progress-info.progress-striped .bar,
 .progress-striped .bar-info {
@@ -4449,7 +4449,7 @@ a.badge:focus {
  background-color: #faa;
  background-image: linear-gradient(to bottom,#fbb,#f89);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#fffab44f',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#fffab44f','#fff89406',GradientType=0)
 }
 .progress-warning.progress-striped .bar,
 .progress-striped .bar-warning {
@@ -7351,7 +7351,7 @@ figcaption {
  background-color: #005;
  background-image: linear-gradient(to bottom,#005,#004);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d',',GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d','#ff004c73',GradientType=0)
 }
 .categories-list .collapse {
  margin-left: 20px

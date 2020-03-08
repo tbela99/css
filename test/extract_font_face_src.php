@@ -8,10 +8,10 @@ use \TBela\CSS\Element;
 use \TBela\CSS\Element\AtRule;
 use \TBela\CSS\Element\Stylesheet;
 
-$parser = new Parser('./css/manipulate.css', [
+$parser = (new Parser(file_get_contents('', [
     'silent' => false,
     'flatten_import' => true
-]);
+])))->load('./css/manipulate.css');
 
 $stylesheet = new Stylesheet();
 

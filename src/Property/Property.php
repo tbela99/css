@@ -23,7 +23,7 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     /**
      * @var string
      */
-    protected $type = 'property';
+    protected $type = 'Property';
     /**
      * @var Value[]|null
      */

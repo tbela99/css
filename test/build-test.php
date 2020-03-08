@@ -13,7 +13,7 @@ use \TBela\CSS\Compiler;
 
          as $file) {
 
-     $parser = new Parser($file, ['flatten_import' => true]);
+     $parser = new Parser('', ['flatten_import' => true]);
      $compiler = new Compiler();
 
      $compiler->setOptions(['rgba_hex' => true]);
@@ -34,7 +34,7 @@ use \TBela\CSS\Compiler;
          $parser->setOptions(['allow_duplicate_declarations' => true]);
      }
 
-     $compiler->setData($parser->parse());
+     $compiler->setData($parser->load($file)->parse());
      $compiler->setOptions(['compress' => false, 'rgba_hex' => false]);
 
      file_put_contents('./output/'.basename($file), $compiler->compile());

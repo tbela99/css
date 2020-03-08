@@ -61,6 +61,17 @@ class Compiler {
     }
 
     /**
+     * @param string $file
+     * @return $this
+     * @throws Exception
+     */
+    public function load ($file) {
+
+        $this->data = Element::getInstance((new Parser('', $this->options))->load($file)->parse());
+        return $this;
+    }
+
+    /**
      * @param object $ast
      * @return Compiler
      */

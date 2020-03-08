@@ -13,4 +13,4 @@ strong {
    color: #000
  }
 }
-@namespace svg https://google.com/;
+@namespace svg url(https://google.com/);

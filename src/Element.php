@@ -34,7 +34,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
         if (is_null($ast)) {
 
             $ast = new stdClass;
-            $ast->type = strtolower(str_ireplace(Element::class.'\\', '', get_class($this)));
+            $ast->type = str_ireplace(Element::class.'\\', '', get_class($this));
         }
 
         $this->ast = $ast;
@@ -61,12 +61,13 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
         if ($ast instanceof Element) {
 
-            $ast = json_decode(json_encode($ast));
+            $ast = clone $ast->ast;
         }
 
         if (isset($ast->type)) {
 
             $type = $ast->type;
+            unset($ast->parsingErrors);
         }
 
         if ($type === '') {
@@ -113,7 +114,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
      */
     public function setValue ($value) {
 
-        $this->ast->value = $value;
+        $this->ast->value = (string) $value;
         return $this;
     }
 
@@ -163,6 +164,14 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
      * @return stdClass
      */
     public function jsonSerialize () {
+
+        if (isset($this->ast->elements) && empty($this->ast->elements)) {
+
+            $ast = clone $this->ast;
+
+            unset ($ast->elements);
+            return $ast;
+        }
 
         return $this->ast;
     }

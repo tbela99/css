@@ -80,6 +80,14 @@ class PropertySet
 
         foreach ($config['properties'] as $property) {
 
+            if (!isset($config[$property]['type'])) {
+
+                var_dump($shorthand, $property, $config[$property]);
+                echo (new \Exception())->getTraceAsString();
+                die;
+            }
+
+
             $this->property_type[$config[$property]['type']][] = $property;
         }
 

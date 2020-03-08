@@ -27,9 +27,9 @@ class Filter {
 
         $type = (string) $element['type'];
 
-        if ($type == 'atrule') {
+        if ($type == 'AtRule') {
 
-            if ($value !== '') {
+            if ($value !== '' && (string) $element['name'] == 'import') {
 
                 // rewrite atrule @somename url(https://foobar) -> @somename https://foobar
                 $value = preg_replace('#url\(\s*(["\']?)(.*?)\1\)#s', '$2', $value);

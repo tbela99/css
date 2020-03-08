@@ -63,7 +63,7 @@ $media['value'] = 'all';
 $rule2 = $media->addRule('.new');
 $rule2->addDeclaration('color', 'green');
 
-$namespace = $stylesheet->addAtRule('namespace', 'svg https://google.com/', 2);
+$namespace = $stylesheet->addAtRule('namespace', 'svg url(https://google.com/)', 2);
 
 echo $stylesheet."\n\n\n";
 file_put_contents('output/build_css_'.(++$step).'.css', $stylesheet);

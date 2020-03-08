@@ -12,10 +12,10 @@ use TBela\CSS\Renderer;
 use TBela\CSS\Element\Stylesheet;
 
 $renderer = new Renderer();
-$parser = new Parser('./css/manipulate.css', [
+$parser = (new Parser('', [
     'silent' => false,
     'flatten_import' => true
-]);
+]))->load('./css/manipulate.css');
 
 $stylesheet = new Stylesheet();
 

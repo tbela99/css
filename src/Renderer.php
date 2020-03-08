@@ -178,7 +178,7 @@ class Renderer
 
         switch ($element['type']) {
 
-            case 'comment':
+            case 'Comment':
 
                 if ($this->remove_comments) {
 
@@ -187,23 +187,23 @@ class Renderer
 
                 return (is_null($level) ? '' : str_repeat($this->indent, $level + 1)). $element['value'];
 
-            case 'stylesheet':
+            case 'Stylesheet':
 
                 return $this->renderCollection($element, $level);
 
-            case 'declaration':
+            case 'Declaration':
 
                 return $indent . $this->indent . $this->renderDeclaration($element);
 
-            case 'property':
+            case 'Property':
 
                 return $indent . $this->indent . $this->renderProperty($element);
 
-            case 'rule':
+            case 'Rule':
 
                 return $this->renderRule($element, $level, $indent);
 
-            case 'atrule':
+            case 'AtRule':
 
                 return $this->renderAtRule($element, $level, $indent);
 
@@ -377,7 +377,7 @@ class Renderer
 
         $value = $this->filter->value($value, $element);
 
-        if ($element['type'] == 'declaration') {
+        if ($element['type'] == 'Declaration') {
 
             $value = $this->filter->color($value, $element);
         }
@@ -421,7 +421,7 @@ class Renderer
         $type = $element['type'];
         $count = 0;
 
-        if ($type == 'rule' || ($type == 'atrule' && $element->hasDeclarations())) {
+        if ($type == 'Rule' || ($type == 'AtRule' && $element->hasDeclarations())) {
 
             $glue = ';';
 
@@ -447,7 +447,7 @@ class Renderer
                 }
             }
 
-            else if ($el['type'] != 'comment') {
+            else if ($el['type'] != 'Comment') {
 
 
                 if ($count == 0) {
@@ -456,7 +456,7 @@ class Renderer
                 }
             }
 
-            if ($el['type'] != 'comment') {
+            if ($el['type'] != 'Comment') {
 
                 $output .= $glue;
             }

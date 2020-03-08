@@ -1,9 +1,9 @@
-@-moz-document https://www.example.com/ {
+@-moz-document url(https://www.example.com/) {
  h1 {
    color: #3a3
  }
  h2 {
-   color: #f0f
+   color: #f0f8ff
  }
  h1 {
    color: #fff
@@ -32,7 +32,7 @@ body {
  -moz-border-radius: 15px
 }
 h1 {
- color: #f0f
+ color: #f0f8ff
 }
 a {
  text-decoration: underline

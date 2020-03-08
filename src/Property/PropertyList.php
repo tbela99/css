@@ -47,23 +47,28 @@ class PropertyList implements IteratorAggregate
 
     public function set($name, $value, $propertyType = null) {
 
-        if ($propertyType == 'comment') {
+        if ($propertyType == 'Comment') {
 
             $this->properties[] = new Comment($value);
             return $this;
         }
 
-        if (!Config::exists($name) && !empty($this->options['allow_duplicate_declarations'])) {
+        $name = (string) $name;
 
-            if ($this->options['allow_duplicate_declarations'] === true ||
-                (is_array($this->options['allow_duplicate_declarations']) && in_array($name, $this->options['allow_duplicate_declarations']))) {
+        if (!Config::exists($name)) {
 
-                $this->properties[] = (new Property($name, $propertyType))->setValue($value);
-                return $this;
+            if(!empty($this->options['allow_duplicate_declarations'])) {
+
+                if ($this->options['allow_duplicate_declarations'] === true ||
+                    (is_array($this->options['allow_duplicate_declarations']) && in_array($name, $this->options['allow_duplicate_declarations']))) {
+
+                    $this->properties[] = (new Property($name, $propertyType))->setValue($value);
+                    return $this;
+                }
             }
         }
 
-        $value = Value::parse($value);
+        $value = is_string($value) ? Value::parse($value) : $value;
         $alias_name = Config::alias($name.'.alias', $name);
         $config = Config::getProperty($alias_name);
 
