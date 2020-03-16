@@ -7,6 +7,22 @@ use TBela\CSS\Value;
 
 class Number extends Value
 {
+    public function __construct($data)
+    {
+        parent::__construct($data);
+
+        if (strpos($this->data->value, 'e') !== false) {
+
+            $value = (float) $this->data->value;
+
+            if ($value == intval($value)) {
+
+                $value = (int) $value;
+            }
+
+            $this->data->value = (string) $value;
+        }
+    }
 
     public function match ($type) {
 
@@ -51,10 +67,10 @@ class Number extends Value
         return implode('.', $value);
     }
 
-    public function render($compressed = false, array $options = [])
+    public function render(array $options = [])
     {
 
-        if ($compressed) {
+        if (!empty($options['compress'])) {
 
             return $this->compress($this->data->value);
         }

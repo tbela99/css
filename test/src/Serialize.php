@@ -3,11 +3,8 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Stylesheet;
 use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
-use TBela\CSS\Renderer;
 
 // because git changes \n to \r\n at some point, this causes test failure
 function get_content($file) {
@@ -19,19 +16,17 @@ function get_content($file) {
 final class Serialize extends TestCase
 {
     /**
-     * @param Parser $parser
-     * @param Compiler $compiler
-     * @param string $file
+     * @param Element $element
+     * @param $jsonData
      * @param string $expected
-     * @throws Exception
      * @dataProvider serializeProvider
      */
     public function testSerialize(Element $element, $jsonData, $expected): void
     {
 
         $this->assertEquals(
-           json_encode($element),
-            $jsonData
+            $jsonData,
+           json_encode($element)
         );
 
         $this->assertEquals(

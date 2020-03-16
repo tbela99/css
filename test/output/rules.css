@@ -4,17 +4,18 @@
  }
 }
 .element {
- color: #000
+ color: rgb(0, 0, 0)
 }
 .elements {
- color: transparent
+ color: rgba(0, 0, 0, 0)
 }
 body {
  border: 0;
- background: no-repeat rgba(153,34,17,.5)
+ background: no-repeat rgba(153, 34, 17, .5)
 }
 .animate {
  /* Multiple function values */
+ transform: translateX(10px) rotate(10deg) translateY(5px);
  transform: perspective(500px) translate(10px,0,20px) rotateY(3deg)
 }
 /*

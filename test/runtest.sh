@@ -1,7 +1,7 @@
 #!/bin/sh -x
-## you need to install terser
-# npm install --save-dev terser
-## before you run uglify on WSL, you need to install it there
+## to run run a particular test, give the file name without extension as a parameter
+##  ./runtest.sh Render
+##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR"
 #

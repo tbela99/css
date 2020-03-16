@@ -81,6 +81,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * return the root element
      * @return Element
      */
     public function getRoot () {
@@ -96,7 +97,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
-     * @return string
+     * @return Value|string
      */
     public function getValue () {
 
@@ -109,12 +110,12 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
-     * @param string $value
+     * @param Set|Value|string $value
      * @return $this
      */
     public function setValue ($value) {
 
-        $this->ast->value = (string) $value;
+        $this->ast->value = $value;
         return $this;
     }
 

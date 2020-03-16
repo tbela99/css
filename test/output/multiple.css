@@ -1,11 +1,18 @@
 @-moz-document url(https://www.example.com/) {
  h1 {
-   color: #3a3
+   color: #000;
+   color: #f0f8ff;
+   color: green;
+   color: blue;
+   color: #3a3a3a
  }
  h2 {
+   color: #000;
    color: #f0f8ff
  }
  h1 {
+   color: green;
+   color: blue;
    color: #fff
  }
 }
@@ -24,14 +31,17 @@ body {
  background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent
 }
 .element {
- color: #000;
+ color: rgb(0, 0, 0);
  background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent;
- margin: 5px 3px;
- padding: 5px 3px;
- border-radius: 5px;
- -moz-border-radius: 15px
+ margin: 5px 3px 5px 3px;
+ padding: 5px 3px 5px;
+ border-radius: 5px 5px;
+ -moz-border-radius: 15px 15px
 }
 h1 {
+ color: green;
+ color: blue;
+ color: #000;
  color: #f0f8ff
 }
 a {

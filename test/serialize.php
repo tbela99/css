@@ -8,7 +8,7 @@ use \TBela\CSS\Compiler;
 
 $parser = new Parser('', [
     'silent' => false,
-    'minify' => true,
+    'minify' => false,
     'flatten_import' => true
 ]);
 

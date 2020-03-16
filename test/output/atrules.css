@@ -31,7 +31,7 @@
 @media all {
  .url-imported-from-media {
    outline: 0;
-   color: rgba(161,161,161,.63);
+   color: rgba(161, 161, 161, .63);
    background-image: url(css/css/img/d4ca075023f827d81478565989.png)
  }
 }
@@ -42,8 +42,8 @@
  border-radius: 6px
 }
 .nav .dropdown-toggle .caret {
- border-top-color: #005;
- border-bottom-color: #005;
+ border-top-color: #005e8d;
+ border-bottom-color: #005e8d;
  margin-top: 6px
 }
 @viewport {

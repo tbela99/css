@@ -32,27 +32,8 @@ final class Render extends TestCase
         $compiler->setData($parser->load($file)->parse());
 
         $this->assertEquals(
-           $compiler->compile(),
-            $expected
-        );
-    }
-
-    /**
-     * @param Parser $parser
-     * @param Compiler $compiler
-     * @param string $file
-     * @param string $expected
-     * @throws Exception
-     * @dataProvider minifiedProvider
-     */
-    public function testMinifyDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
-    {
-
-        $compiler->setData($parser->load($file)->parse());
-
-        $this->assertEquals(
-            $compiler->compile(),
-            $expected
+            get_content($expected),
+           $compiler->compile()
         );
     }
 
@@ -331,40 +312,7 @@ final class Render extends TestCase
                 $parser,
                 new Compiler(['compress' => false, 'rgba_hex' => false]),
                 $file,
-                get_content(dirname(dirname($file)).'/output/'.basename($file))
-            ];
-        }
-
-        return $data;
-    }
-
-    public function minifiedProvider(): array
-    {
-
-        $data = [];
-
-        foreach (glob('css/*.css') as $file) {
-
-            $parser =  (new Parser())->setOptions(['flatten_import' => true]);
-
-            if (basename($file) == 'color.css') {
-
-                $parser->setOptions([
-                    'allow_duplicate_declarations' => ['color']
-                ]);
-            }
-
-            else {
-
-                $parser->setOptions(['allow_duplicate_declarations' => true]);
-            }
-
-            $data[] = [
-
-               $parser,
-                (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
-                $file,
-                get_content(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
+                dirname(dirname($file)).'/output/'.basename($file)
             ];
         }
 

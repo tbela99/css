@@ -40,6 +40,7 @@ $config['properties'] = array_merge($config['properties'], makePropertySet('bord
 $config['alias'] = array_merge($config['alias'], addAlias('-moz-border-radius',
     ['-moz-border-radius' => [
         'alias' => 'border-radius',
+        'shorthand' => '-moz-border-radius',
         'properties' => [
 
             '-moz-border-radius-topleft',
@@ -74,6 +75,7 @@ $config['alias'] = array_merge($config['alias'], addAlias('-moz-border-radius',
 $config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius',
     ['-webkit-border-radius' => [
         'alias' => 'border-radius',
+        'shorthand' => '-webkit-border-radius',
         'properties' => [
 
             '-webkit-border-top-left-radius',
@@ -113,7 +115,41 @@ $config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius
         ]
     ));
 
+// generate configuration -------------
+foreach ($config['alias'] as $alias => $data) {
+
+    $properties = $config['properties'][$data['alias']];
+
+    if (isset($properties['value_map'])) {
+
+        $map = [];
+        $j = count ($properties['properties']);
+
+        while (--$j > 0) {
+
+            $map[$data['properties'][$j]] = $properties['value_map'][$properties['properties'][$j]];
+        }
+
+        $properties['value_map'] = $map;
+    }
+
+    if (isset($data['properties'])) {
+
+        $properties['properties'] = $data['properties'];
+    }
+
+    if (isset($data['shorthand'])) {
+
+        $properties['shorthand'] = $data['shorthand'];
+    }
+
+    $config['properties'][$alias] = $properties;
+}
+
+unset($config['alias']);
+
 file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config));
+
 
 function addAlias($property)
 {

@@ -17,6 +17,7 @@ class Compiler {
         'charset' => false,
         'rgba_hex' => false,
         'compress' => false,
+        'css_level' => 3,
         'remove_comments' => false,
         'remove_empty_nodes' => true,
         'allow_duplicate_declarations' => true

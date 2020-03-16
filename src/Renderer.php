@@ -22,6 +22,11 @@ class Renderer
     /** @var bool minify output */
     protected $compress = false;
 
+    /**
+     * @var int CSS level 3|4
+     */
+    protected $css_level = 3;
+
     /** @var string line indention */
     protected $indent = ' ';
 
@@ -80,6 +85,11 @@ class Renderer
         if (isset($options['charset'])) {
 
             $this->charset = $options['charset'];
+        }
+
+        if (isset($options['css_level'])) {
+
+            $this->css_level = $options['css_level'];
         }
 
         if (isset($options['glue'])) {
@@ -291,7 +301,10 @@ class Renderer
     protected function renderDeclaration(Declaration $element)
     {
 
-        return $this->renderName($element) . ':' . $this->indent . $this->renderValue($element);
+        $property = new PropertyList(null, array_merge($this->getOptions(), ['allow_duplicate_declarations' => false]));
+        $property->set($element['name'], $element['value']);
+
+        return (string) $property;
     }
 
     /**
@@ -302,7 +315,7 @@ class Renderer
     protected function renderProperty(RenderableProperty $element)
     {
 
-        return $this->renderName($element) . ':' . $this->indent . $this->filter->value($element['value']->render($this->compress, $this->getOptions()), $element);
+        return $this->renderName($element) . ':' . $this->indent . $this->filter->value($element['value']->render($this->getOptions()), $element);
     }
 
     protected function shouldRender(Rendererable $element)
@@ -370,31 +383,7 @@ class Renderer
     protected function renderValue(Element $element)
     {
 
-        $value = $element['value'];
-
-        $hash = $this->escape($value);
-        $value = $hash[0];
-
-        $value = $this->filter->value($value, $element);
-
-        if ($element['type'] == 'Declaration') {
-
-            $value = $this->filter->color($value, $element);
-        }
-
-        // hash quoted words
-        $hash = $this->escape($value);
-        $value = $hash[0];
-
-        // parse numbers
-        $value = $this->filter->numbers($value);
-
-        // remove unnecessary space
-        $value = $this->filter->whitespace($value);
-
-        $value = $this->unescape($value, $hash[1]);
-
-        return trim($value);
+        return trim(Value::parse($element['value'])->render($this->getOptions()));
     }
 
     /**
@@ -448,7 +437,6 @@ class Renderer
             }
 
             else if ($el['type'] != 'Comment') {
-
 
                 if ($count == 0) {
 

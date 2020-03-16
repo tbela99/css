@@ -11,8 +11,8 @@ class CSSFunction extends Value {
         return isset($data->name) && isset($data->arguments);
     }
 
-    public function render($compress = false, array $options = []) {
+    public function render(array $options = []) {
 
-        return $this->data->name.'('. $this->data->arguments->render($compress, $options).')';
+        return $this->data->name.'('. $this->data->arguments->render($options).')';
     }
 }

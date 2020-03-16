@@ -11,9 +11,9 @@ class Comment extends Value {
         return true;
     }
 
-    public function render($compressed = false, array $options = [])
+    public function render(array $options = [])
     {
-        if ($compressed || !empty($options['remove_comments'])) {
+        if (!empty($options['compress']) || !empty($options['remove_comments'])) {
 
             return '';
         }

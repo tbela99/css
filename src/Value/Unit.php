@@ -9,7 +9,13 @@ class Unit extends Number {
         return isset($data->unit);
     }
 
-    public function render($compressed = false, array $options = [])
+    public function match ($type) {
+
+        $dataType = strtolower($this->data->type);
+        return $dataType == $type || ($type == 'number' && $this->data->value == 0);
+    }
+
+    public function render(array $options = [])
     {
 
         if ($this->data->value == 0) {
@@ -17,7 +23,7 @@ class Unit extends Number {
             return '0';
         }
 
-        if ($compressed) {
+        if (!empty($options['compress'])) {
 
             $value = $this->data->value;
             $unit = $this->data->unit;

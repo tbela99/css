@@ -87,7 +87,7 @@ class Parser
                         $this->options[$key] = [$this->options[$key]];
                     }
 
-                    if (is_array($this->options[$key])) {
+                    else if (is_array($this->options[$key])) {
 
                         $this->options[$key] = array_flip($this->options[$key]);
                     }
@@ -277,7 +277,7 @@ class Parser
             $total = count($elements);
 
             $hash = [];
-            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : [];
+            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : !empty($this->options['allow_duplicate_declarations']);
 
             while ($total--) {
 
@@ -290,7 +290,7 @@ class Parser
 
                 $name = (isset($declaration->vendor) ? '-' . $declaration->vendor . '-' : '') . $declaration->name;
 
-                if (isset($exceptions[$name])) {
+                if ($exceptions === true || isset($exceptions[$name])) {
 
                     continue;
                 }

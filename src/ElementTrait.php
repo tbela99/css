@@ -20,11 +20,6 @@ trait ElementTrait  {
             return '-'.$vendor.'-'.$this->ast->name;
         }
 
-        if (!isset($this->ast->name)) {
-
-            throw new Exception("The name cannot be empty");
-        }
-
         return $this->ast->name;
     }
 

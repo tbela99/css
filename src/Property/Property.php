@@ -39,11 +39,6 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
         $this->name = $name;
     }
 
-    public function getPropertyType() {
-
-        return $this->propertyType;
-    }
-
     public function setValue($value) {
 
         if (is_string($value)) {
@@ -71,6 +66,11 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     public function getType() {
 
         return $this->type;
+    }
+
+    public function getHash() {
+
+        return $this->name.':'.$this->value->render(['compress' => true, 'rgba_hex' => true]);
     }
 
     public function render () {

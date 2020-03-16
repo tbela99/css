@@ -1,21 +1,44 @@
-/* 50% translucent */
-/* These examples all specify the same color: a lavender. */
-/* These examples all specify the same color: a lavender that is 15% opaque. */
 p {
- /* hex */
- /* hex2 */
- color: #f00F;
- color: #ff0000Ff;
- color: #ff0;
- color: rgb(100%,0,0);
- /* hsl */
- color: red;
- color: rgba(255,0,0,.5);
- /* hsla(0, 100%, 50%, 0.5) */
- color: hsla(0,100%,50%,.5);
- /* hsl(270deg, 60%, 70%) */
- /* hsl(4.71239rad, 60%, 70%) */
- /* hsl(.75turn, 60%, 70%) */
- color: #b385e0;
- color: hsla(270,60%,50%,.15)
+ /* Functional syntax with floats value */
+ color: rgb(255, 0, 153.6);
+ color: rgba(100, 5, 0.5, 0.25);
+ /* These examples all specify the same color: black. */
+ /* color black black */
+ /* color black #000 */
+ /* color black #000000 */
+ /* color black rgb(0, 0, 0) */
+ /* color black rgba(0, 0, 0, 1) */
+ /* color black #000000ff */
+ color: #000;
+ /* These examples all specify the same color: red. */
+ /* color red red */
+ /* color red #f00 */
+ /* color red #f00F */
+ /* color red #ff0000Ff */
+ /* color red #ff0000 */
+ /* color red rgb(255,0,0) */
+ /* color red rgba(255,0,0,1); */
+ /* color red rgb(100%, 0%, 0%) */
+ /* color red hsl(0, 100%, 50%) */
+ color: hsl(0, 100%, 50%);
+ /* red 50% translucent #ff000080 */
+ /* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
+ /* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
+ /* red 50% translucent hsla(0, 100%, 50%, 0.5) */
+ color: hsla(0, 100%, 50%, 0.5);
+ /* These examples all specify the same color: a lavender. */
+ /* lavender hsl(270,60%,70%) */
+ /* lavender hsl(270, 60%, 70%) */
+ /* lavender hsl(270 60% 70%) */
+ /* lavender hsl(270deg, 60%, 70%) */
+ /* lavender hsl(4.71239rad, 60%, 70%) */
+ /* lavender hsl(.75turn, 60%, 70%) */
+ /* lavender hsl(.75turn, 60%, 70%, 1) */
+ color: hsl(.75turn, 60%, 70%);
+ /* These examples all specify the same color: a lavender that is 15% opaque. */
+ /* lavender that is 15% opaque. hsl(270, 60%, 50%, .15) */
+ /* lavender that is 15% opaque. hsl(270, 60%, 50%, 15%) */
+ /* lavender that is 15% opaque. hsl(270 60% 50% / .15) */
+ /* lavender that is 15% opaque. hsl(270 60% 50% / 15%) */
+ color: hsla(270, 60%, 50%, .15)
 }

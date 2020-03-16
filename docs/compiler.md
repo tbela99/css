@@ -73,6 +73,10 @@ _boolean_. Convert rgba and hsla to hex
 
 _boolean_. If true then compress the css. If false then pretty print the css
 
+### css_level
+
+_int_.  Default to 3. Support features specific to the specified CSS level. Setting the value 4 will replace _rgba()_ with _rgb()_ and _hsla()_ with _hsl()_.
+
 ### remove_comments
 
 _boolean_. If true then remove comments. When compress is set to true then comments are always removed
