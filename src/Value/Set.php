@@ -12,16 +12,29 @@ use TBela\CSS\Value;
  */
 class Set implements IteratorAggregate, JsonSerializable
 {
-
     /**
-     * var stdClass;
+     * @var array
      */
     protected $data = [];
 
+    /**
+     * Set constructor.
+     * @param array $data
+     */
     public function __construct(array $data)
     {
 
         $this->data = array_map([Value::class, 'getInstance'], $data);
+    }
+
+    public function __get($name)
+    {
+        if(isset($this->data[$name])) {
+
+            return $this->data[$name];
+        }
+
+        return null;
     }
 
     /**
@@ -41,9 +54,23 @@ class Set implements IteratorAggregate, JsonSerializable
         return $result;
     }
 
+    /**
+     * @param callable $filter
+     * @return $this
+     */
     public function filter (callable $filter) {
 
         $this->data = array_filter($this->data, $filter);
+        return $this;
+    }
+
+    /**
+     * @param callable $map
+     * @return $this
+     */
+    public function map (callable $map) {
+
+        $this->data = array_map($this->data, $map);
         return $this;
     }
 

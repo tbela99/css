@@ -17,6 +17,7 @@ class Compiler {
         'charset' => false,
         'rgba_hex' => false,
         'compress' => false,
+        'css_level' => 3,
         'remove_comments' => false,
         'remove_empty_nodes' => true,
         'allow_duplicate_declarations' => true
@@ -58,6 +59,17 @@ class Compiler {
 
 	    $this->data = Element::getInstance((new Parser($css, $this->options))->parse());
 	    return $this;
+    }
+
+    /**
+     * @param string $file
+     * @return $this
+     * @throws Exception
+     */
+    public function load ($file) {
+
+        $this->data = Element::getInstance((new Parser('', $this->options))->load($file)->parse());
+        return $this;
     }
 
     /**

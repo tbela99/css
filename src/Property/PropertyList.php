@@ -3,15 +3,9 @@
 namespace TBela\CSS\Property;
 
 use ArrayIterator;
-use Exception;
-use InvalidArgumentException;
 use IteratorAggregate;
-use stdClass;
-use TBela\CSS\RuleList;
 use TBela\CSS\Value;
-use Traversable;
-use function preg_match;
-
+use TBela\CSS\RuleList;
 use TBela\CSS\Element\Rule;
 
 /**
@@ -31,6 +25,11 @@ class PropertyList implements IteratorAggregate
      */
     protected $options = [];
 
+    /***
+     * PropertyList constructor.
+     * @param RuleList|null $list
+     * @param array $options
+     */
     public function __construct(RuleList $list = null, $options = [])
     {
         $this->options = $options;
@@ -45,15 +44,23 @@ class PropertyList implements IteratorAggregate
 
     }
 
+    /**
+     * @param string $name
+     * @param Value|string $value
+     * @param string|null $propertyType
+     * @return $this
+     */
     public function set($name, $value, $propertyType = null) {
 
-        if ($propertyType == 'comment') {
+        if ($propertyType == 'Comment') {
 
             $this->properties[] = new Comment($value);
             return $this;
         }
 
-        if (!Config::exists($name) && !empty($this->options['allow_duplicate_declarations'])) {
+        $name = (string) $name;
+
+        if(!empty($this->options['allow_duplicate_declarations'])) {
 
             if ($this->options['allow_duplicate_declarations'] === true ||
                 (is_array($this->options['allow_duplicate_declarations']) && in_array($name, $this->options['allow_duplicate_declarations']))) {
@@ -63,16 +70,13 @@ class PropertyList implements IteratorAggregate
             }
         }
 
-        $value = Value::parse($value);
-        $alias_name = Config::alias($name.'.alias', $name);
-        $config = Config::getProperty($alias_name);
+        $value = is_string($value) ? Value::parse($value) : $value;
+        $shorthand = Config::getProperty($name.'.shorthand');
 
         // is is an expanded property?
-        if (!is_null($config)) {
+        if (!is_null($shorthand)) {
 
-            $shorthand = Config::alias($name.'.shorthand', $config['shorthand']);
-
-           $config = Config::getProperty($shorthand, $config);
+           $config = Config::getProperty($shorthand);
 
             if (!isset($this->properties[$shorthand])) {
 
@@ -96,24 +100,30 @@ class PropertyList implements IteratorAggregate
         return $this;
     }
 
+    /**
+     * @param string $glue
+     * @param string $join
+     * @return string
+     */
     public function render ($glue = ';', $join = "\n")
     {
 
-        $result = '';
+        $result = [];
 
         foreach ($this->getProperties() as $property) {
 
-            $result .= $property->render($glue, $join);
+            $output = $property->render($glue, $join);
 
             if (!($property instanceof Comment)) {
 
-                $result .= $glue;
+                $output .= $glue;
             }
 
-            $result .= $join;
+            $output .= $join;
+            $result[] = $output;
         }
 
-        return rtrim(rtrim($result), $glue);
+        return rtrim(rtrim(implode('', $result)), $glue);
     }
 
     public function __toString() {
@@ -121,6 +131,9 @@ class PropertyList implements IteratorAggregate
         return $this->render();
     }
 
+    /**
+     * @return ArrayIterator<Property>
+     */
     public function getProperties () {
 
         $result = [];
@@ -135,6 +148,37 @@ class PropertyList implements IteratorAggregate
             else {
 
                 $result[] = $property;
+            }
+        }
+
+        $hashes = [];
+
+        $i = count($result);
+
+        // remove duplicate values
+        // color: #f00;
+        // color: red;
+        // ...
+        // color: rbg(255, 0, 0);
+        // compute all to the last value -> color: red
+
+        while($i--) {
+
+            if ($result[$i]['type'] == 'Comment') {
+
+                continue;
+            }
+
+            $hash = $result[$i]['hash'];
+
+            if (isset($hashes[$hash])) {
+
+                array_splice($result, $i, 1);
+            }
+
+            else {
+
+                $hashes[$hash] = 1;
             }
         }
 

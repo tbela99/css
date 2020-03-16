@@ -6,3 +6,4 @@ test/debug.txt
 .phpunit.result.cache
 xpath.txt
 test/color.php
+test/*.json

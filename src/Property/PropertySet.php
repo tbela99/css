@@ -35,52 +35,14 @@ class PropertySet
     public function __construct($shorthand, array $config)
     {
 
-        $this->shorthand = $shorthand;
-
-        if ($this->shorthand != $config['shorthand']) {
-
-            $value_map = [];
-            $config['shorthand'] = $shorthand;
-            $properties = Config::alias($shorthand.'.properties', []);
-
-            $config['properties'] = $properties;
-
-            foreach (array_reverse($properties) as $property) {
-
-                $alias = Config::alias($property.'.alias');
-
-            //    if (isset($config[$alias])) {
-
-                    $config[$property] = Config::getProperty($alias);
-                 //   unset($config[$alias]);
-            //    }
-
-                if (isset($config['value_map'])) {
-
-                    if (isset($config['value_map'][$alias])) {
-
-                        $value_map[$property] = $config['value_map'][$alias];
-                    }
-                }
-            }
-
-            if (!empty($value_map)) {
-
-                $config['value_map'] = $value_map;
-            }
-        }
-
-        else if (isset($config['properties'])) {
-
-            foreach ($config['properties'] as $property) {
-
-                $config[$property] = Config::getProperty($property);
-            }
-        }
+        $this->shorthand = (string) $shorthand;
 
         foreach ($config['properties'] as $property) {
 
+            $config[$property] = Config::getProperty($property);
             $this->property_type[$config[$property]['type']][] = $property;
+
+            unset($config[$property]['shorthand']);
         }
 
         $this->config = $config;
@@ -88,7 +50,7 @@ class PropertySet
 
     /**
      * @param string $name
-     * @param Value[]|string $value
+     * @param Value|Set|string $value
      * @return PropertySet
      * @throws InvalidArgumentException
      */
@@ -100,6 +62,8 @@ class PropertySet
             $value = Value::parse($value);
         }
 
+        $name = (string) $name;
+
         // is valid property
         if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
 
@@ -109,7 +73,34 @@ class PropertySet
         // $name is shorthand -> expand
         if ($this->shorthand == $name) {
 
-            $this->expand($value);
+            $result = $this->expand($value);
+
+            if ($result == false) {
+
+                foreach ($this->config['properties'] as $property) {
+
+                    $this->setProperty($property, $value);
+                }
+            }
+
+            else {
+
+                foreach ($result as $property => $values) {
+
+                    $separator = Config::getProperty($property.'.separator', ' ');
+
+                    if ($separator != ' ') {
+
+                        $separator = ' '.$separator.' ';
+                    }
+
+                    $this->setProperty($property, implode($separator, $values));
+                }
+
+            //    return $this;
+            }
+
+
         } else {
 
             $this->setProperty($name, $value);
@@ -121,7 +112,7 @@ class PropertySet
     /**
      * expand shorthand property
      * @param Value[] $value
-     * @return PropertySet
+     * @return array|bool
      */
     protected function expand($value)
     {
@@ -132,7 +123,6 @@ class PropertySet
         $result = [];
 
         $separator = isset($this->config['separator']) ? $this->config['separator'] : null;
-
         $index = 0;
 
         foreach ($value as $v) {
@@ -146,7 +136,7 @@ class PropertySet
             }
         }
 
-        foreach ($pattern as $match) {
+        foreach ($pattern as $key => $match) {
 
             foreach ($value_map as $index => $map) {
 
@@ -158,6 +148,19 @@ class PropertySet
                         array_splice($value_map[$index], $i, 1);
                         break;
                     }
+                }
+            }
+        }
+
+        // value_map must be empty!!!
+        foreach ($value_map as $val) {
+
+            foreach ($val as $v) {
+
+                if ($v->type != 'whitespace' && $v->type != 'separator') {
+
+                    // failure to match the pattern
+                    return false;
                 }
             }
         }
@@ -210,19 +213,7 @@ class PropertySet
             }
         }
 
-        foreach ($result as $property => $values) {
-
-            $separator = Config::getProperty($property.'.separator', ' ');
-
-            if ($separator != ' ') {
-
-                $separator = ' '.$separator.' ';
-            }
-
-            $this->setProperty($property, implode($separator, $values));
-        }
-
-        return $this;
+        return $result;
     }
 
     /**
@@ -239,12 +230,17 @@ class PropertySet
 
                 if (isset($this->properties[$property])) {
 
-                    $data = $this->properties[$property];
+                    $prop = $this->properties[$property];
                     $type = $this->config[$property]['type'];
                     $separator = isset($this->config[$property]['separator']) ? $this->config[$property]['separator'] : ' ';
                     $index = 0;
 
-                    foreach ($data['value'] as $v) {
+                    foreach ($prop['value'] as $v) {
+
+                        if ($v->type != 'whitespace' && $v->type != 'separator' && !$v->match($type)) {
+
+                            return false;
+                        }
 
                         if (!is_null($separator) && $v->value == $separator) {
 
@@ -312,17 +308,27 @@ class PropertySet
 
         if (!isset($this->properties[$name])) {
 
-            $this->properties[$name] = new Property($name, Config::getProperty($name . '.type'));
+            $this->properties[$name] = new Property($name);
         }
 
         $this->properties[$name]->setValue($value);
+
+        return $this;
     }
 
+    /**
+     * @return Property[]
+     */
     public function getProperties() {
 
         if (count($this->properties) == count($this->config['properties'])) {
 
-            return [(new Property($this->config['shorthand']))->setValue($this->reduce())];
+            $value = $this->reduce();
+
+            if ($value !== false) {
+
+                return [(new Property($this->config['shorthand']))->setValue($value)];
+            }
         }
 
         return array_values($this->properties);
@@ -340,7 +346,12 @@ class PropertySet
         // should use shorthand?
         if (count($this->properties) == count($this->config['properties'])) {
 
-            return $this->config['shorthand'].': '.$this->reduce();
+            $value = $this->reduce();
+
+            if ($value !== false) {
+
+                return $this->config['shorthand'].': '.$value;
+            }
         }
 
         foreach ($this->properties as $property) {

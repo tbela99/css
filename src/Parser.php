@@ -37,15 +37,7 @@ class Parser
     {
         if ($css !== '') {
 
-            if (preg_match('#(^(https?:))//#', $css) || is_file($css)) {
-
-                $this->load($css);
-            }
-
-            else {
-
-                $this->setContent($css);
-            }
+            $this->setContent($css);
         }
 
         $this->setOptions($options);
@@ -95,7 +87,7 @@ class Parser
                         $this->options[$key] = [$this->options[$key]];
                     }
 
-                    if (is_array($this->options[$key])) {
+                    else if (is_array($this->options[$key])) {
 
                         $this->options[$key] = array_flip($this->options[$key]);
                     }
@@ -138,15 +130,15 @@ class Parser
 
             switch ($ast->type) {
 
-                case 'atrule':
+                case 'AtRule':
 
                     return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
 
-                case 'stylesheet':
+                case 'Stylesheet':
 
                     return $this->deduplicateRules($ast);
 
-                case 'rule':
+                case 'Rule':
 
                     return $this->deduplicateDeclarations($ast);
             }
@@ -214,14 +206,14 @@ class Parser
                      //   $index = $total;
                         $el = $ast->elements[$total];
 
-                        if ($el->type == 'comment') {
+                        if ($el->type == 'Comment') {
 
                             continue;
                         }
 
                         $next = $ast->elements[$total - 1];
 
-                        while ($total > 1 && $next->type == 'comment') {
+                        while ($total > 1 && $next->type == 'Comment') {
 
                             $next = $ast->elements[--$total - 1];
                         }
@@ -237,7 +229,7 @@ class Parser
 
                             array_splice($ast->elements, $total - 1, 1);
 
-                            if ($el->type != 'declaration') {
+                            if ($el->type != 'Declaration') {
 
                                 array_splice($el->elements, 0, 0, $next->elements);
                             }
@@ -249,7 +241,7 @@ class Parser
 
                             $next = $ast->elements[--$total - 1];
 
-                            while ($total > 1 && $next->type == 'comment') {
+                            while ($total > 1 && $next->type == 'Comment') {
 
                                 $next = $ast->elements[--$total - 1];
                             }
@@ -285,20 +277,20 @@ class Parser
             $total = count($elements);
 
             $hash = [];
-            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : [];
+            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : !empty($this->options['allow_duplicate_declarations']);
 
             while ($total--) {
 
                 $declaration = $ast->elements[$total];
 
-                if ($declaration->type == 'comment') {
+                if ($declaration->type == 'Comment') {
 
                     continue;
                 }
 
                 $name = (isset($declaration->vendor) ? '-' . $declaration->vendor . '-' : '') . $declaration->name;
 
-                if (isset($exceptions[$name])) {
+                if ($exceptions === true || isset($exceptions[$name])) {
 
                     continue;
                 }
@@ -620,7 +612,7 @@ function stylesheet($context)
 
     $result = new stdClass;
 
-    $result->type = 'stylesheet';
+    $result->type = 'Stylesheet';
     $result->elements = $rulesList;
     $result->parsingErrors = $context->errorsList;
 
@@ -790,7 +782,7 @@ function comment($context)
 
     $data = new stdClass;
 
-    $data->type = 'comment';
+    $data->type = 'Comment';
     $data->value = $m[0];
 
     return $data;
@@ -859,11 +851,11 @@ function declaration($context)
 
     $filter = function ($value) use (&$comments) {
 
-        if ($value->type == 'comment') {
+        if ($value->type == 'Comment') {
 
             $data = new stdClass;
 
-            $data->type = 'comment';
+            $data->type = 'Comment';
             $data->value = (string) $value;
 
             $comments[] = $data;
@@ -881,7 +873,7 @@ function declaration($context)
     $val = match('/^((?:\'(?:\\\'|.)*?\'|"(?:\\"|.)*?"|\([^\)]*?\)|[^};])+)/s', $context);
 
     $data = [
-        'type' => 'declaration',
+        'type' => 'Declaration',
         'name' => Value::parse($prop)->filter($filter),
         'value' => Value::parse($val[0])->filter($filter)
     ];
@@ -918,7 +910,7 @@ function atrule($context)
 
         $data = [
 
-            'type' => 'atrule',
+            'type' => 'AtRule',
             'name' => $m[7],
             'isLeaf' => true,
             'value' => trim($m[8])
@@ -942,7 +934,7 @@ function atrule($context)
 
         $data = [
 
-            'type' => 'atrule',
+            'type' => 'AtRule',
             'name' => $m[7],
             'value' => trim($m[8])
         ];
@@ -1076,7 +1068,7 @@ function rule($context)
 
     $data = [
 
-        'type' => 'rule',
+        'type' => 'Rule',
         'selectors' => $sel,
         'elements' => $c
     ];

@@ -76,9 +76,9 @@ class Value
         return new $className($data);
     }
 
-    public function render($compressed = false, array $options = [])
+    public function render(array $options = [])
     {
-        if ($compressed && $this->data->value !== '') {
+        if (!empty($options['compress']) && $this->data->value !== '') {
 
             return preg_replace('#^("\')(["\'\s]+)\\1$#', '$2', $this->data->value);
         }
@@ -87,9 +87,9 @@ class Value
     }
 
     /**
-     * @param $string
+     * @param Value|$string
      * @param bool $capture_whitespace
-     * @return Value\Set
+     * @return Set<Value>
      */
     public static function parse($string, $capture_whitespace = true)
     {
@@ -194,7 +194,7 @@ class Value
 
                             $token = new stdClass;
 
-                            if (preg_match('#^(-([a-zA-Z]+)-(\S+))#', $buffer, $matches)) {
+                            if (preg_match('#^(-([a-zA-Z]+)-(\S+))#i', $buffer, $matches)) {
 
                                 $token->name = $matches[3];
                                 $token->vendor = $matches[2];
@@ -203,8 +203,7 @@ class Value
                                 $token->name = $buffer;
                             }
 
-                            if (preg_match('#^'.Color::COLOR_RGBA.'$#', $buffer.$params) ||
-                                preg_match('#^'.Color::COLOR_HSLA.'$#', $buffer.$params)) {
+                            if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla'])) {
 
                                 $token->type = 'color';
                             }
@@ -446,21 +445,22 @@ function type($token)
 
     $type->value = $token;
 
-    if (preg_match('#^(\d*(\.?\d+))(%|([a-zA-Z]+))$#', $token, $matches)) {
-
-        $type->type = 'unit';
-        $type->value = $matches[1];
-        $type->unit = $matches[3];
-    }
-
-    else if (is_numeric($token)) {
+    if (substr($token, 0, 1) != '#' && is_numeric($token)) {
 
         $type->type = 'number';
     }
 
-    else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^'.Color::COLOR_HEX.'$#', $token)) {
+    else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
         $type->type = 'color';
+        $type->colorType = 'hex';
+    }
+
+    else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
+
+        $type->type = 'unit';
+        $type->value = $matches[1];
+        $type->unit = $matches[9];
     }
 
     else {

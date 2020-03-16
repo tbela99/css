@@ -23,7 +23,7 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     /**
      * @var string
      */
-    protected $type = 'property';
+    protected $type = 'Property';
     /**
      * @var Value[]|null
      */
@@ -37,11 +37,6 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     {
 
         $this->name = $name;
-    }
-
-    public function getPropertyType() {
-
-        return $this->propertyType;
     }
 
     public function setValue($value) {
@@ -71,6 +66,11 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     public function getType() {
 
         return $this->type;
+    }
+
+    public function getHash() {
+
+        return $this->name.':'.$this->value->render(['compress' => true, 'rgba_hex' => true]);
     }
 
     public function render () {

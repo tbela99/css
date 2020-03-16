@@ -1,5 +1,5 @@
 p {
+ color: red;
  /* hex */
- /* this is a comment */
- color: red
+ color: red /* this is a comment */
 }

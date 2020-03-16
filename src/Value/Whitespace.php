@@ -16,7 +16,7 @@ class Whitespace extends Value {
         return ' ';
     }
 
-    public function render($compressed = false, array $options = [])
+    public function render(array $options = [])
     {
         return ' ';
     }

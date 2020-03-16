@@ -314,176 +314,7 @@ class Color {
         '#00000000' => 'transparent'
     ];
 
-    const COLOR_HEX = '\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})'; // /i
-    const COLOR_RGBA = 'rgb(a?)\(\s*(\d*(\.?\d+)?)(%?)\s*([,\s])\s*(\d*(\.?\d+)?)\\4\s*\\5\s*(\d*(\.?\d+)?)\\4\s*([,/]\s*(\d*(\.?\d+)?)(%?))?\s*\)'; // /s
-    const COLOR_HSLA = 'hsl(a?)\(\s*(\d*(\.?\d+)?)([a-z]*)\s*([,\s])\s*(\d*(\.?\d+)?)%\s*\\5\s*(\d*(\.?\d+)?)%\s*([,/]\s*(\d*(\.?\d+)?)(%?))?\s*\)'; // /s
-
-    public static function parseNamedColor ($str, $rgba_hex) {
-
-        return preg_replace_callback('#\w+#', function ($matches) use ($rgba_hex) {
-
-            $str = strtolower($matches[0]);
-
-            if (isset(static::COLORS_NAMES[$str])) {
-
-                $name = static::COLORS_NAMES[$str];
-
-                $shortened = static::shorten($name);
-
-                if (strlen($str) > strlen($shortened)) {
-
-                    if ((strlen($shortened) == 5 || strlen($shortened) == 9) && !$rgba_hex) {
-
-                        return static::hex2rgba($shortened);
-                    }
-
-                    return $shortened;
-                }
-
-                if (strlen($str) > strlen($name)) {
-
-                    return $name;
-                }
-            }
-
-            return static::shorten($matches[0]);
-        }, $str);
-    }
-
-    public static function parseHexColor ($str, $rgba_hex) {
-
-        return preg_replace_callback('#(?=\W?)'.static::COLOR_HEX.'(?=\W|$)#i', function ($matches) use ($rgba_hex) {
-
-            $color = static::expand($matches[0]);
-            $short = static::shorten($color);
-            $length = strlen($short);
-
-            if (isset(static::NAMES_COLORS[$color]) && $length > strlen(static::NAMES_COLORS[$color])) {
-
-                return static::NAMES_COLORS[$color];
-            }
-
-            if (!$rgba_hex) {
-
-                if ($length == 5 || $length == 9) {
-
-                    return static::hex2rgba($short);
-                }
-            }
-
-            return $short;
-
-        }, $str);
-    }
-
-    public static function parseRGBColor ($str, $rgba_hex) {
-
-        return preg_replace_callback('#(?=\W?)'.static::COLOR_RGBA.'(?=\W|$)#s', function ($matches) use ($rgba_hex) {
-
-            $hex = $matches[0];
-
-            /*
-            if ($matches[4] == '%') {
-
-                $matches[2] = round($matches[2] * 255 / 100);
-                $matches[6] = round($matches[6] * 255 / 100);
-                $matches[8] = round($matches[8] * 255 / 100);
-            }
-
-            if (isset($matches[13]) && $matches[13] == '%') {
-
-                $matches[11] /= 100;
-            }
-            */
-
-            if (!empty($matches[10])) {
-
-                $hex = static::rgba2hex($matches[2].$matches[4], $matches[6].$matches[4], $matches[8].$matches[4], $matches[11].$matches[13]);
-            }
-
-            else {
-
-                $hex = static::rgba2hex($matches[2].$matches[4], $matches[6].$matches[4], $matches[8].$matches[4]);
-            }
-
-            if (!$rgba_hex) {
-
-                $length = strlen($hex);
-
-                if ($length == 5 || $length == 9) {
-
-                    return static::hex2rgba($hex);
-                }
-            }
-
-            return $hex;
-
-        }, $str);
-    }
-
-    public static function parseHSLColor($value, $rgba_hex) {
-
-        return preg_replace_callback('#(?=\W?)'.static::COLOR_HSLA.'(?=\W|$)#s', function ($matches) use ($rgba_hex) {
-
-            $hex = $matches[0];
-
-            /*
-            $matches[6] /= 100;
-            $matches[8] /= 100;
-
-            switch ($matches[4]) {
-
-                case 'rad':
-
-                    $matches[2] /= 2 * pi();
-                    break;
-
-                case '':
-                case 'deg':
-
-                    $matches[2] /= 360;
-                    break;
-
-                case 'turn':
-                    // do nothing
-                    break;
-            }
-            */
-
-
-            if (!empty($matches[10])) {
-
-                /*
-                if ($matches[13] == '%') {
-
-                    $matches[11] /= 100;
-                }
-                */
-
-                $hex = static::hsl2hex($matches[2].$matches[4], $matches[6], $matches[8], $matches[11].$matches[13]);
-            }
-
-            else {
-
-                $hex = static::hsl2hex($matches[2].$matches[4], $matches[6], $matches[8]);
-            }
-
-            if (!$rgba_hex) {
-
-                $length = strlen($hex);
-
-                if ($length == 5 || $length == 9) {
-
-                    return static::hex2hsla($hex);
-                }
-            }
-
-            return $hex;
-
-        }, $value);
-    }
-
-    public static function hex2rgba($hex) {
+    public static function hex2rgba($hex, array $options = []) {
 
         $color = static::expand($hex);
 
@@ -492,23 +323,26 @@ class Color {
             return static::NAMES_COLORS[$color];
         }
 
+        $glue = empty($options['compress']) ? ', ' : ',';
+        $rgba = !empty($options['css_level']) && $options['css_level'] > 3 ? 'rgb' : 'rgba';
+
         switch (strlen($hex)) {
 
             case 4;
 
-                return 'rgb('.hexdec($hex[1].$hex[1]).','. hexdec($hex[2].$hex[2]).','. hexdec($hex[3].$hex[3]).')';
+                return 'rgb('.hexdec($hex[1].$hex[1]).$glue. hexdec($hex[2].$hex[2]).$glue. hexdec($hex[3].$hex[3]).')';
 
             case 5;
 
-                return 'rgba('.hexdec($hex[1].$hex[1]).','. hexdec($hex[2].$hex[2]).','. hexdec($hex[3].$hex[3]).','. ValueNumber::compress(round(hexdec($hex[4].$hex[4]) / 255, 2)).')';
+                return $rgba.'('.hexdec($hex[1].$hex[1]).$glue. hexdec($hex[2].$hex[2]).$glue. hexdec($hex[3].$hex[3]).$glue. ValueNumber::compress(round(hexdec($hex[4].$hex[4]) / 255, 2)).')';
 
             case 7;
 
-                return 'rgb('.hexdec($hex[1].$hex[2]).','. hexdec($hex[3].$hex[4]).','. hexdec($hex[5].$hex[6]).')';
+                return 'rgb('.hexdec($hex[1].$hex[2]).$glue. hexdec($hex[3].$hex[4]).$glue. hexdec($hex[5].$hex[6]).')';
 
             case 9;
 
-                return 'rgba('.hexdec($hex[1].$hex[2]).','. hexdec($hex[3].$hex[4]).','. hexdec($hex[5].$hex[6]).','. ValueNumber::compress(round(hexdec($hex[7].$hex[8]) / 255, 2)).')';
+                return $rgba.'('.hexdec($hex[1].$hex[2]).$glue. hexdec($hex[3].$hex[4]).$glue. hexdec($hex[5].$hex[6]).$glue. ValueNumber::compress(round(hexdec($hex[7].$hex[8]) / 255, 2)).')';
         }
 
         return $hex;
@@ -568,7 +402,6 @@ class Color {
         }
 
         $hex = static::expand($hex);
-
         $a = '';
 
         if (strlen($hex) == 9) {
@@ -579,36 +412,16 @@ class Color {
         return static::rgba2hsl(hexdec($hex[1].$hex[2]), hexdec($hex[3].$hex[4]), hexdec($hex[5].$hex[6]), $a);
     }
 
+    /**
+     * @param float $r
+     * @param float $g
+     * @param float $b
+     * @param float|null $a
+     * @return string
+     */
     public static function rgba2hex($r, $g, $b, $a = null) {
 
-        $r = (string) $r;
-        $g = (string) $g;
-        $b = (string) $b;
-
-        if (substr($r, -1) == '%') {
-
-            $r = floatval($r) * 255 / 100;
-        }
-
-        if (substr($g, -1) == '%') {
-
-            $g = floatval($g) * 255 / 100;
-        }
-
-        if (substr($b, -1) == '%') {
-
-            $b = floatval($b) * 255 / 100;
-        }
-
-        if (!is_null($a) && $a !== '') {
-
-            if ($a[strlen($a) - 1] == '%') {
-
-                $a = floatval($a) / 100;
-            }
-        }
-
-        $color = sprintf(is_null($a) || $a == 1 || $a === '' ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $r, $g, $b, 255 * $a);
+        $color = sprintf(is_null($a) || $a == 1 || $a === '' ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $r, $g, $b, round(255 * $a));
 
         $short = static::shorten($color);
 
@@ -621,36 +434,6 @@ class Color {
     }
 
     public static function hsl2hex($h, $s, $l, $a = null) {
-
-        switch (preg_replace('#^(\d*(\.?\d+)?)+#', '', $h)) {
-
-            case 'rad':
-
-                $h = floatval($h) / (2 * pi());
-                break;
-
-            case '':
-            case 'deg':
-
-                $h = floatval($h) / 360;
-                break;
-
-            case 'turn':
-                // do nothing
-                $h = floatval($h);
-                break;
-        }
-
-        $s = floatval($s) / 100;
-        $l = floatval($l) / 100;
-
-        if (!is_null($a) && $a !== '') {
-
-            if (substr($a, -1) == '%') {
-
-                $a = floatval($a) / 100;
-            }
-        }
 
         $r = $l;
         $g = $l;
@@ -724,9 +507,9 @@ class Color {
             return $color;
         }
 
-        if (strlen($color) > 7) {
+        if (strlen($color) >= 7) {
 
-            if ($color[7].$color[8] == 'ff') {
+            if (strlen($color) > 7 && $color[7].$color[8] == 'ff') {
 
                 return substr($color, 0, 7);
             }
@@ -734,7 +517,7 @@ class Color {
             return $color;
         }
 
-        $expanded = '#'.$color[1].$color[1]. $color[2].$color[2]. $color[3].$color[3];
+        $expanded = '#'.$color[1].$color[1]. $color[2].$color[2].$color[3].$color[3];
 
         if (strlen ($color) == 5) {
 
@@ -752,6 +535,11 @@ class Color {
         $regExp = '\#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3';
 
         $color = strtolower($str);
+
+        if (strlen($color) == 5 && $color[4] == 'f') {
+
+            $color = substr($color, 0, 4);
+        }
 
         if (strlen($color) == 9) {
 

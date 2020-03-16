@@ -12,7 +12,7 @@ use TBela\CSS\Renderer;
 // because git changes \n to \r\n at some point, this causes test failure
 function get_content($file) {
 
-    return str_replace("\r\n", "\n", file_get_contents($file));
+    return file_get_contents($file);
 }
 
 
@@ -32,27 +32,8 @@ final class Render extends TestCase
         $compiler->setData($parser->load($file)->parse());
 
         $this->assertEquals(
-           $compiler->compile(),
-            $expected
-        );
-    }
-
-    /**
-     * @param Parser $parser
-     * @param Compiler $compiler
-     * @param string $file
-     * @param string $expected
-     * @throws Exception
-     * @dataProvider minifiedProvider
-     */
-    public function testMinifyDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
-    {
-
-        $compiler->setData($parser->load($file)->parse());
-
-        $this->assertEquals(
-            $compiler->compile(),
-            $expected
+            get_content($expected),
+           $compiler->compile()
         );
     }
 
@@ -111,14 +92,14 @@ final class Render extends TestCase
         );
     }
 
-    /*
+    /**
      * @param Element $data
      * @param Renderer $renderer
      * @param string $expected
      * @dataProvider extractDeclarationsProvider
      * @throws Exception
      */
-/*
+
     public function testExtractDeclarations(Element $data, Renderer $renderer, $expected)
     {
 
@@ -172,7 +153,7 @@ final class Render extends TestCase
             get_content($expected)
         );
     }
-*/
+
     public function testBuildCss() {
 
         $step = 0;
@@ -246,7 +227,7 @@ final class Render extends TestCase
         $rule2 = $media->addRule('.new');
         $rule2->addDeclaration('color', 'green');
 
-        $namespace = $stylesheet->addAtRule('namespace', 'svg https://google.com/', 2);
+        $namespace = $stylesheet->addAtRule('namespace', 'svg url(https://google.com/)', 2);
 
         $this->assertEquals(
             (string) $stylesheet,
@@ -329,42 +310,9 @@ final class Render extends TestCase
             $data[] = [
 
                 $parser,
-                (new Compiler())->setOptions(['compress' => false, 'rgba_hex' => false]),
+                new Compiler(['compress' => false, 'rgba_hex' => false]),
                 $file,
-                get_content(dirname(dirname($file)).'/output/'.basename($file))
-            ];
-        }
-
-        return $data;
-    }
-
-    public function minifiedProvider(): array
-    {
-
-        $data = [];
-
-        foreach (glob('css/*.css') as $file) {
-
-            $parser =  (new Parser())->setOptions(['flatten_import' => true]);
-
-            if (basename($file) == 'color.css') {
-
-                $parser->setOptions([
-                    'allow_duplicate_declarations' => ['color']
-                ]);
-            }
-
-            else {
-
-                $parser->setOptions(['allow_duplicate_declarations' => true]);
-            }
-
-            $data[] = [
-
-               $parser,
-                (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
-                $file,
-                get_content(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
+                dirname(dirname($file)).'/output/'.basename($file)
             ];
         }
 
@@ -375,30 +323,28 @@ final class Render extends TestCase
      * @return array
      * @throws Exception
      */
-    /*
     public function extractDeclarationsProvider () {
 
-        $parser = new Parser(dirname(__DIR__).'/css/manipulate.css', [
+        $parser = new Parser('', [
             'silent' => false,
             'flatten_import' => true
         ]);
 
         return [
-            [$parser->parse(), new Renderer(), __DIR__ .'/../output/extract_font_face_src.css']
+            [$parser->load(dirname(__DIR__).'/css/manipulate.css')->parse(), new Renderer(), __DIR__ .'/../output/extract_font_face_src.css']
         ];
     }
-    */
 /*
 */
     public function extractAtRuleProvider () {
 
-        $parser = new Parser(__DIR__.'/../css/manipulate.css', [
+        $parser = new Parser('', [
             'silent' => false,
             'flatten_import' => true
         ]);
 
         return [
-            [$parser->parse(), new Renderer(), __DIR__.'/../output/extract_font_face.css']
+            [$parser->load(__DIR__.'/../css/manipulate.css')->parse(), new Renderer(), __DIR__.'/../output/extract_font_face.css']
         ];
     }
 }
