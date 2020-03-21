@@ -6,9 +6,8 @@ CSS (A CSS parser and minifier written in PHP)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
-- remove (nested) empty rules
 - merge duplicate rules
-- remove d rules and declarations
+- remove empty rules and declarations
 - process @import directive
 - remove @charset directive
 - compute css declarations (margin, padding, border-width, border-radius)
@@ -27,55 +26,92 @@ $ composer require tbela99/css
 
 ```css
 h1 {
-        color: green;
-        color: blue;
-        color: black;
-    }
+  color: green;
+  color: blue;
+  color: black;
+}
 
-    h1 {
-        color: #000;
-        color: aliceblue;
-    }
+h1 {
+  color: #000;
+  color: aliceblue;
+}
+```
+
+PHP Code
+
+```php
+
+use \TBela\CSS\Compiler;
+
+$compiler = new Compiler();
+
+$compiler->setContent('
+h1 {
+  color: green;
+  color: blue;
+  color: black;
+}
+
+h1 {
+  color: #000;
+  color: aliceblue;
+}');
+
+echo $compiler->compile();
+```
+
+Result
+
+```css
+h1 {
+  color: #f0f8ff;
+}
 ```
 
 Parse the css file and generate the AST
 
 ```php
 
-$parser = new \TBela\CSS\Parser($css);
-$ast = $parser->parse();
+use \TBela\CSS\Parser;
+use \TBela\CSS\Renderer;
 
-file_put_contents('style.json', json_encode($ast));
+$parser = new Parser($css);
+$element = $parser->parse();
+
+// pretty print css
+$css = (string) $element;
+
+// minified output
+$renderer = new Renderer([
+  'compress' => true,
+  'rgba_hex' => true,
+  'css_level' => 4,
+  'allow_duplicate_declarations' => false
+  ]);
+
+$css = $renderer->render($element);
+
+// save as json
+file_put_contents('style.json', json_encode($element));
 ```
 
 Load the AST and generate css code
 
 ```php
 
+use \TBela\CSS\Compiler;
+
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new \TBela\CSS\Compiler([
+$compiler = new Compiler([
     'rgba_hex' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $parser->compile($ast);
+$compiler->setData($ast);
 
-```
-
-pretty print output
-
-```css
-h1 {
- color: aliceblue
-}
-```
-
-minified output
-
-```css
-h1{color:#f0f8ff}
+$css = $compiler->compile();
 ```
 
 ## CSS manipulation
@@ -83,63 +119,65 @@ h1{color:#f0f8ff}
 ### Example: Extract Font-src
 
 CSS source
+
 ```css
 @font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 
-body{
-background-color: green;
-color: #fff;
-font-family: Arial, Helvetica, sans-serif;
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
 }
-h1{
-color: #fff;
-font-size: 50px;
-font-family: Arial, Helvetica, sans-serif;
-font-weight: bold;
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }
 
 @media print {
-	@font-face {
-  font-family: MaHelvetica;
-  src: local("Helvetica Neue Bold"),
-       local("HelveticaNeue-Bold"),
-       url(MgOpenModernaBold.ttf);
-  font-weight: bold;
-}
-body {
-  font-family: "Bitstream Vera Serif Bold", serif;
-}
-p{
-font-size: 12px;
-color: #000;
-text-align: left
-}
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
 
-    @font-face {
-        font-family: Arial, MaHelvetica;
-        src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf);
-        font-weight: bold;
-    }
-	}
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+}
 ```
 
 php source
-```php 
+
+```php
 
 use \TBela\CSS\Parser;
 use \TBela\CSS\Element;
 use \TBela\CSS\Element\AtRule;
 use \TBela\CSS\Element\Stylesheet;
 
-$parser = new Parser(file_get_contents('./css/manipulate.css'), [
+$parser = new Parser('', [
     'silent' => false,
     'flatten_import' => true
 ]);
+
+$parser->load('./css/manipulate.css');
 
 $stylesheet = new Stylesheet();
 
@@ -151,13 +189,13 @@ function getNodes ($data, $stylesheet) {
 
         if ($node instanceof AtRule) {
 
-            switch ($node->getName()) {
+            switch ((string) $node->getName()) {
 
                 case 'font-face':
 
                     foreach ($node as $declaration) {
 
-                        if ($declaration['name'] == 'src') {
+                        if ((string) $declaration['name'] == 'src') {
 
                             $stylesheet->append($declaration->copy()->getRoot());
                             break;
@@ -185,19 +223,19 @@ echo $stylesheet;
 
 result
 
-```css 
+```css
 @font-face {
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 @media print {
- @font-face {
-   src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf)
- }
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
 }
 ```
-## Build a css document
+
+## Build a CSS document
 
 ```php
 
@@ -213,84 +251,95 @@ $rule->addDeclaration('color', 'black');
 echo $stylesheet;
 
 ```
+
 output
+
 ```css
 div {
- background-color: white;
- color: black
+  background-color: #fff;
+  color: #000;
 }
 ```
+
 ```php
 
 $media = $stylesheet->addAtRule('media', 'print');
 $media->append($rule);
 
 ```
+
 output
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 ```
 
 ```php
-$rule = $stylesheet->addRule('div');
+$div = $stylesheet->addRule('div');
 
-$rule->addDeclaration('max-width', '100%');
-$rule->addDeclaration('border-width', '0px');
+$div->addDeclaration('max-width', '100%');
+$div->addDeclaration('border-width', '0px');
 
 ```
+
 output
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 div {
- max-width: 100%;
- border-width: 0px
+  max-width: 100%;
+  border-width: 0;
 }
 ```
 
 ```php
 
-$media->append($rule);
+$media->append($div);
 
 ```
+
 output
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
   div {
-   max-width: 100%;
-   border-width: 0px
- }
+    max-width: 100%;
+    border-width: 0;
+  }
 }
 ```
 
 ```php
 
-$stylesheet->insert($rule, 0);
+$stylesheet->insert($div, 0);
 ```
+
 output
+
 ```css
 div {
- max-width: 100%;
- border-width: 0px
+  max-width: 100%;
+  border-width: 0;
 }
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 ```
 
@@ -299,15 +348,15 @@ div {
 - source: CSS source file. It is only used in the exception error message.
 - silent: throw an exception if false or silently return an error. default to false
 - flatten_import: process @import directive and import the content into the css. default to false.
-- allow_duplicate_rules: merge duplicate rules
-- allow_duplicate_declarations: remove duplicate declarations
+- allow_duplicate_rules: allow duplicated rules. By default duplicate rules are merged
+- allow_duplicate_declarations: allow duplicated declarations in the same rule.
 
 ## Compiler options
 
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
+- remove*comments: remove comments. If \_compress* is true, comments are always removed
 - rgba_hex: convert colors in rgba() and hsla() to hex
 - compress: produce minified output
 - remove_empty_nodes: remove empty css declaration

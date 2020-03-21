@@ -97,7 +97,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
-     * @return Value|string
+     * @return Value\Set|Value|string
      */
     public function getValue () {
 
@@ -110,7 +110,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
-     * @param Set|Value|string $value
+     * @param Value\Set|Value|string $value
      * @return $this
      */
     public function setValue ($value) {

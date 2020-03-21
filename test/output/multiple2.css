@@ -1,9 +1,6 @@
 /* unexpected rule */
 h1 {
- color: green;
- color: blue;
+ color: #f0f8ff;
  /* unexpected */
- color: #000;
  /* unexpected declaration */
- color: #f0f8ff
 }

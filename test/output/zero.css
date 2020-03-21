@@ -8,11 +8,11 @@ body {
  background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent
 }
 .element {
- color: rgb(0, 0, 0);
+ color: #000;
  background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent;
- margin: 5px 3px 5px 3px;
- padding: 5px 3px 5px;
- -moz-border-radius: 15px 10px 10px 10px;
- -webkit-border-radius: 5px 15px 5px 15px;
- border-radius: 5px 5px
+ margin: 5px 3px;
+ padding: 5px 3px;
+ -moz-border-radius: 15px 10px 10px;
+ -webkit-border-radius: 5px 15px;
+ border-radius: 5px
 }

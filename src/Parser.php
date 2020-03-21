@@ -47,6 +47,7 @@ class Parser
      * @param string $file
      * @return $this
      */
+
     public function load($file)
     {
 
@@ -99,7 +100,7 @@ class Parser
     }
 
     /**
-     * @return object
+     * @return Element
      * @throws Exception
      */
     public function parse()
@@ -116,7 +117,7 @@ class Parser
     }
 
     /**
-     * @param object|Element $ast
+     * @param object
      * @return object
      */
     public function deduplicate($ast)
@@ -126,7 +127,7 @@ class Parser
             $ast = json_decode(json_encode($ast));
         }
 
-        if ((empty($this->options['allow_duplicate_rules']) || empty($this->options['allow_duplicate_declarations'])) && !empty ($ast)) {
+        if ((empty($this->options['allow_duplicate_rules']) || empty($this->options['allow_duplicate_declarations']) || $this->options['allow_duplicate_declarations'] !== true) && !empty ($ast)) {
 
             switch ($ast->type) {
 

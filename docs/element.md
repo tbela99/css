@@ -5,7 +5,7 @@
 An Element instance can be created in multiple ways
 From the AST
 
-```php 
+```php
 
 use \TBela\Element;
 
@@ -16,11 +16,11 @@ $stylesheet = Element::getInstance($ast);
 
 Using the parser
 
-```php 
+```php
 
 use \TBela\Parser;
 
-$parser = new Parser('template.css');
+$parser = new Parser($css);
 
 // or
 $parser->load('template.css');
@@ -28,12 +28,13 @@ $parser->load('template.css');
 // or
 $parser->seContent($css);
 
+// and then
 $stylesheet = $parser->parse();
 ```
 
 Using the compiler
 
-```php 
+```php
 
 use \TBela\Compiler;
 
@@ -41,8 +42,11 @@ $compiler = new Compiler();
 
 //
 $compiler->load('template.css');
-// or
 
+// or
+$compiler->setContent($css);
+
+// and then
 $stylesheet = $compiler->getData();
 ```
 
@@ -51,10 +55,48 @@ $stylesheet = $compiler->getData();
 The AST is a json representation of the CSS file.
 Getting the AST
 
-```php 
+```php
 
 $json = json_encode($stylesheet);
 $ast = json_decode($json);
+
+$compiler->setData($ast);
+
+
+// print css ...
+echo $compiler->compile();
+```
+
+## Properties
+
+### childNodes
+
+If the element can contain children, they can be accessed using the syntax \$element['childNodes']
+
+```php
+$childNodes = $elements['childNodes'];
+
+// or
+$childNodes = $element->getChildren();
+
+// or
+$childNodes = $element['children'];
+```
+
+### firstChild
+
+Return the first child element
+
+```php
+$firstChild = $element['firstChild'];
+```
+
+### lastChild
+
+Return the last child element
+
+```php
+$lastChild = $element['lastChild'];
 ```
 
 ## Methods shortcut
@@ -85,23 +127,32 @@ $element['name'] = 'src';
 $element->setName('src');
 ```
 
-
 ## Iterating over the children
-
 
 ```php
 
-foreach ($element['children'] as $child) {
-
- // ...
-}
-
-// or
 foreach ($element as $child) {
 
  // ...
 }
 
+// or
+foreach ($element['childNodes'] as $child) {
+
+ // ...
+}
+
+// or
+foreach ($element->getChildren() as $child) {
+
+ // ...
+}
+
+// or
+foreach ($element['children'] as $child) {
+
+ // ...
+}
 ```
 
 ## Methods
@@ -160,7 +211,7 @@ Set the value
 
 #### Arguments
 
-- $value: _string_
+- \$value: _string_
 
 #### Return Type
 

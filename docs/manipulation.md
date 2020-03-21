@@ -1,4 +1,3 @@
-
 ## Example build a css document
 
 ```php
@@ -15,26 +14,31 @@ $rule->addDeclaration('color', 'black');
 echo $stylesheet;
 
 ```
-output
+
+Result
+
 ```css
 div {
- background-color: white;
- color: black
+  background-color: #fff;
+  color: #000;
 }
 ```
+
 ```php
 
 $media = $stylesheet->addAtRule('media', 'print');
 $media->append($rule);
 
 ```
-output
+
+Result
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 ```
 
@@ -45,17 +49,19 @@ $rule->addDeclaration('max-width', '100%');
 $rule->addDeclaration('border-width', '0px');
 
 ```
-output
+
+Result
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 div {
- max-width: 100%;
- border-width: 0px
+  max-width: 100%;
+  border-width: 0;
 }
 ```
 
@@ -64,88 +70,91 @@ div {
 $media->append($rule);
 
 ```
-output
+
+Result
+
 ```css
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
   div {
-   max-width: 100%;
-   border-width: 0px
- }
+    max-width: 100%;
+    border-width: 0;
+  }
 }
 ```
 
 ```php
-
 $stylesheet->insert($rule, 0);
 ```
-output
+
+Result
+
 ```css
 div {
- max-width: 100%;
- border-width: 0px
+  max-width: 100%;
+  border-width: 0;
 }
 @media print {
   div {
-   background-color: white;
-   color: black
- }
+    background-color: #fff;
+    color: #000;
+  }
 }
 ```
 
 ## Extract Font-src from a document
 
 CSS source
+
 ```css
 @font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 
-body{
-background-color: green;
-color: #fff;
-font-family: Arial, Helvetica, sans-serif;
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
 }
-h1{
-color: #fff;
-font-size: 50px;
-font-family: Arial, Helvetica, sans-serif;
-font-weight: bold;
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }
 
 @media print {
-	@font-face {
-  font-family: MaHelvetica;
-  src: local("Helvetica Neue Bold"),
-       local("HelveticaNeue-Bold"),
-       url(MgOpenModernaBold.ttf);
-  font-weight: bold;
-}
-body {
-  font-family: "Bitstream Vera Serif Bold", serif;
-}
-p{
-font-size: 12px;
-color: #000;
-text-align: left
-}
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
 
-    @font-face {
-        font-family: Arial, MaHelvetica;
-        src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf);
-        font-weight: bold;
-    }
-	}
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+}
 ```
 
 php source
-```php 
+
+```php
 
 use \TBela\CSS\Parser;
 use \TBela\CSS\Element;
@@ -202,72 +211,70 @@ $stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
 echo $stylesheet;
 ```
 
-result
+Result
 
-```css 
+```css
 @font-face {
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 @media print {
- @font-face {
-   src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf)
- }
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
 }
 ```
-
 
 ## Extract @Font-face rules from a document
 
 CSS source
+
 ```css
 @font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 
-body{
-background-color: green;
-color: #fff;
-font-family: Arial, Helvetica, sans-serif;
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
 }
-h1{
-color: #fff;
-font-size: 50px;
-font-family: Arial, Helvetica, sans-serif;
-font-weight: bold;
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }
 
 @media print {
-	@font-face {
-  font-family: MaHelvetica;
-  src: local("Helvetica Neue Bold"),
-       local("HelveticaNeue-Bold"),
-       url(MgOpenModernaBold.ttf);
-  font-weight: bold;
-}
-body {
-  font-family: "Bitstream Vera Serif Bold", serif;
-}
-p{
-font-size: 12px;
-color: #000;
-text-align: left
-}
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
 
-    @font-face {
-        font-family: Arial, MaHelvetica;
-        src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf);
-        font-weight: bold;
-    }
-	}
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+}
 ```
 
 php source
-```php 
+
+```php
 
 use \TBela\CSS\Parser;
 use \TBela\CSS\Element;
@@ -319,20 +326,19 @@ $stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
 echo $stylesheet;
 ```
 
-result
+Result
 
-```css 
+```css
 @font-face {
   font-family: "Bitstream Vera Serif Bold";
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 @media print {
- @font-face {
-   font-family: Arial, MaHelvetica;
-   src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf);
-   font-weight: bold
- }
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
 }
 ```

@@ -17,10 +17,17 @@ class Value
      */
     protected $data = null;
 
+    protected static $cache = [];
+
     public function __construct($data)
     {
 
         $this->data = $data;
+    }
+
+    public function __destruct()
+    {
+        unset (static::$cache[spl_object_hash($this)]);
     }
 
     public function __get($name)

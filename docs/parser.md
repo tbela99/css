@@ -1,88 +1,138 @@
 # Parser
 
-Parse CSS and convert it to an AST. An AST is an object representation of the CSS.
+Parse CSS and convert it to an Element.
 
 ## Usage
 
 Load CSS string
 
-```php 
+```php
 
 $parser = new \TBela\CSS\Parser();
 $parser->setContent('
-@import 'css/style.css';
+@import "css/style.css";
 body { border: 0px; }');
 
-$parser->setOptions([  
+$parser->setOptions([
     'flatten_import' => true,
     'allow_duplicate_declarations' => true,
     'allow_duplicate_rules' => true
-]);
+]);css
 
-echo $compiler->compile();
+// return an Element
+$stylesheet = $parser->parse();
+
+//
+echo $stylesheet;
 ```
 
 Load CSS file
 
-```php 
+```php
 
 $parser = new \TBela\CSS\Parser();
 $parser->load($css_file);
 
-$parser->setOptions([  
+$parser->setOptions([
     'flatten_import' => true,
     'allow_duplicate_declarations' => true,
     'allow_duplicate_rules' => true
 ]);
 
-echo $compiler->compile();
+// return an Element
+$stylesheet = $parser->parse();
+
+//
+echo $stylesheet;
 ```
 
 ## Parser Options
 
+### source
+
+_string_. CSS source file. It is only used in the exception error message.
+
+### silent
+
+_boolean_. Default _false_. Throw an exception or return an error
+
 ### flatten_import
 
-_boolean_. Replace the @import directive with actual content
+_boolean_. Default _false_. Replace the @import directive with actual content
 
 ### allow_duplicate_rules
 
-_boolean_. Merge duplicate rules
+_boolean_. Default _false_. allow duplicate rules or merge them into one rule
 
 ### allow_duplicate_declarations
 
-_boolean_|_string_|_array_. Default _'background-image'_. Remove duplicate declarations. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
+_boolean_|_string_|_array_. Default _'background-image'_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
 
 ```php
 
-// preserve everything
-$parser->setOptions(['allow_duplicate_declarations' => false]);
+use TBela\CSS\Parser;
 
-// remove duplicates
-$parser->setOptions(['allow_duplicate_declarations' => true]);
+$parser = new Parser();
 
-// preserve multiple declarations for color 
-$parser->setOptions(['allow_duplicate_declarations' => 'color']);
+$parser->setOptions(['allow_duplicate_rules' => true, 'allow_duplicate_declarations' => ['background-image']]);
 
-// preserve multiple declarations for color and background-color
-$parser->setOptions(['allow_duplicate_declarations' => ['color', 'background-color']);
+$parser->setContent('
+h1 {
+  color: green;
+  color: blue;
+  color: black;
+}
 
+h1 {
+  color: aliceblue;
+  color: #000;
+}');
+
+echo $parser->parse();
+
+```
+
+Result
+
+```css
+h1 {
+  color: #000;
+}
+h1 {
+  color: #f0f8ff;
+}
+```
+
+PHP
+
+```php
+$parser->setOptions(['allow_duplicate_rules' => false]);
+echo $parser->parse();
+```
+
+Result
+
+```css
+h1 {
+  color: #f0f8ff;
+}
 ```
 
 ### silent
 
-_boolean_. By default the parser will throw an exception if an invalid css content is provided. 
+_boolean_. By default the parser will throw an exception if an invalid css content is provided.
 
-## Compiler Methods
- 
+## Parser Methods
+
 ### Constructor
 
 Constructor
 
 #### Parameters
 
-- $css: _string_. css string or file path or url
-- $options: _array_. see [parser options](#parser-options)
-   
+- \$css: _string_. css string or file path or url
+- \$options: _array_. see [parser options](#parser-options)
+
 ### Parse
 
 Parse CSS and return the CSS stylesheet
@@ -94,36 +144,35 @@ none
 #### Return type
 
 \TBela\Element
-  
+
 ### SetOptions
 
-Configure the parser options. see [compiler options](#compiler-options)
+Configure the parser options.
 
 #### Parameters
 
-- $options: _array_. see [parser options](#parser-options)
-    
+- \$options: _array_. see [parser options](#parser-options)
+
 #### Return type
 
 \TBela\CSS\Parser instance
-  
+
 ### Load
 
 #### Parameters
 
-- $file: _string_. load a css file
-    
+- \$file: _string_. load a css file
+
 #### Return type
 
 \TBela\CSS\Parser instance
-  
+
 ### SetContent
 
 #### Parameters
 
-- $css: _string_.  css string or file path or url
-    
+- \$css: _string_. Css string
+
 #### Return type
 
 \TBela\CSS\Parser instance
-  

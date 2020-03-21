@@ -9,6 +9,7 @@ use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Declaration;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Property\RenderableProperty;
+use function is_string;
 
 /**
      * Pretty print CSS
@@ -114,7 +115,7 @@ class Renderer
 
         if (isset($options['allow_duplicate_declarations'])) {
 
-            $this->allow_duplicate_declarations = $options['allow_duplicate_declarations'];
+            $this->allow_duplicate_declarations = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
         }
 
         if (isset($options['compress'])) {
