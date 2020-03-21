@@ -348,9 +348,7 @@ div {
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove*comments: remove comments. If \_compress* is true, comments are always removed
-- rgba_hex: convert colors in rgba() and hsla() to hex
+- remove_comments: remove comments. If \_compress\* is true, comments are always removed
+- rgba_hex: convert colors in rgb\[a\] and hsl\[a\] to hex
 - compress: produce minified output
 - remove_empty_nodes: remove empty css declaration
-
-The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)

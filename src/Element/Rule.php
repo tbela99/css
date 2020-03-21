@@ -52,6 +52,8 @@ class Rule extends Elements {
 
         array_splice($this->ast->selectors, count($this->ast->selectors), 0, $selector);
 
+        $this->ast->selectors = array_unique($this->ast->selectors);
+
         return $this;
     }
 

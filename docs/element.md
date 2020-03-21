@@ -74,7 +74,7 @@ echo $compiler->compile();
 If the element can contain children, they can be accessed using the syntax \$element['childNodes']
 
 ```php
-$childNodes = $elements['childNodes'];
+$childNodes = $element['childNodes'];
 
 // or
 $childNodes = $element->getChildren();
