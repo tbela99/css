@@ -1,6 +1,7 @@
 
 phpunit.phar
 phpunit
+benchmark/
 test/debug.txt
 .idea/
 .phpunit.result.cache

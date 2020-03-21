@@ -20,7 +20,7 @@ class Compiler {
         'css_level' => 3,
         'remove_comments' => false,
         'remove_empty_nodes' => true,
-        'allow_duplicate_declarations' => true
+        'allow_duplicate_declarations' => ['background-image']
     ];
 
     /**
@@ -37,6 +37,10 @@ class Compiler {
 		$this->setOptions($options);
 	}
 
+    /**
+     * @param array $options
+     * @return $this
+     */
 	public function setOptions (array $options) {
 
 	    foreach (array_keys($this->options) as $key) {

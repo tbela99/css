@@ -4,10 +4,10 @@
  }
 }
 .element {
- color: rgb(0, 0, 0)
+ color: #000
 }
 .elements {
- color: rgba(0, 0, 0, 0)
+ color: transparent
 }
 body {
  border: 0;
@@ -15,7 +15,6 @@ body {
 }
 .animate {
  /* Multiple function values */
- transform: translateX(10px) rotate(10deg) translateY(5px);
  transform: perspective(500px) translate(10px,0,20px) rotateY(3deg)
 }
 /*

@@ -3,39 +3,70 @@
 
 require 'autoload.php';
 
-$property = new \TBela\CSS\Property\PropertyList();
+use TBela\CSS\Compiler;
 
-/*
-$property->set('margin-top', '1px \9');
-echo $property."\n\n";
+$compiler = new Compiler(['compress' => true, 'rgba_hex' => false]);
+//
 
-$property->set('margin-right', '1px \9');
-echo $property."\n\n";
+$data = [];
 
-$property->set('margin-bottom', '1px \9');
-echo $property."\n\n";
+$data[] = [
+    'p {
+	/* Functional syntax with floats value */
+	color: rgba(255, 0, 153.6, 1);
+}', 'p {
+ /* Functional syntax with floats value */
+ color: #f09
+}'];
 
-$property->set('margin-left', '1px \9');
-echo $property."\n\n";
-*/
+$data[] = [
+    'p {
+	/* Functional syntax with floats value */
+	color: rgba(1e2, .5e1, .5e0, +.25e2%);
+}', 'p {
+ /* Functional syntax with floats value */
+ color: rgba(100, 5, 0.5, 0.25)
+}'];
 
-$property->set('margin', '0 0 15px 15px ');
-echo $property."\n\n";
+$data[] = [
+    '
+p {
+	/* red 50% translucent #ff000080 */
+	color: #ff000080;
+}', 'p {
+ /* red 50% translucent #ff000080 */
+ color: rgba(255, 0, 0, .5)
+}'];
 
-$property->set('margin-left', '15px ');
-echo $property."\n\n";
+$data[] = [
+    'p {
+	/* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
+	color: rgba(255, 0, 0, 0.5);
+}', 'p {
+ /* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
+ color: rgba(255, 0, 0, 0.5)
+}'];
 
-$property->set('margin-top', '15px ');
-echo $property."\n\n";
+$data[] = [
+    'p {
+	/* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
+	color: hsl(0, 100%, 50%, 0.5);
+}', 'p {
+ /* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
+ color: hsla(0, 100%, 50%, 0.5)
+}'];
 
-$property->set('margin-top', '0px ');
-echo $property."\n\n";
+$data[] = [
+    'p {
 
-$property->set('margin-left', '0px ');
-echo $property."\n\n";
+	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
+	color: hsla(0, 100%, 50%, 0.5);
+}', 'p {
+ /* red 50% translucent hsla(0, 100%, 50%, 0.5) */
+ color: hsla(0, 100%, 50%, 0.5)
+}'];
 
-$property->set('margin-top', '15px ');
-echo $property."\n\n";
+foreach ($data as $values) {
 
-$property->set('margin-left', '0 ');
-echo $property."\n\n";
+    echo $compiler->setContent($values[0])->compile()."\n\n";
+}

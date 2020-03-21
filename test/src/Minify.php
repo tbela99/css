@@ -25,14 +25,14 @@ final class Minify extends TestCase
      * @throws Exception
      * @dataProvider minifiedProvider
      */
-    public function testMinifyDuplicate(Parser $parser, Compiler $compiler, $file, $expected): void
+    public function testMinify(Parser $parser, Compiler $compiler, $file, $expected): void
     {
 
         $compiler->setData($parser->load($file)->parse());
 
         $this->assertEquals(
-            $compiler->compile(),
-            $expected
+            $expected,
+            $compiler->compile()
         );
     }
 
@@ -43,7 +43,7 @@ final class Minify extends TestCase
 
         foreach (glob('css/*.css') as $file) {
 
-            $parser =  (new Parser())->setOptions(['flatten_import' => true]);
+            $parser =  (new Parser())->setOptions(['flatten_import' => true, 'flatten_import' => true]);
 
             if (basename($file) == 'color.css') {
 

@@ -84,6 +84,7 @@ p {
 	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
 	color: hsla(0, 100%, 50%, 0.5);
 }
+
 p {
 	/* These examples all specify the same color: a lavender. */
 	/* lavender hsl(270,60%,70%) */

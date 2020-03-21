@@ -1,35 +1,60 @@
 # Compiler
 
-Compile an AST into CSS.
+Compile an Element or an AST into CSS.
 
 ## Usage
 
-Pretty print css 
+Pretty print css
 
-```php 
+```php
+use \TBela\CSS\Compiler;
 
-$compiler = new \TBela\CSS\Compiler();
-$compiler->setContent('body { border: 0px; }');
+$compiler = new Compiler();
+$compiler->setContent('body {
+    border: 0px;
+    color: rgba(100, 100, 100, .8);
+    }');
 
 echo $compiler->compile();
+```
+
+Result
+
+```css
+body {
+  border: 0;
+  color: rgba(100, 100, 100, 0.8);
+}
 ```
 
 Produce minified output
 
-```php 
-
-$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
+```php
+$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
 
 echo $compiler->compile();
 ```
 
+Result
+
+```css
+body {border: 0;color: #646464cc;}
+```
+
 Load AST from a json file
 
-```php 
+```php
 
+// save AST
+file_put_contents('ast.json', $compiler->getData());
+
+// or if you use Parser
+// file_put_contents('ast.json', $parser->parse());
+
+// ...
 $ast = json_decode(file_get_contents('ast.json'));
 
-$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
+$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
 $compiler->setData($ast);
 
 echo $compiler->compile();
@@ -37,11 +62,11 @@ echo $compiler->compile();
 
 Load a css string
 
-```php 
+```php
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler->setOptions(['compress' => true, 'rbga_hex' => true, 'charset' => true]);
+$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
 $compiler->setContent('body { border: 0px; }');
 
 echo $compiler->compile();
@@ -51,7 +76,7 @@ echo $compiler->compile();
 
 ### indent
 
-_string_. The string used to indent lines. The default value is ' '
+_string_. The string used to indent lines. The default value is the space char ' '
 
 ### glue
 
@@ -59,42 +84,46 @@ _string_. The string used as line separator. The default value is "\n"
 
 ### separator
 
-_string_. The character used to tokens. The default value is ' '
+_string_. The character used to tokens. The default value is the space char ' '
 
 ### charset
 
-_boolean_. If false then remove @charset declaration
+_boolean_. If false then remove @charset declaration. The default value is _false_
 
 ### rgba_hex
 
-_boolean_. Convert rgba and hsla to hex
+_boolean_. Convert rgb\[a\] and hsl\[a\] to hex. The default value is _false_
 
 ### compress
 
-_boolean_. If true then compress the css. If false then pretty print the css
+_boolean_. If true then compress the css. If false then pretty print the css. The default value is _false_
 
 ### css_level
 
-_int_.  Default to 3. Support features specific to the specified CSS level. Setting the value 4 will replace _rgba()_ with _rgb()_ and _hsla()_ with _hsl()_.
+_int_. Support features specific to the specified CSS level. Setting the value 4 will replace _rgba_ with _rgb_ and _hsla_ with _hsl_. The default value is _3_
 
 ### remove_comments
 
-_boolean_. If true then remove comments. When compress is set to true then comments are always removed
+_boolean_. If true then remove comments. When compress is set to true then comments are always removed. The default value is _false_
 
 ### remove_empty_nodes
 
-_boolean_. If true then remove empty css rules and media queries
+_boolean_. If true then remove empty css rules and media queries. The default value is _true_
+
+### allow_duplicate_declarations
+
+_boolean_|_string_|_array_. If false then duplicated declarations are removed. if it is set to a string or and array, only the specified properties duplicates are allowed. The default value is _\['background-image'\]_
 
 ## Compiler Methods
- 
+
 ### Constructor
 
 Constructor
 
 #### Parameters
 
-- $options: _array_. see [compiler options](#compiler-options)
-   
+- \$options: _array_. see [compiler options](#compiler-options)
+
 ### Compile
 
 Compile AST into css
@@ -106,46 +135,45 @@ none
 #### Return type
 
 _string_.
-  
+
 ### SetOptions
 
-Configure the compiler options. see [compiler options](#compiler-options)
+Configure the compiler options.
 
 #### Parameters
 
-- $options: _array_. see [compiler options](#compiler-options)
-    
+- \$options: _array_. see [compiler options](#compiler-options)
+
 #### Return type
 
 \TBela\CSS\Compiler instance
-  
+
 ### SetContent
 
 #### Parameters
 
-- $css: _string_. css string or file or url
-    
+- \$css: _string_. css string
+
 #### Return type
 
 \TBela\CSS\Compiler instance
-  
+
 ### SetData
 
 #### Parameters
 
-- $ast: _\TBela\CSS\Element_. Assign an AST object to the compiler
-    
+- \$ast: _\TBela\CSS\Element_|_object_. Assign an AST object to the compiler
+
 #### Return type
 
 \TBela\CSS\Compiler instance
-  
+
 ### getData
 
 #### Parameters
 
 none
-    
+
 #### Return type
 
 \TBela\CSS\Element instance
-  
