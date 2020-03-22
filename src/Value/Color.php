@@ -5,9 +5,19 @@ namespace TBela\CSS\Value;
 use TBela\CSS\Color as ColorUtil;
 use TBela\CSS\Value;
 
+/**
+ * Css Color Value
+ * Class Color
+ * @package TBela\CSS\Value
+ */
 class Color extends Value
 {
 
+    /**
+     * Test whether data matches this class
+     * @param $data
+     * @return bool
+     */
     protected static function validate($data)
     {
 

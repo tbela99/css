@@ -378,7 +378,7 @@ function reduce ($tokens) {
 
             $token = $tokens[$j];
 
-            if ($token->type == 'whitespace' && ($tokens[$j + 1]->type == 'separator' || ($tokens[$j + 1]->type == 'cssString' && $tokens[$j + 1]->value == '!important'))) {
+            if ($token->type == 'whitespace' && $tokens[$j + 1]->type == 'separator') {
 
                 array_splice($tokens, $j, 1);
             }
