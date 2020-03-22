@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title> &raquo; Compilation errors</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">                            <li><a href="../namespaces/TBela.html">\TBela</a></li>                        </ul>
+                    </li>                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">260</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">                                    <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">                                    <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">    <section class="row-fluid">
+        <div class="span2 sidebar">
+
+            <ul class="side-nav nav nav-list">
+                <li class="nav-header">Navigation</li>                        <li><a href="#Property/Comment.php"><i class="icon-file"></i>Property/Comment.php</a></li>                        <li><a href="#Value/Number.php"><i class="icon-file"></i>Value/Number.php</a></li>                        <li><a href="#Value/CssFunction.php"><i class="icon-file"></i>Value/CssFunction.php</a></li>                        <li><a href="#Value/Set.php"><i class="icon-file"></i>Value/Set.php</a></li>                        <li><a href="#Element/Declaration.php"><i class="icon-file"></i>Element/Declaration.php</a></li>                        <li><a href="#Rendererable.php"><i class="icon-file"></i>Rendererable.php</a></li>                        <li><a href="#Property/Property.php"><i class="icon-file"></i>Property/Property.php</a></li>                        <li><a href="#Element/Rule.php"><i class="icon-file"></i>Element/Rule.php</a></li>                        <li><a href="#Element/AtRule.php"><i class="icon-file"></i>Element/AtRule.php</a></li>                        <li><a href="#Property/Config.php"><i class="icon-file"></i>Property/Config.php</a></li>                        <li><a href="#Property/RenderableProperty.php"><i class="icon-file"></i>Property/RenderableProperty.php</a></li>                        <li><a href="#Color.php"><i class="icon-file"></i>Color.php</a></li>                        <li><a href="#Renderer.php"><i class="icon-file"></i>Renderer.php</a></li>                        <li><a href="#Filter.php"><i class="icon-file"></i>Filter.php</a></li>                        <li><a href="#Value/Unit.php"><i class="icon-file"></i>Value/Unit.php</a></li>                        <li><a href="#Property/PropertySet.php"><i class="icon-file"></i>Property/PropertySet.php</a></li>                        <li><a href="#Elements.php"><i class="icon-file"></i>Elements.php</a></li>                        <li><a href="#Elements/Rules.php"><i class="icon-file"></i>Elements/Rules.php</a></li>                        <li><a href="#Value.php"><i class="icon-file"></i>Value.php</a></li>                        <li><a href="#Compiler.php"><i class="icon-file"></i>Compiler.php</a></li>                        <li><a href="#ArrayTrait.php"><i class="icon-file"></i>ArrayTrait.php</a></li>                        <li><a href="#Property/PropertyList.php"><i class="icon-file"></i>Property/PropertyList.php</a></li>                        <li><a href="#Value/Separator.php"><i class="icon-file"></i>Value/Separator.php</a></li>                        <li><a href="#Element/Stylesheet.php"><i class="icon-file"></i>Element/Stylesheet.php</a></li>                        <li><a href="#Parser.php"><i class="icon-file"></i>Parser.php</a></li>                        <li><a href="#Value/Color.php"><i class="icon-file"></i>Value/Color.php</a></li>                        <li><a href="#Value/CssString.php"><i class="icon-file"></i>Value/CssString.php</a></li>                        <li><a href="#Value/Whitespace.php"><i class="icon-file"></i>Value/Whitespace.php</a></li>                        <li><a href="#Element.php"><i class="icon-file"></i>Element.php</a></li>                        <li><a href="#ElementTrait.php"><i class="icon-file"></i>ElementTrait.php</a></li>                        <li><a href="#Value/Comment.php"><i class="icon-file"></i>Value/Comment.php</a></li>                        <li><a href="#RuleList.php"><i class="icon-file"></i>RuleList.php</a></li>                        <li><a href="#Element/Comment.php"><i class="icon-file"></i>Element/Comment.php</a></li>            </ul>
+        </div>
+
+        <div class="span10 offset2">
+            <ul class="breadcrumb">
+                <li><a href="../"><i class="icon-remove-sign"></i></a><span class="divider">\</span></li>
+                <li>Compilation Errors</li>
+            </ul>                <div class="package-contents">                        <a name="Property/Comment.php" id="Property/Comment.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/Comment.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>10</td>
+                                        <td>No summary for class \TBela\CSS\Property\Comment</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>Argument $value is missing from the Docblock of setValue</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method setValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method getValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>49</td>
+                                        <td>No summary for method getType()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>59</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>69</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for property $value</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>16</td>
+                                        <td>No summary for property $type</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Number.php" id="Value/Number.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Number.php
+                            <small style="float: right;padding-right: 10px;">12</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>8</td>
+                                        <td>No summary for class \TBela\CSS\Value\Number</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>10</td>
+                                        <td>Argument $data is missing from the Docblock of __construct</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>10</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>Argument $type is missing from the Docblock of match</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method match()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>Argument $data is missing from the Docblock of validate</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method validate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>38</td>
+                                        <td>Argument $value is missing from the Docblock of compress</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>38</td>
+                                        <td>No summary for method compress()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>70</td>
+                                        <td>Argument $options is missing from the Docblock of render</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>70</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/CssFunction.php" id="Value/CssFunction.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/CssFunction.php
+                            <small style="float: right;padding-right: 10px;">6</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Value\CSSFunction</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>Argument $data is missing from the Docblock of validate</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>No summary for method validate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>Argument $options is missing from the Docblock of render</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Set.php" id="Value/Set.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Set.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>Argument $name is missing from the Docblock of __get</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method __get()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>43</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>61</td>
+                                        <td>No summary for method filter()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>71</td>
+                                        <td>No summary for method map()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>77</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>85</td>
+                                        <td>No summary for method getIterator()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>93</td>
+                                        <td>No summary for method jsonSerialize()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>18</td>
+                                        <td>No summary for property $data</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element/Declaration.php" id="Element/Declaration.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element/Declaration.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>8</td>
+                                        <td>No summary for class \TBela\CSS\Element\Declaration</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Rendererable.php" id="Rendererable.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Rendererable.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>No summary for interface \TBela\CSS\Rendererable</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Property/Property.php" id="Property/Property.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/Property.php
+                            <small style="float: right;padding-right: 10px;">13</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>Argument $value is missing from the Docblock of setValue</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method setValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>56</td>
+                                        <td>No summary for method getValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>61</td>
+                                        <td>No summary for method getName()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>66</td>
+                                        <td>No summary for method getType()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>71</td>
+                                        <td>No summary for method getHash()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>76</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>81</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>22</td>
+                                        <td>No summary for property $name</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for property $type</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for property $value</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element/Rule.php" id="Element/Rule.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element/Rule.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>11</td>
+                                        <td>No summary for class \TBela\CSS\Element\Rule</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>16</td>
+                                        <td>No summary for method getSelector()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for method setSelector()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>41</td>
+                                        <td>No summary for method addSelector()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>64</td>
+                                        <td>No summary for method removeSelector()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>81</td>
+                                        <td>No summary for method addDeclaration()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>112</td>
+                                        <td>Argument $child is missing from the Docblock of support</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>112</td>
+                                        <td>No summary for method support()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element/AtRule.php" id="Element/AtRule.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element/AtRule.php
+                            <small style="float: right;padding-right: 10px;">7</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for class \TBela\CSS\Element\AtRule</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method isLeaf()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method hasDeclarations()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>Argument $child is missing from the Docblock of support</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method support()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>79</td>
+                                        <td>No summary for method addDeclaration()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Property/Config.php" id="Property/Config.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/Config.php
+                            <small style="float: right;padding-right: 10px;">8</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Property\Config</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method exists()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>93</td>
+                                        <td>No summary for method getPath()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>115</td>
+                                        <td>No summary for method getProperty()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>139</td>
+                                        <td>No summary for method addAlias()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>161</td>
+                                        <td>No summary for method addSet()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for property $config</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Property/RenderableProperty.php" id="Property/RenderableProperty.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/RenderableProperty.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>No summary for interface \TBela\CSS\Property\RenderableProperty</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Color.php" id="Color.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Color.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Renderer.php" id="Renderer.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Renderer.php
+                            <small style="float: right;padding-right: 10px;">19</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>149</td>
+                                        <td>No summary for method getOptions()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>175</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>236</td>
+                                        <td>No summary for method renderRule()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>265</td>
+                                        <td>No summary for method renderAtRule()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>302</td>
+                                        <td>No summary for method renderDeclaration()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>316</td>
+                                        <td>No summary for method renderProperty()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>322</td>
+                                        <td>Argument $element is missing from the Docblock of shouldRender</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>322</td>
+                                        <td>No summary for method shouldRender()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>342</td>
+                                        <td>No summary for method renderName()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>348</td>
+                                        <td>Argument $value is missing from the Docblock of escape</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>348</td>
+                                        <td>No summary for method escape()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>369</td>
+                                        <td>Argument $value is missing from the Docblock of unescape</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>369</td>
+                                        <td>Argument $replace is missing from the Docblock of unescape</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>369</td>
+                                        <td>No summary for method unescape()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>384</td>
+                                        <td>No summary for method renderValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>395</td>
+                                        <td>No summary for method renderSelector()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>407</td>
+                                        <td>No summary for method renderCollection()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>60</td>
+                                        <td>No summary for property $filter</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Filter.php" id="Filter.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Filter.php
+                            <small style="float: right;padding-right: 10px;">4</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>Argument $renderer is missing from the Docblock of __construct</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>13</td>
+                                        <td>No summary for property $renderer</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Unit.php" id="Value/Unit.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Unit.php
+                            <small style="float: right;padding-right: 10px;">8</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>No summary for class \TBela\CSS\Value\Unit</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>Argument $data is missing from the Docblock of validate</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for method validate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>Argument $type is missing from the Docblock of match</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for method match()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>18</td>
+                                        <td>Argument $options is missing from the Docblock of render</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>18</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Property/PropertySet.php" id="Property/PropertySet.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/PropertySet.php
+                            <small style="float: right;padding-right: 10px;">11</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>8</td>
+                                        <td>No summary for class \TBela\CSS\Property\PropertySet</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>57</td>
+                                        <td>No summary for method set()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>306</td>
+                                        <td>No summary for method setProperty()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>322</td>
+                                        <td>No summary for method getProperties()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>341</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>365</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for property $config</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>No summary for property $properties</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for property $property_type</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for property $shorthand</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Elements.php" id="Elements.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Elements.php
+                            <small style="float: right;padding-right: 10px;">18</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>12</td>
+                                        <td>No summary for class \TBela\CSS\Elements</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>No summary for method createElements()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>Argument $value is missing from the Docblock of addComment</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method addComment()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>No summary for method hasChildren()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>57</td>
+                                        <td>No summary for method removeChildren()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>84</td>
+                                        <td>No summary for method getChildren()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>93</td>
+                                        <td>Argument $child is missing from the Docblock of support</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>93</td>
+                                        <td>No summary for method support()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>115</td>
+                                        <td>Argument $element is missing from the Docblock of append</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>115</td>
+                                        <td>No summary for method append()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>155</td>
+                                        <td>Argument $element is missing from the Docblock of insert</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>155</td>
+                                        <td>Argument $position is missing from the Docblock of insert</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>155</td>
+                                        <td>No summary for method insert()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>184</td>
+                                        <td>Argument $element is missing from the Docblock of remove</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>184</td>
+                                        <td>No summary for method remove()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>200</td>
+                                        <td>No summary for method getIterator()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Elements/Rules.php" id="Elements/Rules.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Elements/Rules.php
+                            <small style="float: right;padding-right: 10px;">3</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method addAtRule()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>No summary for method addRule()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value.php" id="Value.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Compiler.php" id="Compiler.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Compiler.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method setOptions()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>62</td>
+                                        <td>No summary for method setContent()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>73</td>
+                                        <td>No summary for method load()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>83</td>
+                                        <td>No summary for method setData()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>92</td>
+                                        <td>No summary for method getData()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>101</td>
+                                        <td>No summary for method compile()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>13</td>
+                                        <td>No summary for property $options</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for property $data</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="ArrayTrait.php" id="ArrayTrait.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>ArrayTrait.php
+                            <small style="float: right;padding-right: 10px;">11</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>5</td>
+                                        <td>No summary for trait \TBela\CSS\ArrayTrait</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>Argument $offset is missing from the Docblock of offsetSet</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>Argument $value is missing from the Docblock of offsetSet</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for method offsetSet()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>Argument $offset is missing from the Docblock of offsetExists</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
+                                        <td>No summary for method offsetExists()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>21</td>
+                                        <td>Argument $offset is missing from the Docblock of offsetUnset</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>21</td>
+                                        <td>No summary for method offsetUnset()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>Argument $offset is missing from the Docblock of offsetGet</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method offsetGet()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Property/PropertyList.php" id="Property/PropertyList.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Property/PropertyList.php
+                            <small style="float: right;padding-right: 10px;">11</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>Argument $list is missing from the Docblock of __construct</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>Argument $options is missing from the Docblock of __construct</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>No summary for method set()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>108</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>129</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>137</td>
+                                        <td>No summary for method getProperties()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>191</td>
+                                        <td>No summary for method getIterator()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>21</td>
+                                        <td>No summary for property $properties</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for property $options</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Separator.php" id="Value/Separator.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Separator.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Value\Separator</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element/Stylesheet.php" id="Element/Stylesheet.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element/Stylesheet.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Element\Stylesheet</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Parser.php" id="Parser.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Parser.php
+                            <small style="float: right;padding-right: 10px;">34</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>313</td>
+                                        <td>No summary for function \TBela\CSS\get_current_directory()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>324</td>
+                                        <td>Argument $file is missing from the Docblock of get_content</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>324</td>
+                                        <td>No summary for function \TBela\CSS\get_content()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>340</td>
+                                        <td>Argument $css is missing from the Docblock of expand</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>340</td>
+                                        <td>Argument $path is missing from the Docblock of expand</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>340</td>
+                                        <td>No summary for function \TBela\CSS\expand()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>390</td>
+                                        <td>Argument $file is missing from the Docblock of resolvePath</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>390</td>
+                                        <td>Argument $path is missing from the Docblock of resolvePath</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>390</td>
+                                        <td>No summary for function \TBela\CSS\resolvePath()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>436</td>
+                                        <td>Argument $url is missing from the Docblock of fetch_content</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>436</td>
+                                        <td>Argument $options is missing from the Docblock of fetch_content</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>436</td>
+                                        <td>Argument $curlOptions is missing from the Docblock of fetch_content</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>436</td>
+                                        <td>No summary for function \TBela\CSS\fetch_content()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>489</td>
+                                        <td>Argument $css is missing from the Docblock of parse_import</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>489</td>
+                                        <td>Argument $path is missing from the Docblock of parse_import</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>489</td>
+                                        <td>No summary for function \TBela\CSS\parse_import()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>645</td>
+                                        <td>Argument $str is missing from the Docblock of parse_vendor</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>645</td>
+                                        <td>No summary for function \TBela\CSS\parse_vendor()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>1087</td>
+                                        <td>No summary for function \TBela\CSS\parse()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for class \TBela\CSS\Parser</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>51</td>
+                                        <td>No summary for method load()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>No summary for method setContent()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>75</td>
+                                        <td>No summary for method setOptions()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>106</td>
+                                        <td>No summary for method parse()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>123</td>
+                                        <td>No summary for method deduplicate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>155</td>
+                                        <td>No summary for method computeSignature()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>192</td>
+                                        <td>No summary for method deduplicateRules()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>271</td>
+                                        <td>No summary for method deduplicateDeclarations()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>17</td>
+                                        <td>No summary for property $css</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>18</td>
+                                        <td>No summary for property $_css</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>No summary for property $path</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>21</td>
+                                        <td>No summary for property $options</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for property $errorsList</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Color.php" id="Value/Color.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Color.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/CssString.php" id="Value/CssString.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/CssString.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Value\CssString</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Whitespace.php" id="Value/Whitespace.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Whitespace.php
+                            <small style="float: right;padding-right: 10px;">7</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Value\Whitespace</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>Argument $data is missing from the Docblock of validate</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>No summary for method validate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for method getValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>Argument $options is missing from the Docblock of render</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>19</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element.php" id="Element.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element.php
+                            <small style="float: right;padding-right: 10px;">12</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>16</td>
+                                        <td>No summary for class \TBela\CSS\Element</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>58</td>
+                                        <td>No summary for method getInstance()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>102</td>
+                                        <td>No summary for method getValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>116</td>
+                                        <td>No summary for method setValue()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>125</td>
+                                        <td>No summary for method getParent()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>133</td>
+                                        <td>No summary for method getType()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>167</td>
+                                        <td>No summary for method jsonSerialize()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>184</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>199</td>
+                                        <td>No summary for method __clone()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>20</td>
+                                        <td>No summary for property $ast</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for property $parent</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="ElementTrait.php" id="ElementTrait.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>ElementTrait.php
+                            <small style="float: right;padding-right: 10px;">7</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for trait \TBela\CSS\ElementTrait</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for method getName()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method getVendor()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>Argument $name is missing from the Docblock of setName</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method setName()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>62</td>
+                                        <td>No summary for method setVendor()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Value/Comment.php" id="Value/Comment.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Value/Comment.php
+                            <small style="float: right;padding-right: 10px;">6</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Value\Comment</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>Argument $data is missing from the Docblock of validate</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>9</td>
+                                        <td>No summary for method validate()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>Argument $options is missing from the Docblock of render</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>14</td>
+                                        <td>No summary for method render()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="RuleList.php" id="RuleList.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>RuleList.php
+                            <small style="float: right;padding-right: 10px;">8</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>20</td>
+                                        <td>No summary for method hasChildren()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for method getChildren()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method addComment()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method append()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>52</td>
+                                        <td>No summary for method insert()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>58</td>
+                                        <td>No summary for method remove()</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>No summary for method removeChildren()</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>                <div class="package-contents">                        <a name="Element/Comment.php" id="Element/Comment.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>Element/Comment.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>                                    <tr>
+                                        <td>error</td>
+                                        <td>7</td>
+                                        <td>No summary for class \TBela\CSS\Element\Comment</td>
+                                    </tr>                            </tbody>
+                            </table>
+                        </div>                </div>        </div>
+    </section>
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">                            <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>                                        <li><a href="../namespaces/TBela.html">\TBela</a></li>                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">                            <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">                            <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    onMarch 21st, 2020 at 21:41.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

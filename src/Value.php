@@ -7,7 +7,7 @@ use stdClass;
 use TBela\CSS\Value\Set;
 
 /**
- * Pretty print CSS
+ * CSS value base class
  * @package CSS
  */
 class Value
@@ -17,19 +17,35 @@ class Value
      */
     protected $data = null;
 
+    /**
+     * @var array
+     */
     protected static $cache = [];
 
+    /**
+     * Value constructor.
+     * @param stdClass $data
+     */
     public function __construct($data)
     {
 
         $this->data = $data;
     }
 
+    /**
+     * Cleanup cache
+     * @ignore
+     */
     public function __destruct()
     {
         unset (static::$cache[spl_object_hash($this)]);
     }
 
+    /**
+     * @param string $name
+     * @return mixed|null
+     * @ignore
+     */
     public function __get($name)
     {
         if(isset($this->data->{$name})) {
@@ -45,11 +61,21 @@ class Value
         return null;
     }
 
+    /**
+     * test if this object matches the specified type
+     * @param string $type
+     * @return bool
+     */
     public function match ($type) {
 
         return strtolower($this->data->type) == $type;
     }
 
+    /**
+     *
+     * @param $data
+     * @return bool
+     */
     protected static function validate($data) {
 
         return isset($data->value);
@@ -298,6 +324,15 @@ class Value
 
                 default:
 
+                    if ($string[$i] == '!') {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = type($buffer);
+                            $buffer = '';
+                        }
+                    }
+
                     $buffer .= $string[$i];
             }
         }
@@ -343,7 +378,7 @@ function reduce ($tokens) {
 
             $token = $tokens[$j];
 
-            if ($token->type == 'whitespace' && $tokens[$j + 1]->type == 'separator') {
+            if ($token->type == 'whitespace' && ($tokens[$j + 1]->type == 'separator' || ($tokens[$j + 1]->type == 'cssString' && $tokens[$j + 1]->value == '!important'))) {
 
                 array_splice($tokens, $j, 1);
             }
