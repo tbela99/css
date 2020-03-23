@@ -7,11 +7,20 @@ use Exception;
 use InvalidArgumentException;
 use TBela\CSS\Element\Comment;
 use TBela\CSS\Element\Stylesheet;
+use Traversable;
 use function in_array;
 
-class Elements extends Element implements RuleList
+/**
+ * Class Elements
+ * @package TBela\CSS
+ */
+abstract class Elements extends Element implements RuleList
 {
 
+    /**
+     * create child nodes
+     * @ignore
+     */
     protected function createElements()
     {
 
@@ -31,13 +40,12 @@ class Elements extends Element implements RuleList
 
     /**
      * @inheritDoc
-     * @throws Exception
      */
     public function addComment($value)
     {
 
         $comment = new Comment();
-        $comment['value'] = '/* ' . $value . ' */';
+        $comment->setValue('/* ' . $value . ' */');
 
         return $this->append($comment);
     }
@@ -197,6 +205,10 @@ class Elements extends Element implements RuleList
         return $element;
     }
 
+    /**
+     * return an iterator of child nodes
+     * @return ArrayIterator|Traversable
+     */
     public function getIterator()
     {
 

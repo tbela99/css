@@ -6,7 +6,7 @@ use TBela\CSS\Color as ColorUtil;
 use TBela\CSS\Value;
 
 /**
- * Css Color Value
+ * Css color value
  * Class Color
  * @package TBela\CSS\Value
  */
@@ -14,9 +14,7 @@ class Color extends Value
 {
 
     /**
-     * Test whether data matches this class
-     * @param $data
-     * @return bool
+     * @inheritDoc
      */
     protected static function validate($data)
     {
@@ -29,12 +27,18 @@ class Color extends Value
         return isset(ColorUtil::COLORS_NAMES[$data->value]) || (isset($data->colorType) && $data->colorType == 'hex');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function match($type)
     {
 
         return $type == 'color';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(array $options = [])
     {
         $index = spl_object_hash($this);
@@ -50,15 +54,11 @@ class Color extends Value
             if ($this->data->value[0] == '#') {
 
                 static::$cache[$index][$key] = $this->parseHexColor($this->data->value, $options);
-            }
-
-            else {
+            } else {
 
                 static::$cache[$index][$key] = $this->parseNamedColor($this->data->value, $options);
             }
-        }
-
-        else {
+        } else {
 
             $callback = null;
 
@@ -76,6 +76,12 @@ class Color extends Value
         return static::$cache[$index][$key];
     }
 
+    /**
+     * parse color specified by its name
+     * @param string $str
+     * @param array $options
+     * @return string
+     */
     protected function parseNamedColor($str, array $options)
     {
 
@@ -106,6 +112,12 @@ class Color extends Value
         return ColorUtil::shorten($str);
     }
 
+    /**
+     * parse hex color
+     * @param string $str
+     * @param array $options
+     * @return string
+     */
     public static function parseHexColor($str, array $options)
     {
 
@@ -129,12 +141,25 @@ class Color extends Value
         return $short;
     }
 
+    /**
+     * return the shortest string
+     * @param string $color
+     * @param string|null $named_color
+     * @return mixed
+     * @ignore
+     */
     protected function shortestValue($color, $named_color)
     {
 
         return is_null($named_color) || strlen($named_color) > strlen($color) ? $color : $named_color;
     }
 
+    /**
+     * parse rgb[a] color
+     * @param object $data
+     * @param array $options
+     * @return string
+     */
     public static function parseRGBColor($data, array $options)
     {
 
@@ -198,9 +223,7 @@ class Color extends Value
         if (!empty($options['compress'])) {
 
             $color = sprintf(is_null($a) ? 'rgb(%s,%s,%s)' : $rgba . '(%s,%s,%s,%s)', Number::compress($r), Number::compress($g), Number::compress($b), Number::compress($a));
-        }
-
-        else {
+        } else {
 
             $color = sprintf(is_null($a) ? 'rgb(%s, %s, %s)' : $rgba . '(%s, %s, %s, %s)', $r, $g, $b, $a);
         }
@@ -208,6 +231,12 @@ class Color extends Value
         return static::shortestValue($color, $named_color);
     }
 
+    /**
+     * parse hsl[a] color
+     * @param object $data
+     * @param array $options
+     * @return string
+     */
     public static function parseHSLColor($data, array $options)
     {
 
@@ -234,31 +263,27 @@ class Color extends Value
             }
         }
 
-     //   if (!empty($options['rgba_hex'])) {
+        $sa = floatval((string)$s->value) / 100;
+        $li = floatval((string)$l->value) / 100;
 
-     //   }
+        switch ($h->unit) {
 
-            $sa = floatval((string)$s->value) / 100;
-            $li = floatval((string)$l->value) / 100;
+            case 'rad':
 
-            switch ($h->unit) {
+                $hu = floatval((string)$h->value) / (2 * pi());
+                break;
 
-                case 'rad':
+            case 'turn':
+                // do nothing
+                $hu = floatval((string)$h->value);
+                break;
 
-                    $hu = floatval((string)$h->value) / (2 * pi());
-                    break;
+            case 'deg':
+            default:
 
-                case 'turn':
-                    // do nothing
-                    $hu = floatval((string)$h->value);
-                    break;
-
-                case 'deg':
-                default:
-
-                    $hu = floatval((string)$h->value) / 360;
-                    break;
-            }
+                $hu = floatval((string)$h->value) / 360;
+                break;
+        }
 
 
         $hex = ColorUtil::hsl2hex($hu, $sa, $li, $a);
@@ -299,9 +324,7 @@ class Color extends Value
         if (!empty($options['compress'])) {
 
             $color = sprintf(is_null($a) ? 'hsl(%s,%s,%s)' : $hsla . '(%s,%s,%s,%s)', Number::compress($h), $s, $l, Number::compress($a));
-        }
-
-        else {
+        } else {
 
             $color = sprintf(is_null($a) ? 'hsl(%s, %s, %s)' : $hsla . '(%s, %s, %s, %s)', $h, $s, $l, $a);
         }

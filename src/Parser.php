@@ -9,15 +9,41 @@ use function str_replace;
 use function substr;
 
 // http://www.w3.org/TR/CSS21/grammar.html
+/**
+ * @ignore
+ */
 const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 
+/**
+ * Css Parser
+ * @package TBela\CSS
+ */
 class Parser
 {
 
+    /**
+     * css data
+     * @var string
+     * @ignore
+     */
     public $css = '';
+
+    /**
+     * @var string
+     * @ignore
+     */
     protected $_css = '';
+
+    /**
+     * @var string
+     * @ignore
+     */
     protected $path = '';
 
+    /**
+     * @var array
+     * @ignore
+     */
     public $options = [
         'source' => '',
         'silent' => false,
@@ -26,6 +52,10 @@ class Parser
         'allow_duplicate_declarations' => ['background-image']
     ];
 
+    /**
+     * contains the list of css errors
+     * @var array
+     */
     public $errorsList = [];
 
     /**
@@ -44,6 +74,7 @@ class Parser
     }
 
     /**
+     * load a css content from a file
      * @param string $file
      * @return $this
      */
@@ -57,6 +88,7 @@ class Parser
     }
 
     /**
+     * set css content
      * @param string $css
      * @return $this
      */
@@ -69,6 +101,7 @@ class Parser
     }
 
     /**
+     * set the parser options
      * @param array $options
      * @return $this
      */
@@ -100,6 +133,7 @@ class Parser
     }
 
     /**
+     * parse Css
      * @return Element
      * @throws Exception
      */
@@ -110,13 +144,14 @@ class Parser
 
         if (!empty($this->options['flatten_import'])) {
 
-            $this->css = parse_import($this->css, dirname($this->path));
+            $this->css = parse_import($this->css, $this->path === '' ? get_current_directory() : dirname($this->path));
         }
 
         return Element::getInstance($this->deduplicate(parse($this)));
     }
 
     /**
+     * merge css rules and declarations
      * @param object
      * @return object
      */
@@ -149,8 +184,10 @@ class Parser
     }
 
     /**
+     * compute signature
      * @param object $ast
      * @return string
+     * @ignore
      */
     protected function computeSignature($ast)
     {
@@ -186,8 +223,10 @@ class Parser
     }
 
     /**
+     * merge duplicate rules
      * @param object $ast
      * @return object
+     * @ignore
      */
     protected function deduplicateRules($ast)
     {
@@ -265,8 +304,10 @@ class Parser
     }
 
     /**
+     * merge duplicate declarations
      * @param object $ast
      * @return object
+     * @ignore
      */
     protected function deduplicateDeclarations($ast)
     {
@@ -310,6 +351,10 @@ class Parser
     }
 }
 
+/**
+ * @ignore
+ * @return string
+ */
 function get_current_directory() {
 
     if (isset($_SERVER['PWD'])) {
@@ -321,6 +366,11 @@ function get_current_directory() {
     return dirname($_SERVER['PHP_SELF']);
 }
 
+/**
+ * @param $file
+ * @return string|bool
+ * @ignore
+ */
 function get_content($file)
 {
 
@@ -337,6 +387,12 @@ function get_content($file)
     return expand(fetch_content($file), dirname($file));
 }
 
+/**
+ *
+ * @param $css
+ * @param null $path
+ * @return string
+ */
 function expand($css, $path = null)
 {
 
@@ -393,6 +449,14 @@ function resolvePath($file, $path = '')
     if ($path !== '') {
 
         if (!preg_match('#^(https?:/)?/#', $file)) {
+
+            if ($file[0] != '/' && $path !== '') {
+
+                if ($path[strlen($path) - 1] != '/') {
+
+                    $path .= '/';
+                }
+            }
 
             $file = $path.$file;
         }
@@ -490,7 +554,6 @@ function parse_import($css, $path = '')
 {
 
     $comments = [];
-
     $css = preg_replace_callback(COMMENT_REGEXP, function ($matches) use (&$comments) {
 
         $comments[$matches[0]] = '~~~b' . md5($matches[0]) . 'b~~~';
@@ -500,9 +563,9 @@ function parse_import($css, $path = '')
 
     $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) use ($path) {
 
-        if (preg_match('#(url\(\s*((["\'])([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
+        if (preg_match('#(url\(\s*((["\']?)([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
 
-            $file = resolvePath(empty($match[4]) ? $match[7] : $match[4], $path);
+            $file = resolvePath(trim(empty($match[4]) ? $match[7] : $match[4]), $path);
 
             $media = trim($match[8]);
 
@@ -517,7 +580,7 @@ function parse_import($css, $path = '')
 
                 if ($media !== '') {
 
-                    $css = '@media ' . $media . " {\n" . $css . "\n}";
+                    $css = '@media ' . $media . " {\n" . $css . "\n}\n";
                 }
 
                 return '/* start: @import from ' . $file . ' */' . "\n" . $css . "\n" . '/* end: @import from ' . $file . ' */'. "\n" ;

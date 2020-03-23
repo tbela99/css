@@ -2,33 +2,63 @@
 
 namespace TBela\CSS;
 
-trait ArrayTrait  {
+/**
+ * Utility class that enable array like access to getter / setter and properties.
+ *
+ * - Getter syntax: $value = $element['value']; // $value = $element->getValue()
+ * - Setter syntax: $element['value'] = $value; // $element->setValue($value);
+ * - Properties: $element['childNodes'], $element['firstChild'], $element['lastChild']
+ * @package TBela\CSS
+ */
+trait ArrayTrait
+{
 
-    public function offsetSet($offset, $value) {
+    /**
+     * @param string $offset
+     * @param Value\Set|string $value
+     * @ignore
+     */
+    public function offsetSet($offset, $value)
+    {
 
-        if (is_callable([$this, 'set'.$offset])) {
+        if (is_callable([$this, 'set' . $offset])) {
 
-            call_user_func([$this, 'set'.$offset], $value);
+            call_user_func([$this, 'set' . $offset], $value);
         }
     }
 
-    public function offsetExists($offset) {
-        return is_callable([$this, 'get'.$offset]) ||
-                is_callable([$this, 'set'.$offset]) ||
+    /**
+     * @param string $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return is_callable([$this, 'get' . $offset]) ||
+            is_callable([$this, 'set' . $offset]) ||
             (isset($this->ast->elements) && in_array($offset, ['childNodes', 'firstChild', 'lastChild']));
     }
 
-    public function offsetUnset($offset) {
+    /**
+     * @param string $offset
+     */
+    public function offsetUnset($offset)
+    {
 
-        if (is_callable([$this, 'set'.$offset])) {
+        if (is_callable([$this, 'set' . $offset])) {
 
-            call_user_func([$this, 'set'.$offset], null);
+            call_user_func([$this, 'set' . $offset], null);
         }
-}
+    }
 
-    public function offsetGet($offset) {
+    /**
+     * @param string $offset
+     * @return mixed|null
+     * @ignore
+     */
+    public function offsetGet($offset)
+    {
 
-        if(is_callable([$this, 'get'.$offset])) {
+        if (is_callable([$this, 'get' . $offset])) {
 
             return call_user_func([$this, 'get' . $offset]);
         }

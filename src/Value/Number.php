@@ -4,9 +4,15 @@ namespace TBela\CSS\Value;
 
 use TBela\CSS\Value;
 
-
+/**
+ * Css number value
+ * @package TBela\CSS\Value
+ */
 class Number extends Value
 {
+    /**
+     * @inheritDoc
+     */
     public function __construct($data)
     {
         parent::__construct($data);
@@ -24,17 +30,26 @@ class Number extends Value
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function match ($type) {
 
         return ($this->data->value == '0' && $type == 'unit') || $this->data->type == $type;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected static function validate($data)
     {
 
         return isset($data->value) && is_numeric($data->value) && $data->value !== '';
     }
 
+    /**
+     * @inheritDoc
+     */
     public static function compress($value)
     {
 
@@ -67,6 +82,9 @@ class Number extends Value
         return implode('.', $value);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(array $options = [])
     {
 

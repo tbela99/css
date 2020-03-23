@@ -11,6 +11,7 @@ use TBela\CSS\Element\Declaration;
 class Rule extends Elements {
 
     /**
+     * Return the css selectors
      * @return array
      */
     public function getSelector () {
@@ -19,6 +20,7 @@ class Rule extends Elements {
     }
 
     /**
+     * Set css rule selector
      * @param string|array $selectors
      * @return $this
      */
@@ -29,13 +31,14 @@ class Rule extends Elements {
             $selectors = array_map(function ($selector) { return trim(strtolower($selector)); }, explode(',', $selectors));
         }
 
-        $this->ast->selectors = array_keys(array_flip($selectors));
+        $this->ast->selectors = array_unique($selectors);
 
         return $this;
     }
 
     /**
-     * @param aray|string $selector
+     * Add css selectors
+     * @param array|string $selector
      * @return $this
      */
     public function addSelector($selector) {
@@ -58,6 +61,7 @@ class Rule extends Elements {
     }
 
     /**
+     * Remove a css selector
      * @param array|string $selector
      * @return $this
      */
@@ -73,6 +77,7 @@ class Rule extends Elements {
     }
 
     /**
+     * Add css declaration
      * @param string $name
      * @param string $value
      * @return Declaration
@@ -89,18 +94,18 @@ class Rule extends Elements {
     }
 
     /**
-     * Merge the specified declaration
+     * Merge another css rule into this
      * @param Rule $rule
      * @return Rule $this
      * @throws Exception
      */
     public function merge (Rule $rule) {
 
-        $this->addSelector($rule['selector']);
+        $this->addSelector($rule->getSelector());
 
-        foreach ($rule['children'] as $element) {
+        foreach ($rule->getChildren() as $element) {
 
-            $this->addDeclaration($element['name'], $element['value']);
+            $this->addDeclaration($element->getName(), $element->getValue());
         }
 
         return $this;

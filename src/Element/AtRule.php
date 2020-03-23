@@ -4,12 +4,16 @@ namespace TBela\CSS\Element;
 
 use Exception;
 use TBela\CSS\Element;
-use TBela\CSS\Element\Comment;
-use TBela\CSS\Element\Declaration;
 use TBela\CSS\ElementTrait;
 use TBela\CSS\Elements\Rules;
 
+/**
+ * Class AtRule
+ * @package TBela\CSS\Element
+ */
 class AtRule extends Rules {
+
+    use ElementTrait;
 
     /**
      * Type of @at-rule that contains other rules like @media
@@ -24,13 +28,19 @@ class AtRule extends Rules {
      */
     const ELEMENT_AT_NO_LIST = 2;
 
-    use ElementTrait;
-
+    /**
+     * test if this at-rule node is a leaf
+     * @return bool
+     */
     public function isLeaf () {
 
         return !empty($this->ast->isLeaf);
     }
 
+    /**
+     * test if this at-rule node contains declaration
+     * @return bool
+     */
     public function hasDeclarations () {
 
         return !empty($this->ast->hasDeclarations);
@@ -71,6 +81,7 @@ class AtRule extends Rules {
     }
 
     /**
+     * add a css declaration child node
      * @param string $name
      * @param string $value
      * @return Declaration

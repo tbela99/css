@@ -9,7 +9,7 @@ use TBela\CSS\RuleList;
 use TBela\CSS\Element\Rule;
 
 /**
- * Pretty print CSS
+ * Property list
  * @package CSS
  */
 class PropertyList implements IteratorAggregate
@@ -17,11 +17,13 @@ class PropertyList implements IteratorAggregate
 
     /**
      * @var Property[]
+     * @ignore
      */
     protected $properties = [];
 
     /**
      * @var array
+     * @ignore
      */
     protected $options = [];
 
@@ -45,11 +47,13 @@ class PropertyList implements IteratorAggregate
     }
 
     /**
+     * set property
      * @param string $name
      * @param Value|string $value
      * @param string|null $propertyType
      * @return $this
      */
+
     public function set($name, $value, $propertyType = null) {
 
         if ($propertyType == 'Comment') {
@@ -101,6 +105,7 @@ class PropertyList implements IteratorAggregate
     }
 
     /**
+     * convert properties to string
      * @param string $glue
      * @param string $join
      * @return string
@@ -126,12 +131,17 @@ class PropertyList implements IteratorAggregate
         return rtrim(rtrim(implode('', $result)), $glue);
     }
 
+    /**
+     * convert this object to string
+     * @return string
+     */
     public function __toString() {
 
         return $this->render();
     }
 
     /**
+     * return properties iterator
      * @return ArrayIterator<Property>
      */
     public function getProperties () {
