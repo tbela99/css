@@ -12,12 +12,15 @@ use TBela\CSS\Property\RenderableProperty;
 use function is_string;
 
 /**
-     * Pretty print CSS
-     * @package CSS
-     */
+ * Css node Renderer
+ * @package TBela\CSS
+ */
 class Renderer
 {
 
+    /**
+     * @ignore
+     */
     const MATCH_WORD = '/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s';
 
     /** @var bool minify output */

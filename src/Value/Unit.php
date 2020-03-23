@@ -2,19 +2,32 @@
 
 namespace TBela\CSS\Value;
 
+/**
+ * Css unit value
+ * @package TBela\CSS\Value
+ */
 class Unit extends Number {
 
+    /**
+     * @inheritDoc
+     */
     protected static function validate($data) {
 
         return isset($data->unit);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function match ($type) {
 
         $dataType = strtolower($this->data->type);
         return $dataType == $type || ($type == 'number' && $this->data->value == 0);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(array $options = [])
     {
 

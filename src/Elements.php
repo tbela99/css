@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace TBela\CSS;
 
@@ -7,11 +7,22 @@ use Exception;
 use InvalidArgumentException;
 use TBela\CSS\Element\Comment;
 use TBela\CSS\Element\Stylesheet;
+use Traversable;
 use function in_array;
 
-class Elements extends Element implements RuleList  {
+/**
+ * Class Elements
+ * @package TBela\CSS
+ */
+abstract class Elements extends Element implements RuleList
+{
 
-    protected function createElements () {
+    /**
+     * create child nodes
+     * @ignore
+     */
+    protected function createElements()
+    {
 
         if (!isset($this->ast->elements)) {
 
@@ -29,12 +40,12 @@ class Elements extends Element implements RuleList  {
 
     /**
      * @inheritDoc
-     * @throws Exception
      */
-    public function addComment ($value) {
+    public function addComment($value)
+    {
 
         $comment = new Comment();
-        $comment['value'] = '/* '.$value.' */';
+        $comment->setValue('/* ' . $value . ' */');
 
         return $this->append($comment);
     }
@@ -42,15 +53,17 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
-    public function hasChildren() {
+    public function hasChildren()
+    {
 
-        return isset($this->ast->elements) && count($this->ast->elements)  > 0;
+        return isset($this->ast->elements) && count($this->ast->elements) > 0;
     }
 
     /**
      * @inheritDoc
      */
-    public function removeChildren() {
+    public function removeChildren()
+    {
 
         if (is_callable([$this, 'isLeaf']) && call_user_func([$this, 'isLeaf'])) {
 
@@ -61,7 +74,7 @@ class Elements extends Element implements RuleList  {
 
             foreach ($this->ast->elements as $element) {
 
-                if(!is_null($element->parent)) {
+                if (!is_null($element->parent)) {
 
                     $element->parent->remove($element);
                 }
@@ -76,7 +89,8 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
-    public function getChildren () {
+    public function getChildren()
+    {
 
         return isset($this->ast->elements) ? $this->ast->elements : [];
     }
@@ -84,7 +98,8 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
-    public function support (Element $child) {
+    public function support(Element $child)
+    {
 
         $element = $this;
 
@@ -105,47 +120,39 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
-    public function append (Element $element) {
+    public function append(Element $element)
+    {
 
         if (!$this->support($element)) {
 
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('Illegal argument', 400);
         }
 
-    //    if ($this != $element['parent']) {
+        if ($element instanceof Stylesheet) {
 
-            if ($element instanceof Stylesheet) {
+            foreach ($element->getChildren() as $child) {
 
-                foreach ($element->getChildren() as $child) {
+                if (!$this->support($child)) {
 
-                    if (!$this->support($child)) {
-
-                        throw new InvalidArgumentException();
-                    }
-
-                 //   if (!empty($child->parent)) {
-
-                        $child->parent->remove($child);
-                //    }
-
-                    $this->append($child);
+                    throw new InvalidArgumentException('Illegal argument', 400);
                 }
+
+                $child->parent->remove($child);
+                $this->append($child);
             }
+        } else {
 
-            else {
+            if (!in_array($element, $this->ast->elements, true)) {
 
-                if (!in_array($element, $this->ast->elements, true)) {
+                if (!empty($element->parent)) {
 
-                    if (!empty($element->parent)) {
-
-                        $element->parent->remove($element);
-                    }
-
-                    $this->ast->elements[] = $element;
-                    $element->parent = $this;
+                    $element->parent->remove($element);
                 }
+
+                $this->ast->elements[] = $element;
+                $element->parent = $this;
             }
-    //    }
+        }
 
         return $element;
     }
@@ -157,7 +164,7 @@ class Elements extends Element implements RuleList  {
     {
         if (!$this->support($element) || $position < 0) {
 
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('Illegal argument', 400);
         }
 
         $parent = $element->parent;
@@ -169,7 +176,7 @@ class Elements extends Element implements RuleList  {
                 $parent->remove($element);
             }
 
-            $position = min ($position, count($this->ast->elements));
+            $position = min($position, count($this->ast->elements));
 
             array_splice($this->ast->elements, $position, 0, [$element]);
 
@@ -182,22 +189,28 @@ class Elements extends Element implements RuleList  {
     /**
      * @inheritDoc
      */
-    public function remove (Element $element) {
+    public function remove(Element $element)
+    {
 
-       if ($element->getParent() === $this) {
+        if ($element->getParent() === $this) {
 
-        $index = array_search ($element, $this->ast->elements);
+            $index = array_search($element, $this->ast->elements);
 
-        if ($index !== false) {
+            if ($index !== false) {
 
-            array_splice ($this->ast->elements, $index, 1);
+                array_splice($this->ast->elements, $index, 1);
+            }
         }
-       }
-       
-       return $element;
+
+        return $element;
     }
 
-    public function getIterator () {
+    /**
+     * return an iterator of child nodes
+     * @return ArrayIterator|Traversable
+     */
+    public function getIterator()
+    {
 
         return new ArrayIterator(isset($this->ast->elements) ? $this->ast->elements : []);
     }

@@ -5,25 +5,33 @@ namespace TBela\CSS\Property;
 use InvalidArgumentException;
 use TBela\CSS\Value;
 
+/**
+ * Compute shorthand properties. Used internally by PropertyList
+ * @package TBela\CSS\Property
+ */
 class PropertySet
 {
 
     /**
      * @var array
+     * @ignore
      */
     protected $config;
 
     /**
      * @var array
+     * @ignore
      */
     protected $properties = [];
 
     /**
      * @var array
+     * @ignore
      */
     protected $property_type = [];
     /**
      * @var string
+     * @ignore
      */
     protected $shorthand;
 
@@ -49,6 +57,7 @@ class PropertySet
     }
 
     /**
+     * set property value
      * @param string $name
      * @param Value|Set|string $value
      * @return PropertySet
@@ -113,6 +122,7 @@ class PropertySet
      * expand shorthand property
      * @param Value[] $value
      * @return array|bool
+     * @ignore
      */
     protected function expand($value)
     {
@@ -219,6 +229,7 @@ class PropertySet
     /**
      * convert 'border-radius: 10% 17% 10% 17% / 50% 20% 50% 20% -> 'border-radius: 10% 17% / 50% 20%
      * @return string
+     * @ignore
      */
     protected function reduce()
     {
@@ -300,8 +311,11 @@ class PropertySet
     }
 
     /**
-     * @param $name
-     * @param $value
+     * set property
+     * @param string $name
+     * @param Value\Set|string $value
+     * @return PropertySet
+     * @ignore
      */
     protected function setProperty($name, $value)
     {
@@ -317,6 +331,7 @@ class PropertySet
     }
 
     /**
+     * return Property array
      * @return Property[]
      */
     public function getProperties() {
@@ -335,6 +350,7 @@ class PropertySet
     }
 
     /**
+     * convert this object to string
      * @param string $join
      * @return string
      */
@@ -362,6 +378,10 @@ class PropertySet
         return rtrim($value, $glue . $join);
     }
 
+    /**
+     * convert this object to string
+     * @return string
+     */
     public function __toString()
     {
 

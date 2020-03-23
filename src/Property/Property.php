@@ -9,7 +9,7 @@ use TBela\CSS\Value\Set;
 
 
 /**
- * Pretty print CSS
+ * Css property
  * @package CSS
  */
 class Property implements ArrayAccess, Rendererable, RenderableProperty
@@ -18,27 +18,35 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
 
     /**
      * @var string
+     * @ignore
      */
     protected $name;
     /**
      * @var string
+     * @ignore
      */
     protected $type = 'Property';
     /**
      * @var Value[]|null
+     * @ignore
      */
     protected $value = [];
 
     /**
-     * @param $name
+     * Property constructor.
+     * @param Value\Set|string$name
      */
-
     public function __construct($name)
     {
 
         $this->name = $name;
     }
 
+    /**
+     * set the property value
+     * @param Set|string $value
+     * @return $this
+     */
     public function setValue($value) {
 
         if (is_string($value)) {
@@ -51,33 +59,54 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
     }
 
     /**
-     * @return Value[]|null
+     * get the property value
+     * @return Set|null
      */
     public function getValue() {
 
         return $this->value;
     }
 
+    /**
+     * get the property name
+     * @return Set
+     */
     public function getName() {
 
         return $this->name;
     }
 
+    /**
+     * return the property type
+     * @return string
+     */
     public function getType() {
 
         return $this->type;
     }
 
+    /**
+     * get property hash.
+     * @return string
+     */
     public function getHash() {
 
         return $this->name.':'.$this->value->render(['compress' => true, 'rgba_hex' => true]);
     }
 
+    /**
+     * convert property to string
+     * @return string
+     */
     public function render () {
 
         return $this->name.': '.$this->value;
     }
 
+    /**
+     * convert this object to string
+     * @return string
+     */
     public function __toString () {
 
         return $this->render();

@@ -15,6 +15,7 @@ use TBela\CSS\Element\Rule;
 class Rules extends Elements {
 
     /**
+     * Add at-rule child node
      * @param string $name
      * @param string|null $value
      * @param int $type the type of the node:
@@ -56,7 +57,8 @@ class Rules extends Elements {
     }
 
     /**
-     * @param $selectors
+     * add a rule child node
+     * @param string|array $selectors
      * @return Rule
      * @throws Exception
      */

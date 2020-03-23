@@ -4,9 +4,14 @@ namespace TBela\CSS;
 
 use Exception;
 
+/**
+ * Css node methods
+ * @package TBela\CSS
+ */
 trait ElementTrait  {
 
     /**
+     * get css node name
      * @param bool $getVendor
      * @return string
      * @throws Exception
@@ -20,23 +25,25 @@ trait ElementTrait  {
             return '-'.$vendor.'-'.$this->ast->name;
         }
 
-        return $this->ast->name;
+        return (string) $this->ast->name;
     }
 
     /**
+     * set vendor prefix
      * @return string
      */
     public function getVendor () {
 
         if (isset($this->ast->vendor)) {
 
-            return $this->ast->vendor;
+            return (string) $this->ast->vendor;
         }
 
         return '';
     }
 
     /**
+     * get node name
      * @return string
      */
     public function setName ($name) {
@@ -56,7 +63,7 @@ trait ElementTrait  {
     }
 
     /**
-     * @param null|string $prefix
+     * @param string|null $prefix
      * @return $this
      */
     public function setVendor ($prefix) {

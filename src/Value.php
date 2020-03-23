@@ -7,55 +7,92 @@ use stdClass;
 use TBela\CSS\Value\Set;
 
 /**
- * Pretty print CSS
+ * CSS value base class
  * @package CSS
  */
 class Value
 {
     /**
      * var stdClass;
+     * @ignore
      */
     protected $data = null;
 
+    /**
+     * @var array
+     * @ignore
+     */
     protected static $cache = [];
 
+    /**
+     * Value constructor.
+     * @param stdClass $data
+     */
     public function __construct($data)
     {
 
         $this->data = $data;
     }
 
+    /**
+     * Cleanup cache
+     * @ignore
+     */
     public function __destruct()
     {
         unset (static::$cache[spl_object_hash($this)]);
     }
 
+    /**
+     * get property
+     * @param string $name
+     * @return mixed|null
+     * @ignore
+     */
     public function __get($name)
     {
-        if(isset($this->data->{$name})) {
+        if (isset($this->data->{$name})) {
 
             return $this->data->{$name};
         }
 
-        if (is_callable([$this, 'get'.$name])) {
+        if (is_callable([$this, 'get' . $name])) {
 
-            return call_user_func([$this, 'get'.$name]);
+            return call_user_func([$this, 'get' . $name]);
         }
 
         return null;
     }
 
-    public function match ($type) {
+    /**
+     * test if this object matches the specified type
+     * @param string $type
+     * @return bool
+     */
+    public function match($type)
+    {
 
         return strtolower($this->data->type) == $type;
     }
 
-    protected static function validate($data) {
+    /**
+     * test if $data matches this class
+     * @param stdClass $data
+     * @return bool
+     */
+    protected static function validate($data)
+    {
 
         return isset($data->value);
     }
 
-    public static function getInstance($data) {
+    /**
+     * create an instance
+     * @param stdClass $data
+     * @return Value
+     */
+    public static function getInstance($data)
+    {
 
         if ($data instanceof Value) {
 
@@ -64,25 +101,30 @@ class Value
 
         if (!isset($data->type)) {
 
-            throw new InvalidArgumentException('Type property is required: '.gettype($data).':'.var_export($data, true), 400);
+            throw new InvalidArgumentException('Type property is required: ' . gettype($data) . ':' . var_export($data, true), 400);
         }
 
-        $className = static::class.'\\'.ucfirst($data->type);
+        $className = static::class . '\\' . ucfirst($data->type);
 
         if (!class_exists($className)) {
 
-            error_log(__METHOD__.' missing data type? '.$className);
+            error_log(__METHOD__ . ' missing data type? ' . $className);
             $className = static::class;
         }
 
-        if(!$className::validate($data)) {
+        if (!$className::validate($data)) {
 
-            throw new InvalidArgumentException('Invalid argument: $className:'.$className.' data:'.var_export($data, true), 400);
+            throw new InvalidArgumentException('Invalid argument: $className:' . $className . ' data:' . var_export($data, true), 400);
         }
 
         return new $className($data);
     }
 
+    /**
+     * convert this object to string
+     * @param array $options
+     * @return string
+     */
     public function render(array $options = [])
     {
         if (!empty($options['compress']) && $this->data->value !== '') {
@@ -94,9 +136,10 @@ class Value
     }
 
     /**
+     * parse a css value
      * @param Value|$string
      * @param bool $capture_whitespace
-     * @return Set<Value>
+     * @return Set
      */
     public static function parse($string, $capture_whitespace = true)
     {
@@ -213,13 +256,12 @@ class Value
                             if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla'])) {
 
                                 $token->type = 'color';
-                            }
-                            else {
+                            } else {
 
                                 $token->type = 'cssFunction';
                             }
 
-                            $token->arguments = static::parse(substr($params, 1,  - 1), true);
+                            $token->arguments = static::parse(substr($params, 1, -1), true);
 
                             $tokens[] = $token;
 
@@ -236,29 +278,26 @@ class Value
 
                 case ',':
                 case '/':
-            //    case '+':
-            //    case '-':
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
-                   //     if ($string[$i + 1] == '*') {
+                        //     if ($string[$i + 1] == '*') {
 
-                            $params = match_comment($string, $i, $j);
+                        $params = match_comment($string, $i, $j);
 
-                            if ($params !== false) {
+                        if ($params !== false) {
 
-                                $token = new stdClass;
+                            $token = new stdClass;
 
-                                $token->type = 'comment';
-                                $token->value = $params;
+                            $token->type = 'comment';
+                            $token->value = $params;
 
-                                $tokens[] = $token;
+                            $tokens[] = $token;
 
-                                $i += strlen($params) - 1;
-                                $buffer = '';
-                                break;
-                            }
-                    //    }
+                            $i += strlen($params) - 1;
+                            $buffer = '';
+                            break;
+                        }
                     }
 
                     if (
@@ -298,6 +337,15 @@ class Value
 
                 default:
 
+                    if ($string[$i] == '!') {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = type($buffer);
+                            $buffer = '';
+                        }
+                    }
+
                     $buffer .= $string[$i];
             }
         }
@@ -316,7 +364,8 @@ class Value
     }
 }
 
-function is_separator($char) {
+function is_separator($char)
+{
 
     switch ($char) {
 
@@ -331,9 +380,10 @@ function is_separator($char) {
     return false;
 }
 
-function reduce ($tokens) {
+function reduce($tokens)
+{
 
-    $count = count ($tokens) - 1;
+    $count = count($tokens) - 1;
 
     if ($count > 1) {
 
@@ -343,18 +393,15 @@ function reduce ($tokens) {
 
             $token = $tokens[$j];
 
-            if ($token->type == 'whitespace' && $tokens[$j + 1]->type == 'separator') {
+            if ($token->type == 'whitespace' && ($tokens[$j + 1]->type == 'separator' || ($tokens[$j + 1]->type == 'cssString' && $tokens[$j + 1]->value == '!important'))) {
 
                 array_splice($tokens, $j, 1);
-            }
-
-            else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
+            } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
 
                 array_splice($tokens, $j + 1, 1);
             }
         }
     }
-
 
     return $tokens;
 }
@@ -440,7 +487,8 @@ function _close($string, $search, $reset, $start, $end)
     return false;
 }
 
-function is_whitespace ($char) {
+function is_whitespace($char)
+{
 
     return preg_match("#^\s$#", $char);
 }
@@ -455,22 +503,16 @@ function type($token)
     if (substr($token, 0, 1) != '#' && is_numeric($token)) {
 
         $type->type = 'number';
-    }
-
-    else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
+    } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
         $type->type = 'color';
         $type->colorType = 'hex';
-    }
-
-    else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
+    } else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
 
         $type->type = 'unit';
         $type->value = $matches[1];
         $type->unit = $matches[9];
-    }
-
-    else {
+    } else {
 
         $type->type = 'cssString';
     }

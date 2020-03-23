@@ -7,7 +7,7 @@ From the AST
 
 ```php
 
-use \TBela\Element;
+use \TBela\CSS\Element;
 
 $ast = json_decode(file_get_contents('ast.json'));
 
@@ -18,7 +18,7 @@ Using the parser
 
 ```php
 
-use \TBela\Parser;
+use \TBela\CSS\Parser;
 
 $parser = new Parser($css);
 
@@ -36,7 +36,7 @@ Using the compiler
 
 ```php
 
-use \TBela\Compiler;
+use \TBela\CSS\Compiler;
 
 $compiler = new Compiler();
 
@@ -74,7 +74,7 @@ echo $compiler->compile();
 If the element can contain children, they can be accessed using the syntax \$element['childNodes']
 
 ```php
-$childNodes = $elements['childNodes'];
+$childNodes = $element['childNodes'];
 
 // or
 $childNodes = $element->getChildren();
