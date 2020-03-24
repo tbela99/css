@@ -1,12 +1,8 @@
-# Stylesheet
+# AtRule
 
-It is the root element of the css stylesheet. 
+This class implements At-Rule logic
 
-## Creating a Stylesheet
-
-there are several ways to create a stylesheet.
-
-### Using AST
+Using AST
 ```php
 
 use \TBela\Element;
@@ -15,7 +11,7 @@ $ast = json_decode(file_get_contents('ast.json'));
 
 $stylesheet = Element::getInstance($ast);
 ```
-### Using Parser
+Using the parser
 ```php
 
 use \TBela\CSS;
@@ -32,7 +28,7 @@ $parser->seContent($css);
 $stylesheet = $parser->parse();
 ```
 
-### Using Compiler
+Using the compiler
 
 ```php
 
@@ -49,12 +45,9 @@ $compiler->setContent($css);
 // and then
 $stylesheet = $compiler->getData();
 ```
-## Building Manually
+Building stylesheet manually
 
 ```php
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Stylesheet;
-
 $stylesheet = new Stylesheet();
 
 $rule = $stylesheet->addRule('div');
@@ -70,13 +63,6 @@ $rule = $stylesheet->addRule('div');
 $rule->addDeclaration('max-width', '100%');
 $rule->addDeclaration('border-width', '0px');
 
-$viewport = $stylesheet->addAtRule('viewport', null, AtRule::ELEMENT_AT_DECLARATIONS_LIST);
-
-$viewport->addDeclaration('width', '100vw');
-$viewport->addDeclaration('height', '60px');
-
-$media->insert($viewport, 0);
-
 $namespace = $stylesheet->addAtRule('namespace', 'svg url(http://www.w3.org/2000/svg)', AtRule::ELEMENT_AT_NO_LIST);
 
 $import = $stylesheet->addAtRule('import', 'url(css/stylesheet.css)', AtRule::ELEMENT_AT_NO_LIST);
@@ -89,10 +75,6 @@ Result
 ```css
 @import url(css/stylesheet.css);
 @media print {
- @viewport {
-   width: 100vw;
-   height: 60px
- }
  div {
    background-color: #fff;
    color: #000
@@ -102,5 +84,5 @@ div {
  max-width: 100%;
  border-width: 0
 }
-@namespace svg url(http://www.w3.org/2000/svg);t
+@namespace svg url(http://www.w3.org/2000/svg);
 ```

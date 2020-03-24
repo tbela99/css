@@ -79,7 +79,7 @@ class Set implements IteratorAggregate, JsonSerializable
      */
     public function map (callable $map) {
 
-        $this->data = array_map($this->data, $map);
+        $this->data = array_map($map, $this->data);
         return $this;
     }
 
@@ -90,6 +90,15 @@ class Set implements IteratorAggregate, JsonSerializable
     public function __toString()
     {
         return $this->render();
+    }
+
+    /**
+     * return an array of internal data
+     * @return array
+     */
+    public function toArray() {
+
+        return $this->data;
     }
 
     /**

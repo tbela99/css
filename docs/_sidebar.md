@@ -6,3 +6,4 @@
 - [CSS Manipulation](./manipulation.md)
 - [CSS API](./api.md)
 - [Element Class](./element.md)
+- [Stylesheet Class](./stylesheet.md)

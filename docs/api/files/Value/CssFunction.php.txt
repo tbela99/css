@@ -4,6 +4,10 @@ namespace TBela\CSS\Value;
 
 use \TBela\CSS\Value;
 
+/**
+ * CSS function value
+ * @package TBela\CSS\Value
+ */
 class CSSFunction extends Value {
 
     protected static function validate($data) {

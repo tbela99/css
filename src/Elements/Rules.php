@@ -12,16 +12,16 @@ use TBela\CSS\Element\Rule;
  * Rules container
  * @package TBela\CSS
  */
-class Rules extends Elements {
+abstract class Rules extends Elements {
 
     /**
      * Add at-rule child node
      * @param string $name
      * @param string|null $value
      * @param int $type the type of the node:
-     * - Rule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
-     * - Rule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
-     * - Rule::ELEMENT_AT_NO_LIST the element does not support children
+     * - AtRule::ELEMENT_AT_RULE_LIST (the elements can contain other rules)
+     * - AtRule::ELEMENT_AT_DECLARATIONS_LIST the element contains declarations
+     * - AtRule::ELEMENT_AT_NO_LIST the element does not support children
      * @return AtRule
      * @throws Exception
      */
@@ -50,8 +50,8 @@ class Rules extends Elements {
                 break;
         }
 
-        $rule['name'] = $name;
-        $rule['value'] = $value;
+        $rule->setName($name);
+        $rule->setValue($value);
 
         return $this->append($rule);
     }
@@ -65,7 +65,7 @@ class Rules extends Elements {
     public function addRule ($selectors) {
 
         $rule = new Rule();
-        $rule['selector'] = $selectors;
+        $rule->setSelector($selectors);
 
         return $this->append($rule);
     }

@@ -4,6 +4,7 @@ namespace TBela\CSS;
 
 use InvalidArgumentException;
 use stdClass;
+use TBela\CSS\Value\FontWeight;
 use TBela\CSS\Value\Set;
 
 /**
@@ -127,9 +128,10 @@ class Value
      */
     public function render(array $options = [])
     {
-        if (!empty($options['compress']) && $this->data->value !== '') {
 
-            return preg_replace('#^("\')(["\'\s]+)\\1$#', '$2', $this->data->value);
+        if (!empty($options['compress']) && strlen($this->data->value) > 2) {
+
+            return preg_replace('#^(["\'])([^"\'\s]+)\\1$#', '$2', $this->data->value);
         }
 
         return $this->data->value;
@@ -137,14 +139,21 @@ class Value
 
     /**
      * parse a css value
-     * @param Value|$string
+     * @param Set|string $string
+     * @param string $property
      * @param bool $capture_whitespace
      * @return Set
      */
-    public static function parse($string, $capture_whitespace = true)
+    public static function parse($string, $property = null, $capture_whitespace = true)
     {
+        // too lazy to reparse ...
+        if (!is_string($string)) {
+
+            return $string;
+        }
 
         $string = trim($string);
+        $property = (string) $property;
 
         $i = -1;
         $j = strlen($string) - 1;
@@ -153,6 +162,43 @@ class Value
         $tokens = [];
 
         while (++$i <= $j) {
+
+            if ($property == 'font' || $property == 'font-weight') {
+
+                foreach (FontWeight::keywords() as $keyword) {
+
+                    $word = $keyword;
+
+                    if ($string[$i] == '"' || $string[$i] == "'") {
+
+                        $word = $string[$i].$word.$string[$i];
+                    }
+
+                    $length = strlen($word);
+
+                    if (strcasecmp(substr($string, $i, $length), $word) == 0) {
+
+                        $token = new stdClass;
+                        $token->type = 'fontWeight';
+                        $token->value = $keyword;
+                        $tokens[] = $token;
+
+                        $i += $length;
+                        $buffer = '';
+
+                        if ($i >= $j) {
+
+                            continue 2;
+                        }
+
+                        if ($string[$i] == ' ') {
+
+                            $tokens[] = type(' ');
+                            continue 2;
+                        }
+                    }
+                }
+            }
 
             switch ($string[$i]) {
 
@@ -356,6 +402,16 @@ class Value
         }
 
         return new Set(reduce($tokens));
+    }
+
+    /**
+     * return the list of keywords
+     * @return array
+     * @ignore
+     */
+    public static function keywords () {
+
+        return [];
     }
 
     public function __toString()

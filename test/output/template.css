@@ -151,10 +151,10 @@ textarea {
 }
 @media print {
  * {
-   text-shadow: none !important;
-   color: #000 !important;
-   background: transparent !important;
-   box-shadow: none !important
+   text-shadow: none!important;
+   color: #000!important;
+   background: transparent!important;
+   box-shadow: none!important
  }
  a,
  a:visited {
@@ -184,7 +184,7 @@ textarea {
    page-break-inside: avoid
  }
  img {
-   max-width: 100% !important
+   max-width: 100%!important
  }
  @page {
    margin: 0.5cm
@@ -639,7 +639,7 @@ h3,
 h4,
 h5,
 h6 {
- margin: 9px 0 0;
+ margin: 9px 0;
  font-family: inherit;
  font-weight: bold;
  line-height: 18px;
@@ -766,7 +766,7 @@ dd {
  margin-left: 180px
 }
 hr {
- margin: 18px 0 0;
+ margin: 18px 0;
  border: 0;
  border-top: 1px solid #eee;
  border-bottom: 1px solid #fff
@@ -839,7 +839,7 @@ pre {
  border-radius: 3px
 }
 code {
- padding: 2px 4px 4px;
+ padding: 2px 4px;
  color: #d14;
  background-color: #f7f7f9;
  border: 1px solid #e1e1e8;
@@ -935,7 +935,7 @@ input[type="color"],
 .uneditable-input {
  display: inline-block;
  height: 18px;
- padding: 4px 6px 6px;
+ padding: 4px 6px;
  margin-bottom: 9px;
  font-size: 13px;
  line-height: 18px;
@@ -1470,7 +1470,7 @@ select:focus:invalid:focus {
  width: auto;
  height: 18px;
  min-width: 16px;
- padding: 4px 5px 5px;
+ padding: 4px 5px;
  font-size: 13px;
  font-weight: normal;
  line-height: 18px;
@@ -1765,7 +1765,7 @@ table {
 }
 .table-condensed th,
 .table-condensed td {
- padding: 4px 5px 5px
+ padding: 4px 5px
 }
 .table-bordered {
  border: 1px solid #ddd;
@@ -2000,7 +2000,7 @@ table th[class*="span"],
  display: none;
  float: left;
  min-width: 160px;
- padding: 5px 0 0;
+ padding: 5px 0;
  margin: 2px 0 0;
  list-style: none;
  background-color: #fff;
@@ -2024,14 +2024,14 @@ table th[class*="span"],
 .dropdown-menu .divider {
  *width: 100%;
  height: 1px;
- margin: 8px 1px 1px;
+ margin: 8px 1px;
  *margin: -5px 0 5px;
  overflow: hidden;
  background-color: #e5e5e5;
  border-bottom: 1px solid #fff
 }
 .dropdown-menu .menuitem-group {
- margin: 4px 1px 1px;
+ margin: 4px 1px;
  overflow: hidden;
  border-top: 1px solid #eee;
  border-bottom: 1px solid #eee;
@@ -2039,11 +2039,11 @@ table th[class*="span"],
  color: #555;
  text-transform: capitalize;
  font-size: 95%;
- padding: 3px 20px 20px
+ padding: 3px 20px
 }
 .dropdown-menu>li>a {
  display: block;
- padding: 3px 20px 20px;
+ padding: 3px 20px;
  clear: both;
  font-weight: normal;
  line-height: 18px;
@@ -2278,7 +2278,7 @@ button.close {
  display: inline-block;
  *display: inline;
  *zoom: 1;
- padding: 4px 12px 12px;
+ padding: 4px 12px;
  margin-bottom: 0;
  font-size: 13px;
  line-height: 18px;
@@ -2356,7 +2356,7 @@ button.close {
  box-shadow: none
 }
 .btn-large {
- padding: 11px 19px 19px;
+ padding: 11px 19px;
  font-size: 16.25px;
  -webkit-border-radius: 6px;
  -moz-border-radius: 6px;
@@ -2367,7 +2367,7 @@ button.close {
  margin-top: 4px
 }
 .btn-small {
- padding: 2px 10px 10px;
+ padding: 2px 10px;
  font-size: 12px;
  -webkit-border-radius: 3px;
  -moz-border-radius: 3px;
@@ -2382,7 +2382,7 @@ button.close {
  margin-top: -1px
 }
 .btn-mini {
- padding: 0 6px 6px;
+ padding: 0 6px;
  font-size: 9.75px;
  -webkit-border-radius: 3px;
  -moz-border-radius: 3px;
@@ -2914,7 +2914,7 @@ input[type="submit"].btn.btn-mini {
 }
 .nav-header {
  display: block;
- padding: 3px 15px 15px;
+ padding: 3px 15px;
  font-size: 11px;
  font-weight: bold;
  line-height: 18px;
@@ -2937,7 +2937,7 @@ input[type="submit"].btn.btn-mini {
  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5)
 }
 .nav-list>li>a {
- padding: 3px 15px 15px
+ padding: 3px 15px
 }
 .nav-list>.active>a,
 .nav-list>.active>a:hover,
@@ -2953,7 +2953,7 @@ input[type="submit"].btn.btn-mini {
 .nav-list .divider {
  *width: 100%;
  height: 1px;
- margin: 8px 1px 1px;
+ margin: 8px 1px;
  *margin: -5px 0 5px;
  overflow: hidden;
  background-color: #e5e5e5;
@@ -3307,7 +3307,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar .divider-vertical {
  height: 40px;
- margin: 0 9px 9px;
+ margin: 0 9px;
  border-left: 1px solid #f2f2f2;
  border-right: 1px solid #fff
 }
@@ -3369,7 +3369,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar-search .search-query {
  margin-bottom: 0;
- padding: 4px 14px 14px;
+ padding: 4px 14px;
  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
  font-size: 13px;
  font-weight: normal;
@@ -3478,7 +3478,7 @@ input[type="submit"].btn.btn-mini {
 .navbar .btn-navbar {
  display: none;
  float: right;
- padding: 7px 10px 10px;
+ padding: 7px 10px;
  margin-left: 5px;
  margin-right: 5px;
  color: #fff;
@@ -3696,7 +3696,7 @@ input[type="submit"].btn.btn-mini {
 }
 .navbar-inverse .navbar-search .search-query:focus,
 .navbar-inverse .navbar-search .search-query.focused {
- padding: 5px 15px 15px;
+ padding: 5px 15px;
  color: #333;
  text-shadow: 0 1px 0 #fff;
  background-color: #fff;
@@ -3733,7 +3733,7 @@ input[type="submit"].btn.btn-mini {
  background-color: #000 \9
 }
 .breadcrumb {
- padding: 8px 15px 15px;
+ padding: 8px 15px;
  margin: 0 0 18px;
  list-style: none;
  background-color: #f5f5f5;
@@ -3748,14 +3748,14 @@ input[type="submit"].btn.btn-mini {
  text-shadow: 0 1px 0 #fff
 }
 .breadcrumb>li>.divider {
- padding: 0 5px 5px;
+ padding: 0 5px;
  color: #ccc
 }
 .breadcrumb>.active {
  color: #999
 }
 .pagination {
- margin: 18px 0 0
+ margin: 18px 0
 }
 .pagination ul {
  display: inline-block;
@@ -3776,7 +3776,7 @@ input[type="submit"].btn.btn-mini {
 .pagination ul>li>a,
 .pagination ul>li>span {
  float: left;
- padding: 4px 12px 12px;
+ padding: 4px 12px;
  line-height: 18px;
  text-decoration: none;
  background-color: #fff;
@@ -3829,7 +3829,7 @@ input[type="submit"].btn.btn-mini {
 }
 .pagination-large ul>li>a,
 .pagination-large ul>li>span {
- padding: 11px 19px 19px;
+ padding: 11px 19px;
  font-size: 16.25px
 }
 .pagination-large ul>li:first-child>a,
@@ -3874,16 +3874,16 @@ input[type="submit"].btn.btn-mini {
 }
 .pagination-small ul>li>a,
 .pagination-small ul>li>span {
- padding: 2px 10px 10px;
+ padding: 2px 10px;
  font-size: 12px
 }
 .pagination-mini ul>li>a,
 .pagination-mini ul>li>span {
- padding: 0 6px 6px;
+ padding: 0 6px;
  font-size: 9.75px
 }
 .pager {
- margin: 18px 0 0;
+ margin: 18px 0;
  list-style: none;
  text-align: center;
  *zoom: 1
@@ -3903,7 +3903,7 @@ input[type="submit"].btn.btn-mini {
 .pager li>a,
 .pager li>span {
  display: inline-block;
- padding: 5px 14px 14px;
+ padding: 5px 14px;
  background-color: #fff;
  border: 1px solid #ddd;
  -webkit-border-radius: 15px;
@@ -3949,7 +3949,7 @@ input[type="submit"].btn.btn-mini {
  filter: alpha(opacity=80)
 }
 .modal-header {
- padding: 9px 15px 15px;
+ padding: 9px 15px;
  border-bottom: 1px solid #eee
 }
 .modal-header .close {
@@ -3968,7 +3968,7 @@ input[type="submit"].btn.btn-mini {
 .modal-body iframe {
  width: 100%;
  max-height: none;
- border: 0 !important
+ border: 0!important
 }
 .modal-form {
  margin-bottom: 0
@@ -4022,19 +4022,19 @@ input[type="submit"].btn.btn-mini {
 }
 .tooltip.top {
  margin-top: -3px;
- padding: 5px 0 0
+ padding: 5px 0
 }
 .tooltip.right {
  margin-left: 3px;
- padding: 0 5px 5px
+ padding: 0 5px
 }
 .tooltip.bottom {
  margin-top: 3px;
- padding: 5px 0 0
+ padding: 5px 0
 }
 .tooltip.left {
  margin-left: -3px;
- padding: 0 5px 5px
+ padding: 0 5px
 }
 .tooltip-inner {
  max-width: 200px;
@@ -4118,7 +4118,7 @@ input[type="submit"].btn.btn-mini {
 }
 .popover-title {
  margin: 0;
- padding: 8px 14px 14px;
+ padding: 8px 14px;
  font-size: 14px;
  font-weight: normal;
  line-height: 18px;
@@ -4132,7 +4132,7 @@ input[type="submit"].btn.btn-mini {
  display: none
 }
 .popover-content {
- padding: 9px 14px 14px
+ padding: 9px 14px
 }
 .popover .arrow,
 .popover .arrow:after {
@@ -4260,7 +4260,7 @@ a.thumbnail:focus {
 .label,
 .badge {
  display: inline-block;
- padding: 2px 4px 4px;
+ padding: 2px 4px;
  font-size: 10.998px;
  font-weight: bold;
  line-height: 14px;
@@ -4521,13 +4521,13 @@ a.badge:focus {
 }
 .accordion-heading .accordion-toggle {
  display: block;
- padding: 8px 15px 15px
+ padding: 8px 15px
 }
 .accordion-toggle {
  cursor: pointer
 }
 .accordion-inner {
- padding: 9px 15px 15px;
+ padding: 9px 15px;
  border-top: 1px solid #e5e5e5
 }
 .carousel {
@@ -4702,54 +4702,54 @@ a.badge:focus {
  visibility: hidden
 }
 .visible-phone {
- display: none !important
+ display: none!important
 }
 .visible-tablet {
- display: none !important
+ display: none!important
 }
 .hidden-desktop {
- display: none !important
+ display: none!important
 }
 .visible-desktop {
- display: inherit !important
+ display: inherit!important
 }
 @media (min-width: 768px) and (max-width: 979px) {
  .hidden-desktop {
-   display: inherit !important
+   display: inherit!important
  }
  .visible-desktop {
-   display: none !important
+   display: none!important
  }
  .visible-tablet {
-   display: inherit !important
+   display: inherit!important
  }
  .hidden-tablet {
-   display: none !important
+   display: none!important
  }
 }
 @media (max-width: 767px) {
  .hidden-desktop {
-   display: inherit !important
+   display: inherit!important
  }
  .visible-desktop {
-   display: none !important
+   display: none!important
  }
  .visible-phone {
-   display: inherit !important
+   display: inherit!important
  }
  .hidden-phone {
-   display: none !important
+   display: none!important
  }
 }
 .visible-print {
- display: none !important
+ display: none!important
 }
 @media print {
  .visible-print {
-   display: inherit !important
+   display: inherit!important
  }
  .hidden-print {
-   display: none !important
+   display: none!important
  }
 }
 @media (max-width: 767px) {
@@ -5636,7 +5636,7 @@ a.badge:focus {
  }
  .nav-collapse .nav>li>a,
  .nav-collapse .dropdown-menu a {
-   padding: 9px 15px 15px;
+   padding: 9px 15px;
    font-weight: bold;
    color: #555;
    -webkit-border-radius: 3px;
@@ -5680,7 +5680,7 @@ a.badge:focus {
    float: none;
    display: none;
    max-width: none;
-   margin: 0 15px 15px;
+   margin: 0 15px;
    padding: 0;
    background-color: transparent;
    border: none;
@@ -5708,8 +5708,8 @@ a.badge:focus {
  .nav-collapse .navbar-form,
  .nav-collapse .navbar-search {
    float: none;
-   padding: 9px 15px 15px;
-   margin: 9px 0 0;
+   padding: 9px 15px;
+   margin: 9px 0;
    border-top: 1px solid #f2f2f2;
    border-bottom: 1px solid #f2f2f2;
    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1),0 1px 0 rgba(255, 255, 255, .1);
@@ -5740,8 +5740,8 @@ a.badge:focus {
 }
 @media (min-width: 980px) {
  .nav-collapse.collapse {
-   height: auto !important;
-   overflow: visible !important
+   height: auto!important;
+   overflow: visible!important
  }
 }
 .small {
@@ -5779,7 +5779,7 @@ a.disabled:hover {
  margin-bottom: 7px
 }
 .btn.btn-micro .caret {
- margin: 5px 0 0
+ margin: 5px 0
 }
 body.modal {
  padding-top: 0
@@ -5847,7 +5847,7 @@ body.modal {
  margin-left: 91.489361693%
 }
 .navbar .nav>li>a.btn {
- padding: 4px 10px 10px;
+ padding: 4px 10px;
  line-height: 18px
 }
 .nav-tabs.nav-dark {
@@ -5935,7 +5935,7 @@ body.modal {
  height: 100px
 }
 hr.hr-condensed {
- margin: 10px 0 0
+ margin: 10px 0
 }
 .list-striped,
 .row-striped {
@@ -5977,11 +5977,11 @@ hr.hr-condensed {
  margin-left: 0
 }
 .list-condensed li {
- padding: 4px 5px 5px
+ padding: 4px 5px
 }
 .row-condensed .row,
 .row-condensed .row-fluid {
- padding: 4px 5px 5px
+ padding: 4px 5px
 }
 .list-bordered,
 .row-bordered {
@@ -6036,7 +6036,7 @@ fieldset.radio.btn-group {
  border-radius: 4px 4px 0 0
 }
 .btn-micro {
- padding: 1px 4px 4px;
+ padding: 1px 4px;
  font-size: 10px;
  line-height: 8px
 }
@@ -6045,7 +6045,7 @@ fieldset.radio.btn-group {
 }
 .tip-wrap {
  max-width: 200px;
- padding: 3px 8px 8px;
+ padding: 3px 8px;
  color: #fff;
  text-align: center;
  text-decoration: none;
@@ -7127,7 +7127,7 @@ body.site.fluid {
  margin-top: 0
 }
 .navigation {
- padding: 5px 0 0;
+ padding: 5px 0;
  border-top: 1px solid rgba(0, 0, 0, 0.075);
  border-bottom: 1px solid rgba(0, 0, 0, 0.075);
  margin-bottom: 10px
@@ -7165,7 +7165,7 @@ h3,
 h4,
 h5,
 h6 {
- margin: 12px 0 0;
+ margin: 12px 0;
  word-wrap: break-word
 }
 h1 {
@@ -7204,7 +7204,7 @@ p {
  margin-bottom: 9px
 }
 .item-content {
- margin: 18px 0 0
+ margin: 18px 0
 }
 .item-subtitle {
  margin-bottom: 9px
@@ -7228,17 +7228,17 @@ p {
  margin-bottom: 9px
 }
 .list-item-content {
- margin: 18px 0 0
+ margin: 18px 0
 }
 .list-item-subtitle {
  margin-bottom: 9px
 }
 .items-more,
 .content-links {
- padding: 15px 0 0
+ padding: 15px 0
 }
 .breadcrumb {
- margin: 10px 0 0
+ margin: 10px 0
 }
 .breadcrumb>li,
 .breadcrumb>.active {
@@ -7268,7 +7268,7 @@ p {
  text-align: center
 }
 .img_caption {
- text-align: center !important
+ text-align: center!important
 }
 .img_caption.none {
  margin-left: auto;
@@ -7298,7 +7298,7 @@ figcaption {
  display: none;
  float: left;
  min-width: 160px;
- padding: 5px 0 0;
+ padding: 5px 0;
  margin: 2px 0 0;
  list-style: none;
  background-color: #fff;
@@ -7322,7 +7322,7 @@ figcaption {
 .navigation .nav-child .divider {
  *width: 100%;
  height: 1px;
- margin: 8px 1px 1px;
+ margin: 8px 1px;
  *margin: -5px 0 5px;
  overflow: hidden;
  background-color: #e5e5e5;
@@ -7330,7 +7330,7 @@ figcaption {
 }
 .navigation .nav-child a {
  display: block;
- padding: 3px 20px 20px;
+ padding: 3px 20px;
  clear: both;
  font-size: 13px;
  font-weight: normal;
@@ -7531,7 +7531,7 @@ figcaption {
 }
 @media (max-width: 980px) {
  .navbar-fixed-top {
-   margin-bottom: 0 !important
+   margin-bottom: 0!important
  }
  .item-comment .item-image {
    display: none
@@ -7565,7 +7565,7 @@ dl.tabs {
 dl.tabs dt.tabs {
  float: left;
  margin-left: 3px;
- padding: 4px 10px 10px;
+ padding: 4px 10px;
  background-color: #f0f0f0;
  border-top: 1px solid #ccc;
  border-left: 1px solid #ccc;
@@ -7618,7 +7618,7 @@ code {
 .search span.highlight {
  background-color: #ffc;
  font-weight: bold;
- padding: 1px 0 0
+ padding: 1px 0
 }
 dt.result-title {
  word-wrap: break-word
@@ -7645,7 +7645,7 @@ body.modal-open {
  padding-top: 0
 }
 .field-media-wrapper .modal .modal-body {
- padding: 5px 10px 10px;
+ padding: 5px 10px;
  overflow: hidden
 }
 #search-results {

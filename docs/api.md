@@ -1,5 +1,7 @@
 ## CSS Api
 
+The documentation generated from the source code using phpdocs is available [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tbela99/css/master/docs/api/namespaces/TBela.CSS.html)
+
 ## Rendering an Element
 
 Every Element instance implement a \_\_toString() method which means they are automatically converted to string where a string is expected.
@@ -23,6 +25,7 @@ Example
 }
 ```
 
+PHP
 ```php
 
 use \TBela\CSS\Parser;

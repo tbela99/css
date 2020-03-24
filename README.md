@@ -6,7 +6,11 @@ CSS (A CSS parser and minifier written in PHP)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
+## Features
+
+- CSS4 colors support
 - merge duplicate rules
+- remove duplicate declarations
 - remove empty rules and declarations
 - process @import directive
 - remove @charset directive
