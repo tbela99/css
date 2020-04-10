@@ -9,15 +9,41 @@ use function str_replace;
 use function substr;
 
 // http://www.w3.org/TR/CSS21/grammar.html
+/**
+ * @ignore
+ */
 const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 
+/**
+ * Css Parser
+ * @package TBela\CSS
+ */
 class Parser
 {
 
+    /**
+     * css data
+     * @var string
+     * @ignore
+     */
     public $css = '';
+
+    /**
+     * @var string
+     * @ignore
+     */
     protected $_css = '';
+
+    /**
+     * @var string
+     * @ignore
+     */
     protected $path = '';
 
+    /**
+     * @var array
+     * @ignore
+     */
     public $options = [
         'source' => '',
         'silent' => false,
@@ -26,6 +52,10 @@ class Parser
         'allow_duplicate_declarations' => ['background-image']
     ];
 
+    /**
+     * contains the list of css parsing errors
+     * @var array
+     */
     public $errorsList = [];
 
     /**
@@ -44,6 +74,7 @@ class Parser
     }
 
     /**
+     * load css content from a file
      * @param string $file
      * @return $this
      */
@@ -57,6 +88,7 @@ class Parser
     }
 
     /**
+     * set css content
      * @param string $css
      * @return $this
      */
@@ -69,6 +101,7 @@ class Parser
     }
 
     /**
+     * set the parser options
      * @param array $options
      * @return $this
      */
@@ -100,6 +133,7 @@ class Parser
     }
 
     /**
+     * parse Css
      * @return Element
      * @throws Exception
      */
@@ -110,16 +144,18 @@ class Parser
 
         if (!empty($this->options['flatten_import'])) {
 
-            $this->css = parse_import($this->css, dirname($this->path));
+            $this->css = parse_import($this->css, $this->path === '' ? get_current_directory() : dirname($this->path));
         }
 
         return Element::getInstance($this->deduplicate(parse($this)));
     }
 
     /**
-     * @param object
+     * merge css rules and declarations
+     * @param Element|object $ast
      * @return object
      */
+
     public function deduplicate($ast)
     {
         if ($ast instanceof Element) {
@@ -149,8 +185,10 @@ class Parser
     }
 
     /**
+     * compute signature
      * @param object $ast
      * @return string
+     * @ignore
      */
     protected function computeSignature($ast)
     {
@@ -186,8 +224,10 @@ class Parser
     }
 
     /**
+     * merge duplicate rules
      * @param object $ast
      * @return object
+     * @ignore
      */
     protected function deduplicateRules($ast)
     {
@@ -265,8 +305,10 @@ class Parser
     }
 
     /**
+     * merge duplicate declarations
      * @param object $ast
      * @return object
+     * @ignore
      */
     protected function deduplicateDeclarations($ast)
     {
@@ -310,6 +352,11 @@ class Parser
     }
 }
 
+/**
+ * @ignore
+ * @return string
+ * @ignore
+ */
 function get_current_directory() {
 
     if (isset($_SERVER['PWD'])) {
@@ -321,6 +368,11 @@ function get_current_directory() {
     return dirname($_SERVER['PHP_SELF']);
 }
 
+/**
+ * @param $file
+ * @return string|bool
+ * @ignore
+ */
 function get_content($file)
 {
 
@@ -337,6 +389,13 @@ function get_content($file)
     return expand(fetch_content($file), dirname($file));
 }
 
+/**
+ *
+ * @param $css
+ * @param null $path
+ * @return string
+ * @ignore
+ */
 function expand($css, $path = null)
 {
 
@@ -387,12 +446,26 @@ function expand($css, $path = null)
     return $css;
 }
 
+/**
+ * @param $file
+ * @param string $path
+ * @return string
+ * @ignore
+ */
 function resolvePath($file, $path = '')
 {
 
     if ($path !== '') {
 
         if (!preg_match('#^(https?:/)?/#', $file)) {
+
+            if ($file[0] != '/' && $path !== '') {
+
+                if ($path[strlen($path) - 1] != '/') {
+
+                    $path .= '/';
+                }
+            }
 
             $file = $path.$file;
         }
@@ -433,6 +506,13 @@ function resolvePath($file, $path = '')
     return preg_replace('#^'.preg_quote(get_current_directory().'/', '#').'#', '', $file);
 }
 
+/**
+ * @param $url
+ * @param array $options
+ * @param array $curlOptions
+ * @return bool|string
+ * @ignore
+ */
 function fetch_content($url, $options = [], $curlOptions = [])
 {
 
@@ -486,11 +566,16 @@ function fetch_content($url, $options = [], $curlOptions = [])
     return $result;
 }
 
+/**
+ * @param $css
+ * @param string $path
+ * @return string
+ * @ignore
+ */
 function parse_import($css, $path = '')
 {
 
     $comments = [];
-
     $css = preg_replace_callback(COMMENT_REGEXP, function ($matches) use (&$comments) {
 
         $comments[$matches[0]] = '~~~b' . md5($matches[0]) . 'b~~~';
@@ -500,9 +585,9 @@ function parse_import($css, $path = '')
 
     $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) use ($path) {
 
-        if (preg_match('#(url\(\s*((["\'])([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
+        if (preg_match('#(url\(\s*((["\']?)([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
 
-            $file = resolvePath(empty($match[4]) ? $match[7] : $match[4], $path);
+            $file = resolvePath(trim(empty($match[4]) ? $match[7] : $match[4]), $path);
 
             $media = trim($match[8]);
 
@@ -517,7 +602,7 @@ function parse_import($css, $path = '')
 
                 if ($media !== '') {
 
-                    $css = '@media ' . $media . " {\n" . $css . "\n}";
+                    $css = '@media ' . $media . " {\n" . $css . "\n}\n";
                 }
 
                 return '/* start: @import from ' . $file . ' */' . "\n" . $css . "\n" . '/* end: @import from ' . $file . ' */'. "\n" ;
@@ -540,6 +625,7 @@ function parse_import($css, $path = '')
  * Update lineno and column based on `str`.
  * @param string $str
  * @param object $context
+ * @ignore
  */
 
 function updatePosition($str, $context)
@@ -567,6 +653,7 @@ function updatePosition($str, $context)
  * @param object $context
  * @return Exception
  * @throws Exception
+ * @ignore
  */
 
 function error($msg, $context)
@@ -604,6 +691,7 @@ function error($msg, $context)
  * @param $context
  * @return stdClass
  * @throws Exception
+ * @ignore
  */
 
 function stylesheet($context)
@@ -624,6 +712,7 @@ function stylesheet($context)
  * Opening brace.
  * @param $context
  * @return string
+ * @ignore
  */
 
 function open($context)
@@ -635,6 +724,7 @@ function open($context)
  * Closing brace.
  * @param object $context
  * @return string
+ * @ignore
  */
 
 function close($context)
@@ -642,6 +732,11 @@ function close($context)
     return match('/^}/', $context);
 }
 
+/**
+ * @param $str
+ * @return array
+ * @ignore
+ */
 function parse_vendor($str)
 {
 
@@ -662,6 +757,7 @@ function parse_vendor($str)
  * @param object $context
  * @return array
  * @throws Exception
+ * @ignore
  */
 
 function rules($context)
@@ -712,6 +808,7 @@ function rules($context)
  * @param string $re
  * @param object $context
  * @return string
+ * @ignore
  */
 
 function match($re, $context)
@@ -730,6 +827,7 @@ function match($re, $context)
 /**
  * Parse whitespace.
  * @param object $context
+ * @ignore
  */
 
 function whitespace($context)
@@ -743,6 +841,7 @@ function whitespace($context)
  * @param object $context
  * @return array
  * @throws Exception
+ * @ignore
  */
 
 function comments(&$rules, $context)
@@ -764,6 +863,7 @@ function comments(&$rules, $context)
  * @param object $context
  * @return Exception|stdClass|bool
  * @throws Exception
+ * @ignore
  */
 
 function comment($context)
@@ -793,6 +893,7 @@ function comment($context)
  * Parse selector.
  * @param object $context
  * @return array
+ * @ignore
  */
 
 function selector($context)
@@ -834,6 +935,7 @@ function selector($context)
  * @param object $context
  * @return array|bool|Exception
  * @throws Exception
+ * @ignore
  */
 
 function declaration($context)
@@ -876,7 +978,7 @@ function declaration($context)
     $data = [
         'type' => 'Declaration',
         'name' => Value::parse($prop)->filter($filter),
-        'value' => Value::parse($val[0])->filter($filter)
+        'value' => Value::parse($val[0], $prop)->filter($filter)
     ];
 
     foreach (parse_vendor($data['name']) as $key => $value) {
@@ -897,6 +999,7 @@ function declaration($context)
  * @param $context
  * @return array|bool|Exception|void
  * @throws Exception
+ * @ignore
  */
 function atrule($context)
 {
@@ -1014,6 +1117,7 @@ function atrule($context)
  * @param object $context
  * @return array|bool|Exception
  * @throws Exception
+ * @ignore
  */
 
 function rule($context)
@@ -1083,6 +1187,7 @@ function rule($context)
  * @param object $context
  * @return stdClass
  * @throws Exception
+ * @ignore
  */
 function parse($context)
 {

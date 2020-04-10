@@ -1,5 +1,6 @@
-#!/bin/sh -x
-## to run run a particular test, give the file name without extension as a parameter
+#!/bin/sh
+##!/bin/sh -x
+# # to run run a particular test, give the file name without extension as a parameter
 ##  ./runtest.sh Render
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
@@ -13,7 +14,7 @@ cd "$DIR"
 if [ "$1" == "" ]; then
   for file in src/*.php
     do
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || exit "test ended with failure"
+      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || $(echo "test ended with failure" >&2 && exit 1)
     done
 else
 

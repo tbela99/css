@@ -62,7 +62,12 @@ class PropertyList implements IteratorAggregate
             return $this;
         }
 
-        $name = (string) $name;
+        $name = strtolower($name);
+
+        if (is_string($value) || is_numeric($value)) {
+
+            $value = Value::parse($value, $name);
+        }
 
         if(!empty($this->options['allow_duplicate_declarations'])) {
 
@@ -74,10 +79,9 @@ class PropertyList implements IteratorAggregate
             }
         }
 
-        $value = is_string($value) ? Value::parse($value) : $value;
         $shorthand = Config::getProperty($name.'.shorthand');
 
-        // is is an expanded property?
+        // is is an shorthand property?
         if (!is_null($shorthand)) {
 
            $config = Config::getProperty($shorthand);
@@ -92,13 +96,32 @@ class PropertyList implements IteratorAggregate
 
         else {
 
-            // regular property
-            if (!isset($this->properties[$name])) {
+            $shorthand = Config::getPath('map.'.$name.'.shorthand');
 
-                $this->properties[$name] = new Property($name, Config::getProperty($name . '.type'));
+            // is is an shorthand property?
+            if (!is_null($shorthand)) {
+
+                $config = Config::getPath('map.'.$shorthand);
+
+                if (!isset($this->properties[$shorthand])) {
+
+                    $this->properties[$shorthand] = new PropertyMap($shorthand, $config);
+                }
+
+                $this->properties[$shorthand]->set($name, $value);
             }
 
-            $this->properties[$name]->setValue($value);
+            else {
+
+                // regular property
+                if (!isset($this->properties[$name])) {
+
+                    $this->properties[$name] = new Property($name, Config::getProperty($name . '.type'));
+                }
+
+                $this->properties[$name]->setValue($value);
+            }
+
         }
 
         return $this;
@@ -150,7 +173,7 @@ class PropertyList implements IteratorAggregate
 
         foreach ($this->properties as $property) {
 
-            if ($property instanceof PropertySet) {
+            if (is_callable([$property, 'getProperties'])) {
 
                 array_splice($result, count($result), 0, $property->getProperties());
             }

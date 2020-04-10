@@ -51,7 +51,7 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
 
         if (is_string($value)) {
 
-            $value = Value::parse($value);
+            $value = Value::parse($value, $this->name);
         }
 
         $this->value = $value;

@@ -4,26 +4,35 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
+use TBela\CSS\Value\Set;
 
+/**
+ * Compute shorthand properties. Used internally by PropertyList
+ * @package TBela\CSS\Property
+ */
 class PropertySet
 {
 
     /**
      * @var array
+     * @ignore
      */
     protected $config;
 
     /**
      * @var array
+     * @ignore
      */
     protected $properties = [];
 
     /**
      * @var array
+     * @ignore
      */
     protected $property_type = [];
     /**
      * @var string
+     * @ignore
      */
     protected $shorthand;
 
@@ -49,18 +58,14 @@ class PropertySet
     }
 
     /**
+     * set property value
      * @param string $name
-     * @param Value|Set|string $value
+     * @param Set $value
      * @return PropertySet
      * @throws InvalidArgumentException
      */
-    public function set($name, $value)
+    public function set($name, Set $value)
     {
-
-        if (is_string($value)) {
-
-            $value = Value::parse($value);
-        }
 
         $name = (string) $name;
 
@@ -111,10 +116,11 @@ class PropertySet
 
     /**
      * expand shorthand property
-     * @param Value[] $value
+     * @param Set $value
      * @return array|bool
+     * @ignore
      */
-    protected function expand($value)
+    protected function expand(Set $value)
     {
 
         $pattern = explode(' ', $this->config['pattern']);
@@ -187,21 +193,16 @@ class PropertySet
                         $key = $index;
                     } else {
 
-                        if (isset($this->config['value_map'])) {
+                        if (isset($this->config['value_map'][$property])) {
 
-                            $value_map = $this->config['value_map'];
-
-                            foreach ($value_map as $i) {
-
-                                foreach ($i as $item) {
+                                foreach ($this->config['value_map'][$property] as $item) {
 
                                     if (isset($list[$item])) {
 
                                         $key = $item;
-                                        break 2;
+                                        break;
                                     }
                                 }
-                            }
                         }
                     }
 
@@ -219,6 +220,7 @@ class PropertySet
     /**
      * convert 'border-radius: 10% 17% 10% 17% / 50% 20% 50% 20% -> 'border-radius: 10% 17% / 50% 20%
      * @return string
+     * @ignore
      */
     protected function reduce()
     {
@@ -300,8 +302,11 @@ class PropertySet
     }
 
     /**
-     * @param $name
-     * @param $value
+     * set property
+     * @param string $name
+     * @param Value\Set|string $value
+     * @return PropertySet
+     * @ignore
      */
     protected function setProperty($name, $value)
     {
@@ -317,6 +322,7 @@ class PropertySet
     }
 
     /**
+     * return Property array
      * @return Property[]
      */
     public function getProperties() {
@@ -335,6 +341,7 @@ class PropertySet
     }
 
     /**
+     * convert this object to string
      * @param string $join
      * @return string
      */
@@ -362,6 +369,10 @@ class PropertySet
         return rtrim($value, $glue . $join);
     }
 
+    /**
+     * convert this object to string
+     * @return string
+     */
     public function __toString()
     {
 

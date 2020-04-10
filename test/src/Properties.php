@@ -110,6 +110,7 @@ final class Properties extends TestCase
 
         $property1 = new PropertyList();
 
+        $data[] = [$property1, 'margin', '5px 3px', 'margin: 5px 3px'];
         $data[] = [$property1, 'margin', '0 0 15px 15px', 'margin: 0 0 15px 15px'];
         $data[] = [$property1, 'margin-left', '15px', 'margin: 0 0 15px 15px'];
         $data[] = [$property1, 'margin-top', '15px', 'margin: 15px 0 15px 15px'];

@@ -22,7 +22,7 @@ class Set implements IteratorAggregate, JsonSerializable
      * Set constructor.
      * @param array[Value] $data
      */
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
 
         $this->data = array_map([Value::class, 'getInstance'], $data);
@@ -79,7 +79,29 @@ class Set implements IteratorAggregate, JsonSerializable
      */
     public function map (callable $map) {
 
-        $this->data = array_map($this->data, $map);
+        $this->data = array_map($map, $this->data);
+        return $this;
+    }
+
+    /**
+     * append the second set data to the first set data
+     * @param Set $set
+     * @return Set
+     */
+    public function merge (Set $set) {
+
+        array_splice($this->data, count($this->data), 0, $set->data);
+        return $this;
+    }
+
+    /**
+     * add an item to the set
+     * @param Value $value
+     * @return $this
+     */
+    public function add(Value $value) {
+
+        $this->data[] = $value;
         return $this;
     }
 
@@ -90,6 +112,15 @@ class Set implements IteratorAggregate, JsonSerializable
     public function __toString()
     {
         return $this->render();
+    }
+
+    /**
+     * return an array of internal data
+     * @return array
+     */
+    public function toArray() {
+
+        return $this->data;
     }
 
     /**

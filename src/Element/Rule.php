@@ -5,8 +5,6 @@ namespace TBela\CSS\Element;
 use Exception;
 use TBela\CSS\Element;
 use TBela\CSS\Elements;
-use TBela\CSS\Element\Comment;
-use TBela\CSS\Element\Declaration;
 
 class Rule extends Elements {
 

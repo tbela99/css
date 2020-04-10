@@ -78,7 +78,7 @@ final class Config {
      * @return mixed|null
      * @ignore
      */
-    protected static function getPath($path, $default = null) {
+    public static function getPath($path, $default = null) {
 
         $data = static::$config;
 

@@ -3,7 +3,7 @@
 namespace TBela\CSS;
 
 /**
- * Utility class that enable array like access to getter / setter and properties.
+ * Utility class that enable array like access to getter / setter and some properties.
  *
  * - Getter syntax: $value = $element['value']; // $value = $element->getValue()
  * - Setter syntax: $element['value'] = $value; // $element->setValue($value);
@@ -30,6 +30,7 @@ trait ArrayTrait
     /**
      * @param string $offset
      * @return bool
+     * @ignore
      */
     public function offsetExists($offset)
     {
@@ -40,6 +41,7 @@ trait ArrayTrait
 
     /**
      * @param string $offset
+     * @ignore
      */
     public function offsetUnset($offset)
     {

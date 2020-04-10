@@ -4,10 +4,16 @@ namespace TBela\CSS\Property;
 
 Config::load(dirname(__DIR__).'/config.json');
 
+/**
+ * Property cvonfiguration manager class
+ * @package TBela\CSS\Property
+ * @ignore
+ */
 final class Config {
 
     /**
      * @var array
+     * @ignore
      */
     protected static $config = [
         'properties' => [],
@@ -15,8 +21,8 @@ final class Config {
     ];
 
     /**
-     * load config from a file
-     * @param $file
+     * load properties configuration from a JSON file
+     * @param string $file
      */
     public static function load($file) {
 
@@ -24,6 +30,7 @@ final class Config {
     }
 
     /**
+     * test the property existence
      * @param string $path
      * @return bool
      */
@@ -65,30 +72,11 @@ final class Config {
     }
 
     /**
-     * return property alias
-     * @param string $property
-     * @param mixed|null $default
-     * @return string
-     */
-    public static function alias ($property, $default = null) {
-
-        if (strpos($property, '.') > 0) {
-
-            return static::getPath('alias.'.$property, $default);
-        }
-
-        if (isset(static::$config['alias'][$property])) {
-
-            return static::$config['alias'][$property];
-        }
-
-        return $property;
-    }
-
-    /**
+     * return property
      * @param string $path
      * @param mixed|null $default
      * @return mixed|null
+     * @ignore
      */
     protected static function getPath($path, $default = null) {
 
@@ -108,6 +96,7 @@ final class Config {
     }
 
     /**
+     * get property if it exists, return $default if it does not exist
      * @param string|null $name
      * @param mixed|null $default
      * @return array|mixed|null
@@ -133,28 +122,12 @@ final class Config {
     }
 
     /**
-     * @param $property
-     * @param alias, ... property aliases
-     */
-    public static function addAlias ($property) {
-
-        $properties = [];
-
-        $args = func_get_args();
-
-        array_shift($args);
-
-        foreach ($args as $arg) {
-
-            static::$config['alias'][$arg] = $property;
-        }
-    }
-
-    /**
+     * Add a configuration entry
      * @param $shorthand
      * @param $pattern
      * @param $properties
      * @param bool $separator allow multiple values
+     * @ignore
      *
      * @return array
      */

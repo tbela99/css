@@ -53,7 +53,7 @@ class Parser
     ];
 
     /**
-     * contains the list of css errors
+     * contains the list of css parsing errors
      * @var array
      */
     public $errorsList = [];
@@ -74,7 +74,7 @@ class Parser
     }
 
     /**
-     * load a css content from a file
+     * load css content from a file
      * @param string $file
      * @return $this
      */
@@ -152,9 +152,10 @@ class Parser
 
     /**
      * merge css rules and declarations
-     * @param object
+     * @param Element|object $ast
      * @return object
      */
+
     public function deduplicate($ast)
     {
         if ($ast instanceof Element) {
@@ -354,6 +355,7 @@ class Parser
 /**
  * @ignore
  * @return string
+ * @ignore
  */
 function get_current_directory() {
 
@@ -392,6 +394,7 @@ function get_content($file)
  * @param $css
  * @param null $path
  * @return string
+ * @ignore
  */
 function expand($css, $path = null)
 {
@@ -443,6 +446,12 @@ function expand($css, $path = null)
     return $css;
 }
 
+/**
+ * @param $file
+ * @param string $path
+ * @return string
+ * @ignore
+ */
 function resolvePath($file, $path = '')
 {
 
@@ -497,6 +506,13 @@ function resolvePath($file, $path = '')
     return preg_replace('#^'.preg_quote(get_current_directory().'/', '#').'#', '', $file);
 }
 
+/**
+ * @param $url
+ * @param array $options
+ * @param array $curlOptions
+ * @return bool|string
+ * @ignore
+ */
 function fetch_content($url, $options = [], $curlOptions = [])
 {
 
@@ -550,6 +566,12 @@ function fetch_content($url, $options = [], $curlOptions = [])
     return $result;
 }
 
+/**
+ * @param $css
+ * @param string $path
+ * @return string
+ * @ignore
+ */
 function parse_import($css, $path = '')
 {
 
@@ -603,6 +625,7 @@ function parse_import($css, $path = '')
  * Update lineno and column based on `str`.
  * @param string $str
  * @param object $context
+ * @ignore
  */
 
 function updatePosition($str, $context)
@@ -630,6 +653,7 @@ function updatePosition($str, $context)
  * @param object $context
  * @return Exception
  * @throws Exception
+ * @ignore
  */
 
 function error($msg, $context)
@@ -667,6 +691,7 @@ function error($msg, $context)
  * @param $context
  * @return stdClass
  * @throws Exception
+ * @ignore
  */
 
 function stylesheet($context)
@@ -687,6 +712,7 @@ function stylesheet($context)
  * Opening brace.
  * @param $context
  * @return string
+ * @ignore
  */
 
 function open($context)
@@ -698,6 +724,7 @@ function open($context)
  * Closing brace.
  * @param object $context
  * @return string
+ * @ignore
  */
 
 function close($context)
@@ -705,6 +732,11 @@ function close($context)
     return match('/^}/', $context);
 }
 
+/**
+ * @param $str
+ * @return array
+ * @ignore
+ */
 function parse_vendor($str)
 {
 
@@ -725,6 +757,7 @@ function parse_vendor($str)
  * @param object $context
  * @return array
  * @throws Exception
+ * @ignore
  */
 
 function rules($context)
@@ -775,6 +808,7 @@ function rules($context)
  * @param string $re
  * @param object $context
  * @return string
+ * @ignore
  */
 
 function match($re, $context)
@@ -793,6 +827,7 @@ function match($re, $context)
 /**
  * Parse whitespace.
  * @param object $context
+ * @ignore
  */
 
 function whitespace($context)
@@ -806,6 +841,7 @@ function whitespace($context)
  * @param object $context
  * @return array
  * @throws Exception
+ * @ignore
  */
 
 function comments(&$rules, $context)
@@ -827,6 +863,7 @@ function comments(&$rules, $context)
  * @param object $context
  * @return Exception|stdClass|bool
  * @throws Exception
+ * @ignore
  */
 
 function comment($context)
@@ -856,6 +893,7 @@ function comment($context)
  * Parse selector.
  * @param object $context
  * @return array
+ * @ignore
  */
 
 function selector($context)
@@ -897,6 +935,7 @@ function selector($context)
  * @param object $context
  * @return array|bool|Exception
  * @throws Exception
+ * @ignore
  */
 
 function declaration($context)
@@ -939,7 +978,7 @@ function declaration($context)
     $data = [
         'type' => 'Declaration',
         'name' => Value::parse($prop)->filter($filter),
-        'value' => Value::parse($val[0])->filter($filter)
+        'value' => Value::parse($val[0], $prop)->filter($filter)
     ];
 
     foreach (parse_vendor($data['name']) as $key => $value) {
@@ -960,6 +999,7 @@ function declaration($context)
  * @param $context
  * @return array|bool|Exception|void
  * @throws Exception
+ * @ignore
  */
 function atrule($context)
 {
@@ -1077,6 +1117,7 @@ function atrule($context)
  * @param object $context
  * @return array|bool|Exception
  * @throws Exception
+ * @ignore
  */
 
 function rule($context)
@@ -1146,6 +1187,7 @@ function rule($context)
  * @param object $context
  * @return stdClass
  * @throws Exception
+ * @ignore
  */
 function parse($context)
 {

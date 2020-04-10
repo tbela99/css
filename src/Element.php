@@ -13,13 +13,22 @@ use function is_null;
 use function strtolower;
 use function str_ireplace;
 
+/**
+ * Css node base class
+ * @package TBela\CSS
+ */
 abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   {
 
     use ArrayTrait;
 
+    /**
+     * @var stdClass|null
+     * @ignore
+     */
     protected $ast = null;
     /**
      * @var RuleList
+     * @ignore
      */
     protected $parent = null;
 
@@ -51,6 +60,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * create an instance from ast or another Element instance
      * @param Element|object $ast
      * @return mixed
      * @throws InvalidArgumentException
@@ -97,6 +107,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * return Value\Set|string
      * @return Value\Set|Value|string
      */
     public function getValue () {
@@ -110,7 +121,8 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
-     * @param Value\Set|Value|string $value
+     * assign the value
+     * @param Set|string $value
      * @return $this
      */
     public function setValue ($value) {
@@ -120,6 +132,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * get the parent node
      * @return RuleList|null
      */
     public function getParent () {
@@ -128,6 +141,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * return the type
      * @return string
      */
     public function getType() {
@@ -163,6 +177,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
     /**
      * @return stdClass
+     * @ignore
      */
     public function jsonSerialize () {
 
@@ -178,6 +193,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * convert to string
      * @return string
      * @throws Exception
      */
@@ -196,6 +212,10 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
         return '';
     }
 
+    /**
+     * clone object
+     * @ignore
+     */
     public function __clone()
     {
         $this->ast = clone $this->ast;

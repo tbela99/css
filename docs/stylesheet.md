@@ -1,10 +1,12 @@
-# Element
+# Stylesheet
 
-## Creating an Element instance
+It is the root element of the css stylesheet. 
 
-An Element instance can be created in multiple ways
-From the AST
+## Creating a Stylesheet
 
+there are several ways to create a stylesheet.
+
+### Using AST
 ```php
 
 use \TBela\Element;
@@ -13,26 +15,24 @@ $ast = json_decode(file_get_contents('ast.json'));
 
 $stylesheet = Element::getInstance($ast);
 ```
-
-Using the parser
-
+### Using Parser
 ```php
 
-use \TBela\Parser;
+use \TBela\CSS;
 
 $parser = new Parser($css);
 
-// or
+// load css like this
 $parser->load('template.css');
 
-// or
+// or like that
 $parser->seContent($css);
 
 // and then
 $stylesheet = $parser->parse();
 ```
 
-Using the compiler
+### Using Compiler
 
 ```php
 
@@ -40,191 +40,67 @@ use \TBela\Compiler;
 
 $compiler = new Compiler();
 
-//
+// load css like this
 $compiler->load('template.css');
 
-// or
+// or like that
 $compiler->setContent($css);
 
 // and then
 $stylesheet = $compiler->getData();
 ```
-
-## Manipulating the AST
-
-The AST is a json representation of the CSS file.
-Getting the AST
+## Building Manually
 
 ```php
+use TBela\CSS\Element\AtRule;
+use TBela\CSS\Element\Stylesheet;
 
-$json = json_encode($stylesheet);
-$ast = json_decode($json);
+$stylesheet = new Stylesheet();
 
-$compiler->setData($ast);
+$rule = $stylesheet->addRule('div');
 
+$rule->addDeclaration('background-color', 'white');
+$rule->addDeclaration('color', 'black');
 
-// print css ...
-echo $compiler->compile();
+$media = $stylesheet->addAtRule('media', 'print');
+$media->append($rule);
+
+$rule = $stylesheet->addRule('div');
+
+$rule->addDeclaration('max-width', '100%');
+$rule->addDeclaration('border-width', '0px');
+
+$viewport = $stylesheet->addAtRule('viewport', null, AtRule::ELEMENT_AT_DECLARATIONS_LIST);
+
+$viewport->addDeclaration('width', '100vw');
+$viewport->addDeclaration('height', '60px');
+
+$media->insert($viewport, 0);
+
+$namespace = $stylesheet->addAtRule('namespace', 'svg url(http://www.w3.org/2000/svg)', AtRule::ELEMENT_AT_NO_LIST);
+
+$import = $stylesheet->addAtRule('import', 'url(css/stylesheet.css)', AtRule::ELEMENT_AT_NO_LIST);
+$stylesheet->insert($import, 0);
+
+echo $stylesheet;
 ```
+Result
 
-## Properties
-
-### childNodes
-
-If the element can contain children, they can be accessed using the syntax \$element['childNodes']
-
-```php
-$childNodes = $element['childNodes'];
-
-// or
-$childNodes = $element->getChildren();
-
-// or
-$childNodes = $element['children'];
-```
-
-### firstChild
-
-Return the first child element
-
-```php
-$firstChild = $element['firstChild'];
-```
-
-### lastChild
-
-Return the last child element
-
-```php
-$lastChild = $element['lastChild'];
-```
-
-## Methods shortcut
-
-Setters and getters methods can be accessed using array-like notation
-
-```php
-
-$type = $element['type'];
-// or
-$type = $element->getType();
-
-
-$children = $element['children'];
-// or
-$children = $element->getChildren();
-
-$name = $element['name'];
-// or
-$name = $element->getName();
-
-$element['value'] = 'bold';
-// or
-$element->setValue('bold');
-
-$element['name'] = 'src';
-// or
-$element->setName('src');
-```
-
-## Iterating over the children
-
-```php
-
-foreach ($element as $child) {
-
- // ...
+```css
+@import url(css/stylesheet.css);
+@media print {
+ @viewport {
+   width: 100vw;
+   height: 60px
+ }
+ div {
+   background-color: #fff;
+   color: #000
+ }
 }
-
-// or
-foreach ($element['childNodes'] as $child) {
-
- // ...
+div {
+ max-width: 100%;
+ border-width: 0
 }
-
-// or
-foreach ($element->getChildren() as $child) {
-
- // ...
-}
-
-// or
-foreach ($element['children'] as $child) {
-
- // ...
-}
+@namespace svg url(http://www.w3.org/2000/svg);t
 ```
-
-## Methods
-
-### GetRoot
-
-Return the stylesheet root element
-
-#### Arguments
-
-none
-
-#### Return Type
-
-\TBela\CSS\Element
-
-### GetParent
-
-Return the parent element
-
-#### Arguments
-
-none
-
-#### Return Type
-
-\TBela\CSS\Element
-
-### Copy
-
-Clone the element and its parents. returns the copy of the root element
-
-#### Arguments
-
-none
-
-#### Return Type
-
-\TBela\CSS\Element
-
-### GetValue
-
-Return the value
-
-#### Arguments
-
-none
-
-#### Return Type
-
-_string_
-
-### SetValue
-
-Set the value
-
-#### Arguments
-
-- \$value: _string_
-
-#### Return Type
-
-\TBela\CSS\Element
-
-### GetType
-
-return the node type
-
-#### Arguments
-
-none
-
-#### Return Type
-
-_string_

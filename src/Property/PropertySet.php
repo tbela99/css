@@ -4,6 +4,7 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
+use TBela\CSS\Value\Set;
 
 /**
  * Compute shorthand properties. Used internally by PropertyList
@@ -59,17 +60,12 @@ class PropertySet
     /**
      * set property value
      * @param string $name
-     * @param Value|Set|string $value
+     * @param Set $value
      * @return PropertySet
      * @throws InvalidArgumentException
      */
-    public function set($name, $value)
+    public function set($name, Set $value)
     {
-
-        if (is_string($value)) {
-
-            $value = Value::parse($value);
-        }
 
         $name = (string) $name;
 
@@ -103,7 +99,7 @@ class PropertySet
                         $separator = ' '.$separator.' ';
                     }
 
-                    $this->setProperty($property, implode($separator, $values));
+                    $this->setProperty($property, Value::parse(implode($separator, $values), $property));
                 }
 
             //    return $this;
@@ -120,11 +116,11 @@ class PropertySet
 
     /**
      * expand shorthand property
-     * @param Value[] $value
+     * @param Set $value
      * @return array|bool
      * @ignore
      */
-    protected function expand($value)
+    protected function expand(Set $value)
     {
 
         $pattern = explode(' ', $this->config['pattern']);
@@ -197,21 +193,16 @@ class PropertySet
                         $key = $index;
                     } else {
 
-                        if (isset($this->config['value_map'])) {
+                        if (isset($this->config['value_map'][$property])) {
 
-                            $value_map = $this->config['value_map'];
-
-                            foreach ($value_map as $i) {
-
-                                foreach ($i as $item) {
+                                foreach ($this->config['value_map'][$property] as $item) {
 
                                     if (isset($list[$item])) {
 
                                         $key = $item;
-                                        break 2;
+                                        break;
                                     }
                                 }
-                            }
                         }
                     }
 
@@ -313,11 +304,11 @@ class PropertySet
     /**
      * set property
      * @param string $name
-     * @param Value\Set|string $value
+     * @param Set|string $value
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, $value)
+    protected function setProperty($name, Set $value)
     {
 
         if (!isset($this->properties[$name])) {

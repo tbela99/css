@@ -1,0 +1,292 @@
+<?php
+
+namespace TBela\CSS\Property;
+
+use InvalidArgumentException;
+use TBela\CSS\Value;
+use TBela\CSS\Value\Set;
+
+/**
+ * Compute shorthand properties. Used internally by PropertyList
+ * @package TBela\CSS\Property
+ */
+class PropertyMap
+{
+
+    /**
+     * @var array
+     * @ignore
+     */
+    protected $config;
+
+    /**
+     * @var Property[]
+     * @ignore
+     */
+    protected $properties = [];
+
+    /**
+     * @var array
+     * @ignore
+     */
+    protected $property_type = [];
+    /**
+     * @var string
+     * @ignore
+     */
+    protected $shorthand;
+
+    /**
+     * PropertySet constructor.
+     * @param string $shorthand
+     * @param array $config
+     */
+    public function __construct($shorthand, array $config)
+    {
+
+        $this->shorthand = (string)$shorthand;
+
+        $config['required'] = [];
+
+        foreach ($config['properties'] as $property) {
+
+            $config[$property] = Config::getPath('map.' . $property);
+
+            unset($config[$property]['shorthand']);
+
+            $this->property_type[$property] = $config[$property];
+
+            if (empty($config[$property]['optional'])) {
+
+                $config['required'][] = $property;
+            }
+        }
+
+        $this->config = $config;
+    }
+
+    /**
+     * set property value
+     * @param string $name
+     * @param Set $value
+     * @return PropertyMap
+     */
+    public function set($name, Set $value)
+    {
+
+        $name = (string) $name;
+
+        // is valid property
+        if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
+
+            throw new InvalidArgumentException('Invalid property ' . $name, 400);
+        }
+
+        if (isset($this->properties[$this->shorthand]) || $name == $this->shorthand) {
+
+            if ($name != $this->shorthand) {
+
+                foreach ($this->properties[$this->shorthand]->getValue() as $val) {
+
+                    if ($val->type == $this->shorthand) {
+
+                        if (!isset($this->properties[$name])) {
+
+                            $this->properties[$name] = new Property($name);
+                        }
+
+                        $this->properties[$name]->setValue($value);
+                        return $this;
+                    }
+                }
+            }
+
+            $this->properties = isset($this->properties[$this->shorthand]) ? [$this->shorthand => $this->properties[$this->shorthand]] : [];
+
+            if (!isset($this->properties[$this->shorthand])) {
+
+                $this->properties[$this->shorthand] = new Property($this->shorthand);
+            }
+
+            if ($name == $this->shorthand) {
+
+                $this->properties[$this->shorthand]->setValue($value);
+                return $this;
+            }
+        } else {
+
+            if (!isset($this->properties[$name])) {
+
+                $this->properties[$name] = new Property($name);
+            }
+
+            $this->properties[$name]->setValue($value);
+            return $this;
+        }
+
+        $properties = $this->property_type;
+        $values = array_merge([], $properties);
+
+        // create a map of existing values
+        foreach ($this->properties[$this->shorthand]->getValue() as $val) {
+
+            if (isset($properties[$val->type])) {
+
+                if (!empty($properties[$val->type]['multiple'])) {
+
+                    $properties[$val->type]['value'][] = new Set([$val]);
+                } else {
+
+                    $properties[$val->type]['value'] = new Set([$val]);
+                }
+            }
+        }
+
+        foreach ($value as $val) {
+
+            if (isset($properties[$val->type])) {
+
+                if (!empty($properties[$val->type]['multiple'])) {
+
+                    $values[$val->type]['value'][] = new Set([$val]);
+                } else {
+
+                    $values[$val->type]['value'] = new Set([$val]);
+                }
+            }
+        }
+
+        foreach ($values as $key => $val) {
+
+            if (!isset($values[$key]['value'])) {
+
+                unset($values[$key]);
+            }
+        }
+
+        $properties = array_merge($properties, $values);
+
+        foreach ($properties as $key => $property) {
+
+            if (!isset($property['value'])) {
+
+                continue;
+            }
+
+            if (is_array($property['value'])) {
+
+                $data = ['type' => 'whitespace'];
+
+                if (isset($property['separator'])) {
+
+                    $data = ['type' => 'separator', 'value' => $property['separator']];
+                }
+
+                $val = new Set;
+                $j = count($property['value']);
+
+                for ($i = 0; $i < $j; $i++) {
+
+                    $val->merge($property['value'][$i]);
+
+                    if ($i < $j - 1) {
+
+                        $val->add(Value::getInstance((object)$data));
+                    }
+                }
+
+                $properties[$key]['value'] = $val;
+            }
+        }
+
+
+        $set = new Set;
+
+
+        // compute the shorthand and render?
+        foreach ($properties as $key => $prop) {
+
+            if (!isset($prop['value'])) {
+
+                continue;
+            }
+
+            if (isset($prop['prefix'])) {
+
+                $set->add(Value::getInstance((object)['type' => 'separator', 'value' => $prop['prefix']]));
+            }
+
+            $set->merge($prop['value']);
+            $set->add(Value::getInstance((object)['type' => 'whitespace']));
+        }
+
+        $data = $set->toArray();
+
+        if (count($properties) > 1) {
+
+            array_pop($data);
+        }
+
+        $this->properties[$this->shorthand]->setValue(new Set(Value::reduce($data, ['remove_defaults' => true])));
+
+        return $this;
+    }
+
+    /**
+     * set property
+     * @param string $name
+     * @param Value\Set|string $value
+     * @return PropertyMap
+     * @ignore
+     */
+    protected function setProperty($name, $value)
+    {
+
+        if (!isset($this->properties[$name])) {
+
+            $this->properties[$name] = new Property($name);
+        }
+
+        $this->properties[$name]->setValue($value);
+
+        return $this;
+    }
+
+    /**
+     * return Property array
+     * @return Property[]
+     */
+    public function getProperties()
+    {
+
+        return array_values($this->properties);
+    }
+
+    /**
+     * convert this object to string
+     * @param string $join
+     * @return string
+     */
+    public function render($join = "\n")
+    {
+        $glue = ';';
+        $value = '';
+
+        foreach ($this->properties as $property) {
+
+            $value .= $property->render() . $glue . $join;
+        }
+
+        return rtrim($value, $glue . $join);
+    }
+
+    /**
+     * convert this object to string
+     * @return string
+     */
+    public function __toString()
+    {
+
+        return $this->render();
+    }
+}

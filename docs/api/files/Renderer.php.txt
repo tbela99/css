@@ -1,63 +1,89 @@
-<?php 
+<?php
 
 namespace TBela\CSS;
 
 use Exception;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\AtRule;
+
 // use TBela\CSS\Element\Comment;
 use TBela\CSS\Element\Declaration;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Property\RenderableProperty;
+use TBela\CSS\Value\Set;
 use function is_string;
 
 /**
-     * Pretty print CSS
-     * @package CSS
-     */
+ * Css node Renderer
+ * @package TBela\CSS
+ */
 class Renderer
 {
 
+    /**
+     * @ignore
+     */
     const MATCH_WORD = '/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s';
 
-    /** @var bool minify output */
+    /**
+     * @var bool minify output
+     * @ignore
+     */
     protected $compress = false;
 
     /**
      * @var int CSS level 3|4
+     * @ignore
      */
     protected $css_level = 3;
 
-    /** @var string line indention */
+    /**
+     * @var string line indention
+     * @ignore
+     */
     protected $indent = ' ';
 
-    /** @var string line separator */
+    /**
+     * @var string line separator
+     * @ignore
+     */
     protected $glue = "\n";
 
-    /** @var string token separator */
+    /**
+     * @var string token separator
+     * @ignore
+     */
     protected $separator = ' ';
 
-    /** @var bool preserve charset */
+    /**
+     * @var bool preserve charset
+     * @ignore
+     */
     protected $charset = false;
 
-    /** @var bool allow rbga hex color */
+    /**
+     * @var bool allow rbga hex color
+     * @ignore
+     */
     protected $rgba_hex = false;
 
-    /** @var bool remove comments */
+    /**
+     * @var bool remove comments
+     * @ignore
+     */
     protected $remove_comments = false;
 
-    /** @var bool remove empty node */
+    /**
+     * @var bool remove empty node
+     * @ignore
+     */
     protected $remove_empty_nodes = true;
 
     /**
      * @var bool|array|string true|false or a list of exceptions
+     * @ignore
      */
     protected $allow_duplicate_declarations = true;
-
-    /**
-     * @var Filter
-     */
-    protected $filter = null;
 
     /**
      * Identity constructor.
@@ -66,7 +92,6 @@ class Renderer
     public function __construct(array $options = [])
     {
 
-        $this->filter = new Filter($this);
         $this->setOptions($options);
     }
 
@@ -129,9 +154,7 @@ class Renderer
                 $this->charset = false;
                 $this->remove_comments = true;
                 $this->remove_empty_nodes = true;
-            }
-
-            else {
+            } else {
 
                 $this->glue = "\n";
                 $this->indent = ' ';
@@ -142,15 +165,15 @@ class Renderer
     }
 
     /**
+     * return the options
      * @param string|null $name
      * @param mixed $default return value
      * @return array
      */
-    public function getOptions ($name = null, $default = null) {
+    public function getOptions($name = null, $default = null)
+    {
 
         $options = get_object_vars($this);
-
-        unset($options['filter']);
 
         if (isset($options[$name])) {
 
@@ -162,10 +185,13 @@ class Renderer
             return $default;
         }
 
-        return array_filter(get_object_vars($this), function ($property) { return !is_object($property); });
+        return array_filter(get_object_vars($this), function ($property) {
+            return !is_object($property);
+        });
     }
 
     /**
+     * render an Element or a Property
      * @param Rendererable $element the element to render
      * @param null|int $level indention level
      * @param bool $parent render parent
@@ -185,7 +211,7 @@ class Renderer
             return $this->render($element->copy()->getRoot(), $level);
         }
 
-        $indent = str_repeat($this->indent, (int) $level);
+        $indent = str_repeat($this->indent, (int)$level);
 
         switch ($element['type']) {
 
@@ -193,19 +219,16 @@ class Renderer
 
                 if ($this->remove_comments) {
 
-                    return  '';
+                    return '';
                 }
 
-                return (is_null($level) ? '' : str_repeat($this->indent, $level + 1)). $element['value'];
+                return (is_null($level) ? '' : str_repeat($this->indent, $level + 1)) . $element['value'];
 
             case 'Stylesheet':
 
                 return $this->renderCollection($element, $level);
 
             case 'Declaration':
-
-                return $indent . $this->indent . $this->renderDeclaration($element);
-
             case 'Property':
 
                 return $indent . $this->indent . $this->renderProperty($element);
@@ -227,11 +250,13 @@ class Renderer
     }
 
     /**
+     * render a rule
      * @param Rule $element
      * @param int $level
      * @param string $indent
      * @return string
      * @throws Exception
+     * @ignore
      */
     protected function renderRule(Rule $element, $level, $indent)
     {
@@ -256,11 +281,13 @@ class Renderer
     }
 
     /**
+     * render at-rule
      * @param AtRule $element
      * @param int $level
      * @param string $indent
      * @return string
      * @throws Exception
+     * @ignore
      */
     protected function renderAtRule(AtRule $element, $level, $indent)
     {
@@ -270,9 +297,18 @@ class Renderer
             return '';
         }
 
-        $output = $indent . '@' . $this->renderName($element);
+        $output = '@' . $this->renderName($element);
 
         $value = $this->renderValue($element);
+
+        if ($output == '@import') {
+
+            // rewrite atrule @import url(https://foobar) -> @import https://foobar
+            $value = preg_replace_callback('#url\(\s*(["\']?)(.*?)\1\)#s', function ($matches) {
+
+                return trim($matches[2]);
+            }, $value);
+        }
 
         if ($value !== '') {
 
@@ -281,7 +317,7 @@ class Renderer
 
         if ($element->isLeaf()) {
 
-            return $output . ';';
+            return $indent . $output . ';';
         }
 
         $elements = $this->renderCollection($element, $level + 1);
@@ -291,34 +327,119 @@ class Renderer
             return '';
         }
 
-        return $output . $this->indent . '{' . $this->glue . $elements . $this->glue . $indent . '}';
+        return $indent . $output . $this->indent . '{' . $this->glue . $elements . $this->glue . $indent . '}';
     }
 
     /**
-     * @param Declaration $element
-     * @return string
-     */
-
-    protected function renderDeclaration(Declaration $element)
-    {
-
-        $property = new PropertyList(null, array_merge($this->getOptions(), ['allow_duplicate_declarations' => false]));
-        $property->set($element['name'], $element['value']);
-
-        return (string) $property;
-    }
-
-    /**
+     * render a property
      * @param RenderableProperty $element
      * @return string
+     * @ignore
      */
 
     protected function renderProperty(RenderableProperty $element)
     {
 
-        return $this->renderName($element) . ':' . $this->indent . $this->filter->value($element['value']->render($this->getOptions()), $element);
+        $propertyList = new PropertyList(null, array_merge($this->getOptions(), ['allow_duplicate_declarations' => false]));
+
+        $propertyList->set($element['name'], $element['value']);
+
+        $result = '';
+
+        foreach ($propertyList->getProperties() as $property) {
+
+            $result .= $property['name'].':'.$this->indent.$this->filterValue($property['name'], $property['value']);
+            break;
+        }
+
+        return $result;
     }
 
+    protected function filterValue($name, Set $values) {
+
+        $options = $this->getOptions();
+
+        if ($this->compress) {
+
+            $result = '';
+            $name = (string) $name;
+
+            $array_values = $values->toArray();
+
+            foreach ($array_values as $value) {
+
+                switch ($name) {
+
+                    case 'border':
+                    case 'border-top':
+                    case 'border-right':
+                    case 'border-left':
+                    case 'border-bottom':
+                    case 'outline':
+
+                        if (trim($value) == 'none') {
+
+                            $result .= '0';
+                        }
+                        else {
+
+                            $result .= $value->render($options);
+                        }
+
+                        break;
+
+                    case
+                    'font':
+                    case 'font-weight':
+
+                        switch ((string) $value) {
+
+                            case 'Thin':
+
+                                $result .= 100;
+                                break;
+
+                        //    case 'Extra-light':
+                        //    case 'Ultra-light':
+
+                        //        $result .= 200;
+                        //        break;
+
+                            case 'bold':
+
+                                $result .= 700;
+                                break;
+
+                            case 'normal':
+
+                                $result .= 400;
+                                break;
+                            default:
+                                $result .= $value->render($options);
+                                break;
+
+                }
+
+                        break;
+                    default:
+
+                        $result .= $value->render($options);
+                        break;
+                }
+            }
+
+            return $result;
+        }
+
+        return $values->render($options);
+    }
+
+    /**
+     * test if an item should be rendered
+     * @param Rendererable $element
+     * @return bool
+     * @ignore
+     */
     protected function shouldRender(Rendererable $element)
     {
 
@@ -336,73 +457,49 @@ class Renderer
     }
 
     /**
+     * render a name
      * @param Rendererable $element
      * @return string
+     * @ignore
      */
     protected function renderName(Rendererable $element)
     {
 
-        return $element['name'];
-    }
-
-    protected function escape($value)
-    {
-
-        $replace = [];
-
-        $value = preg_replace_callback(static::MATCH_WORD, function ($matches) use (&$replace) {
-
-            if (empty($matches[1])) {
-
-                return $matches[0];
-            }
-
-            $replace[$matches[1]] = '~~' . crc32($matches[1]) . '~~';
-
-            return str_replace($matches[1], $replace[$matches[1]], $matches[0]);
-
-        }, $value);
-
-        return [$value, $replace];
-    }
-
-    protected function unescape($value, $replace)
-    {
-
-        if (empty($replace)) {
-
-            return $value;
-        }
-
-        return str_replace(array_values($replace), array_keys($replace), $value);
+        return $element->getName();
     }
 
     /**
+     * render a value
      * @param Element $element
      * @return string
+     * @ignore
      */
     protected function renderValue(Element $element)
     {
 
-        return trim(Value::parse($element['value'])->render($this->getOptions()));
+        return trim(Value::parse($element->getValue())->render($this->getOptions()));
     }
 
     /**
+     * render a selector
      * @param array $selector
      * @param string $indent
      * @return string
+     * @ignore
      */
     protected function renderSelector(array $selector, $indent)
     {
 
-        return $indent . implode(',' . $this->glue.$indent, $selector);
+        return $indent . implode(',' . $this->glue . $indent, $selector);
     }
 
     /**
+     * render a list
      * @param RuleList $element
      * @param int $level
      * @return string
      * @throws Exception
+     * @ignore
      */
     protected function renderCollection(RuleList $element, $level)
     {
@@ -416,9 +513,7 @@ class Renderer
             $glue = ';';
 
             $children = new PropertyList($element, $this->getOptions());
-        }
-
-        else {
+        } else {
 
             $children = $element['children'];
         }
@@ -435,9 +530,7 @@ class Renderer
 
                     continue;
                 }
-            }
-
-            else if ($el['type'] != 'Comment') {
+            } else if ($el['type'] != 'Comment') {
 
                 if ($count == 0) {
 
@@ -467,15 +560,13 @@ class Renderer
             if (!isset($hash[$result[$i]])) {
 
                 $hash[$result[$i]] = 1;
-            }
-
-            else {
+            } else {
 
                 array_splice($result, $i, 1);
             }
         }
 
-        return rtrim(implode($this->glue, $result), $glue.$this->glue);
+        return rtrim(implode($this->glue, $result), $glue . $this->glue);
     }
 }
 

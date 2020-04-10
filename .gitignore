@@ -1,7 +1,10 @@
-
+composer.phar
+composer.lock
 phpunit.phar
 phpunit
+phpdocumentor.sh
 benchmark/
+vendor/
 test/debug.txt
 .idea/
 .phpunit.result.cache
