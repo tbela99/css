@@ -122,7 +122,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
     /**
      * assign the value
-     * @param Value\Set|Value|string $value
+     * @param Set|string $value
      * @return $this
      */
     public function setValue ($value) {

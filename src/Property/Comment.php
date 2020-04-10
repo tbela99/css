@@ -45,7 +45,7 @@ class Comment implements ArrayAccess, Rendererable {
      */
     public function setValue($value) {
 
-        if (is_string($value)) {
+        if (is_string($value) || is_numeric($value)) {
 
             $value = Value::parse($value);
         }

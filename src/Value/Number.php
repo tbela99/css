@@ -13,7 +13,7 @@ class Number extends Value
     /**
      * @inheritDoc
      */
-    public function __construct($data)
+    protected function __construct($data)
     {
         parent::__construct($data);
 
@@ -48,7 +48,9 @@ class Number extends Value
     }
 
     /**
-     * @inheritDoc
+     * @param number $value
+     * @return string
+     * @ignore
      */
     public static function compress($value)
     {

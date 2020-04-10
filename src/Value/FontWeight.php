@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Value;
 
+use stdClass;
 use \TBela\CSS\Value;
 
 /**
@@ -11,7 +12,7 @@ use \TBela\CSS\Value;
 class FontWeight extends Value
 {
 
-    protected static $values = [
+    protected static $keywords = [
         'thin' => '100',
         'hairline' => '100',
         'extra light' => '200',
@@ -28,32 +29,114 @@ class FontWeight extends Value
         'black' => '900',
         'heavy' => '900',
         'extra black' => '950',
-        'ultra black' => '950'
+        'ultra black' => '950',
+        'lighter' => 'lighter',
+        'bolder' => 'bolder'
     ];
 
+    protected static $defaults = ['normal', '400', 'regular'];
+
     /**
-     * convert this object to string
-     * @param array $options
-     * @return string
+     * @inheritDoc
      */
     public function render(array $options = [])
     {
 
+        $value = static::matchKeyword($this->data->value);
+
         if (!empty($options['compress'])) {
 
-            $value = ucwords(strtolower(preg_replace('#(["\'])([^\1]+)\\1#', '$1', $this->data->value)));
+            if ($value !== false && isset(static::$keywords[$value])) {
 
-            if (isset(static::$values[$value])) {
+                return static::$keywords[$value];
+            }
 
-                return static::$values[$value];
+            if (is_numeric($value)) {
+
+                return Number::compress($value);
             }
         }
 
         return $this->data->value;
     }
 
-    public static function keywords () {
+    /**
+     * test if this object matches the specified type
+     * @param string $type
+     * @return bool
+     */
+    public function match($type)
+    {
 
-        return array_keys(static::$values);
+        return $type == 'font-weight';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function matchToken($token, $previousToken = null, $previousValue = null)
+    {
+
+        if ($token->type == 'number' && $token->value > 0 && $token->value <= 1000) {
+
+            return true;
+        }
+
+        if (isset($token->value)) {
+
+            $matchKeyWord = static::matchKeyword($token->value);
+
+            if ($matchKeyWord !== false) {
+
+                return true;
+            }
+        }
+
+        return $token->type == static::type();
+    }
+
+
+    /**
+     * @inheritDoc
+     * @throws Exception
+     */
+    protected static function doParse($string, $capture_whitespace = true)
+    {
+
+        $type = static::type();
+        $tokens = static::getTokens($string, $capture_whitespace);
+
+        $matchKeyword = static::matchKeyword($string);
+
+        if ($matchKeyword !== false) {
+
+            return new Set([(object) ['type' => $type, 'value' => $matchKeyword]]);
+        }
+
+        foreach ($tokens as $key => $token) {
+
+            if (static::matchToken($token)) {
+
+                if ($token->type == 'css-string') {
+
+                    $value = static::matchKeyword($token->value);
+
+                    if ($value !== false) {
+
+                        $token->value = $value;
+                    }
+                }
+
+                $token->type = $type;
+            }
+        }
+
+        return new Set(static::reduce($tokens));
+    }
+
+    public static function keywords()
+    {
+
+        return array_keys(static::$keywords);
     }
 }

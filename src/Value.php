@@ -4,20 +4,23 @@ namespace TBela\CSS;
 
 use InvalidArgumentException;
 use stdClass;
-use TBela\CSS\Value\FontWeight;
 use TBela\CSS\Value\Set;
 
 /**
  * CSS value base class
  * @package CSS
  */
-class Value
+abstract class Value
 {
     /**
      * var stdClass;
      * @ignore
      */
     protected $data = null;
+
+    protected static $defaults = [];
+
+    protected static $keywords = [];
 
     /**
      * @var array
@@ -29,7 +32,7 @@ class Value
      * Value constructor.
      * @param stdClass $data
      */
-    public function __construct($data)
+    protected function __construct($data)
     {
 
         $this->data = $data;
@@ -66,6 +69,16 @@ class Value
     }
 
     /**
+     * @param $name
+     * @return bool
+     * @ignore
+     */
+    public function __isset ($name)  {
+
+        return isset($this->data->{$name});
+    }
+
+    /**
      * test if this object matches the specified type
      * @param string $type
      * @return bool
@@ -74,6 +87,58 @@ class Value
     {
 
         return strtolower($this->data->type) == $type;
+    }
+
+    public static function getClassName($type) {
+
+        static $classNames = [];
+
+        if (!isset($classNames[$type])) {
+
+            $classNames[$type] = Value::class.'\\'.preg_replace_callback('#(^|-)([a-z])#', function ($matches) {
+
+                return strtoupper($matches[2]);
+            }, $type);
+        }
+
+        return $classNames[$type];
+    }
+
+    protected static function type() {
+
+        static $types = [];
+
+        if (!isset($types[static::class])) {
+
+            $name = explode('\\', static::class);
+
+            $types[static::class] = preg_replace_callback('#(^|[^A-Z])([A-Z])#', function ($matches) {
+
+                return (empty($matches[1]) ? '' : $matches[1].'-').strtolower($matches[2]);
+            }, end($name));
+        }
+
+        return $types[static::class];
+    }
+
+    /**
+     * @param object $token
+     * @return bool
+     */
+    protected static function matchDefaults ($token) {
+
+        return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
+    }
+
+    /**
+     * @param object $token
+     * @param object $previousToken
+     * @param object $previousValue
+     * @return bool
+     */
+    public function matchToken ($token, $previousToken = null, $previousValue = null) {
+
+        return $token->type == static::type();
     }
 
     /**
@@ -105,7 +170,9 @@ class Value
             throw new InvalidArgumentException('Type property is required: ' . gettype($data) . ':' . var_export($data, true), 400);
         }
 
-        $className = static::class . '\\' . ucfirst($data->type);
+        $className = static::class . '\\' . preg_replace_callback('#(^|-)([a-z-A-Z])#', function ($matches) {
+                return strtoupper($matches[2]);
+            }, $data->type);
 
         if (!class_exists($className)) {
 
@@ -129,11 +196,6 @@ class Value
     public function render(array $options = [])
     {
 
-        if (!empty($options['compress']) && strlen($this->data->value) > 2) {
-
-            return preg_replace('#^(["\'])([^"\'\s]+)\\1$#', '$2', $this->data->value);
-        }
-
         return $this->data->value;
     }
 
@@ -146,14 +208,97 @@ class Value
      */
     public static function parse($string, $property = null, $capture_whitespace = true)
     {
-        // too lazy to reparse ...
-        if (!is_string($string)) {
+        if ($string instanceof Set || $string instanceof Value) {
 
             return $string;
         }
 
         $string = trim($string);
-        $property = (string) $property;
+        $property = strtolower($property);
+
+        if ($property !== '') {
+
+            $className = static::getClassName($property);
+
+            if (is_callable([$className, 'doParse'])) {
+
+                return call_user_func([$className, 'doParse'], $string, $capture_whitespace);
+            }
+        }
+
+        return static::doParse($string, $capture_whitespace);
+    }
+
+    /**
+     * remove unnecessary tokens
+     * @param array $tokens
+     * @param array $options
+     * @return array
+     */
+    public static function reduce(array $tokens, array $options = [])
+    {
+        $count = count($tokens) - 1;
+
+        if ($count > 1) {
+
+            $j = $count;
+
+            while ($j-- >= 1) {
+
+                $token = $tokens[$j];
+
+                if ($token->type == 'whitespace' && ($tokens[$j + 1]->type == 'separator' || ($tokens[$j + 1]->type == 'css-string' && $tokens[$j + 1]->value == '!important'))) {
+
+                    array_splice($tokens, $j, 1);
+                } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
+
+                    array_splice($tokens, $j + 1, 1);
+                }
+
+                else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
+
+                    $className = static::getClassName($token->type);
+
+                    if (is_callable($className.'::matchDefaults') && call_user_func($className.'::matchDefaults', $token)) {
+
+                        // remove item
+                        array_splice($tokens, $j, 1);
+
+                        if (isset($tokens[$j]) && $tokens[$j]->type == 'whitespace') {
+
+                            // remove whitespace after the item removed
+                            array_splice($tokens, $j, 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $tokens;
+    }
+
+    /**
+     * parse a css value
+     * @param string $string
+     * @param bool $capture_whitespace
+     * @return Set
+     */
+    protected static function doParse($string, $capture_whitespace = true)
+    {
+
+        return new Set(static::reduce(static::getTokens($string, $capture_whitespace)));
+    }
+
+    /**
+     * parse a css value
+     * @param Set|string $string
+     * @param bool $capture_whitespace
+     * @return array|null
+     */
+    protected static function getTokens($string, $capture_whitespace = true)
+    {
+
+        $string = trim($string);
 
         $i = -1;
         $j = strlen($string) - 1;
@@ -162,43 +307,6 @@ class Value
         $tokens = [];
 
         while (++$i <= $j) {
-
-            if ($property == 'font' || $property == 'font-weight') {
-
-                foreach (FontWeight::keywords() as $keyword) {
-
-                    $word = $keyword;
-
-                    if ($string[$i] == '"' || $string[$i] == "'") {
-
-                        $word = $string[$i].$word.$string[$i];
-                    }
-
-                    $length = strlen($word);
-
-                    if (strcasecmp(substr($string, $i, $length), $word) == 0) {
-
-                        $token = new stdClass;
-                        $token->type = 'fontWeight';
-                        $token->value = $keyword;
-                        $tokens[] = $token;
-
-                        $i += $length;
-                        $buffer = '';
-
-                        if ($i >= $j) {
-
-                            continue 2;
-                        }
-
-                        if ($string[$i] == ' ') {
-
-                            $tokens[] = type(' ');
-                            continue 2;
-                        }
-                    }
-                }
-            }
 
             switch ($string[$i]) {
 
@@ -209,7 +317,7 @@ class Value
 
                     if ($buffer !== '') {
 
-                        $tokens[] = type($buffer);
+                        $tokens[] = static::getType($buffer);
                         $buffer = '';
                     }
 
@@ -263,7 +371,7 @@ class Value
 
                     $token = new stdClass;
 
-                    $token->type = 'cssString';
+                    $token->type = 'css-string';
                     $token->value = substr($string, $i, $next === false ? $j + 1 : $next - $i + 1);
 
                     $tokens[] = $token;
@@ -304,10 +412,25 @@ class Value
                                 $token->type = 'color';
                             } else {
 
-                                $token->type = 'cssFunction';
+                                $token->type = 'css-function';
                             }
 
-                            $token->arguments = static::parse(substr($params, 1, -1), true);
+                            $str = substr($params, 1, -1);
+
+                            if ($buffer == 'url') {
+
+                                $t = new stdClass;
+
+                                $t->type = 'css-string';
+                                $t->value = $str;
+
+                                $token->arguments = new Set([$t]);
+                            }
+
+                            else {
+
+                                $token->arguments = static::parse($str, true, $capture_whitespace);
+                            }
 
                             $tokens[] = $token;
 
@@ -315,7 +438,7 @@ class Value
                             $i += strlen($params) - 1;
                         } else {
 
-                            $tokens[] = type($buffer . $params);
+                            $tokens[] = static::getType($buffer . $params);
                             $i = $j;
                         }
 
@@ -324,10 +447,9 @@ class Value
 
                 case ',':
                 case '/':
+                case '+':
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
-
-                        //     if ($string[$i + 1] == '*') {
 
                         $params = match_comment($string, $i, $j);
 
@@ -346,40 +468,29 @@ class Value
                         }
                     }
 
-                    if (
-                        $string[$i] == ',' ||
-                        ($i > 0 &&
-                            $i < $j &&
-                            preg_match('#\s#', $string[$i - 1]) &&
-                            preg_match('#\s#', $string[$i + 1]))) {
+                    if ($buffer !== '') {
 
-                        if ($buffer !== '') {
-
-                            $tokens[] = type($buffer);
-                            $buffer = '';
-                        }
-
-                        $token = new stdClass;
-                        $token->type = 'separator';
-                        $token->value = $string[$i];
-                        $tokens[] = $token;
-
-                        $k = $i;
-
-                        while (++$k <= $j) {
-
-                            if (preg_match('#\s#', $string[$k])) {
-
-                                continue;
-                            }
-
-                            $i = $k;
-                            $buffer = $string[$k];
-                            break 2;
-                        }
-
-                        break;
+                        $tokens[] = static::getType($buffer);
+                        $buffer = '';
                     }
+
+                    if (!empty($tokens) && in_array($string[$i], ['-', '+'])) {
+
+                        $token = end($tokens);
+
+                        if (in_array($token->type, ['separator', 'whitespace'])) {
+
+                            $buffer .= $string[$i];
+                            break;
+                        }
+                    }
+
+                    $token = new stdClass;
+                    $token->type = 'separator';
+                    $token->value = $string[$i];
+                    $tokens[] = $token;
+
+                    break;
 
                 default:
 
@@ -387,7 +498,7 @@ class Value
 
                         if ($buffer !== '') {
 
-                            $tokens[] = type($buffer);
+                            $tokens[] = static::getType($buffer);
                             $buffer = '';
                         }
                     }
@@ -398,22 +509,99 @@ class Value
 
         if ($buffer !== '') {
 
-            $tokens[] = type($buffer);
+            $tokens[] = static::getType($buffer);
         }
 
-        return new Set(reduce($tokens));
+        return $tokens;
     }
+
+    protected static function getType($token)
+    {
+
+        $type = new stdClass;
+
+        $type->value = $token;
+
+        if (substr($token, 0, 1) != '#' && is_numeric($token)) {
+
+            $type->type = 'number';
+        } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
+
+            $type->type = 'color';
+            $type->colorType = 'hex';
+        } else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
+
+            $type->type = 'unit';
+            $type->value = $matches[1];
+            $type->unit = $matches[9];
+        } else {
+
+            $type->type = 'css-string';
+        }
+
+        return $type;
+    }
+
 
     /**
      * return the list of keywords
      * @return array
      * @ignore
      */
-    public static function keywords () {
+    public static function keywords()
+    {
 
-        return [];
+        return static::$keywords;
     }
 
+    /**
+     * @param string $string
+     * @param array|null $keywords
+     * @return string|false
+     * @ignore
+     */
+    public function matchKeyword($string, array $keywords = null)
+    {
+
+        if (is_null($keywords)) {
+
+            $keywords = static::keywords();
+        }
+
+        $string = static::stripQuotes($string, true);
+
+        foreach ($keywords as $keyword) {
+
+            if (strcasecmp($string, $keyword) === 0) {
+
+                return $keyword;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $string
+     * @param bool $force_removal
+     * @return false|string
+     */
+    protected static function stripQuotes($string, $force_removal = false) {
+
+        $q = substr($string, 0, 1);
+
+        if (($q == '"' || $q == "'") && strlen($string) > 2 && substr($string, -1) == $q && ($force_removal || !preg_match('#[\s]#', $string))) {
+
+            return substr($string, 1, -1);
+        }
+
+        return $string;
+    }
+
+    /**
+     * convert to string
+     * @return string
+     */
     public function __toString()
     {
         return $this->render();
@@ -434,32 +622,6 @@ function is_separator($char)
     }
 
     return false;
-}
-
-function reduce($tokens)
-{
-
-    $count = count($tokens) - 1;
-
-    if ($count > 1) {
-
-        $j = $count;
-
-        while ($j-- >= 1) {
-
-            $token = $tokens[$j];
-
-            if ($token->type == 'whitespace' && ($tokens[$j + 1]->type == 'separator' || ($tokens[$j + 1]->type == 'cssString' && $tokens[$j + 1]->value == '!important'))) {
-
-                array_splice($tokens, $j, 1);
-            } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
-
-                array_splice($tokens, $j + 1, 1);
-            }
-        }
-    }
-
-    return $tokens;
 }
 
 function match_comment($string, $start, $end)
@@ -547,31 +709,4 @@ function is_whitespace($char)
 {
 
     return preg_match("#^\s$#", $char);
-}
-
-function type($token)
-{
-
-    $type = new stdClass;
-
-    $type->value = $token;
-
-    if (substr($token, 0, 1) != '#' && is_numeric($token)) {
-
-        $type->type = 'number';
-    } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
-
-        $type->type = 'color';
-        $type->colorType = 'hex';
-    } else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
-
-        $type->type = 'unit';
-        $type->value = $matches[1];
-        $type->unit = $matches[9];
-    } else {
-
-        $type->type = 'cssString';
-    }
-
-    return $type;
 }

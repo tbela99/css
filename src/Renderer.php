@@ -383,47 +383,14 @@ class Renderer
                         }
                         else {
 
-                            $result .= $value->render($options);
+                            $result .= $value->render($options, $name);
                         }
 
                         break;
 
-                    case
-                    'font':
-                    case 'font-weight':
-
-                        switch ((string) $value) {
-
-                            case 'Thin':
-
-                                $result .= 100;
-                                break;
-
-                        //    case 'Extra-light':
-                        //    case 'Ultra-light':
-
-                        //        $result .= 200;
-                        //        break;
-
-                            case 'bold':
-
-                                $result .= 700;
-                                break;
-
-                            case 'normal':
-
-                                $result .= 400;
-                                break;
-                            default:
-                                $result .= $value->render($options);
-                                break;
-
-                }
-
-                        break;
                     default:
 
-                        $result .= $value->render($options);
+                        $result .= $value->render($options, $name);
                         break;
                 }
             }

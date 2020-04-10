@@ -14,7 +14,7 @@ A CSS parser, beautifier and minifier written in PHP.
 - remove empty rules and declarations
 - process @import directive
 - remove @charset directive
-- compute css declarations (margin, padding, border-width, border-radius)
+- compute css declarations (margin, padding, border-width, border-radius, font)
 
 This was originally a PHP port of https://github.com/reworkcss/css
 
@@ -355,4 +355,4 @@ div {
 - remove_comments: remove comments. If \_compress\* is true, comments are always removed
 - rgba_hex: convert colors in rgb\[a\] and hsl\[a\] to hex
 - compress: produce minified output
-- remove_empty_nodes: remove empty css declaration
+- remove_empty_nodes: remove empty css rules

@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Packagist](https://img.shields.io/packagist/v/tbela99/css.svg)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -14,7 +14,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - remove empty rules and declarations
 - process @import directive
 - remove @charset directive
-- compute css declarations (margin, padding, border-width, border-radius)
+- compute css declarations (margin, padding, border-width, border-radius, font)
 
 This was originally a PHP port of https://github.com/reworkcss/css
 
@@ -363,6 +363,10 @@ div {
 - remove*comments: remove comments. If \_compress* is true, comments are always removed
 - rgba_hex: convert colors in rgba() and hsla() to hex
 - compress: produce minified output
-- remove_empty_nodes: remove empty css declaration
+- remove_empty_nodes: remove empty css rules
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
+
+---
+
+Thanks to [jetbrains](https://jetbrains.com) for providing a PhpStorm free license

@@ -273,6 +273,10 @@ class Color extends Value
                 $hu = floatval((string)$h->value) / (2 * pi());
                 break;
 
+            case 'grad':
+
+                $hu = floatval((string)$h->value) / 400;
+                break;
             case 'turn':
                 // do nothing
                 $hu = floatval((string)$h->value);

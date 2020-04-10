@@ -99,7 +99,7 @@ class PropertySet
                         $separator = ' '.$separator.' ';
                     }
 
-                    $this->setProperty($property, implode($separator, $values));
+                    $this->setProperty($property, Value::parse(implode($separator, $values), $property));
                 }
 
             //    return $this;
@@ -304,11 +304,11 @@ class PropertySet
     /**
      * set property
      * @param string $name
-     * @param Value\Set|string $value
+     * @param Set|string $value
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, $value)
+    protected function setProperty($name, Set $value)
     {
 
         if (!isset($this->properties[$name])) {
