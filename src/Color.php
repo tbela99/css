@@ -1,12 +1,15 @@
 <?php
 
 namespace TBela\CSS;
+
+use TBela\CSS\Value\Number;
 use TBela\CSS\Value\Number as ValueNumber;
 
 /**
  * Class Color
  */
-class Color {
+class Color
+{
 
     // name to color
     const COLORS_NAMES = [
@@ -216,7 +219,7 @@ class Color {
         '#f8f8ff' => 'ghostwhite',
         '#ffd700' => 'gold',
         '#daa520' => 'goldenrod',
-        '#808080' => 'gray',
+        //    '#808080' => 'gray',
         '#808080' => 'grey',
         '#008000' => 'green',
         '#adff2f' => 'greenyellow',
@@ -314,41 +317,89 @@ class Color {
         '#00000000' => 'transparent'
     ];
 
-    public static function hex2rgba($hex, array $options = []) {
+    public static function hex2rgba_values($hex)
+    {
 
-        $color = static::expand($hex);
+        $hex = static::expand($hex);
 
-        if (isset(static::NAMES_COLORS[$color])) {
+        if (isset(static::COLORS_NAMES[$hex])) {
 
-            return static::NAMES_COLORS[$color];
+            $hex = static::COLORS_NAMES[$hex];
         }
-
-        $glue = empty($options['compress']) ? ', ' : ',';
-        $rgba = !empty($options['css_level']) && $options['css_level'] > 3 ? 'rgb' : 'rgba';
 
         switch (strlen($hex)) {
 
             case 4;
 
-                return 'rgb('.hexdec($hex[1].$hex[1]).$glue. hexdec($hex[2].$hex[2]).$glue. hexdec($hex[3].$hex[3]).')';
+                return [hexdec($hex[1] . $hex[1]), hexdec($hex[2] . $hex[2]), hexdec($hex[3] . $hex[3])];
 
             case 5;
 
-                return $rgba.'('.hexdec($hex[1].$hex[1]).$glue. hexdec($hex[2].$hex[2]).$glue. hexdec($hex[3].$hex[3]).$glue. ValueNumber::compress(round(hexdec($hex[4].$hex[4]) / 255, 2)).')';
+                return [hexdec($hex[1] . $hex[1]), hexdec($hex[2] . $hex[2]), hexdec($hex[3] . $hex[3]), ValueNumber::compress(round(hexdec($hex[4] . $hex[4]) / 255, 2))];
 
             case 7;
 
-                return 'rgb('.hexdec($hex[1].$hex[2]).$glue. hexdec($hex[3].$hex[4]).$glue. hexdec($hex[5].$hex[6]).')';
+                return [hexdec($hex[1] . $hex[2]), hexdec($hex[3] . $hex[4]), hexdec($hex[5] . $hex[6])];
 
             case 9;
 
-                return $rgba.'('.hexdec($hex[1].$hex[2]).$glue. hexdec($hex[3].$hex[4]).$glue. hexdec($hex[5].$hex[6]).$glue. ValueNumber::compress(round(hexdec($hex[7].$hex[8]) / 255, 2)).')';
+                return [hexdec($hex[1] . $hex[2]), hexdec($hex[3] . $hex[4]), hexdec($hex[5] . $hex[6]), ValueNumber::compress(round(hexdec($hex[7] . $hex[8]) / 255, 2))];
+        }
+
+        return [];
+    }
+
+    public static function cmyk2rgba_values($c, $m, $y, $k, $a = null)
+    {
+
+        $rgb = [
+            round(255 * (1 - min(1, $c * (1 - $k) + $k))),
+            round(255 * (1 - min(1, $m * (1 - $k) + $k))),
+            round(255 * (1 - min(1, $y * (1 - $k) + $k)))
+        ];
+
+        if (!is_null($a) && $a != 1 && $a !== '') {
+
+            $rgb[] = $a;
+        }
+
+        return $rgb;
+    }
+
+    public static function rgba_values2hex(array $rgb)
+    {
+
+        $na = !isset($rgb[3]) || is_null($rgb[3]) || $rgb[3] == 1 || $rgb[3] === '';
+        $hex = sprintf($na ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2], $na ? 255 : round(255 * $rgb[3]));
+
+        if (isset(static::NAMES_COLORS[$hex]) && strlen($hex) >= strlen(static::NAMES_COLORS[$hex])) {
+
+            return static::NAMES_COLORS[$hex];
         }
 
         return $hex;
     }
 
-    public static function rgba2hsl($r, $g, $b, $a = null)
+    public static function hwb2rgba_values($hue, $white, $black, $a = null)
+    {
+
+        $rgb = static::hsl2rgb_values($hue, 1, .5);
+
+        for ($i = 0; $i < 3; $i++) {
+
+            $rgb[$i] *= (1 - $white - $black);
+            $rgb[$i] += $white;
+        }
+
+        if (!is_null($a) && $a != 1 && $a !== '') {
+
+            $rgb[] = $a;
+        }
+
+        return $rgb;
+    }
+
+    public static function rgba2hsl_values($r, $g, $b, $a = null)
     {
 
         $r /= 255;
@@ -382,68 +433,31 @@ class Color {
             $h /= 6;
         }
 
-        $h = ValueNumber::compress(round($h * 360));
         $s = ValueNumber::compress(round($s * 100));
         $l = ValueNumber::compress(round($l * 100));
 
-        if (is_null($a) || $a === '' || $a == 1) {
+        $values = [ValueNumber::compress(round($h * 360)), $s == 0 ? 0 : $s . '%', $l == 0 ? 0 : $l . '%'];
 
-            return 'hsl(' . $h . ',' . $s . '%,' . $l . '%)';
+        if (!is_null($a) && $a != 1 && $a !== '') {
+
+            $values[] = $a;
         }
 
-        return 'hsla(' . $h . ',' . $s . '%,' . $l . '%,' . ValueNumber::compress($a) . ')';
+        return $values;
     }
 
-    public static function hex2hsla($hex) {
-
-        if ($hex[0] != '#') {
-
-            return $hex;
-        }
-
-        $hex = static::expand($hex);
-        $a = '';
-
-        if (strlen($hex) == 9) {
-
-            $a = round(hexdec($hex[7].$hex[8]) / 255, 2);
-        }
-
-        return static::rgba2hsl(hexdec($hex[1].$hex[2]), hexdec($hex[3].$hex[4]), hexdec($hex[5].$hex[6]), $a);
-    }
-
-    /**
-     * @param float $r
-     * @param float $g
-     * @param float $b
-     * @param float|null $a
-     * @return string
-     */
-    public static function rgba2hex($r, $g, $b, $a = null) {
-
-        $color = sprintf(is_null($a) || $a == 1 || $a === '' ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", $r, $g, $b, round(255 * $a));
-
-        $short = static::shorten($color);
-
-        if (isset(static::NAMES_COLORS[$color]) && strlen($short) > strlen(static::NAMES_COLORS[$color])) {
-
-            return static::NAMES_COLORS[$color];
-        }
-
-        return $short;
-    }
-
-    public static function hsl2hex($h, $s, $l, $a = null) {
+    public static function hsl2rgb_values($h, $s, $l, $a = null)
+    {
 
         $r = $l;
         $g = $l;
         $b = $l;
         $v = ($l <= 0.5) ? ($l * (1.0 + $s)) : ($l + $s - $l * $s);
 
-        if ($v > 0){
+        if ($v > 0) {
 
             $m = $l + $l - $v;
-            $sv = ($v - $m ) / $v;
+            $sv = ($v - $m) / $v;
             $h *= 6.0;
             $sextant = floor($h);
             $fract = $h - $sextant;
@@ -451,8 +465,7 @@ class Color {
             $mid1 = $m + $vsf;
             $mid2 = $v - $vsf;
 
-            switch ($sextant)
-            {
+            switch ($sextant) {
                 case 0:
                     $r = $v;
                     $g = $mid1;
@@ -486,19 +499,123 @@ class Color {
             }
         }
 
-        $hex = sprintf(is_null($a) || $a == 1 ? "#%02x%02x%02x" : "#%02x%02x%02x%02x", round($r * 255), round($g * 255), round($b * 255), round(255 * $a));
+        $rgba = [round($r * 255), round($g * 255), round($b * 255)];
 
-        $short = static::shorten($hex);
+        if (!is_null($a) && $a != 1) {
 
-        if (isset(static::NAMES_COLORS[$hex]) && strlen($short) > strlen(static::NAMES_COLORS[$hex])) {
-
-            return static::NAMES_COLORS[$hex];
+            $rgba[] = $a;
         }
 
-        return $short;
+        return $rgba;
     }
 
-    public static function expand ($color) {
+    public static function rgba2hwb_values($r, $g, $b, $a = null, $fallback = 0)
+    {
+
+        $r *= 100 / 255;
+        $g *= 100 / 255;
+        $b *= 100 / 255;
+
+        $hue = static::rgb2hue($r, $g, $b, $fallback);
+        $whiteness = static::rgb2whiteness($r, $g, $b);
+        $value = static::rgb2value($r, $g, $b);
+        $blackness = 100 - $value;
+
+        $hue = round($hue);
+        $blackness = $blackness == 0 ? 0 : Number::compress($blackness);
+
+        $result = [Number::compress($hue), $whiteness == 0 ? 0 : Number::compress(round($whiteness)) . '%', $blackness == 0 ? 0 : Number::compress(round($blackness)) . '%'];
+
+        if (!is_null($a) && $a != 1 && $a !== '') {
+
+            $result[] = Number::compress(round($a / 255, 2));
+        }
+
+        return $result;
+    }
+
+    public static function rgba2cmyk_values($r, $g, $b, $a = null, $fallback = 0)
+    {
+
+        $r /= 255;
+        $g /= 255;
+        $b /= 255;
+
+        $k = 1 - max($r, $g, $b);
+
+        if ($k == 1) {
+
+            $c = $m = $y = 0;
+        } else {
+
+            $div = 1 - $k;
+
+            $c = (1 - $r - $k) / $div;
+            $m = (1 - $g - $k) / $div;
+            $y = (1 - $b - $k) / $div;
+        }
+
+        $result = [
+            $c == 0 ? 0 : Number::compress(round(100 * $c)) . '%',
+            $m == 0 ? 0 : Number::compress(round(100 * $m)) . '%',
+            $y == 0 ? 0 : Number::compress(round(100 * $y)) . '%',
+            $k == 0 ? 0 : Number::compress(round(100 * $k)) . '%'];
+
+        if (!is_null($a) && $a != 1 && $a !== '') {
+
+            $result[] = $a;
+        }
+
+        return $result;
+    }
+
+    protected static function rgb2hue($r, $g, $b, $fallback = 0)
+    {
+
+        $value = static::rgb2value($r, $g, $b);
+        $whiteness = static::rgb2whiteness($r, $g, $b);
+
+        $delta = $value - $whiteness;
+
+        if ($delta > 0) {
+
+            // calculate segment
+            $segment = $value === $r
+                ? ($g - $b) / $delta
+                : $value === $g
+                    ? ($b - $r) / $delta
+                    : ($r - $g) / $delta;
+
+            // calculate shift
+            $shift = $value === $r
+                ? $segment < 0
+                    ? 360 / 60
+                    : 0 / 60
+                : $value === $g
+                    ? 120 / 60
+                    : 240 / 60;
+
+            // calculate hue
+            return ($segment + $shift) * 60;
+        }
+
+        return $fallback;
+    }
+
+    protected static function rgb2value($r, $g, $b)
+    {
+
+        return max($r, $g, $b);
+    }
+
+    protected static function rgb2whiteness($r, $g, $b)
+    {
+
+        return min($r, $g, $b);
+    }
+
+    public static function expand($color)
+    {
 
         $color = strtolower($color);
 
@@ -509,7 +626,7 @@ class Color {
 
         if (strlen($color) >= 7) {
 
-            if (strlen($color) > 7 && $color[7].$color[8] == 'ff') {
+            if (strlen($color) > 7 && $color[7] . $color[8] == 'ff') {
 
                 return substr($color, 0, 7);
             }
@@ -517,24 +634,31 @@ class Color {
             return $color;
         }
 
-        $expanded = '#'.$color[1].$color[1]. $color[2].$color[2].$color[3].$color[3];
+        $expanded = '#' . $color[1] . $color[1] . $color[2] . $color[2] . $color[3] . $color[3];
 
-        if (strlen ($color) == 5) {
+        if (strlen($color) == 5) {
 
             if ($color[4] != 'f') {
 
-                $expanded .= $color[4].$color[4];
+                $expanded .= $color[4] . $color[4];
             }
         }
 
         return $expanded;
     }
 
-    public static function shorten ($str) {
+    public static function shorten($str)
+    {
 
         $regExp = '\#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3';
 
         $color = strtolower($str);
+
+        if (isset(static::COLORS_NAMES[$color])) {
+
+            $str = $color;
+            $color = static::COLORS_NAMES[$color];
+        }
 
         if (strlen($color) == 5 && $color[4] == 'f') {
 
@@ -546,23 +670,18 @@ class Color {
             $regExp .= '([0-9a-f])\4';
         }
 
-        if (preg_match('#'.$regExp.'#', $color, $matches)) {
+        if (preg_match('#' . $regExp . '#', $color, $matches)) {
 
-            $color = '#'.$matches[1].$matches[2].$matches[3];
+            $color = '#' . $matches[1] . $matches[2] . $matches[3];
 
             if (isset($matches[4]) && $matches[4] != 'f') {
 
                 $color .= $matches[4];
             }
 
-            if (isset(static::NAMES_COLORS[$color]) && strlen(static::NAMES_COLORS[$color]) < 7) {
-
-                return static::NAMES_COLORS[$color];
-            }
-
-            return $color;
+        //    return $color;
         }
 
-        return $str;
+        return strlen($str) <= strlen($color) ? $str : $color;
     }
 }

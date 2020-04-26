@@ -154,8 +154,21 @@ final class Render extends TestCase
         );
     }
 
-    public function testBuildCss() {
+    /**
+     * @throws Exception
+     * @dataProvider BuildCssProvider
+     */
+    public function testBuildCss($expected, $content) {
 
+        $this->assertEquals(
+           $expected,
+           $content
+        );
+    }
+
+    public function BuildCssProvider() {
+
+        $data = [];
         $step = 0;
         $stylesheet = new Stylesheet();
 
@@ -164,63 +177,63 @@ final class Render extends TestCase
         $rule->addDeclaration('background-color', 'white');
         $rule->addDeclaration('color', 'black');
 
-        $this->assertEquals(
-            (string) $stylesheet,
-           get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $media = $stylesheet->addAtRule('media', 'print');
         $media->append($rule);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule = $stylesheet->addRule('div');
 
         $rule->addDeclaration('max-width', '100%');
         $rule->addDeclaration('border-width', '0px');
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $media->append($rule);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $stylesheet->insert($rule, 0);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule->addSelector('.name, .general');
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule->removeSelector('div, .general');
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule['selector'] = 'a,b,strong';
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $media['value'] = 'all';
 
@@ -229,41 +242,41 @@ final class Render extends TestCase
 
         $namespace = $stylesheet->addAtRule('namespace', 'svg url(https://google.com/)', 2);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $stylesheet->insert($rule2, 1);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule->merge($rule2);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
         $rule2['parent']->remove($rule2);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
 
-        $this->assertEquals(
-            (string) $rule2,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $rule2
+        ];
 
-        $this->assertEquals(
-            (string) $rule,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $rule
+        ];
 
         $rule3 = $media->addRule('ul');
 
@@ -272,18 +285,21 @@ final class Render extends TestCase
 
         foreach ($media as $key => $child) {
 
-            $this->assertEquals(
-                (string) $child,
-                get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-            );
+            $data[] = [
+                get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+                (string) $child
+            ];
         }
 
         $stylesheet->insert($namespace, 0);
 
-        $this->assertEquals(
-            (string) $stylesheet,
-            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css')
-        );
+
+        $data[] = [
+            get_content(__DIR__.'/../output/build_css_'.(++$step).'.css'),
+            (string) $stylesheet
+        ];
+
+        return $data;
     }
 
     public function beautifyProvider(): array
@@ -310,7 +326,7 @@ final class Render extends TestCase
             $data[] = [
 
                 $parser,
-                new Compiler(['compress' => false, 'rgba_hex' => false]),
+                new Compiler(['compress' => false, 'convert_color' => true]),
                 $file,
                 dirname(dirname($file)).'/output/'.basename($file)
             ];

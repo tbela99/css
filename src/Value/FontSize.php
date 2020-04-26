@@ -11,6 +11,7 @@ use \TBela\CSS\Value;
 class FontSize extends Value
 {
 
+    use ValueTrait;
     protected static $keywords = [
         'xx-small',
         'x-small',
@@ -68,26 +69,5 @@ class FontSize extends Value
         }
 
         return $value;
-    }
-
-    /**
-     * @inheritDoc
-     * @throws Exception
-     */
-    protected static function doParse($string, $capture_whitespace = true)
-    {
-
-        $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
-
-        foreach ($tokens as $token) {
-
-            if (static::matchToken($token)) {
-
-                $token->type = $type;
-            }
-        }
-
-        return new Set(static::reduce($tokens));
     }
 }

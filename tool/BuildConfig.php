@@ -32,7 +32,7 @@ $config['map'] = array_merge($config['map'], makePropertySet('font', ['font', 'f
         ['type' => 'font-style', 'optional' => true]
     ],
     ['font-variant',
-        ['type' => 'font-variant', 'optional' => true, 'match' => 'keyword', 'keywords' => ['normal', 'small-caps']]
+        ['type' => 'font-variant', 'optional' => true]
     ],
     ['font-stretch',
         ['type' => 'font-stretch', 'optional' => true]
@@ -48,21 +48,37 @@ $config['map'] = array_merge($config['map'], makePropertySet('font', ['font', 'f
     ]
 ], null, false));
 
-$config['properties'] = array_merge($config['properties'], makePropertySet('margin', 'unit unit unit unit', [
+$config['map'] = array_merge($config['map'], makePropertySet('outline', ['outline-style outline-width outline-color'], [
+    ['outline-style',
+        ['type' => 'outline-style', 'optional' => true]
+    ],
+    ['outline-width',
+        ['type' => 'outline-width', 'optional' => true]
+    ],
+    ['outline-color',
+        ['type' => 'outline-color', 'optional' => true]
+    ]
+], null, false,
+    /**
+     *compute shorthand property
+     */
+    ['compute' => true]));
+
+$config['properties'] = array_merge($config['properties'], makePropertySet('margin', ['unit unit unit unit'], [
     ['margin-top', 'unit'],
     ['margin-right', 'unit'],
     ['margin-bottom', 'unit'],
     ['margin-left', 'unit']
 ]));
 
-$config['properties'] = array_merge($config['properties'], makePropertySet('padding', 'unit unit unit unit', [
+$config['properties'] = array_merge($config['properties'], makePropertySet('padding', ['unit unit unit unit'], [
     ['padding-top', 'unit'],
     ['padding-right', 'unit'],
     ['padding-bottom', 'unit'],
     ['padding-left', 'unit']
 ]));
 
-$config['properties'] = array_merge($config['properties'], makePropertySet('border-radius', 'unit unit unit unit', [
+$config['properties'] = array_merge($config['properties'], makePropertySet('border-radius', ['unit unit unit unit'], [
     ['border-top-left-radius', 'unit', ' '],
     ['border-top-right-radius', 'unit', ' '],
     ['border-bottom-right-radius', 'unit', ' '],
@@ -148,6 +164,11 @@ $config['alias'] = array_merge($config['alias'], addAlias('-webkit-border-radius
     ));
 
 // generate configuration -------------
+foreach ($config['map'] as $key => $value) {
+
+    unset($config['map'][$key]['value_map']);
+}
+
 foreach ($config['alias'] as $alias => $data) {
 
     $properties = $config['properties'][$data['alias']];
@@ -210,13 +231,14 @@ function addAlias($property)
 
 /**
  * @param string $shorthand
- * @param string $pattern
+ * @param array $pattern
  * @param array $props
  * @param null|string $separator
  * @param bool $map_properties
+ * @param array|null $settings
  * @return array
  */
-function makePropertySet($shorthand, $pattern, array $props, $separator = null, $map_properties = true)
+function makePropertySet(string $shorthand, array $pattern, array $props, ?string $separator = null, bool $map_properties = true, ?array $settings = null)
 {
 
     $properties = [];
@@ -252,6 +274,11 @@ function makePropertySet($shorthand, $pattern, array $props, $separator = null, 
 
             $properties[$prop[0]]['separator'] = $props[1][2];
         }
+    }
+
+    if (!is_null($settings)) {
+
+        $properties[$shorthand.'.settings'] = $settings;
     }
 
     return Config::addSet($shorthand, $pattern, $properties, $separator);

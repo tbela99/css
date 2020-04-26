@@ -21,11 +21,11 @@ body {
   max-zoom: 0.9
 }
 .short {
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #0000
 }
 .element {
  color: #000;
- background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left transparent;
+ background: url(css/img/d4ca075023f827d81478565989.png) no-repeat top left #0000;
  margin: 5px 3px;
  padding: 5px 3px;
  border-radius: 5px;

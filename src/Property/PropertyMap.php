@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
 
 /**
- * Compute shorthand properties. Used internally by PropertyList
+ * Compute shorthand properties. Used internally by PropertyList to cpmpute shorthand for properties of different types
  * @package TBela\CSS\Property
  */
 class PropertyMap
@@ -75,7 +75,6 @@ class PropertyMap
     {
 
         $name = (string) $name;
-
         // is valid property
         if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
 
@@ -84,6 +83,7 @@ class PropertyMap
 
         if (isset($this->properties[$this->shorthand]) || $name == $this->shorthand) {
 
+            // the type matches the shorthand - example system font
             if ($name != $this->shorthand) {
 
                 foreach ($this->properties[$this->shorthand]->getValue() as $val) {
@@ -121,6 +121,12 @@ class PropertyMap
             }
 
             $this->properties[$name]->setValue($value);
+
+            if (!empty($this->config['settings']['compute'])) {
+
+                return $this->computeProperties();
+            }
+
             return $this;
         }
 
@@ -132,6 +138,7 @@ class PropertyMap
 
             if (isset($properties[$val->type])) {
 
+                // allow multiple values - example font family
                 if (!empty($properties[$val->type]['multiple'])) {
 
                     $properties[$val->type]['value'][] = new Set([$val]);
@@ -154,6 +161,11 @@ class PropertyMap
                     $values[$val->type]['value'] = new Set([$val]);
                 }
             }
+
+         //   else {
+
+                // should not happen
+        //    }
         }
 
         foreach ($values as $key => $val) {
@@ -199,9 +211,7 @@ class PropertyMap
             }
         }
 
-
         $set = new Set;
-
 
         // compute the shorthand and render?
         foreach ($properties as $key => $prop) {
@@ -228,7 +238,6 @@ class PropertyMap
         }
 
         $this->properties[$this->shorthand]->setValue(new Set(Value::reduce($data, ['remove_defaults' => true])));
-
         return $this;
     }
 
@@ -278,6 +287,44 @@ class PropertyMap
         }
 
         return rtrim($value, $glue . $join);
+    }
+
+    /**
+     * compute shorthand property
+     * @return $this
+     */
+    protected function computeProperties(): PropertyMap
+    {
+
+        foreach ($this->config['pattern'] as $pattern) {
+
+            $values = [];
+            foreach (preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE) as $token) {
+
+                if (trim($token) === '') {
+
+                    $values[] = Value::getInstance((object) ['type' => 'whitespace']);
+                }
+
+                else {
+
+                    if (!isset($this->properties[$token])) {
+
+                        continue 2;
+                    }
+
+                    array_splice($values, count($values), 0, $this->properties[$token]->getValue()->toArray());
+                }
+            }
+
+            $property = new Property($this->shorthand);
+            $property->setValue(new Set($values));
+
+            $this->properties = [$this->shorthand => $property];
+            break;
+        }
+
+        return $this;
     }
 
     /**

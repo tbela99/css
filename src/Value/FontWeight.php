@@ -11,7 +11,6 @@ use \TBela\CSS\Value;
  */
 class FontWeight extends Value
 {
-
     protected static $keywords = [
         'thin' => '100',
         'hairline' => '100',
@@ -134,7 +133,7 @@ class FontWeight extends Value
         return new Set(static::reduce($tokens));
     }
 
-    public static function keywords()
+    public static function keywords() : array
     {
 
         return array_keys(static::$keywords);

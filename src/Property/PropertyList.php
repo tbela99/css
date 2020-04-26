@@ -169,6 +169,9 @@ class PropertyList implements IteratorAggregate
      */
     public function getProperties () {
 
+        /**
+         * @var Property[] $result
+         */
         $result = [];
 
         foreach ($this->properties as $property) {
@@ -202,7 +205,7 @@ class PropertyList implements IteratorAggregate
                 continue;
             }
 
-            $hash = $result[$i]['hash'];
+            $hash = $result[$i]->getHash();
 
             if (isset($hashes[$hash])) {
 

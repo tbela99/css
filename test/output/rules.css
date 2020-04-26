@@ -7,15 +7,15 @@
  color: #000
 }
 .elements {
- color: transparent
+ color: #0000
 }
 body {
  border: 0;
- background: no-repeat rgba(153, 34, 17, .5)
+ background: no-repeat #99221180
 }
 .animate {
  /* Multiple function values */
- transform: perspective(500px) translate(10px,0,20px) rotateY(3deg)
+ transform: perspective(500px) translate(10px, 0, 20px) rotateY(3deg)
 }
 /*
 @import "import-media.css" print;

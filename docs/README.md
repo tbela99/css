@@ -88,7 +88,7 @@ $css = (string) $element;
 // minified output
 $renderer = new Renderer([
   'compress' => true,
-  'rgba_hex' => true,
+  'convert_color' => true,
   'css_level' => 4,
   'allow_duplicate_declarations' => false
   ]);
@@ -108,7 +108,7 @@ use \TBela\CSS\Compiler;
 $ast = json_decode(file_get_contents('style.json'));
 
 $compiler = new Compiler([
-    'rgba_hex' => true,
+    'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
@@ -352,7 +352,12 @@ div {
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If \_compress\* is true, comments are always removed
-- rgba_hex: convert colors in rgb\[a\] and hsl\[a\] to hex
+- remove_comments: remove comments. If _compress_ is true, comments are always removed
+- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
 - remove_empty_nodes: remove empty css rules
+
+## Requirements
+
+PHP version >= 7.1

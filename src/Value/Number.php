@@ -55,6 +55,11 @@ class Number extends Value
     public static function compress($value)
     {
 
+        if (is_null($value)) {
+
+            return null;
+        }
+
         $value = explode('.', (float)$value);
 
         if (isset($value[1]) && $value[1] == 0) {

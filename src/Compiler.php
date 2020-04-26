@@ -19,12 +19,12 @@ class Compiler {
         'glue' => "\n",
         'separator' => ' ',
         'charset' => false,
-        'rgba_hex' => false,
+        'convert_color' => true,
         'compress' => false,
-        'css_level' => 3,
+        'css_level' => 4,
         'remove_comments' => false,
         'remove_empty_nodes' => true,
-        'allow_duplicate_declarations' => ['background-image']
+        'allow_duplicate_declarations' => false // ['background-image']
     ];
 
     /**
@@ -58,6 +58,11 @@ class Compiler {
         }
 
 	    return $this;
+    }
+
+    public function getOptions(): array {
+
+	    return $this->options;
     }
 
     /**

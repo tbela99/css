@@ -11,7 +11,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - CSS4 colors support
 - merge duplicate rules
 - remove duplicate declarations
-- remove empty rules and declarations
+- remove empty rules
 - process @import directive
 - remove @charset directive
 - compute css declarations (margin, padding, border-width, border-radius, font)
@@ -88,7 +88,7 @@ $css = (string) $element;
 // minified output
 $renderer = new Renderer([
   'compress' => true,
-  'rgba_hex' => true,
+  'convert_color' => 'hex',
   'css_level' => 4,
   'allow_duplicate_declarations' => false
   ]);
@@ -108,7 +108,7 @@ use \TBela\CSS\Compiler;
 $ast = json_decode(file_get_contents('style.json'));
 
 $compiler = new Compiler([
-    'rgba_hex' => true,
+    'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
@@ -360,13 +360,18 @@ div {
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove*comments: remove comments. If \_compress* is true, comments are always removed
-- rgba_hex: convert colors in rgba() and hsla() to hex
+- remove_comments: remove comments. If _compress_ is true, comments are always removed
+- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
 - remove_empty_nodes: remove empty css rules
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 
+## Requirements
+
+PHP version >= 7.1
+
 ---
 
-Thanks to [jetbrains](https://jetbrains.com) for providing a PhpStorm free license
+Thanks to [jetbrains](https://jetbrains.com) for providing a free PhpStorm license

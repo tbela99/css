@@ -14,7 +14,7 @@ cd "$DIR"
 if [ "$1" == "" ]; then
   for file in src/*.php
     do
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || $(echo "test ended with failure" >&2 && exit 1)
+      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || $(echo "test ""$file"" ended with failure" >&2 && exit 1)
     done
 else
 

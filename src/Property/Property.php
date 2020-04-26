@@ -91,7 +91,7 @@ class Property implements ArrayAccess, Rendererable, RenderableProperty
      */
     public function getHash() {
 
-        return $this->name.':'.$this->value->render(['compress' => true, 'rgba_hex' => true]);
+        return $this->name.':'.$this->value->render(['css_level' => 4, 'convert_color' => true, 'compress' => true]);
     }
 
     /**

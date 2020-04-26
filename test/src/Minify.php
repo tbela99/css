@@ -60,7 +60,7 @@ final class Minify extends TestCase
             $data[] = [
 
                $parser,
-                (new Compiler())->setOptions(['compress' => true, 'rgba_hex' => true]),
+                (new Compiler())->setOptions(['compress' => true, 'convert_color' => true, 'css_level' => true]),
                 $file,
                 get_content(dirname(dirname($file)).'/output/'.str_replace('.css', '.min.css', basename($file)))
             ];

@@ -57,14 +57,14 @@ font-weight: bold;
             'body {
  background-color: green;
  color: #fff;
- font-family: Arial,Helvetica,sans-serif
+ font-family: Arial, Helvetica, sans-serif
 }'];
 
         $data[] = [(string) $element['lastChild'],
             'h1 {
  color: #fff;
  font-size: 50px;
- font-family: Arial,Helvetica,sans-serif;
+ font-family: Arial, Helvetica, sans-serif;
  font-weight: bold
 }'];
 
@@ -72,7 +72,7 @@ font-weight: bold;
             'body {
  background-color: green;
  color: #fff;
- font-family: Arial,Helvetica,sans-serif
+ font-family: Arial, Helvetica, sans-serif
 }
 div {
  background-color: #ff0
@@ -80,7 +80,7 @@ div {
 h1 {
  color: #fff;
  font-size: 50px;
- font-family: Arial,Helvetica,sans-serif;
+ font-family: Arial, Helvetica, sans-serif;
  font-weight: bold
 }'];
 
