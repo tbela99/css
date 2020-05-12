@@ -11,6 +11,7 @@ use \TBela\CSS\Value;
 class FontStretch extends Value
 {
 
+    use ValueTrait;
     /**
      * @var array
      * @ignore
@@ -51,29 +52,8 @@ class FontStretch extends Value
     /**
      * @inheritDoc
      */
-    public static function keywords () {
+    public static function keywords () : array {
 
         return array_keys(static::$keywords);
-    }
-
-    /**
-     * @inheritDoc
-     * @throws Exception
-     */
-    protected static function doParse($string, $capture_whitespace = true)
-    {
-
-        $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
-
-        foreach ($tokens as $key => $token) {
-
-            if (static::matchToken($token)) {
-
-                $token->type = $type;
-            }
-        }
-
-        return new Set(static::reduce($tokens));
     }
 }

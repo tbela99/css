@@ -11,6 +11,7 @@ use \TBela\CSS\Value;
 class FontVariant extends Value
 {
 
+    use ValueTrait;
     protected static $keywords = [
         'normal',
         'none',
@@ -36,26 +37,5 @@ class FontVariant extends Value
         }
 
         return $token->type == static::type();
-    }
-
-    /**
-     * @inheritDoc
-     * @throws Exception
-     */
-    protected static function doParse($string, $capture_whitespace = true)
-    {
-
-        $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
-
-        foreach ($tokens as $key => $token) {
-
-            if (static::matchToken($token)) {
-
-                $token->type = $type;
-            }
-        }
-
-        return new Set(static::reduce($tokens));
     }
 }

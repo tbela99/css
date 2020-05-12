@@ -3,6 +3,6 @@
 }
 @media print {
  @font-face {
-   src: local("Helvetica Neue Bold"),local("HelveticaNeue-Bold"),url(css/MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
  }
 }

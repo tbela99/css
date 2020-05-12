@@ -4,14 +4,20 @@ namespace TBela\CSS;
 
 use InvalidArgumentException;
 use stdClass;
+use TBela\CSS\Value\Number;
 use TBela\CSS\Value\Set;
+use TBela\CSS\Parser\ParserTrait;
 
 /**
  * CSS value base class
  * @package CSS
+ * @property-read string $value
+ * @property-read Set $arguments
  */
 abstract class Value
 {
+    use ParserTrait;
+
     /**
      * var stdClass;
      * @ignore
@@ -138,7 +144,7 @@ abstract class Value
      */
     public function matchToken ($token, $previousToken = null, $previousValue = null) {
 
-        return $token->type == static::type();
+        return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
     }
 
     /**
@@ -170,9 +176,7 @@ abstract class Value
             throw new InvalidArgumentException('Type property is required: ' . gettype($data) . ':' . var_export($data, true), 400);
         }
 
-        $className = static::class . '\\' . preg_replace_callback('#(^|-)([a-z-A-Z])#', function ($matches) {
-                return strtoupper($matches[2]);
-            }, $data->type);
+        $className = static::getClassName($data->type);
 
         if (!class_exists($className)) {
 
@@ -334,7 +338,7 @@ abstract class Value
 
                             $buffer = '';
 
-                            if (!is_separator($string[$k]) || ($j >= $k + 1 && !is_whitespace($string[$k + 1]))) {
+                            if (!static::is_separator($string[$k]) || ($j >= $k + 1 && !static::is_whitespace($string[$k + 1]))) {
 
                                 $token = new stdClass;
                                 $token->type = 'whitespace';
@@ -392,7 +396,7 @@ abstract class Value
 
                     if ($string[$i - 1] != '\\') {
 
-                        $params = _close($string, ')', '(', $i, $j);
+                        $params = static::_close($string, ')', '(', $i, $j);
 
                         if ($params !== false) {
 
@@ -407,7 +411,7 @@ abstract class Value
                                 $token->name = $buffer;
                             }
 
-                            if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla'])) {
+                            if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'])) {
 
                                 $token->type = 'color';
                             } else {
@@ -451,7 +455,7 @@ abstract class Value
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
-                        $params = match_comment($string, $i, $j);
+                        $params = static::match_comment($string, $i, $j);
 
                         if ($params !== false) {
 
@@ -528,7 +532,7 @@ abstract class Value
         } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
             $type->type = 'color';
-            $type->colorType = 'hex';
+            $type->colorType = $token == 'currentcolor' ? 'keyword' : 'hex';
         } else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
 
             $type->type = 'unit';
@@ -548,7 +552,7 @@ abstract class Value
      * @return array
      * @ignore
      */
-    public static function keywords()
+    public static function keywords(): array
     {
 
         return static::$keywords;
@@ -582,20 +586,61 @@ abstract class Value
     }
 
     /**
-     * @param string $string
-     * @param bool $force_removal
-     * @return false|string
+     * @param Value|null $value
+     * @param array $options
+     * @return string
      */
-    protected static function stripQuotes($string, $force_removal = false) {
+    public static function getNumericValue (?Value $value, array $options = []): ?string {
 
-        $q = substr($string, 0, 1);
+        if (is_null($value) || $value->value === '') {
 
-        if (($q == '"' || $q == "'") && strlen($string) > 2 && substr($string, -1) == $q && ($force_removal || !preg_match('#[\s]#', $string))) {
-
-            return substr($string, 1, -1);
+            return null;
         }
 
-        return $string;
+        return Number::compress($value->unit == '%' ? $value->value / 100 : $value->render($options));
+    }
+
+    /**
+     * @param Value $value
+     * @return string
+     */
+    public static function getRGBValue (Value $value): string {
+
+        return Number::compress($value->unit == '%' ? 255 * $value->value / 100 : $value->value);
+    }
+
+    /**
+     * @param Value|null $value
+     * @param array $options
+     * @return string
+     */
+    public static function getAngleValue (?Value $value, array $options = []): ?string {
+
+        if (is_null($value) || $value->value === '') {
+
+            return null;
+        }
+
+        switch ($value->unit) {
+
+            case 'rad':
+
+                return floatval((string)$value->value) / (2 * pi());
+
+            case 'grad':
+
+                return floatval((string)$value->value) / 400;
+            case 'turn':
+                // do nothing
+                return floatval((string)$value->value);
+
+        //    case 'deg':
+        //    default:
+
+        //        break;
+        }
+
+        return floatval((string)$value->value) / 360;
     }
 
     /**
@@ -606,107 +651,4 @@ abstract class Value
     {
         return $this->render();
     }
-}
-
-function is_separator($char)
-{
-
-    switch ($char) {
-
-        case ',':
-        case '/':
-        case '+':
-        case '-':
-
-            return true;
-    }
-
-    return false;
-}
-
-function match_comment($string, $start, $end)
-{
-
-    $i = $start + 1;
-
-    while ($i++ < $end) {
-
-        switch ($string[$i]) {
-
-            case '*':
-
-                if ($string[$i + 1] == '/') {
-
-                    return substr($string, $start, $i + 2 - $start);
-                }
-
-                break;
-        }
-    }
-
-    return false;
-}
-
-function _close($string, $search, $reset, $start, $end)
-{
-
-    $count = 1;
-    $i = $start;
-
-    while ($i++ <= $end) {
-
-        switch ($string[$i]) {
-
-            case $search:
-
-                if ($string[$i - 1] != '\\') {
-
-                    $count--;
-                }
-
-                break;
-
-            case $reset:
-
-                if ($string[$i - 1] != '\\') {
-
-                    $count++;
-                }
-
-                break;
-
-            // in string matching
-            case '"':
-            case "'":
-
-                $match = _close($string, $string[$i], $string[$i], $i, $end);
-
-                if ($match === false) {
-
-                    return false;
-                }
-
-                $i += strlen($match) - 1;
-
-                break;
-        }
-
-        if ($count == 0) {
-
-            break;
-        }
-    }
-
-    if ($count == 0) {
-
-        return substr($string, $start, $i - $start + 1);
-    }
-
-    return false;
-}
-
-function is_whitespace($char)
-{
-
-    return preg_match("#^\s$#", $char);
 }

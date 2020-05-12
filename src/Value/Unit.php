@@ -5,6 +5,7 @@ namespace TBela\CSS\Value;
 /**
  * Css unit value
  * @package TBela\CSS\Value
+ * @property-read string $unit
  */
 class Unit extends Number {
 
@@ -13,7 +14,7 @@ class Unit extends Number {
      */
     protected static function validate($data) {
 
-        return isset($data->unit);
+        return isset($data->unit) || (isset($data->value) && $data->value == '0');
     }
 
     /**
@@ -22,7 +23,7 @@ class Unit extends Number {
     public function match ($type) {
 
         $dataType = strtolower($this->data->type);
-        return $dataType == $type || ($type == 'number' && $this->data->value == 0);
+        return $dataType == static::type() || ($type == 'number' && $this->data->value == 0);
     }
 
     /**
@@ -36,10 +37,11 @@ class Unit extends Number {
             return '0';
         }
 
+        $unit = !empty($options['omit_unit']) && $options['omit_unit'] == $this->data->unit ? '' : $this->data->unit;
+
         if (!empty($options['compress'])) {
 
             $value = $this->data->value;
-            $unit = $this->data->unit;
 
             if ($this->data->unit == 'ms' && $value >= 100) {
 
@@ -50,6 +52,6 @@ class Unit extends Number {
             return $this->compress($value).$unit;
         }
 
-        return $this->data->value.$this->data->unit;
+        return $this->data->value.$unit;
     }
 }

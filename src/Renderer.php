@@ -21,11 +21,6 @@ class Renderer
 {
 
     /**
-     * @ignore
-     */
-    const MATCH_WORD = '/"(?:\\"|[^"])*"|\'(?:\\\'|[^\'])*\'/s';
-
-    /**
      * @var bool minify output
      * @ignore
      */
@@ -35,7 +30,7 @@ class Renderer
      * @var int CSS level 3|4
      * @ignore
      */
-    protected $css_level = 3;
+    protected $css_level = 4;
 
     /**
      * @var string line indention
@@ -65,7 +60,7 @@ class Renderer
      * @var bool allow rbga hex color
      * @ignore
      */
-    protected $rgba_hex = false;
+    protected $convert_color = true;
 
     /**
      * @var bool remove comments
@@ -83,7 +78,7 @@ class Renderer
      * @var bool|array|string true|false or a list of exceptions
      * @ignore
      */
-    protected $allow_duplicate_declarations = true;
+    protected $allow_duplicate_declarations = false;
 
     /**
      * Identity constructor.
@@ -133,9 +128,9 @@ class Renderer
             $this->remove_comments = $options['remove_comments'];
         }
 
-        if (isset($options['rgba_hex'])) {
+        if (isset($options['convert_color'])) {
 
-            $this->rgba_hex = $options['rgba_hex'];
+            $this->convert_color = $options['convert_color'];
         }
 
         if (isset($options['allow_duplicate_declarations'])) {
@@ -339,66 +334,15 @@ class Renderer
 
     protected function renderProperty(RenderableProperty $element)
     {
+        $name = (string) $element->getName();
+        $value = $element->getValue()->render(['compress' => $this->compress, 'css_level' => $this->css_level, 'convert_color' => $this->convert_color === true ? 'hex' : $this->convert_color]);
 
-        $propertyList = new PropertyList(null, array_merge($this->getOptions(), ['allow_duplicate_declarations' => false]));
+        if ($value == 'none' && in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
 
-        $propertyList->set($element['name'], $element['value']);
-
-        $result = '';
-
-        foreach ($propertyList->getProperties() as $property) {
-
-            $result .= $property['name'].':'.$this->indent.$this->filterValue($property['name'], $property['value']);
-            break;
+            $value = 0;
         }
 
-        return $result;
-    }
-
-    protected function filterValue($name, Set $values) {
-
-        $options = $this->getOptions();
-
-        if ($this->compress) {
-
-            $result = '';
-            $name = (string) $name;
-
-            $array_values = $values->toArray();
-
-            foreach ($array_values as $value) {
-
-                switch ($name) {
-
-                    case 'border':
-                    case 'border-top':
-                    case 'border-right':
-                    case 'border-left':
-                    case 'border-bottom':
-                    case 'outline':
-
-                        if (trim($value) == 'none') {
-
-                            $result .= '0';
-                        }
-                        else {
-
-                            $result .= $value->render($options, $name);
-                        }
-
-                        break;
-
-                    default:
-
-                        $result .= $value->render($options, $name);
-                        break;
-                }
-            }
-
-            return $result;
-        }
-
-        return $values->render($options);
+        return $name.':'.$this->indent.$value;
     }
 
     /**

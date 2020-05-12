@@ -16,13 +16,28 @@ final class Color extends TestCase
      * @param $content
      * @param string $expected
      * @throws Exception
+     * @dataProvider rgbaCss4ColorProvider
+     */
+    public function testRgbaCss4Color(Compiler $compiler, $content, $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+           $compiler->setContent($content)->compile()
+        );
+    }
+
+    /**
+     * @param Compiler $compiler
+     * @param $content
+     * @param string $expected
+     * @throws Exception
      * @dataProvider rgbaColorProvider
      */
     public function testRgbaColor(Compiler $compiler, $content, $expected): void
     {
         $this->assertEquals(
             $expected,
-           $compiler->setContent($content)->compile()
+            $compiler->setContent($content)->compile()
         );
     }
 
@@ -117,7 +132,7 @@ final class Color extends TestCase
 
     public function rgbaColorProvider () {
 
-        $compiler = new Compiler();
+        $compiler = new Compiler(['css_level' => 3]);
 
         $data = [];
 
@@ -136,7 +151,7 @@ final class Color extends TestCase
 	color: rgba(1e2, .5e1, .5e0, +.25e2%);
 }', 'p {
  /* Functional syntax with floats value */
- color: rgba(100, 5, 0.5, 0.25)
+ color: rgba(100, 5, .5, .25)
 }'];
 
         $data[] = [$compiler,
@@ -151,30 +166,95 @@ p {
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
-	color: rgba(255, 0, 0, 0.5);
+	/* red 50% translucent rgba rgba(255, 0, 0, .5) */
+	color: rgba(255, 0, 0, .5);
 }', 'p {
- /* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
- color: rgba(255, 0, 0, 0.5)
+ /* red 50% translucent rgba rgba(255, 0, 0, .5) */
+ color: rgba(255, 0, 0, .5)
 }'];
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
-	color: hsl(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+	color: hsl(0, 100%, 50%, .5);
 }', 'p {
- /* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
- color: hsla(0, 100%, 50%, 0.5)
+ /* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+ color: hsla(0, 100%, 50%, .5)
 }'];
 
         $data[] = [$compiler,
             'p {
 
-	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
-	color: hsla(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla(0, 100%, 50%, .5) */
+	color: hsla(0, 100%, 50%, .5);
 }', 'p {
- /* red 50% translucent hsla(0, 100%, 50%, 0.5) */
- color: hsla(0, 100%, 50%, 0.5)
+ /* red 50% translucent hsla(0, 100%, 50%, .5) */
+ color: hsla(0, 100%, 50%, .5)
+}'];
+
+        return $data;
+    }
+
+    public function rgbaCss4ColorProvider () {
+
+        $compiler = new Compiler(['compress' => false, 'convert_color' => false, 'css_level' => 4]);
+
+        $data = [];
+
+        $data[] = [$compiler,
+            'p {
+	/* Functional syntax with floats value */
+	color: rgba(255, 0, 153.6, 1);
+}', 'p {
+ /* Functional syntax with floats value */
+ color: rgb(255 0 153.6)
+}'];
+
+        $data[] = [$compiler,
+            'p {
+	/* Functional syntax with floats value */
+	color: rgba(1e2, .5e1, .5e0, +.25e2%);
+}', 'p {
+ /* Functional syntax with floats value */
+ color: rgb(100 5 .5 / .25)
+}'];
+
+        $data[] = [$compiler,
+            '
+p {
+	/* red 50% translucent #ff000080 */
+	color: #ff000080;
+}', 'p {
+ /* red 50% translucent #ff000080 */
+ color: #ff000080
+}'];
+
+        $data[] = [$compiler,
+            'p {
+	/* red 50% translucent rgba rgba(255, 0, 0, .5) */
+	color: rgba(255, 0, 0, .5);
+}', 'p {
+ /* red 50% translucent rgba rgba(255, 0, 0, .5) */
+ color: rgb(255 0 0 / .5)
+}'];
+
+        $data[] = [$compiler,
+            'p {
+	/* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+	color: hsl(0, 100%, 50%, .5);
+}', 'p {
+ /* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+ color: hsl(0 100% 50% / .5)
+}'];
+
+        $data[] = [$compiler,
+            'p {
+
+	/* red 50% translucent hsla(0, 100%, 50%, .5) */
+	color: hsla(0, 100%, 50%, .5);
+}', 'p {
+ /* red 50% translucent hsla(0, 100%, 50%, .5) */
+ color: hsl(0 100% 50% / .5)
 }'];
 
         return $data;
@@ -182,7 +262,7 @@ p {
 
     public function rgbaColorCompressProvider () {
 
-        $compiler = new Compiler(['compress' => true]);
+        $compiler = new Compiler(['compress' => true, 'convert_color' => true, 'css_level' => 3]);
 
         $data = [];
 
@@ -207,21 +287,21 @@ p {
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
-	color: rgba(255, 0, 0, 0.5);
+	/* red 50% translucent rgba rgba(255, 0, 0, .5) */
+	color: rgba(255, 0, 0, .5);
 }', 'p{color:rgba(255,0,0,.5)}'];
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
-	color: hsl(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+	color: hsl(0, 100%, 50%, .5);
 }', 'p{color:hsla(0,100%,50%,.5)}'];
 
         $data[] = [$compiler,
             'p {
 
-	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
-	color: hsla(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla(0, 100%, 50%, .5) */
+	color: hsla(0, 100%, 50%, .5);
 }', 'p{color:hsla(0,100%,50%,.5)}'];
 
         return $data;
@@ -229,7 +309,7 @@ p {
 
     public function rgbaHexColorProvider () {
 
-        $compiler = new Compiler(['rgba_hex' => true]);
+        $compiler = new Compiler(['convert_color' => true, 'css_level' => 4]);
 
         $data = [];
 
@@ -263,29 +343,29 @@ p {
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
-	color: rgba(255, 0, 0, 0.5);
+	/* red 50% translucent rgba rgba(255, 0, 0, .5) */
+	color: rgba(255, 0, 0, .5);
 }', 'p {
- /* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
+ /* red 50% translucent rgba rgba(255, 0, 0, .5) */
  color: #ff000080
 }'];
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
-	color: hsl(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+	color: hsl(0, 100%, 50%, .5);
 }', 'p {
- /* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
+ /* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
  color: #ff000080
 }'];
 
         $data[] = [$compiler,
             'p {
 
-	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
-	color: hsla(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla(0, 100%, 50%, .5) */
+	color: hsla(0, 100%, 50%, .5);
 }', 'p {
- /* red 50% translucent hsla(0, 100%, 50%, 0.5) */
+ /* red 50% translucent hsla(0, 100%, 50%, .5) */
  color: #ff000080
 }'];
 
@@ -294,7 +374,7 @@ p {
 
     public function rgbaHexColorCompressProvider () {
 
-        $compiler = new Compiler(['compress' => true, 'rgba_hex' => true]);
+        $compiler = new Compiler(['compress' => true, 'convert_color' => true, 'css_level' => 4]);
 
         $data = [];
 
@@ -319,21 +399,21 @@ p {
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent rgba rgba(255, 0, 0, 0.5) */
-	color: rgba(255, 0, 0, 0.5);
+	/* red 50% translucent rgba rgba(255, 0, 0, .5) */
+	color: rgba(255, 0, 0, .5);
 }', 'p{color:#ff000080}'];
 
         $data[] = [$compiler,
             'p {
-	/* red 50% translucent hsla hsl(0, 100%, 50%, 0.5) */
-	color: hsl(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla hsl(0, 100%, 50%, .5) */
+	color: hsl(0, 100%, 50%, .5);
 }', 'p{color:#ff000080}'];
 
         $data[] = [$compiler,
             'p {
 
-	/* red 50% translucent hsla(0, 100%, 50%, 0.5) */
-	color: hsla(0, 100%, 50%, 0.5);
+	/* red 50% translucent hsla(0, 100%, 50%, .5) */
+	color: hsla(0, 100%, 50%, .5);
 }', 'p{color:#ff000080}'];
 
         return $data;

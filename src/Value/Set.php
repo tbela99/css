@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Value;
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use TBela\CSS\Value;
@@ -10,7 +11,7 @@ use TBela\CSS\Value;
  * Css values set
  * @package CSS
  */
-class Set implements IteratorAggregate, JsonSerializable
+class Set implements IteratorAggregate, JsonSerializable, Countable
 {
     /**
      * @var array
@@ -137,5 +138,13 @@ class Set implements IteratorAggregate, JsonSerializable
     public function jsonSerialize()
     {
         return (string) $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->data);
     }
 }

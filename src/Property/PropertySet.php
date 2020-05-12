@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
 
 /**
- * Compute shorthand properties. Used internally by PropertyList
+ * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of the same type
  * @package TBela\CSS\Property
  */
 class PropertySet
@@ -55,6 +55,11 @@ class PropertySet
         }
 
         $this->config = $config;
+
+        if (isset($config['pattern']) && is_array($config['pattern'])) {
+
+            $this->config['pattern'] = $config['pattern'][0];
+        }
     }
 
     /**

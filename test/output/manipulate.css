@@ -5,22 +5,22 @@
 body {
  background-color: green;
  color: #fff;
- font-family: Arial,Helvetica,sans-serif
+ font-family: Arial, Helvetica, sans-serif
 }
 h1 {
  color: #fff;
  font-size: 50px;
- font-family: Arial,Helvetica,sans-serif;
+ font-family: Arial, Helvetica, sans-serif;
  font-weight: bold
 }
 @media print {
  @font-face {
    font-family: MaHelvetica;
-   src: local("Helvetica Neue Bold"),local("HelveticaNeue-Bold"),url(css/MgOpenModernaBold.ttf);
-   font-weight: bold
+   font-weight: bold;
+   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold",serif
+   font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
    font-size: 12px;
@@ -28,8 +28,8 @@ h1 {
    text-align: left
  }
  @font-face {
-   font-family: Arial,MaHelvetica;
-   src: local("Helvetica Neue Bold"),local("HelveticaNeue-Bold"),url(css/MgOpenModernaBold.ttf);
-   font-weight: bold
+   font-family: Arial, MaHelvetica;
+   font-weight: bold;
+   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
  }
 }

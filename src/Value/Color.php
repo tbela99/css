@@ -16,15 +16,84 @@ class Color extends Value
     /**
      * @inheritDoc
      */
+    protected function __construct($data)
+    {
+
+        parent::__construct($data);
+
+        if (isset($data->colorType) && $data->colorType == 'hex') {
+
+            $values = ColorUtil::hex2rgba_values($data->value);
+
+            if (count($values) >= 3) {
+
+                $data->rgba = $values;
+            }
+        }
+
+        else if (isset($data->name)) {
+
+            $a = static::getNumericValue($data->arguments->{6});
+
+            if ($a == 1) {
+
+                $a = null;
+            }
+
+            switch ($data->name) {
+
+                case 'rgb':
+                case 'rgba':
+
+                    $data->rgba[] = static::getRGBValue($data->arguments->{0});
+                    $data->rgba[] = static::getRGBValue($data->arguments->{2});
+                    $data->rgba[]= static::getRGBValue($data->arguments->{4});
+
+                    if (!is_null($a)) {
+
+                        $data->rgba[] =  $a;
+                    }
+
+                    break;
+
+                case 'hsl':
+                case 'hsla':
+
+                    $data->rgba = ColorUtil::hsl2rgb_values(static::getAngleValue($data->arguments->{0}), static::getNumericValue($data->arguments->{2}), static::getNumericValue($data->arguments->{4}), $a);
+                    break;
+
+                case 'hwb':
+
+                    $data->rgba = ColorUtil::hwb2rgba_values(static::getAngleValue($data->arguments->{0}), static::getNumericValue($data->arguments->{2}), static::getNumericValue($data->arguments->{4}), $a);
+                    break;
+
+                case 'device-cmyk':
+
+                    $a = static::getNumericValue($data->arguments->{8});
+
+                    if ($a == 1) {
+
+                        $a = null;
+                    }
+
+                    $data->rgba = ColorUtil::cmyk2rgba_values(static::getNumericValue($data->arguments->{0}), static::getNumericValue($data->arguments->{2}), static::getNumericValue($data->arguments->{4}), static::getNumericValue($data->arguments->{6}), $a);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected static function validate($data)
     {
 
         if (isset($data->name) && isset($data->arguments)) {
 
-            return in_array($data->name, ['rgb', 'rgba', 'hsl', 'hsla']);
+            return in_array($data->name, ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk']);
         }
 
-        return isset(ColorUtil::COLORS_NAMES[$data->value]) || (isset($data->colorType) && $data->colorType == 'hex');
+        return isset(ColorUtil::COLORS_NAMES[$data->value]) || (isset($data->colorType) && in_array($data->colorType, ['hex', 'keyword']));
     }
 
     /**
@@ -49,290 +118,154 @@ class Color extends Value
             return static::$cache[$index][$key];
         }
 
-        if (isset($this->data->value)) {
+        if (isset($this->data->rgba)) {
 
-            if ($this->data->value[0] == '#') {
+            static::$cache[$index][$key] = static::rgba2string($this->data, $options);
+        }
 
-                static::$cache[$index][$key] = $this->parseHexColor($this->data->value, $options);
-            } else {
+        else if (isset($this->data->value)) {
 
-                static::$cache[$index][$key] = $this->parseNamedColor($this->data->value, $options);
-            }
+                static::$cache[$index][$key] = $this->data->value;
         } else {
 
-            $callback = null;
-
-            if ($this->data->name == 'rgb' || $this->data->name == 'rgba') {
-
-                $callback = 'parseRGBColor';
-            } else {
-
-                $callback = 'parseHSLColor';
-            }
-
-            static::$cache[$index][$key] = call_user_func([$this, $callback], $this->data, $options);
+            static::$cache[$index][$key] = $this->data->name.'('.$this->data->arguments->render($options).')';
         }
 
         return static::$cache[$index][$key];
     }
 
-    /**
-     * parse color specified by its name
-     * @param string $str
-     * @param array $options
-     * @return string
-     */
-    protected function parseNamedColor($str, array $options)
-    {
+    public static function rgba2string($data, array $options = []) {
 
-        $str = strtolower($str);
+        $hex = ColorUtil::rgba_values2hex($data->rgba, $options);
+        $value = $hex;
+        $css3 = !isset($options['css_level']) || $options['css_level'] < 4;
 
-        if (isset(ColorUtil::COLORS_NAMES[$str])) {
+        if (empty($options['convert_color'])) {
 
-            $name = ColorUtil::COLORS_NAMES[$str];
+            $options['convert_color'] = isset($data->colorType) ? $data->colorType : $data->name;
+        }
 
-            $shortened = ColorUtil::shorten($name);
+        if (isset(ColorUtil::NAMES_COLORS[$hex])) {
 
-            if (strlen($str) > strlen($shortened)) {
+            $hex = ColorUtil::NAMES_COLORS[$hex];
+        }
 
-                if ((strlen($shortened) == 5 || strlen($shortened) == 9) && empty($options['rgba_hex'])) {
+        if (isset($options['convert_color'])) {
 
-                    return ColorUtil::hex2rgba($shortened, $options);
-                }
+            if (is_bool($options['convert_color'])) {
 
-                return $shortened;
+                // convert hex color to css3 rgba
+                $options['convert_color'] = $options['convert_color'] ? 'hex' : (isset($data->colorType) ? $data->colorType : $data->name);
             }
 
-            if (strlen($str) > strlen($name)) {
+            //
+            if ($css3 && substr($value, 0, 1) == '#' && in_array(strlen($value), [5, 9])) {
 
-                return $name;
+                $options['convert_color'] = $data->name ?? 'rgba';
+            }
+
+            if ($options['convert_color'] == 'hex') {
+
+                $hex = ColorUtil::shorten($hex);
+            }
+
+            switch ($options['convert_color']) {
+
+                case 'hsl':
+                case 'hsla':
+
+                    $value = static::rgba_values2hsl($data->rgba, $options);
+                    break;
+
+                case 'hwb':
+
+                    $value = static::rgba2hwb_values($data->rgba, $options);
+                    break;
+
+
+                case 'rgb':
+                case 'rgba':
+
+                    $value = static::rgba_values2rgba($data->rgba, $options);
+                    break;
+
+                case 'cmyk':
+                case 'device-cmyk':
+
+                    $value = static::rgba2cmyk_values($data->rgba, $options);
+                    break;
+
+                case 'hex':
+                default:
+
+                    return $hex;
             }
         }
 
-        return ColorUtil::shorten($str);
+        return substr($hex, 0, 1) != '#' ? (strlen($hex) <= strlen($value) ? $hex : $value) : $value;
     }
 
-    /**
-     * parse hex color
-     * @param string $str
-     * @param array $options
-     * @return string
-     */
-    public static function parseHexColor($str, array $options)
-    {
+    public static function rgba_values2rgba(array $rgba_values, array $options = []) {
 
-        $color = ColorUtil::expand($str);
-        $short = ColorUtil::shorten($color);
-        $length = strlen($short);
+        $compress = !empty($options['compress']);
+        $css4 = !empty($options['css_level']) && $options['css_level'] > 3;
+        $rgba = $css4 || count($rgba_values) == 3 ? 'rgb' : 'rgba';
+        $space = $compress ? '' : ' ';
+        $glue = $css4 ? ' ' : ','.$space;
+        $alpha_sep = ($css4 ? $space.'/' : ',').$space;
 
-        if (isset(ColorUtil::NAMES_COLORS[$color]) && $length > strlen(ColorUtil::NAMES_COLORS[$color])) {
+        $format = '%s'.$glue.'%s'.$glue.'%s'.(count($rgba_values) == 3 ? '' : $alpha_sep.'%s');
 
-            return ColorUtil::NAMES_COLORS[$color];
-        }
+        array_unshift($rgba_values, $rgba.'('.$format.')');
 
-        if (empty($options['rgba_hex'])) {
-
-            if ($length == 5 || $length == 9) {
-
-                return ColorUtil::hex2rgba($short, $options);
-            }
-        }
-
-        return $short;
+        return call_user_func_array('sprintf', $rgba_values);
     }
 
-    /**
-     * return the shortest string
-     * @param string $color
-     * @param string|null $named_color
-     * @return mixed
-     * @ignore
-     */
-    protected function shortestValue($color, $named_color)
-    {
+    public static function rgba_values2hsl(array $rgba_values, array $options = []) {
 
-        return is_null($named_color) || strlen($named_color) > strlen($color) ? $color : $named_color;
+        $rgba_values = call_user_func_array([ColorUtil::class, 'rgba2hsl_values'], $rgba_values);
+
+        $compress = !empty($options['compress']);
+        $css4 = !empty($options['css_level']) && $options['css_level'] > 3;
+        $hsla = $css4 || count($rgba_values) == 3 ? 'hsl' : 'hsla';
+        $space = $compress ? '' : ' ';
+        $glue = $css4 ? ' ' : ','.$space;
+        $alpha_sep = ($css4 ? $space.'/' : ',').$space;
+
+        $format = '%s'.$glue.'%s'.$glue.'%s'.(count($rgba_values) == 3 ? '' : $alpha_sep.'%s');
+
+        array_unshift($rgba_values, $hsla.'('.$format.')');
+
+        return call_user_func_array('sprintf', $rgba_values);
     }
 
-    /**
-     * parse rgb[a] color
-     * @param object $data
-     * @param array $options
-     * @return string
-     */
-    public static function parseRGBColor($data, array $options)
-    {
+    public static function rgba2hwb_values(array $rgba_values, array $options = []) {
 
-        $r = (string)$data->arguments->{0};
-        $g = (string)$data->arguments->{2};
-        $b = (string)$data->arguments->{4};
-        $a = (string)$data->arguments->{6};
+        $rgba_values = call_user_func_array([ColorUtil::class, 'rgba2hwb_values'], $rgba_values);
 
-        if ($a === '' || $a == 1 || $a == '100%') {
+        $compress = !empty($options['compress']);
+        $glue = ' ';
+        $alpha_sep = $compress ? '/' : ' / ';
 
-            $a = null;
-        }
+        $format = '%s'.$glue.'%s'.$glue.'%s'.(count($rgba_values) == 3 ? '' : $alpha_sep.'%s');
 
-        if (substr($r, -1) == '%') {
+        array_unshift($rgba_values, 'hwb('.$format.')');
 
-            $r = floatval($r) * 255 / 100;
-        }
-
-        if (substr($g, -1) == '%') {
-
-            $g = floatval($g) * 255 / 100;
-        }
-
-        if (substr($b, -1) == '%') {
-
-            $b = floatval($b) * 255 / 100;
-        }
-
-        if (!is_null($a)) {
-
-            if (substr($a, -1) == '%') {
-
-                $a = floatval($a) / 100;
-            }
-        }
-
-        $hex = ColorUtil::rgba2hex($r, $g, $b, $a);
-        $expanded = ColorUtil::expand($hex);
-
-        $named_color = null;
-
-        if (isset(ColorUtil::NAMES_COLORS[$expanded])) {
-
-            $named_color = ColorUtil::NAMES_COLORS[$expanded];
-        }
-
-        if ($hex[0] != '#') {
-
-            $named_color = $hex;
-        }
-
-        $length = strlen($hex);
-
-        if (!empty($options['rgba_hex']) || ($length != 5 && $length != 9)) {
-
-            return static::shortestValue($hex, $named_color);
-        }
-
-        $rgba = !empty($options['css_level']) && $options['css_level'] > 3 ? 'rgb' : 'rgba';
-
-        if (!empty($options['compress'])) {
-
-            $color = sprintf(is_null($a) ? 'rgb(%s,%s,%s)' : $rgba . '(%s,%s,%s,%s)', Number::compress($r), Number::compress($g), Number::compress($b), Number::compress($a));
-        } else {
-
-            $color = sprintf(is_null($a) ? 'rgb(%s, %s, %s)' : $rgba . '(%s, %s, %s, %s)', $r, $g, $b, $a);
-        }
-
-        return static::shortestValue($color, $named_color);
+        return call_user_func_array('sprintf', $rgba_values);
     }
 
-    /**
-     * parse hsl[a] color
-     * @param object $data
-     * @param array $options
-     * @return string
-     */
-    public static function parseHSLColor($data, array $options)
-    {
+    public static function rgba2cmyk_values(array $rgba_values, array $options = []) {
 
-        $h = $data->arguments->{0};
-        $s = $data->arguments->{2};
-        $l = $data->arguments->{4};
-        $a = $data->arguments->{6};
+        $rgba_values = call_user_func_array([ColorUtil::class, 'rgba2cmyk_values'], $rgba_values);
 
-        $alpha = (string)$a;
+        $compress = !empty($options['compress']);
+        $glue = ' ';
+        $alpha_sep = $compress ? '/' : ' / ';
 
-        if ($alpha === '' || $alpha == 1 || $alpha == '100%') {
+        $format = '%s'.$glue.'%s'.$glue.'%s'.$glue.'%s'.(count($rgba_values) == 4 ? '' : $alpha_sep.'%s');
 
-            $a = null;
-        }
+        array_unshift($rgba_values, 'device-cmyk('.$format.')');
 
-        if (!is_null($a)) {
-
-            if ($a->unit == '%') {
-
-                $a = Number::compress($a->value / 100);
-            } else {
-
-                $a = $a->render($options);
-            }
-        }
-
-        $sa = floatval((string)$s->value) / 100;
-        $li = floatval((string)$l->value) / 100;
-
-        switch ($h->unit) {
-
-            case 'rad':
-
-                $hu = floatval((string)$h->value) / (2 * pi());
-                break;
-
-            case 'grad':
-
-                $hu = floatval((string)$h->value) / 400;
-                break;
-            case 'turn':
-                // do nothing
-                $hu = floatval((string)$h->value);
-                break;
-
-            case 'deg':
-            default:
-
-                $hu = floatval((string)$h->value) / 360;
-                break;
-        }
-
-
-        $hex = ColorUtil::hsl2hex($hu, $sa, $li, $a);
-        $expanded = ColorUtil::expand($hex);
-
-        $named_color = null;
-
-        if (isset(ColorUtil::NAMES_COLORS[$expanded])) {
-
-            $named_color = ColorUtil::NAMES_COLORS[$expanded];
-        }
-
-        if ($hex[0] != '#') {
-
-            $named_color = $hex;
-        }
-
-        $length = strlen($hex);
-
-        if (!empty($options['rgba_hex']) || ($length != 5 && $length != 9)) {
-
-            return static::shortestValue($hex, $named_color);
-        }
-
-        if ((string)$h->unit == 'deg') {
-
-            $h = (string)$h->value;
-        } else {
-
-            $h = (string)$h;
-        }
-
-        $l = $l->render($options);
-        $s = $s->render($options);
-
-        $hsla = !empty($options['css_level']) && $options['css_level'] > 3 ? 'hsl' : 'hsla';
-
-        if (!empty($options['compress'])) {
-
-            $color = sprintf(is_null($a) ? 'hsl(%s,%s,%s)' : $hsla . '(%s,%s,%s,%s)', Number::compress($h), $s, $l, Number::compress($a));
-        } else {
-
-            $color = sprintf(is_null($a) ? 'hsl(%s, %s, %s)' : $hsla . '(%s, %s, %s, %s)', $h, $s, $l, $a);
-        }
-
-        return static::shortestValue($color, $named_color);
+        return call_user_func_array('sprintf', $rgba_values);
     }
 }

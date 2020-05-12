@@ -7,17 +7,17 @@ use InvalidArgumentException;
 use JsonSerializable;
 use ArrayAccess;
 use stdClass;
+use TBela\CSS\Query\Evaluator;
 use function get_class;
 use function is_callable;
 use function is_null;
-use function strtolower;
 use function str_ireplace;
 
 /**
  * Css node base class
  * @package TBela\CSS
  */
-abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   {
+abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayAccess, Rendererable   {
 
     use ArrayTrait;
 
@@ -62,12 +62,17 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     /**
      * create an instance from ast or another Element instance
      * @param Element|object $ast
+     * @param bool $remove_duplicates
      * @return mixed
-     * @throws InvalidArgumentException
      */
-	public static function getInstance($ast) {
+	public static function getInstance($ast, $remove_duplicates = false) : Element {
 
         $type = '';
+
+        if ($remove_duplicates) {
+
+            $ast = (new Parser())->deduplicate($ast);
+        }
 
         if ($ast instanceof Element) {
 
@@ -91,6 +96,15 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
     }
 
     /**
+     * @param string $query
+     * @return array
+     * @throws Parser\SyntaxError
+     */
+    public function query(string $query): array {
+
+	    return (new Evaluator())->evaluate($query, $this);
+    }
+    /**
      * return the root element
      * @return Element
      */
@@ -108,7 +122,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
     /**
      * return Value\Set|string
-     * @return Value\Set|Value|string
+     * @return Value\Set|string
      */
     public function getValue () {
 
@@ -122,7 +136,7 @@ abstract class Element implements JsonSerializable, ArrayAccess, Rendererable   
 
     /**
      * assign the value
-     * @param Set|string $value
+     * @param Value\Set|string $value
      * @return $this
      */
     public function setValue ($value) {

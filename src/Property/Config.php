@@ -152,10 +152,21 @@ final class Config {
         // build value map
         foreach ($properties as $property => $data) {
 
+            if (strpos($property, '.') !== false) {
+
+                continue;
+            }
+
             $value_map_keys[$data['type']][] = $property;
         }
 
         foreach ($properties as $property => $data) {
+
+            if (strpos($property, '.') !== false) {
+
+                $config[$shorthand][preg_replace('#^[^.]+\.#', '', $property)] = $data;
+                continue;
+            }
 
             $config[$shorthand]['properties'][] = $property;
 
@@ -181,7 +192,7 @@ final class Config {
             $config[$shorthand]['value_map'] = array_reverse($config[$shorthand]['value_map']);
         }
 
-        static::$config['properties'] = array_merge(static::$config['properties'], $config);
+        static::$config['properties'] = isset(static::$config['properties']) ? array_merge(static::$config['properties'], $config) : $config;
 
         return $config;
     }

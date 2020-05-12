@@ -4,8 +4,8 @@
 }
 @media print {
  @font-face {
-   font-family: Arial,MaHelvetica;
-   src: local("Helvetica Neue Bold"),local("HelveticaNeue-Bold"),url(css/MgOpenModernaBold.ttf);
-   font-weight: bold
+   font-family: Arial, MaHelvetica;
+   font-weight: bold;
+   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
  }
 }

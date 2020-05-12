@@ -90,9 +90,10 @@ _string_. The character used to tokens. The default value is the space char ' '
 
 _boolean_. If false then remove @charset declaration. The default value is _false_
 
-### rgba_hex
+### convert_color
 
-_boolean_. Convert rgb\[a\] and hsl\[a\] to hex. The default value is _false_
+_boolean_ | _string_ Convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_. if set to false then no conversion is performed. default to _hex_.
+if you want to convert hsla and rgba like colors to hex, to must set css_level to 4 otherwise they will be converted to rgba
 
 ### compress
 
@@ -100,7 +101,7 @@ _boolean_. If true then compress the css. If false then pretty print the css. Th
 
 ### css_level
 
-_int_. Support features specific to the specified CSS level. Setting the value 4 will replace _rgba_ with _rgb_ and _hsla_ with _hsl_. The default value is _3_
+_int_. Support features specific to the specified CSS level. Setting the value 3 will output colors using CSS3 format. The default value _4_ will use CSS4 color format
 
 ### remove_comments
 

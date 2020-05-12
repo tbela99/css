@@ -14,7 +14,7 @@ $parser = new Parser('', [
 
 $parser->setOptions(['allow_duplicate_declarations' => true]);
 
-$compiler = new Compiler(['compress' => true,'rgba_hex' => true]);
+$compiler = new Compiler(['compress' => true,'convert_color' => true]);
 $compiler->load('./css/atrules.css');
 
 file_put_contents('output/atrules.json', json_encode($compiler->getData()));
