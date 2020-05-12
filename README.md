@@ -367,7 +367,7 @@ The full [documentation](https://tbela99.github.io/css) can be found [here](http
 
 ## Requirements
 
-PHP version >= 7.14
+PHP version >= 7.4
 
 ---
 
