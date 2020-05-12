@@ -6,7 +6,7 @@ use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Rule;
 
 /**
- * Evaludate node name
+ * Evaluate node name
  * @package TBela\CSS\Query
  */
 class TokenSelectorValueString extends TokenSelectorValue
