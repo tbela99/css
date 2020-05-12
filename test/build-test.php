@@ -16,7 +16,7 @@ use \TBela\CSS\Compiler;
      $parser = new Parser('', ['flatten_import' => true]);
      $compiler = new Compiler();
 
-     $compiler->setOptions(['rgba_hex' => true]);
+     $compiler->setOptions(['convert_color' => true, 'css_level' => 4]);
 
      echo $file."\n";
 
@@ -39,6 +39,6 @@ use \TBela\CSS\Compiler;
 
      file_put_contents('./output/'.basename($file), $compiler->compile());
 
-    $compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
+    $compiler->setOptions(['compress' => true, 'convert_color' => true, 'css_level' => 4]);
      file_put_contents('./output/'.str_replace('.css', '.min.css', basename($file)), $compiler->compile());
  }

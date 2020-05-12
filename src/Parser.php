@@ -49,7 +49,7 @@ class Parser
         'silent' => false,
         'flatten_import' => false,
         'allow_duplicate_rules' => false,
-        'allow_duplicate_declarations' => ['background-image']
+        'allow_duplicate_declarations' => false
     ];
 
     /**

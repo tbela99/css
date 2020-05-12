@@ -14,7 +14,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - remove empty rules
 - process @import directive
 - remove @charset directive
-- compute css declarations (margin, padding, border-width, border-radius, font)
+- compute css shorthand (margin, padding, outline, border-radius, font)
 
 This was originally a PHP port of https://github.com/reworkcss/css
 
@@ -120,7 +120,7 @@ $css = $compiler->compile();
 
 ## CSS manipulation
 
-### Example: Extract Font-src
+### Example: Extract Font-src Using the CSS Query API
 
 CSS source
 
@@ -171,61 +171,58 @@ php source
 
 ```php
 
-use \TBela\CSS\Parser;
-use \TBela\CSS\Element;
-use \TBela\CSS\Element\AtRule;
-use \TBela\CSS\Element\Stylesheet;
+use \TBela\CSS\Compiler;
+use TBela\CSS\Element\Stylesheet;
 
-$parser = new Parser('', [
-    'silent' => false,
-    'flatten_import' => true
-]);
+$compiler = new Compiler();
 
-$parser->load('./css/manipulate.css');
+$compiler->setContent($css);
+
+$stylesheet = $compiler->getData();
+
+// get all src properties in a @font-face rule
+$nodes = $stylesheet->query('@font-face/src');
+
+echo implode("\n", array_map('trim', $nodes));
+```
+
+result
+
+```css
+@font-face {
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+@media print {
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
+}
+@media print {
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
+}
+```
+
+Render optimized css
+
+```php
 
 $stylesheet = new Stylesheet();
 
-function getNodes ($data, $stylesheet) {
+foreach($nodes as $node) {
 
-    $nodes = [];
-
-    foreach ($data as $node) {
-
-        if ($node instanceof AtRule) {
-
-            switch ((string) $node->getName()) {
-
-                case 'font-face':
-
-                    foreach ($node as $declaration) {
-
-                        if ((string) $declaration['name'] == 'src') {
-
-                            $stylesheet->append($declaration->copy()->getRoot());
-                            break;
-                        }
-                    }
-
-                    break;
-
-                case 'media':
-
-                    getNodes($node, $stylesheet);
-                    break;
-            }
-        }
-    }
+  $stylesheet->append($node->copy());
 }
 
-getNodes ($parser->parse(), $stylesheet);
-
-// deduplicate rules
-$stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
+$stylesheet = Stylesheet::getInstance($stylesheet, true);
 
 echo $stylesheet;
 ```
 
-result
+Result
 
 ```css
 @font-face {
@@ -360,9 +357,9 @@ div {
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
-- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
-- css_level: will use CSS4 or CSS3 color format. default to _4_
+- remove*comments: remove comments. If \_compress* is true, comments are always removed
+- convert*color: convert colors to a format between \_hex*, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- css*level: will use CSS4 or CSS3 color format. default to \_4*
 - compress: produce minified output
 - remove_empty_nodes: remove empty css rules
 
@@ -370,7 +367,7 @@ The full [documentation](https://tbela99.github.io/css) can be found [here](http
 
 ## Requirements
 
-PHP version >= 7.1
+PHP version >= 7.14
 
 ---
 

@@ -14,7 +14,7 @@ A CSS parser, beautifier and minifier written in PHP.
 - remove empty rules and declarations
 - process @import directive
 - remove @charset directive
-- compute css declarations (margin, padding, border-width, border-radius, font)
+- compute css shorthand (margin, padding, outline, border-radius, font)
 
 This was originally a PHP port of https://github.com/reworkcss/css
 

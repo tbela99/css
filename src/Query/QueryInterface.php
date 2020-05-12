@@ -1,10 +1,13 @@
 <?php
 
+namespace TBela\CSS\Query;
 
-namespace Query;
-
-
-class QueryInterface
+interface QueryInterface
 {
 
+    /**
+     * @param string $query
+     * @return QueryInterface[]
+     */
+    public function query(string $query): array;
 }

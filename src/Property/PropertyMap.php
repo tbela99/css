@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
 
 /**
- * Compute shorthand properties. Used internally by PropertyList to cpmpute shorthand for properties of different types
+ * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of different types
  * @package TBela\CSS\Property
  */
 class PropertyMap
