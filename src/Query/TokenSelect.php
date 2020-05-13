@@ -84,7 +84,7 @@ class TokenSelect extends Token implements TokenSelectInterface
                 throw new Exception(sprintf('Invalid select token "%s"', $this->node), 400);
         }
 
-        return $this->sortContext($this->unique($result));
+        return $this->unique($result);
     }
 
     /**

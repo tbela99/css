@@ -19,9 +19,9 @@ if [ "$1" == "" ]; then
 else
 
   file="src/$1.php"
-  if test -f "$file"; then
+  if [ -f "$file" ]; then
     php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file
   else
-    echo "Invalid test: "$1
+    echo "Invalid test: $1"
   fi
 fi

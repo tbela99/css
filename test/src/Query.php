@@ -16,12 +16,25 @@ function get_content($file) {
 final class Query extends TestCase
 {
     /**
-     * @param Element $element
-     * @param $jsonData
-     * @param string $expected
+     * @param array $expected
+     * @param array $actual
      * @dataProvider queryProvider
      */
     public function testQuery(array $expected, array $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     * @dataProvider queryProviderOr
+     */
+    public function testQueryOr(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -473,6 +486,66 @@ p {
  p {
    background-color: #030303
  }
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        return $data;
+    }
+
+    /*
+    */
+    public function queryProviderOR ()
+    {
+
+        $data = [];
+
+        $css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
+h1,h2, a {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}';
+
+        $compiler = new Compiler();
+
+        $compiler->setContent($css);
+
+        $element = $compiler->getData();
+
+        // select @font-face that contains a src declaration
+        $context = 'h1,a';
+
+        $data[] = [
+            [
+                0 => 'a {
+ color: #fff
+}',
+                1 => 'h1,
+h2,
+a {
+ color: #fff;
+ font-size: 50px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-weight: bold
 }'
             ],
             array_map('trim', $element->query($context))];

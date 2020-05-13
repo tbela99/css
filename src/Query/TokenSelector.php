@@ -45,8 +45,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
         $result = [];
 
-
-
         /**
          * @var TokenSelectorInterface $filter
          */
@@ -68,6 +66,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
             array_splice($result, count($result), 0, $tmp);
         }
 
-        return $this->sortContext($this->unique($result));
+        return $this->unique($result);
     }
 }

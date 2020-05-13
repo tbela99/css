@@ -78,12 +78,19 @@ body {
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
 }
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
 h1,h2, a {
   color: #fff;
   font-size: 50px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
-}
 }')->getData();
 
 echo var_export(array_map('trim', $element->query($expression)), true);
