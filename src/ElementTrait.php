@@ -16,7 +16,7 @@ trait ElementTrait  {
      * @return string
      * @throws Exception
      */
-    public function getName($getVendor = true) {
+    public function getName(bool $getVendor = true): string {
 
         $vendor = $this->getVendor();
 
@@ -25,18 +25,18 @@ trait ElementTrait  {
             return '-'.$vendor.'-'.$this->ast->name;
         }
 
-        return (string) $this->ast->name;
+        return $this->ast->name;
     }
 
     /**
      * set vendor prefix
      * @return string
      */
-    public function getVendor () {
+    public function getVendor () : string {
 
         if (isset($this->ast->vendor)) {
 
-            return (string) $this->ast->vendor;
+            return $this->ast->vendor;
         }
 
         return '';
@@ -44,9 +44,10 @@ trait ElementTrait  {
 
     /**
      * get node name
-     * @return string
+     * @param string $name
+     * @return Element
      */
-    public function setName ($name) {
+    public function setName (string $name) {
 
         if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
 
@@ -56,7 +57,7 @@ trait ElementTrait  {
 
         else {
 
-            $this->ast->name = (string) $name;
+            $this->ast->name = $name;
         }
 
         return $this;
@@ -66,7 +67,7 @@ trait ElementTrait  {
      * @param string|null $prefix
      * @return $this
      */
-    public function setVendor ($prefix) {
+    public function setVendor (string $prefix) {
 
         if (is_null($prefix) || $prefix === '') {
 
@@ -75,7 +76,7 @@ trait ElementTrait  {
 
         else {
 
-            $this->ast->vendor = (string) $prefix;
+            $this->ast->vendor = $prefix;
         }
 
         return $this;

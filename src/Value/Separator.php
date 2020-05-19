@@ -13,12 +13,11 @@ class Separator extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         $value = $this->data->value;
 
         return $value.($value != '/' && empty($options['compress']) ? ' ' : '');
     }
-
 }

@@ -11,27 +11,34 @@ use Exception;
 class Compiler {
 
     /**
+     *
+     * @var array|string[]
+     * @ignore
+     */
+    protected array $properties = [
+           'indent',
+           'glue',
+           'separator',
+           'charset',
+           'convert_color',
+           'compress',
+           'css_level',
+           'remove_comments',
+           'remove_empty_nodes',
+           'allow_duplicate_declarations'
+    ];
+
+    /**
      * @var array
      * @ignore
      */
-    protected $options = [
-	    'indent' => ' ',
-        'glue' => "\n",
-        'separator' => ' ',
-        'charset' => false,
-        'convert_color' => true,
-        'compress' => false,
-        'css_level' => 4,
-        'remove_comments' => false,
-        'remove_empty_nodes' => true,
-        'allow_duplicate_declarations' => false // ['background-image']
-    ];
+    protected array $options = [];
 
     /**
      * @var Element
      * @ignore
      */
-	protected $data;
+	protected Element $data;
 
     /**
      * Compiler constructor.
@@ -49,11 +56,11 @@ class Compiler {
      */
 	public function setOptions (array $options) {
 
-	    foreach (array_keys($this->options) as $key) {
+	    foreach ($options as $key => $value) {
 
-	        if (isset($options[$key])) {
+	        if (in_array($key, $this->properties)) {
 
-	            $this->options[$key] = $options[$key];
+	            $this->options[$key] = $value;
             }
         }
 

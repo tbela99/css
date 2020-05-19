@@ -1,3 +1,4 @@
+
 /*
 @import "import-media.css" print;
 @import url(css/css/url-import-media.css) all;
@@ -29,9 +30,36 @@
    left: 100%
  }
 }
-/* removed empty rules */
-/* removed empty @media */
+@keyframes identifier2 {
+ 0% {
 
+ }
+ 30% {
+
+ }
+ 68%,
+ 72% {
+
+ }
+ 100% {
+
+ }
+}
+/* removed empty rules */
+.removable {
+
+}
+/* removed empty @media */
+@media all {
+ .removable {
+
+ }
+ @media none {
+  .removable {
+
+  }
+ }
+}
 button.close {
  padding: 3px;
  cursor: pointer;
@@ -161,10 +189,10 @@ textarea {
    text-decoration: underline
  }
  a[href]:after {
-   content: " ("attr(href) ")"
+   content: " ("attr(href) )
  }
  abbr[title]:after {
-   content: " ("attr(title) ")"
+   content: " ("attr(title) )
  }
  .ir a:after,
  a[href^="javascript:"]:after,
@@ -2059,7 +2087,7 @@ table th[class*="span"],
  background-color: #005783;
  background-image: linear-gradient(to bottom, #005e8d, #004d74);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d', '#ff004c73', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff005e8d, #ff004c73, GradientType=0)
 }
 .dropdown-menu>.active>a,
 .dropdown-menu>.active>a:hover,
@@ -2070,7 +2098,7 @@ table th[class*="span"],
  background-color: #005783;
  background-image: linear-gradient(to bottom, #005e8d, #004d74);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d', '#ff004c73', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff005e8d, #ff004c73, GradientType=0)
 }
 .dropdown-menu>.disabled>a,
 .dropdown-menu>.disabled>a:hover,
@@ -3233,7 +3261,7 @@ input[type="submit"].btn.btn-mini {
  background-color: #fafafa;
  background-image: linear-gradient(to bottom, #fff, #f2f2f2);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ffffffff', '#fff2f2f2', GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(#ffffffff, #fff2f2f2, GradientType=0);
  border: 1px solid #d4d4d4;
  -webkit-border-radius: 4px;
  -moz-border-radius: 4px;
@@ -3586,7 +3614,7 @@ input[type="submit"].btn.btn-mini {
  background-color: #1b1b1b;
  background-image: linear-gradient(to bottom, #222, #111);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff222222', '#ff111111', GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff222222, #ff111111, GradientType=0);
  border-color: #252525
 }
 .navbar-inverse .brand,
@@ -4364,7 +4392,7 @@ a.badge:focus {
  background-color: #f7f7f7;
  background-image: linear-gradient(to bottom, #f5f5f5, #f9f9f9);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#fff5f5f5', '#fff9f9f9', GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(#fff5f5f5, #fff9f9f9, GradientType=0);
  -webkit-box-shadow: inset 0 1px 2px #0000001a;
  -moz-box-shadow: inset 0 1px 2px #0000001a;
  box-shadow: inset 0 1px 2px #0000001a;
@@ -4383,7 +4411,7 @@ a.badge:focus {
  background-color: #0e90d2;
  background-image: linear-gradient(to bottom, #149bdf, #0480be);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff149bdf', '#ff0480be', GradientType=0);
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff149bdf, #ff0480be, GradientType=0);
  -webkit-box-shadow: inset 0 -1px 0 #00000026;
  -moz-box-shadow: inset 0 -1px 0 #00000026;
  box-shadow: inset 0 -1px 0 #00000026;
@@ -4420,7 +4448,7 @@ a.badge:focus {
  background-color: #dd514c;
  background-image: linear-gradient(to bottom, #ee5f5b, #c43c35);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ffee5f5b', '#ffc43c35', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ffee5f5b, #ffc43c35, GradientType=0)
 }
 .progress-danger.progress-striped .bar,
 .progress-striped .bar-danger {
@@ -4432,7 +4460,7 @@ a.badge:focus {
  background-color: #5eb95e;
  background-image: linear-gradient(to bottom, #62c462, #57a957);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff62c462', '#ff57a957', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff62c462, #ff57a957, GradientType=0)
 }
 .progress-success.progress-striped .bar,
 .progress-striped .bar-success {
@@ -4444,7 +4472,7 @@ a.badge:focus {
  background-color: #4bb1cf;
  background-image: linear-gradient(to bottom, #5bc0de, #339bb9);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff5bc0de', '#ff339bb9', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff5bc0de, #ff339bb9, GradientType=0)
 }
 .progress-info.progress-striped .bar,
 .progress-striped .bar-info {
@@ -4456,7 +4484,7 @@ a.badge:focus {
  background-color: #faa732;
  background-image: linear-gradient(to bottom, #fbb450, #f89406);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#fffab44f', '#fff89406', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#fffab44f, #fff89406, GradientType=0)
 }
 .progress-warning.progress-striped .bar,
 .progress-striped .bar-warning {
@@ -6298,7 +6326,7 @@ div.modal.jviewport-width100 {
   font-family: IcoMoon;
   font-weight: normal;
   font-style: normal;
-  src: url(media/jui/fonts/IcoMoon.eot?#iefix) format('embedded-opentype'), url(media/jui/fonts/IcoMoon.woff) format('woff'), url(media/jui/fonts/IcoMoon.ttf) format('truetype'), url(media/jui/fonts/IcoMoon.svg#IcoMoon) format('svg')
+  src: url(media/jui/fonts/IcoMoon.eot?#iefix) format(embedded-opentype), url(media/jui/fonts/IcoMoon.woff) format(woff), url(media/jui/fonts/IcoMoon.ttf) format(truetype), url(media/jui/fonts/IcoMoon.svg#IcoMoon) format(svg)
 }
 [data-icon]:before {
  font-family: IcoMoon;
@@ -7365,7 +7393,7 @@ figcaption {
  background-color: #005783;
  background-image: linear-gradient(to bottom, #005e8d, #004d74);
  background-repeat: repeat-x;
- filter: progid:DXImageTransform.Microsoft.gradient('#ff005e8d', '#ff004c73', GradientType=0)
+ filter: progid:DXImageTransform.Microsoft.gradient(#ff005e8d, #ff004c73, GradientType=0)
 }
 .categories-list .collapse {
  margin-left: 20px

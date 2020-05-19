@@ -17,34 +17,34 @@ class PropertySet
      * @var array
      * @ignore
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var array
      * @ignore
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected $property_type = [];
+    protected array $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected $shorthand;
+    protected string $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct($shorthand, array $config)
+    public function __construct(string $shorthand, array $config)
     {
 
-        $this->shorthand = (string) $shorthand;
+        $this->shorthand = $shorthand;
 
         foreach ($config['properties'] as $property) {
 
@@ -69,10 +69,8 @@ class PropertySet
      * @return PropertySet
      * @throws InvalidArgumentException
      */
-    public function set($name, Set $value)
+    public function set(string $name, Set $value): PropertySet
     {
-
-        $name = (string) $name;
 
         // is valid property
         if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
@@ -106,8 +104,6 @@ class PropertySet
 
                     $this->setProperty($property, Value::parse(implode($separator, $values), $property));
                 }
-
-            //    return $this;
             }
 
 
@@ -227,7 +223,7 @@ class PropertySet
      * @return string
      * @ignore
      */
-    protected function reduce()
+    protected function reduce(): string
     {
         $result = [];
 
@@ -313,7 +309,7 @@ class PropertySet
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, Set $value)
+    protected function setProperty($name, Set $value): PropertySet
     {
 
         if (!isset($this->properties[$name])) {
@@ -330,13 +326,13 @@ class PropertySet
      * return Property array
      * @return Property[]
      */
-    public function getProperties() {
+    public function getProperties(): array {
 
         if (count($this->properties) == count($this->config['properties'])) {
 
             $value = $this->reduce();
 
-            if ($value !== false) {
+            if ($value !== false && $value !== '') {
 
                 return [(new Property($this->config['shorthand']))->setValue($value)];
             }
@@ -350,7 +346,7 @@ class PropertySet
      * @param string $join
      * @return string
      */
-    public function render($join = "\n")
+    public function render($join = "\n"): string
     {
         $glue = ';';
         $value = '';

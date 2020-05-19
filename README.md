@@ -15,8 +15,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-
-This was originally a PHP port of https://github.com/reworkcss/css
+- query the css nodes using the Query Api
 
 ## Installation
 
@@ -25,6 +24,10 @@ install using [Composer](https://getcomposer.org/)
 ```bash
 $ composer require tbela99/css
 ```
+
+## Requirements
+
+PHP version >= 7.4
 
 ## Usage:
 
@@ -365,10 +368,8 @@ div {
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 
-## Requirements
-
-PHP version >= 7.4
-
 ---
 
 Thanks to [Jetbrains](https://jetbrains.com) for providing a free PhpStorm license
+
+This was originally a PHP port of https://github.com/reworkcss/css

@@ -2,15 +2,8 @@
 
 namespace TBela\CSS\Query;
 
-use Exception;
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Rule;
-use TBela\CSS\RuleList;
-
 class TokenSelector extends Token implements TokenSelectorInterface
 {
- //   protected string $node = '';
-//    protected ?string $context = null;
 
     /**
      * @var TokenSelectorValueInterface[][]

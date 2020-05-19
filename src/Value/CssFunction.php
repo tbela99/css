@@ -10,12 +10,12 @@ use \TBela\CSS\Value;
  */
 class CSSFunction extends Value {
 
-    protected static function validate($data) {
+    protected static function validate($data): bool {
 
         return isset($data->name) && isset($data->arguments);
     }
 
-    public function render(array $options = []) {
+    public function render(array $options = []): string {
 
         return $this->data->name.'('. $this->data->arguments->render($options).')';
     }

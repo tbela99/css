@@ -2,14 +2,16 @@
 
 namespace TBela\CSS\Query;
 
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Rule;
-
 class TokenSelectorValueAttribute extends TokenSelectorValue
 {
     protected array $value = [];
     protected TokenSelectorValueInterface $expression;
 
+    /**
+     * TokenSelectorValueAttribute constructor.
+     * @param object $data
+     * @throws \Exception
+     */
     public function __construct($data)
     {
         parent::__construct($data);

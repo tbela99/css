@@ -24,15 +24,15 @@ abstract class Value
      */
     protected $data = null;
 
-    protected static $defaults = [];
+    protected static array $defaults = [];
 
-    protected static $keywords = [];
+    protected static array $keywords = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected static $cache = [];
+    protected static array $cache = [];
 
     /**
      * Value constructor.
@@ -89,13 +89,13 @@ abstract class Value
      * @param string $type
      * @return bool
      */
-    public function match($type)
+    public function match(string $type): bool
     {
 
         return strtolower($this->data->type) == $type;
     }
 
-    public static function getClassName($type) {
+    public static function getClassName(string $type): string {
 
         static $classNames = [];
 
@@ -110,7 +110,7 @@ abstract class Value
         return $classNames[$type];
     }
 
-    protected static function type() {
+    protected static function type(): string {
 
         static $types = [];
 
@@ -131,7 +131,7 @@ abstract class Value
      * @param object $token
      * @return bool
      */
-    protected static function matchDefaults ($token) {
+    protected static function matchDefaults ($token) : bool {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
     }
@@ -142,7 +142,7 @@ abstract class Value
      * @param object $previousValue
      * @return bool
      */
-    public function matchToken ($token, $previousToken = null, $previousValue = null) {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null): bool {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
     }
@@ -152,7 +152,7 @@ abstract class Value
      * @param stdClass $data
      * @return bool
      */
-    protected static function validate($data)
+    protected static function validate($data): bool
     {
 
         return isset($data->value);
@@ -163,7 +163,7 @@ abstract class Value
      * @param stdClass $data
      * @return Value
      */
-    public static function getInstance($data)
+    public static function getInstance($data): Value
     {
 
         if ($data instanceof Value) {
@@ -197,7 +197,7 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         return $this->data->value;
@@ -205,14 +205,14 @@ abstract class Value
 
     /**
      * parse a css value
-     * @param Set|string $string
+     * @param string $string
      * @param string $property
      * @param bool $capture_whitespace
      * @return Set
      */
-    public static function parse($string, $property = null, $capture_whitespace = true)
+    public static function parse(string $string, ?string $property = null, bool $capture_whitespace = true): Set
     {
-        if ($string instanceof Set || $string instanceof Value) {
+        if ($string instanceof Set) {
 
             return $string;
         }
@@ -239,7 +239,7 @@ abstract class Value
      * @param array $options
      * @return array
      */
-    public static function reduce(array $tokens, array $options = [])
+    public static function reduce(array $tokens, array $options = []): array
     {
         $count = count($tokens) - 1;
 
@@ -287,7 +287,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return Set
      */
-    protected static function doParse($string, $capture_whitespace = true)
+    protected static function doParse(string $string, bool $capture_whitespace = true): Set
     {
 
         return new Set(static::reduce(static::getTokens($string, $capture_whitespace)));
@@ -299,7 +299,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return array|null
      */
-    protected static function getTokens($string, $capture_whitespace = true)
+    protected static function getTokens(string $string, $capture_whitespace = true)
     {
 
         $string = trim($string);
@@ -519,7 +519,11 @@ abstract class Value
         return $tokens;
     }
 
-    protected static function getType($token)
+    /**
+     * @param $token
+     * @return stdClass
+     */
+    protected static function getType(string $token)
     {
 
         $type = new stdClass;
@@ -561,10 +565,10 @@ abstract class Value
     /**
      * @param string $string
      * @param array|null $keywords
-     * @return string|false
+     * @return string|null
      * @ignore
      */
-    public function matchKeyword($string, array $keywords = null)
+    public static function matchKeyword($string, array $keywords = null): ?string
     {
 
         if (is_null($keywords)) {
@@ -582,7 +586,7 @@ abstract class Value
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

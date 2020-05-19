@@ -17,34 +17,34 @@ class PropertyMap
      * @var array
      * @ignore
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var Property[]
      * @ignore
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected $property_type = [];
+    protected array $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected $shorthand;
+    protected string $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct($shorthand, array $config)
+    public function __construct(string $shorthand, array $config)
     {
 
-        $this->shorthand = (string)$shorthand;
+        $this->shorthand = $shorthand;
 
         $config['required'] = [];
 
@@ -71,10 +71,9 @@ class PropertyMap
      * @param Set $value
      * @return PropertyMap
      */
-    public function set($name, Set $value)
+    public function set(string $name, Set $value)
     {
 
-        $name = (string) $name;
         // is valid property
         if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
 

@@ -13,7 +13,7 @@ class FontFamily extends Value
     /**
      * @inheritDoc
      */
-    public function matchToken ($token, $previousToken = null, $previousValue = null) {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null): bool {
 
         return $token->type == 'css-string' || $token->type == static::type();
     }
@@ -22,7 +22,7 @@ class FontFamily extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse($string, $capture_whitespace = true)
+    protected static function doParse($string, $capture_whitespace = true): Set
     {
 
         $type = static::type();

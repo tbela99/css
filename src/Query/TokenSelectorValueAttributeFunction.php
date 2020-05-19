@@ -1,10 +1,6 @@
 <?php
 
-
 namespace TBela\CSS\Query;
-
-
-use InvalidArgumentException;
 
 class TokenSelectorValueAttributeFunction extends TokenSelectorValue implements TokenSelectorValueInterface
 {
@@ -14,7 +10,7 @@ class TokenSelectorValueAttributeFunction extends TokenSelectorValue implements 
 
     /**
      * TokenSelectorValueAttributeExpression constructor.
-     * @param array $value
+     * @param object $value
      */
     public function __construct($value)
     {
@@ -22,15 +18,37 @@ class TokenSelectorValueAttributeFunction extends TokenSelectorValue implements 
 
         $this->arguments = [];
 
-        if ($this->name == 'contains' && count($value->arguments) == 3 && $value->arguments[1]->type == 'separator' && $value->arguments[1]->value == ',') {
+        if (in_array($this->name, ['contains', 'beginswith', 'endswith', 'equals']) && count($value->arguments) == 3 && $value->arguments[1]->type == 'separator' && $value->arguments[1]->value == ',') {
 
+            $op = '';
+
+            switch ($this->name) {
+
+                case 'contains':
+
+                    $op = '*=';
+                    break;
+                case 'beginswith':
+
+                    $op = '^=';
+                    break;
+                case 'endswith':
+
+                    $op = '$=';
+                    break;
+                case 'equals':
+
+                    $op = '=';
+                    break;
+            }
             // use TokenSelectorValueAttributeExpression
-            $value->arguments[1] = (object) ['type' => 'operator', 'value' => '*='];
+            $value->arguments[1] = (object) ['type' => 'operator', 'value' => $op];
             $this->expression = new TokenSelectorValueAttributeExpression($value->arguments);
         }
 
         else {
 
+            // map to an existing function or die
             $this->expression = call_user_func([static::class, 'getInstance'], (object) ['type' => $value->name, 'arguments' => $value->arguments]);
         }
     }

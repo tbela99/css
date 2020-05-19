@@ -2,10 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use \Exception;
-use stdClass;
-use \TBela\CSS\Value;
-
 // pattern font-style font-variant font-weight font-stretch font-size / line-height <'font-family'>
 
 /**
@@ -16,9 +12,11 @@ trait ValueTrait
 {
 
     /**
-     * @throws Exception
+     * @param string $string
+     * @param bool $capture_whitespace
+     * @return Set
      */
-    protected static function doParse($string, $capture_whitespace = true)
+    protected static function doParse(string $string, bool $capture_whitespace = true): Set
     {
 
         $type = static::type();

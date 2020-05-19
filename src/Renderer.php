@@ -60,7 +60,7 @@ class Renderer
      * @var bool allow rbga hex color
      * @ignore
      */
-    protected $convert_color = true;
+    protected $convert_color = false;
 
     /**
      * @var bool remove comments
@@ -72,7 +72,7 @@ class Renderer
      * @var bool remove empty node
      * @ignore
      */
-    protected $remove_empty_nodes = true;
+    protected $remove_empty_nodes = false;
 
     /**
      * @var bool|array|string true|false or a list of exceptions
@@ -97,6 +97,25 @@ class Renderer
      */
     public function setOptions(array $options)
     {
+
+        if (isset($options['compress'])) {
+
+            $this->compress = $options['compress'];
+
+            if ($this->compress) {
+
+                $this->glue = '';
+                $this->indent = '';
+                $this->convert_color = 'hex';
+                $this->charset = false;
+                $this->remove_comments = true;
+                $this->remove_empty_nodes = true;
+            } else {
+
+                $this->glue = "\n";
+                $this->indent = ' ';
+            }
+        }
 
         if (isset($options['indent'])) {
 
@@ -136,24 +155,6 @@ class Renderer
         if (isset($options['allow_duplicate_declarations'])) {
 
             $this->allow_duplicate_declarations = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
-        }
-
-        if (isset($options['compress'])) {
-
-            $this->compress = $options['compress'];
-
-            if ($this->compress) {
-
-                $this->glue = '';
-                $this->indent = '';
-                $this->charset = false;
-                $this->remove_comments = true;
-                $this->remove_empty_nodes = true;
-            } else {
-
-                $this->glue = "\n";
-                $this->indent = ' ';
-            }
         }
 
         return $this;

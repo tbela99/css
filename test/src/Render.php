@@ -87,8 +87,8 @@ final class Render extends TestCase
         $stylesheet = Element::getInstance($ast);
 
         $this->assertEquals(
-            (string) $stylesheet,
-            get_content($expected)
+            get_content($expected),
+            (string) $stylesheet
         );
     }
 

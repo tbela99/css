@@ -2,9 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use \Exception;
-use \TBela\CSS\Value;
-
 /**
  * Css string value
  * @package TBela\CSS\Value
@@ -16,7 +13,7 @@ class OutlineColor extends Color
     /**
      * @inheritDoc
      */
-    public function matchToken($token, $previousToken = null, $previousValue = null)
+    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
     {
         return $token->type == 'color';
     }

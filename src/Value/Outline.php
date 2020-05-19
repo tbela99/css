@@ -18,7 +18,7 @@ class Outline extends ShortHand
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         [
             ['type' => 'outline-style', 'optional' => true],

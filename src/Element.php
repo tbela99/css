@@ -215,7 +215,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     {
         try {
 
-            return (new Renderer())->render($this, null, true);
+            return (new Renderer(['remove_empty_nodes' => false]))->render($this, null, true);
         }
 
         catch (Exception $ex) {

@@ -39,7 +39,6 @@ class TokenSelect extends Token implements TokenSelectInterface
 
             case '..':
 
-
                 foreach ($context as $element) {
 
                     $result[] = $element->getParent();

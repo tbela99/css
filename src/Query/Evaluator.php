@@ -7,10 +7,8 @@ use TBela\CSS\Parser\SyntaxError;
 
 class Evaluator
 {
-    protected array $context = [];
-
     /**
-     * @param $expression
+     * @param string $expression
      * @param QueryInterface $context
      * @return QueryInterface[]
      * @throws SyntaxError
@@ -19,6 +17,11 @@ class Evaluator
     {
 
         $tokens = (new Parser())->parse($expression);
+
+        if ($tokens === []) {
+
+            return [];
+        }
 
         $result = [$context];
         $j = count($tokens);

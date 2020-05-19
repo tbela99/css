@@ -35,6 +35,11 @@ class Parser
 
         $string = trim($string);
 
+        if ($string === '') {
+
+            return [];
+        }
+
         $i = -1;
         $j = strlen($string) - 1;
 
@@ -63,7 +68,7 @@ class Parser
 
         $i = $j = count($this->tokens);
 
-        while ($i-- >= 1) {
+        while ($i && $i--) {
 
             if (isset($this->tokens[$i + 1]->type) && $this->tokens[$i + 1]->type == 'select' && in_array($this->tokens[$i + 1]->node, ['.', '..'])) {
 
@@ -108,7 +113,7 @@ class Parser
         }
 
         // set default context
-        if (isset($this->tokens[0]) && $this->tokens[0]->type != 'select') {
+        if (empty($this->tokens) || (isset($this->tokens[0]) && $this->tokens[0]->type != 'select')) {
 
             array_unshift($this->tokens, (object) ['type' => 'select', 'node' => 'self_or_descendants']);
         }
@@ -119,7 +124,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_selectors()
+    protected function parse_selectors(): void
     {
 
         $j = $this->last;
@@ -199,10 +204,10 @@ class Parser
     /**
      * @param string $selector
      * @param string $context
-     * @return object
+     * @return array
      * @throws SyntaxError
      */
-    protected function parse_selector(string $selector, string $context = 'selector')
+    protected function parse_selector(string $selector, string $context = 'selector'): array
     {
 
         $selector = trim($selector);
@@ -351,23 +356,42 @@ class Parser
                             throw new SyntaxError(sprintf('missing %s in "%s"', '"]"', $selector));
                         }
 
-                        $result[] = $this->getTokenType($buffer, $context);
+                        if ($buffer !== '') {
+
+                            $result[] = $this->getTokenType($buffer, $context);
+                        }
+
                         $data = $this->parse_selector(substr($match, 1, -1), 'attribute');
 
                         if (isset($data[0])) {
 
                             $data = $data[0];
 
-                            if (isset($data->value) &&
-                                count($data->value) == 1 &&
-                                isset($data->value[0]->value) &&
-                                is_numeric($data->value[0]->value)) {
+                            if (isset($data->value)) {
 
-                                $data->value[0]->type = 'index';
-                                $data->value[0]->value = +$data->value[0]->value;
+                                if(count($data->value) == 1 &&
+                                    isset($data->value[0]->value) &&
+                                    is_numeric($data->value[0]->value)) {
+
+                                    $data->value[0]->type = 'index';
+                                    $data->value[0]->value = +$data->value[0]->value;
+                                }
+
+                                else if (count($data->value) == 3) {
+
+                                    if ($data->value[1]->type == 'operator' &&
+                                    $data->value[0]->type == $data->value[2]->type &&
+                                    $data->value[2]->value === $data->value[2]->value) {
+
+                                        $data = [];
+                                    }
+                                }
                             }
 
-                            $result[] = $data;
+                            if (!empty($data)) {
+
+                                $result[] = $data;
+                            }
                         }
 
                         $in_attribute = false;
@@ -388,6 +412,13 @@ class Parser
                         if ($match === false) {
 
                             throw new SyntaxError(sprintf('missing %s in "%s"', '")"', $selector));
+                        }
+
+                        if ($context == 'selector') {
+
+                            $buffer .= $match;
+                            $i += strlen($match) - 1;
+                            break;
                         }
 
                         $data = $this->parse_selector(substr($match, 1, -1), 'function');
@@ -448,7 +479,12 @@ class Parser
         return [(object)['type' => $context, 'value' => $result]];
     }
 
-    protected function getTokenType(string $token, $context)
+    /**
+     * @param string $token
+     * @param string $context
+     * @return object
+     */
+    protected function getTokenType(string $token, string $context)
     {
 
         $result = (object)['type' => 'string', 'value' => $token];
@@ -465,7 +501,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_path()
+    protected function parse_path(): void
     {
 
         $j = strlen($this->string) - 1;
@@ -495,13 +531,13 @@ class Parser
         }
     }
 
-    protected function is_whitespace($char)
+    protected function is_whitespace($char): bool
     {
 
         return preg_match('#^\s+$#sm', $char);
     }
 
-    protected function match_token($string, $close, $start)
+    protected function match_token($string, $close, $start): string
     {
 
         $j = strlen($string) - 1;
