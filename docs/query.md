@@ -38,7 +38,9 @@ $nodes = $element->query('[@name]');
 // match all @media
 $nodes = $element->query('[@name="media"]');
 ```
-- @value: this attribute designates the css declaration value or @AtRule attributes
+#### @value
+
+this attribute designates the css declaration value or @AtRule attributes
 
 ```php
 // match all nodes with a value
@@ -50,22 +52,22 @@ $nodes = $element->query('[@value="print"]');
 
 Operators are used inside attributes. They can only be used inside \[ and \]
 
-- equals (=)
+#### equals (=)
 
 ```php
 $nodes = $element->query('[@value="url(./images/flower.jpg)"]');
 ```
-- begins with (^=)
+#### begins with (^=)
 
 ```php
 $nodes = $element->query('[@value^="print"]');
 ```
-- ends with ($=)
+#### ends with ($=)
 
 ```php
 $nodes = $element->query('[@value$="print"]');
 ```
-- contains (*=)
+#### contains (*=)
 
 ```php
 $nodes = $element->query('[@value*="print"]');
@@ -75,44 +77,66 @@ $nodes = $element->query('[@value*="print"]');
 
 Nodes can be filtered using functions. Functions are 
 
-- color(@attr, 'value'): match all nodes with attributes that match the specified color
+#### color(@attr, 'value')
+ 
+match all nodes with attributes that match the specified color
+
 ```php
 // match all declarations with value that match white color
 $nodes = $element->query('[color(@value, "white")]');
 ```
-- contains(@attr, 'value'): match all nodes with attributes that contains the specified value
+#### contains(@attr, 'value')
+
+match all nodes with attributes that contains the specified value
+
 ```php
 // match all nodes with value that contains print
-$nodes = $element->query('[contains(@attr, "print")]');
+$nodes = $element->query('[contains(@value, "print")]');
 ```
-- beginswith(@attr, 'value'): match all nodes with attributes that begin with the specified value
+#### beginswith(@attr, 'value')
+
+match all nodes with attributes that begin with the specified value
+
 ```php
 // match all nodes with value that contains print
-$nodes = $element->query('[beginswith(@attr, "print")]');
+$nodes = $element->query('[beginswith(@value, "print")]');
 ```
-- endswith(@attr, 'value'): match all nodes with attributes that end with the specified value
+#### endswith(@attr, 'value')
+
+match all nodes with attributes that end with the specified value
+
 ```php
 // match all nodes with value that contains print
-$nodes = $element->query('[endswith(@attr, "print")]');
+$nodes = $element->query('[endswith(@value, "print")]');
 ```
-- equals(@attr, 'value'): match all nodes with attributes that are equal to specified value
+####  equals(@attr, 'value')
+
+match all nodes with attributes that are equal to the specified value
+
 ```php
 // match all nodes with value that contains print
-$nodes = $element->query('[equals(@attr, "print")]');
+$nodes = $element->query('[equals(@value, "print")]');
 ```
-- empty(): match empty rules
+#### empty()
+
+match empty rules
+
 ```php
 // match all empty nodes
 $nodes = $element->query('[empty()]');
 ```
-- comment(): match comments node
+#### comment()
+
+match comments node
 
 ```php
 // match all comment nodes
 $nodes = $element->query('[comment()]');
 ```
 
-- not(): match nodes that do not match an expression
+#### not()
+
+match nodes that do not match an expression
 
 ```php
 // match all nodes with name 'color' and value that is not white
