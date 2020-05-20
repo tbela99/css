@@ -3,7 +3,6 @@
 namespace TBela\CSS\Value;
 
 use \Exception;
-use stdClass;
 use \TBela\CSS\Value;
 
 /**
@@ -16,7 +15,7 @@ class ShortHand extends Value
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         /*
         'keyword',
@@ -36,12 +35,12 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse($string, $capture_whitespace = true)
+    protected static function doParse(string $string, bool $capture_whitespace = true): Set
     {
 
         $keyword = static::matchKeyword($string);
 
-        if ($keyword !== false) {
+        if (!is_null($keyword)) {
 
             return new Set([(object) ['value' => $keyword, 'type' => static::type()]]);
         }

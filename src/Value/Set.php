@@ -48,7 +48,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * Convert this object to string
      * @return string
      */
-    public function render () {
+    public function render (): string {
 
         $result = '';
 
@@ -67,7 +67,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param callable $filter
      * @return $this
      */
-    public function filter (callable $filter) {
+    public function filter (callable $filter): Set {
 
         $this->data = array_filter($this->data, $filter);
         return $this;
@@ -78,7 +78,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param callable $map
      * @return $this
      */
-    public function map (callable $map) {
+    public function map (callable $map): Set {
 
         $this->data = array_map($map, $this->data);
         return $this;
@@ -89,7 +89,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param Set $set
      * @return Set
      */
-    public function merge (Set $set) {
+    public function merge (Set $set): Set {
 
         array_splice($this->data, count($this->data), 0, $set->data);
         return $this;
@@ -100,7 +100,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param Value $value
      * @return $this
      */
-    public function add(Value $value) {
+    public function add(Value $value): Set {
 
         $this->data[] = $value;
         return $this;
@@ -119,7 +119,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * return an array of internal data
      * @return array
      */
-    public function toArray() {
+    public function toArray(): array {
 
         return $this->data;
     }

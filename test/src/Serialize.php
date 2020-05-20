@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
 use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
 
 // because git changes \n to \r\n at some point, this causes test failure
 function get_content($file) {
@@ -29,8 +30,9 @@ final class Serialize extends TestCase
            json_encode($element)
         );
 
+        /** @var TYPE_NAME $element */
         $this->assertEquals(
-            (string) $element,
+            (new Renderer(['convert_color' => true]))->render($element) ,
             get_content($expected)
         );
     }

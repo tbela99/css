@@ -16,7 +16,7 @@ class FontStretch extends Value
      * @var array
      * @ignore
      */
-    protected static $keywords = [
+    protected static array $keywords = [
         'normal' => '100%',
         'semi-condensed' => '87.5%',
         'condensed' => '75%',
@@ -28,12 +28,12 @@ class FontStretch extends Value
         'ultra-expanded' => '200%'
     ];
 
-    protected static $defaults = ['normal', '100%'];
+    protected static array $defaults = ['normal', '100%'];
 
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         if (!empty($options['compress'])) {

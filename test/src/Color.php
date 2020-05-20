@@ -132,7 +132,7 @@ final class Color extends TestCase
 
     public function rgbaColorProvider () {
 
-        $compiler = new Compiler(['css_level' => 3]);
+        $compiler = new Compiler(['css_level' => 3, 'convert_color' => true]);
 
         $data = [];
 
@@ -421,7 +421,7 @@ p {
 
     public function blackColorProvider () {
 
-        $compiler = new Compiler();
+        $compiler = new Compiler(['convert_color' => 'hex']);
 
         $data = [];
 
@@ -594,7 +594,7 @@ p {
 
     public function yellowColorProvider () {
 
-        $compiler = new Compiler();
+        $compiler = new Compiler(['convert_color' => 'hex']);
 
         $data = [];
 

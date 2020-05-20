@@ -1,10 +1,6 @@
 <?php
 
-
 namespace TBela\CSS\Query;
-
-
-use InvalidArgumentException;
 
 class TokenSelectorValueAttributeIndex implements TokenSelectorValueInterface
 {

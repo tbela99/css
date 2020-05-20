@@ -16,12 +16,39 @@ function get_content($file) {
 final class Query extends TestCase
 {
     /**
-     * @param Element $element
-     * @param $jsonData
-     * @param string $expected
+     * @param array $expected
+     * @param array $actual
      * @dataProvider queryProvider
      */
     public function testQuery(array $expected, array $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     * @dataProvider queryFunctionsProvider
+     */
+    public function testQueryFunctions(array $expected, array $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     * @dataProvider queryProviderOr
+     */
+    public function testQueryOr(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -98,20 +125,20 @@ p {
                 [
                     0 => '@font-face {
   font-family: "Bitstream Vera Serif Bold";
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff")
+  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
                     1 => '@media print {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }',
                     2 => '@media print {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
 ],
@@ -156,7 +183,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -169,7 +196,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -183,7 +210,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -196,7 +223,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -210,7 +237,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -223,7 +250,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
                 1 => '@media print, screen and (max-width: 12450px) {
@@ -256,7 +283,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -269,7 +296,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -289,7 +316,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -302,7 +329,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -316,7 +343,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -329,7 +356,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -343,7 +370,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -356,7 +383,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -370,7 +397,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -383,7 +410,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -410,7 +437,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -423,7 +450,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -437,7 +464,7 @@ p {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -450,7 +477,7 @@ p {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
                 1 => '@media print, screen and (max-width: 12450px) {
@@ -473,6 +500,208 @@ p {
  p {
    background-color: #030303
  }
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        return $data;
+    }
+
+    public function queryFunctionsProvider () {
+
+        $data = [];
+
+        $css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+p:before {
+content: "print";
+color: rgb(255 0 0 / 1);
+}
+@media print {
+
+}
+/** this is the story */
+/** of the princess leia */
+/** who was luke sister */
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+strong {
+
+}
+p {
+
+}
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
+h1,h2, a {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}';
+
+        $compiler = new Compiler();
+
+        $compiler->setContent($css);
+
+        $element = $compiler->getData();
+
+        // select @font-face that contains a src declaration
+        $context = '[color(@value, "red")]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@name, "src")]/..';
+
+        $data[] = [
+            [
+                0 => '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@value, print)]';
+
+        $data[] = [
+            [
+                0 => '@media print {
+
+}',
+  1 => 'p:before {
+ content: print
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[comment()]';
+
+        $data[] = [
+            [
+                0 => '/** this is the story */',
+                1 => '/** of the princess leia */',
+                2 => '/** who was luke sister */'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[empty()]';
+
+        $data[] = [
+            [
+                0 => '@media print {
+
+}',
+                1 => 'strong {
+
+}',
+                2 => 'p {
+
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[contains(@name, "background")]';
+
+        $data[] = [
+            [
+                0 => 'body {
+ background-color: green
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}',
+                1 => 'span {
+ color: #343434
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        return $data;
+    }
+    /*
+    */
+    public function queryProviderOR ()
+    {
+
+        $data = [];
+
+        $css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
+h1,h2, a {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}';
+
+        $compiler = new Compiler();
+
+        $compiler->setContent($css);
+
+        $element = $compiler->getData();
+
+        // select @font-face that contains a src declaration
+        $context = 'h1,a';
+
+        $data[] = [
+            [
+                0 => 'a {
+ color: #fff
+}',
+                1 => 'h1,
+h2,
+a {
+ color: #fff;
+ font-size: 50px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-weight: bold
 }'
             ],
             array_map('trim', $element->query($context))];

@@ -17,7 +17,7 @@ h1 {
  @font-face {
    font-family: MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(css/MgOpenModernaBold.ttf)
  }
  body {
    font-family: "Bitstream Vera Serif Bold", serif
@@ -30,6 +30,6 @@ h1 {
  @font-face {
    font-family: Arial, MaHelvetica;
    font-weight: bold;
-   src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(css/MgOpenModernaBold.ttf)
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(css/MgOpenModernaBold.ttf)
  }
 }

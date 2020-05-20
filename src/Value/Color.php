@@ -85,7 +85,7 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    protected static function validate($data)
+    protected static function validate($data):bool
     {
 
         if (isset($data->name) && isset($data->arguments)) {
@@ -99,7 +99,7 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    public function match($type)
+    public function match($type): bool
     {
 
         return $type == 'color';
@@ -108,7 +108,7 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
         $index = spl_object_hash($this);
         $key = md5(json_encode($options));

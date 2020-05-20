@@ -19,10 +19,15 @@ class CssString extends Value
     {
         $q = substr($data->value, 0, 1);
 
-        if (($q == '"' || $q == "'") && strlen($data->value) > 2 && substr($data->value, -1) == $q && !preg_match('#[\s]#', $data->value)) {
+        if (($q == '"' || $q == "'") && strlen($data->value) > 2 && substr($data->value, -1) == $q) {
 
             $data->q = $q;
             $data->value = substr($data->value, 1, -1);
+
+            if (!preg_match('#[\s\\\\]#', $data->value)) {
+
+                $data->q = '';
+            }
         }
 
         else {
@@ -37,7 +42,7 @@ class CssString extends Value
      * @inheritDoc
      * @ignore
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         if (!empty($options['compress'])) {

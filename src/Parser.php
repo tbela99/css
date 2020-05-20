@@ -4,6 +4,7 @@ namespace TBela\CSS;
 
 use Exception;
 use \stdClass;
+use TBela\CSS\Parser\SyntaxError;
 use function preg_replace_callback;
 use function str_replace;
 use function substr;
@@ -46,7 +47,7 @@ class Parser
      */
     public $options = [
         'source' => '',
-        'silent' => false,
+        'silent' => true,
         'flatten_import' => false,
         'allow_duplicate_rules' => false,
         'allow_duplicate_declarations' => false
@@ -792,13 +793,25 @@ function rules($context)
 
                 if ($node instanceof Exception) throw $node;
 
-                if ($node !== false) {
+                else if ($node !== false) {
 
                     $rules[] = $node;
+                }
+
+                else {
+
+                    if (empty($context->options['silent'])) {
+
+                        throw new SyntaxError(sprintf('Cannot parse symbol "%s" at %d:%d', $context->css, $context->lineno, $context->column), 400);
+                    }
+
+                    // go to next symbol
+                    $context->css = substr($context->css, 1);
                 }
             }
         }
     }
+
     return $rules;
 }
 

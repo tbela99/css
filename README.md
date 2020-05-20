@@ -15,8 +15,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-
-This was originally a PHP port of https://github.com/reworkcss/css
+- query the css nodes using the Query Api
 
 ## Installation
 
@@ -25,6 +24,10 @@ install using [Composer](https://getcomposer.org/)
 ```bash
 $ composer require tbela99/css
 ```
+
+## Requirements
+
+PHP version >= 7.4
 
 ## Usage:
 
@@ -118,9 +121,9 @@ $compiler->setData($ast);
 $css = $compiler->compile();
 ```
 
-## CSS manipulation
+## The CSS Query API
 
-### Example: Extract Font-src Using the CSS Query API
+Example: Extract Font-src declaration
 
 CSS source
 
@@ -167,7 +170,7 @@ h1 {
 }
 ```
 
-php source
+PHP source
 
 ```php
 
@@ -206,7 +209,7 @@ result
 }
 ```
 
-Render optimized css
+render optimized css
 
 ```php
 
@@ -222,7 +225,7 @@ $stylesheet = Stylesheet::getInstance($stylesheet, true);
 echo $stylesheet;
 ```
 
-Result
+result
 
 ```css
 @font-face {
@@ -236,7 +239,7 @@ Result
 }
 ```
 
-## Build a CSS document
+## Build a CSS Document
 
 ```php
 
@@ -344,7 +347,7 @@ div {
 }
 ```
 
-## Parser options
+## Parser Options
 
 - source: CSS source file. It is only used in the exception error message.
 - silent: throw an exception if false or silently return an error. default to false
@@ -352,23 +355,21 @@ div {
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 
-## Compiler options
+## Compiler Options
 
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove*comments: remove comments. If \_compress* is true, comments are always removed
-- convert*color: convert colors to a format between \_hex*, _hsl_, _rgb_, _hwb_ and _device-cmyk_
-- css*level: will use CSS4 or CSS3 color format. default to \_4*
+- remove_comments: remove comments. If _compress_ is true, comments are always removed
+- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
-- remove_empty_nodes: remove empty css rules
+- remove_empty_nodes: remove empty css rules when the node is rendered
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 
-## Requirements
-
-PHP version >= 7.4
-
 ---
 
-Thanks to [jetbrains](https://jetbrains.com) for providing a free PhpStorm license
+Thanks to [Jetbrains](https://jetbrains.com) for providing a free PhpStorm license
+
+This was originally a PHP port of https://github.com/reworkcss/css

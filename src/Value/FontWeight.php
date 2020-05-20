@@ -11,7 +11,7 @@ use \TBela\CSS\Value;
  */
 class FontWeight extends Value
 {
-    protected static $keywords = [
+    protected static array $keywords = [
         'thin' => '100',
         'hairline' => '100',
         'extra light' => '200',
@@ -33,19 +33,19 @@ class FontWeight extends Value
         'bolder' => 'bolder'
     ];
 
-    protected static $defaults = ['normal', '400', 'regular'];
+    protected static array $defaults = ['normal', '400', 'regular'];
 
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         $value = static::matchKeyword($this->data->value);
 
         if (!empty($options['compress'])) {
 
-            if ($value !== false && isset(static::$keywords[$value])) {
+            if (!is_null($value)) {
 
                 return static::$keywords[$value];
             }
@@ -64,7 +64,7 @@ class FontWeight extends Value
      * @param string $type
      * @return bool
      */
-    public function match($type)
+    public function match($type): bool
     {
 
         return $type == 'font-weight';
@@ -73,7 +73,7 @@ class FontWeight extends Value
     /**
      * @inheritDoc
      */
-    public function matchToken($token, $previousToken = null, $previousValue = null)
+    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
     {
 
         if ($token->type == 'number' && $token->value > 0 && $token->value <= 1000) {
@@ -85,7 +85,7 @@ class FontWeight extends Value
 
             $matchKeyWord = static::matchKeyword($token->value);
 
-            if ($matchKeyWord !== false) {
+            if (!is_null($matchKeyWord)) {
 
                 return true;
             }
@@ -99,7 +99,7 @@ class FontWeight extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse($string, $capture_whitespace = true)
+    protected static function doParse($string, $capture_whitespace = true): Set
     {
 
         $type = static::type();
@@ -107,7 +107,7 @@ class FontWeight extends Value
 
         $matchKeyword = static::matchKeyword($string);
 
-        if ($matchKeyword !== false) {
+        if (!is_null($matchKeyword)) {
 
             return new Set([(object) ['type' => $type, 'value' => $matchKeyword]]);
         }
@@ -120,7 +120,7 @@ class FontWeight extends Value
 
                     $value = static::matchKeyword($token->value);
 
-                    if ($value !== false) {
+                    if (!is_null($value)) {
 
                         $token->value = $value;
                     }

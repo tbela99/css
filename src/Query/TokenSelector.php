@@ -2,15 +2,8 @@
 
 namespace TBela\CSS\Query;
 
-use Exception;
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Rule;
-use TBela\CSS\RuleList;
-
 class TokenSelector extends Token implements TokenSelectorInterface
 {
- //   protected string $node = '';
-//    protected ?string $context = null;
 
     /**
      * @var TokenSelectorValueInterface[][]
@@ -45,8 +38,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
         $result = [];
 
-
-
         /**
          * @var TokenSelectorInterface $filter
          */
@@ -68,6 +59,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
             array_splice($result, count($result), 0, $tmp);
         }
 
-        return $this->sortContext($this->unique($result));
+        return $this->unique($result);
     }
 }

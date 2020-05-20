@@ -50,9 +50,13 @@ operator = != or =
 #$expression = '//';
 #$expression = '/.field, a, #id/background';
 #$expression = '/.field p, a >   span, div#id span.can /background[2]';
-#$expression='[not(contains(@name, "background"))]';
-
-$expression='h1,a';
+$expression='[@name]';
+#$expression='[equals(@name, "color")][not(color(@value, "white"))]';
+#$expression='[color(@value, "red")]';
+#$expression = '[equals(@name, "src")]/..';
+#$expression = '[equals(@value, print)]';
+#$expression='[comment()]';
+#$expression='[empty()]';
 #$expression='[contains(@name, "background")]';
 #$expression = '@media[@value^=print][2],p[1]';
 #$expression = '@media[@value^=print][1]';
@@ -63,6 +67,7 @@ $expression='h1,a';
 #$expression = '@media[@value=print],p';
 #$expression = '@media[@value=print]';
 #$expression = './[@value=print]';
+#$expression = '[@value=@value]';
 #$expression = '// @font-face / src / ..';
 #$expression = '//* / color/ ..';
 
@@ -72,18 +77,40 @@ $element = (new Compiler())->setContent('@font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
+p:before {
+content: "print";
+color: rgb(255 0 0 / 1);
+}
+@media print {
 
+}
+/** this is the story */
+/** of the princess leia */
+/** who was luke sister */
 body {
   background-color: green;
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
 }
+strong {
+
+}
+p {
+
+}
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
 h1,h2, a {
   color: #fff;
   font-size: 50px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
-}
 }')->getData();
 
 echo var_export(array_map('trim', $element->query($expression)), true);

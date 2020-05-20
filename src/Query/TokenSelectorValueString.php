@@ -37,17 +37,19 @@ class TokenSelectorValueString extends TokenSelectorValue
 
             if ($element instanceof Rule) {
 
-                $name = implode(',', $element->getSelector());
+                if (in_array($this->value, $element->getSelector())) {
 
+                    $result[] = $element;
+                }
             }
             else {
 
                 $name = ($element instanceof AtRule ? '@' : '').$element['name'];
-            }
 
-            if($this->value === $name) {
+                if($this->value === $name) {
 
-                $result[] = $element;
+                    $result[] = $element;
+                }
             }
         }
 

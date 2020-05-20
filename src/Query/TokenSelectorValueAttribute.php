@@ -2,17 +2,21 @@
 
 namespace TBela\CSS\Query;
 
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Rule;
-
 class TokenSelectorValueAttribute extends TokenSelectorValue
 {
     protected array $value = [];
     protected TokenSelectorValueInterface $expression;
 
+    /**
+     * TokenSelectorValueAttribute constructor.
+     * @param object $data
+     * @throws \Exception
+     */
     public function __construct($data)
     {
         parent::__construct($data);
+
+        var_export($data->value);
 
         if (count($data->value) == 3) {
 
@@ -21,7 +25,20 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         else if (count($data->value) == 1) {
 
-            $this->expression = call_user_func([TokenSelectorValueAttribute::class, 'getInstance'], $data->value[0]);
+            if (!isset($data->value[0]->name)) {
+
+                if ($data->value[0]->type != 'attribute_name') {
+
+                    throw new \Exception(sprintf('Expected attribute_name but %s found "%s"', $data->value[0]->type, $data->value[0]->value), 400);
+                }
+
+                $this->expression = new TokenSelectorValueAttributeTest($data->value[0]->value);
+            }
+
+            else {
+
+                $this->expression = call_user_func([TokenSelectorValueAttribute::class, 'getInstance'], $data->value[0]);
+            }
         }
 
         else {
