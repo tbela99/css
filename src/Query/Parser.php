@@ -583,7 +583,7 @@ class Parser
 
                 default:
 
-                    if (!is_null($start) && $string[$i] === $start) {
+                    if (!is_null($start) && (!isset($string[$i - 1]) || $string[$i] != '\\') && $string[$i] === $start) {
 
                         $match++;
                     }
