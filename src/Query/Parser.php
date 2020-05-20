@@ -68,7 +68,7 @@ class Parser
 
         $i = $j = count($this->tokens);
 
-        while ($i && $i--) {
+        while ($i--) {
 
             if (isset($this->tokens[$i + 1]->type) && $this->tokens[$i + 1]->type == 'select' && in_array($this->tokens[$i + 1]->node, ['.', '..'])) {
 
@@ -244,7 +244,7 @@ class Parser
                     case '"':
                     case "'":
 
-                        $match = $this->match_token($selector, $selector[$i], $i);
+                        $match = $this->match_token($selector, $selector[$i], $i, $selector[$i]);
 
                         if ($match === false) {
 
@@ -349,7 +349,7 @@ class Parser
                         }
 
                         $in_attribute = true;
-                        $match = $this->match_token($selector, ']', $i);
+                        $match = $this->match_token($selector, ']', $i, '[');
 
                         if ($match === false) {
 
@@ -401,13 +401,13 @@ class Parser
 
                     case '(':
 
-                        if ($context == 'function') {
-
-                            throw new SyntaxError(sprintf('Unexpected character %s at position %d in "%s"', $selector[$i], $i, $selector));
-                        }
+//                        if ($context == 'function') {
+//
+//                            throw new SyntaxError(sprintf('Unexpected character %s at position %d in "%s:%s"', $selector[$i], $i, $context, $selector));
+//                        }
 
                         $in_attribute = true;
-                        $match = $this->match_token($selector, ')', $i);
+                        $match = $this->match_token($selector, ')', $i, '(');
 
                         if ($match === false) {
 
@@ -537,14 +537,16 @@ class Parser
         return preg_match('#^\s+$#sm', $char);
     }
 
-    protected function match_token($string, $close, $start): string
+    protected function match_token($string, $close, $position, $start): string
     {
 
         $j = strlen($string) - 1;
-        $i = $start;
+        $i = $position;
 
         $buffer = $string[$i];
         $in_str = true;
+
+        $match = 1;
 
         while ($i++ < $j) {
 
@@ -568,12 +570,23 @@ class Parser
 
                 case $close:
 
+                    $match--;
+
                     $buffer .= $string[$i];
-                    return $buffer;
+
+                    if ($match === 0) {
+
+                        return $buffer;
+                    }
 
                     break;
 
                 default:
+
+                    if (!is_null($start) && $string[$i] === $start) {
+
+                        $match++;
+                    }
 
                     $buffer .= $string[$i];
                     break;

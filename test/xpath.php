@@ -50,9 +50,10 @@ operator = != or =
 #$expression = '//';
 #$expression = '/.field, a, #id/background';
 #$expression = '/.field p, a >   span, div#id span.can /background[2]';
-#$expression='[not(contains(@name, "background"))]';
+$expression='[@name]';
+#$expression='[equals(@name, "color")][not(color(@value, "white"))]';
 #$expression='[color(@value, "red")]';
-$expression = '[equals(@name, "src")]/..';
+#$expression = '[equals(@name, "src")]/..';
 #$expression = '[equals(@value, print)]';
 #$expression='[comment()]';
 #$expression='[empty()]';
@@ -112,7 +113,7 @@ h1,h2, a {
   font-weight: bold;
 }')->getData();
 
-echo implode("\n", array_map('trim', $element->query($expression)));
+echo var_export(array_map('trim', $element->query($expression)), true);
 //$stylesheet = (new Parser($css))->parse();
 
 

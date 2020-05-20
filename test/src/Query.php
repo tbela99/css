@@ -515,49 +515,40 @@ p {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
+p:before {
+content: "print";
+color: rgb(255 0 0 / 1);
+}
+@media print {
 
+}
+/** this is the story */
+/** of the princess leia */
+/** who was luke sister */
 body {
   background-color: green;
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
 }
-h1 {
+strong {
+
+}
+p {
+
+}
+a {
+
+color: white;
+}
+span {
+color: #343434;
+}
+
+h1,h2, a {
   color: #fff;
   font-size: 50px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
-}
-
-@media print, screen and (max-width: 12450px) {
-
-p {
-      color: #f0f0f0;
-      background-color: #030303;
-  }
-}
-
-@media print {
-  @font-face {
-    font-family: MaHelvetica;
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
-    font-weight: bold;
-  }
-  body {
-    font-family: "Bitstream Vera Serif Bold", serif;
-  }
-  p {
-    font-size: 12px;
-    color: #000;
-    text-align: left;
-  }
-
-  @font-face {
-    font-family: Arial, MaHelvetica;
-    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
-      ;
-    font-weight: bold;
-  }
 }';
 
         $compiler = new Compiler();
@@ -567,387 +558,91 @@ p {
         $element = $compiler->getData();
 
         // select @font-face that contains a src declaration
-        $context = '// @font-face / [equals(@name,src)] / ..';
+        $context = '[color(@value, "red")]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@name, "src")]/..';
 
         $data[] = [
             [
                 0 => '@font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@value, print)]';
+
+        $data[] = [
+            [
+                0 => '@media print {
+
 }',
-                1 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+  1 => 'p:before {
+ content: print
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[comment()]';
+
+        $data[] = [
+            [
+                0 => '/** this is the story */',
+                1 => '/** of the princess leia */',
+                2 => '/** who was luke sister */'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[empty()]';
+
+        $data[] = [
+            [
+                0 => '@media print {
+
 }',
-                2 => '@media print {
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
+                1 => 'strong {
 
-        // select all nodes that contain a color declaration
-        $context = '//* / color/ ..';
-
-        $data[] = [
-            [ 0 => 'body {
- background-color: green;
- color: #fff;
- font-family: Arial, Helvetica, sans-serif
 }',
-                1 => 'h1 {
- color: #fff;
- font-size: 50px;
- font-family: Arial, Helvetica, sans-serif;
- font-weight: bold
-}',
-                2 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}',
-                3 => '@media print {
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
+                2 => 'p {
+
 }'
             ],
             array_map('trim', $element->query($context))];
 
-        // select all @media that have the value print
-        $context =  '@media[@value=print]';
-
-        $data[] = [
-            [0 =>   '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select all nodes that have the value print
-        $context =  './[@value=print]';
-
-        $data[] = [
-            [0 =>   '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select all p or @media[@value=print]
-        $context = '@media[@value=print],p';
-
-        $data[] = [
-            [0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}',
-                1 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}',
-                2 => '@media print {
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select @media with value that begins with print
-        $context = '@media[@value^=print]';
-
-        $data[] = [
-            [ 0 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}',
-                1 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select @media with value that contains print
-        $context = '@media[@value*=print]';
-
-        $data[] = [
-            [ 0 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}',
-                1 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select @media with value that ends with print
-        $context = '@media[@value$=print]';
-
-        $data[] = [
-            [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select @media with value that ends with print
-        $context = '@media[@value$="print"]';
-
-        $data[] = [
-            [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select @media with value that ends with print
-        $context = '@media[@value$=\'print\']';
-
-        $data[] = [
-            [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select first @media with value that begins with print
-        $context = '@media[@value^=print][1]';
-
-        $data[] = [
-            [ 0 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select second @media with value that begins with print
-        $context = '@media[@value^=print][2]';
-
-        $data[] = [
-            [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select second @media with value that begins with print
-        $context = '@media[@value^=print][2],p[1]';
-
-        $data[] = [
-            [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}',
-                1 => '@media print, screen and (max-width: 12450px) {
- p {
-   color: #f0f0f0;
-   background-color: #030303
- }
-}'
-            ],
-            array_map('trim', $element->query($context))];
-
-        // select second all nodes with property name that contains "background"
+        //
         $context = '[contains(@name, "background")]';
 
         $data[] = [
-            [ 0 => 'body {
+            [
+                0 => 'body {
  background-color: green
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
 }',
-                1 => '@media print, screen and (max-width: 12450px) {
- p {
-   background-color: #030303
- }
+                1 => 'span {
+ color: #343434
 }'
             ],
             array_map('trim', $element->query($context))];

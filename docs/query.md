@@ -27,7 +27,7 @@ $nodes = $element->query('@font-face');
 
 ### Attributes Filters
 
-Nodes can be filtered using attributes. An attributes is contained inside \[ and \]. An attribute name starts with '@'.
+Nodes can be filtered using attributes. An attribute is contained inside \[ and \]. An attribute name starts with '@'.
 Attributes are attribute name (which are @name and @value) or function filter
 
 - @name: this attribute designates either the node selector, the @atRule name or the css declaration name
@@ -48,7 +48,7 @@ $nodes = $element->query('[@value="print"]');
 ```
 ### Operators
 
-Operators are used to test attributes. They can only be used inside \[ and \]
+Operators are used inside attributes. They can only be used inside \[ and \]
 
 - equals (=)
 
@@ -106,7 +106,15 @@ $nodes = $element->query('[equals(@attr, "print")]');
 $nodes = $element->query('[empty()]');
 ```
 - comment(): match comments node
+
 ```php
 // match all comment nodes
 $nodes = $element->query('[comment()]');
+```
+
+- not(): match nodes that do not match an expression
+
+```php
+// match all nodes with name 'color' and value that is not white
+$nodes = $element->query('[equals(@name, "color")][not(color(@value, "white"))]');
 ```
