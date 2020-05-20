@@ -16,8 +16,6 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
     {
         parent::__construct($data);
 
-        var_export($data->value);
-
         if (count($data->value) == 3) {
 
             $this->expression = new TokenSelectorValueAttributeExpression($data->value);
