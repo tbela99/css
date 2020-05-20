@@ -23,7 +23,7 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         else if (count($data->value) == 1) {
 
-            if (!isset($data->value[0]->name)) {
+            if (!isset($data->value[0]->name) && $data->value[0]->type != 'index') {
 
                 if ($data->value[0]->type != 'attribute_name') {
 
