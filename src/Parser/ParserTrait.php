@@ -7,14 +7,13 @@ trait ParserTrait
 
     /**
      * @param string $string
-     * @param bool $force_removal
      * @return false|string
      */
-    public static function stripQuotes($string, $force_removal = false) {
+    public static function stripQuotes($string) {
 
         $q = substr($string, 0, 1);
 
-        if (($q == '"' || $q == "'") && strlen($string) > 2 && substr($string, -1) == $q && ($force_removal || !preg_match('#[\s]#', $string))) {
+        if (($q == '"' || $q == "'") && strlen($string) > 2 && substr($string, -1) == $q && preg_match('#^[\w_-]+$#', $string)) {
 
             return substr($string, 1, -1);
         }
@@ -31,6 +30,9 @@ trait ParserTrait
             case '/':
             case '+':
             case '-':
+            case '>':
+            case '~':
+            case ':':
 
                 return true;
         }
@@ -58,7 +60,104 @@ trait ParserTrait
             }
         }
 
+        // unterminated comment is still a valid comment
         return false;
+    }
+
+    /**
+     * read a string until it encounter any of the $char_stop characters and return the corresponding substring
+     * @param string $string
+     * @param int $startPosition
+     * @param int $endPosition
+     * @param array $char_stop
+     * @return false|string
+     */
+    protected static function substr(string $string, int $startPosition, int $endPosition, array $char_stop) {
+
+        if ($startPosition < 0 || substr($string, $startPosition, 1) === false) {
+
+            return false;
+        }
+
+        if ($startPosition >= strlen($string)) {
+
+            return '';
+        }
+
+        $buffer = $string[$startPosition];
+
+        while ($startPosition + 1 < $endPosition) {
+
+            $startPosition++;
+
+            if (in_array($string[$startPosition], $char_stop)) {
+
+                // do not capture empty statement
+                if ($string[$startPosition] == ';' && trim($buffer) === '') {
+
+                    $buffer .= ' ';
+                    $startPosition++;
+
+                    continue;
+                }
+
+                $buffer.= $string[$startPosition];
+                return $buffer;
+            }
+
+            switch ($string[$startPosition]) {
+
+                case '\\':
+
+                    $buffer .= $string[$startPosition];
+
+                    if (isset($string[$startPosition + 1])) {
+
+                        $buffer .= $string[++$startPosition];
+                    }
+
+                    break;
+
+                case '/':
+
+                    if (isset($string[$startPosition + 1]) && $string[$startPosition + 1] == '*') {
+
+                        // capture comments
+                        $comment = static::match_comment($string, $startPosition, $endPosition);
+
+                        $buffer .= $comment;
+                        $startPosition += strlen($comment) - 1;
+                    }
+
+                    else {
+
+                        $buffer .= $string[$startPosition];
+                    }
+
+                    break;
+
+                case '"':
+                case "'":
+
+                    $substr = static::_close($string, $string[$startPosition], $string[$startPosition], $startPosition, $endPosition);
+
+                    if($substr === false) {
+
+                        return false;
+                    }
+
+                    $buffer .= $substr;
+                    $startPosition += strlen($substr) - 1;
+                    break;
+
+                default:
+
+                    $buffer .= $string[$startPosition];
+                    break;
+            }
+        }
+
+        return $buffer;
     }
 
     protected static function _close($string, $search, $reset, $start, $end)
@@ -101,7 +200,6 @@ trait ParserTrait
                     }
 
                     $i += strlen($match) - 1;
-
                     break;
             }
 

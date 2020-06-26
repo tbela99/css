@@ -4,7 +4,7 @@ namespace TBela\CSS\Property;
 
 use ArrayAccess;
 use TBela\CSS\ArrayTrait;
-use TBela\CSS\Rendererable;
+use TBela\CSS\Renderable;
 use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
 
@@ -12,7 +12,7 @@ use TBela\CSS\Value\Set;
  * Comment property class
  * @package TBela\CSS\Property
  */
-class Comment implements ArrayAccess, Rendererable {
+class Comment implements ArrayAccess, Renderable {
 
     use ArrayTrait;
 

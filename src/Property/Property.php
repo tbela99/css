@@ -3,7 +3,7 @@
 namespace TBela\CSS\Property;
 use ArrayAccess;
 use TBela\CSS\ArrayTrait;
-use TBela\CSS\Rendererable;
+use TBela\CSS\Renderable;
 use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
 
@@ -12,7 +12,7 @@ use TBela\CSS\Value\Set;
  * Css property
  * @package CSS
  */
-class Property implements ArrayAccess, Rendererable, RenderableProperty
+class Property implements ArrayAccess, Renderable, RenderableProperty
 {
     use ArrayTrait;
 

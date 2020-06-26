@@ -17,7 +17,7 @@ use function str_ireplace;
  * Css node base class
  * @package TBela\CSS
  */
-abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayAccess, Rendererable   {
+abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayAccess, Renderable   {
 
     use ArrayTrait;
 
@@ -44,6 +44,12 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
             $ast = new stdClass;
             $ast->type = str_ireplace(Element::class.'\\', '', get_class($this));
+        }
+
+        else {
+
+            $ast = clone $ast;
+            unset($ast->loc);
         }
 
         $this->ast = $ast;

@@ -16,16 +16,16 @@ class Compiler {
      * @ignore
      */
     protected array $properties = [
-           'indent',
-           'glue',
-           'separator',
-           'charset',
-           'convert_color',
-           'compress',
-           'css_level',
-           'remove_comments',
-           'remove_empty_nodes',
-           'allow_duplicate_declarations'
+        'glue',
+        'indent',
+        'charset',
+        'compress',
+        'css_level',
+        'separator',
+        'convert_color',
+        'remove_comments',
+        'remove_empty_nodes',
+        'allow_duplicate_declarations'
     ];
 
     /**

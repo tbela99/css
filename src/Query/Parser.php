@@ -570,7 +570,10 @@ class Parser
 
                 case $close:
 
-                    $match--;
+                    if (!isset($string[$i - 1]) || $string[$i] != '\\') {
+
+                        $match--;
+                    }
 
                     $buffer .= $string[$i];
 

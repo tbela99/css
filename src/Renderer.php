@@ -8,6 +8,8 @@ use TBela\CSS\Element\AtRule;
 
 // use TBela\CSS\Element\Comment;
 use TBela\CSS\Element\Declaration;
+use TBela\CSS\Event\EventInterface;
+use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Property\RenderableProperty;
 use TBela\CSS\Value\Set;
@@ -17,62 +19,66 @@ use function is_string;
  * Css node Renderer
  * @package TBela\CSS
  */
-class Renderer
+class Renderer implements EventInterface
 {
+
+    use EventTrait;
+
+    const REMOVE_NODE = 1;
 
     /**
      * @var bool minify output
      * @ignore
      */
-    protected $compress = false;
+    protected bool $compress = false;
 
     /**
      * @var int CSS level 3|4
      * @ignore
      */
-    protected $css_level = 4;
+    protected int $css_level = 4;
 
     /**
      * @var string line indention
      * @ignore
      */
-    protected $indent = ' ';
+    protected string $indent = ' ';
 
     /**
      * @var string line separator
      * @ignore
      */
-    protected $glue = "\n";
+    protected string $glue = "\n";
 
     /**
      * @var string token separator
      * @ignore
      */
-    protected $separator = ' ';
+    protected string $separator = ' ';
 
     /**
      * @var bool preserve charset
      * @ignore
      */
-    protected $charset = false;
+    protected bool $charset = false;
 
     /**
      * @var bool allow rbga hex color
      * @ignore
      */
-    protected $convert_color = false;
+    protected bool $convert_color = false;
 
     /**
      * @var bool remove comments
      * @ignore
      */
-    protected $remove_comments = false;
+    protected bool $remove_comments = false;
 
     /**
      * @var bool remove empty node
      * @ignore
      */
-    protected $remove_empty_nodes = false;
+    protected bool $remove_empty_nodes = false;
 
     /**
      * @var bool|array|string true|false or a list of exceptions
@@ -88,118 +94,47 @@ class Renderer
     {
 
         $this->setOptions($options);
-    }
+        $this->on('traverse', function (Renderable $node) {
 
-    /**
-     * Set output formatting
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options)
-    {
+            // remove comments
+            if (($this->remove_comments && $node->getType() == 'Comment') ||
+                // remove empty nodes
+                ($this->remove_empty_nodes && !is_callable([$node, 'isLeaf']) && is_callable([$node, 'hasChildren']) && !$node->hasChildren())
+            ) {
 
-        if (isset($options['compress'])) {
-
-            $this->compress = $options['compress'];
-
-            if ($this->compress) {
-
-                $this->glue = '';
-                $this->indent = '';
-                $this->convert_color = 'hex';
-                $this->charset = false;
-                $this->remove_comments = true;
-                $this->remove_empty_nodes = true;
-            } else {
-
-                $this->glue = "\n";
-                $this->indent = ' ';
+                return static::REMOVE_NODE;
             }
-        }
-
-        if (isset($options['indent'])) {
-
-            $this->indent = $options['indent'];
-        }
-
-        if (isset($options['charset'])) {
-
-            $this->charset = $options['charset'];
-        }
-
-        if (isset($options['css_level'])) {
-
-            $this->css_level = $options['css_level'];
-        }
-
-        if (isset($options['glue'])) {
-
-            $this->glue = $options['glue'];
-        }
-
-        if (isset($options['remove_empty_nodes'])) {
-
-            $this->remove_empty_nodes = $options['remove_empty_nodes'];
-        }
-
-        if (isset($options['remove_comments'])) {
-
-            $this->remove_comments = $options['remove_comments'];
-        }
-
-        if (isset($options['convert_color'])) {
-
-            $this->convert_color = $options['convert_color'];
-        }
-
-        if (isset($options['allow_duplicate_declarations'])) {
-
-            $this->allow_duplicate_declarations = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
-        }
-
-        return $this;
-    }
-
-    /**
-     * return the options
-     * @param string|null $name
-     * @param mixed $default return value
-     * @return array
-     */
-    public function getOptions($name = null, $default = null)
-    {
-
-        $options = get_object_vars($this);
-
-        if (isset($options[$name])) {
-
-            return $options[$name];
-        }
-
-        if (!is_null($name)) {
-
-            return $default;
-        }
-
-        return array_filter(get_object_vars($this), function ($property) {
-            return !is_object($property);
         });
     }
 
     /**
      * render an Element or a Property
-     * @param Rendererable $element the element to render
+     * @param Renderable $element the element to render
      * @param null|int $level indention level
      * @param bool $parent render parent
      * @return string
      * @throws Exception
      */
-    public function render(Rendererable $element, $level = null, $parent = false)
+    public function render(Renderable $element, ?int $level = null, $parent = false)
     {
 
-        if (!$this->shouldRender($element)) {
+        foreach ($this->emit('traverse', $element, $level) as $result) {
 
-            return '';
+            if ($result === static::REMOVE_NODE) {
+
+                return '';
+            }
+
+            if (is_string($result)) {
+
+                return $result;
+            }
+
+            if ($result instanceof Renderable) {
+
+                $element = $result;
+                break;
+            }
         }
 
         if ($parent && ($element instanceof Element) && !is_null($element['parent'])) {
@@ -212,11 +147,6 @@ class Renderer
         switch ($element['type']) {
 
             case 'Comment':
-
-                if ($this->remove_comments) {
-
-                    return '';
-                }
 
                 return (is_null($level) ? '' : str_repeat($this->indent, $level + 1)) . $element['value'];
 
@@ -328,12 +258,12 @@ class Renderer
 
     /**
      * render a property
-     * @param RenderableProperty $element
+     * @param Renderable $element
      * @return string
      * @ignore
      */
 
-    protected function renderProperty(RenderableProperty $element)
+    protected function renderProperty(Renderable $element)
     {
         $name = (string) $element->getName();
         $value = $element->getValue()->render(['compress' => $this->compress, 'css_level' => $this->css_level, 'convert_color' => $this->convert_color === true ? 'hex' : $this->convert_color]);
@@ -347,34 +277,12 @@ class Renderer
     }
 
     /**
-     * test if an item should be rendered
-     * @param Rendererable $element
-     * @return bool
-     * @ignore
-     */
-    protected function shouldRender(Rendererable $element)
-    {
-
-        if (is_callable([$element, 'hasChildren'])) {
-
-            if (is_callable([$element, 'isLeaf']) && $element->isLeaf()) {
-
-                return true;
-            }
-
-            return $element->hasChildren() || !$this->remove_empty_nodes;
-        }
-
-        return true;
-    }
-
-    /**
      * render a name
-     * @param Rendererable $element
+     * @param Renderable $element
      * @return string
      * @ignore
      */
-    protected function renderName(Rendererable $element)
+    protected function renderName(Renderable $element)
     {
 
         return $element->getName();
@@ -438,10 +346,11 @@ class Renderer
 
             if (trim($output) === '') {
 
-                if ($glue == ';') {
+//                if ($glue == ';' || $glue === '') {
 
                     continue;
-                }
+//                }
+
             } else if ($el['type'] != 'Comment') {
 
                 if ($count == 0) {
@@ -479,5 +388,100 @@ class Renderer
         }
 
         return rtrim(implode($this->glue, $result), $glue . $this->glue);
+    }
+    /**
+     * Set output formatting
+     * @param array $options
+     * @return $this
+     */
+    public function setOptions(array $options)
+    {
+
+        if (isset($options['compress'])) {
+
+            $this->compress = $options['compress'];
+
+            if ($this->compress) {
+
+                $this->glue = '';
+                $this->indent = '';
+                $this->convert_color = 'hex';
+                $this->charset = false;
+                $this->remove_comments = true;
+                $this->remove_empty_nodes = true;
+            } else {
+
+                $this->glue = "\n";
+                $this->indent = ' ';
+            }
+        }
+
+        if (isset($options['indent'])) {
+
+            $this->indent = $options['indent'];
+        }
+
+        if (isset($options['charset'])) {
+
+            $this->charset = $options['charset'];
+        }
+
+        if (isset($options['css_level'])) {
+
+            $this->css_level = $options['css_level'];
+        }
+
+        if (isset($options['glue'])) {
+
+            $this->glue = $options['glue'];
+        }
+
+        if (isset($options['remove_empty_nodes'])) {
+
+            $this->remove_empty_nodes = $options['remove_empty_nodes'];
+        }
+
+        if (isset($options['remove_comments'])) {
+
+            $this->remove_comments = $options['remove_comments'];
+        }
+
+        if (isset($options['convert_color'])) {
+
+            $this->convert_color = $options['convert_color'];
+        }
+
+        if (isset($options['allow_duplicate_declarations'])) {
+
+            $this->allow_duplicate_declarations = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
+        }
+
+        return $this;
+    }
+
+    /**
+     * return the options
+     * @param string|null $name
+     * @param mixed $default return value
+     * @return array
+     */
+    public function getOptions($name = null, $default = null)
+    {
+
+        $options = get_object_vars($this);
+
+        if (isset($options[$name])) {
+
+            return $options[$name];
+        }
+
+        if (!is_null($name)) {
+
+            return $default;
+        }
+
+        return array_filter(get_object_vars($this), function ($property) {
+            return !is_object($property);
+        });
     }
 }

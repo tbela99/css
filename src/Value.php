@@ -416,7 +416,7 @@ abstract class Value
                                 $token->type = 'color';
                             } else {
 
-                                $token->type = 'css-function';
+                                $token->type = $token->name === '' ? 'css-parenthesis-expression' : 'css-function';
                             }
 
                             $str = substr($params, 1, -1);
@@ -452,6 +452,7 @@ abstract class Value
                 case ',':
                 case '/':
                 case '+':
+                case ':':
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
