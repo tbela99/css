@@ -1,0 +1,71 @@
+{
+    "type": "Stylesheet",
+    "location": {
+        "start": {
+            "line": 1,
+            "column": 1,
+            "index": 0
+        },
+        "end": {
+            "line": 10,
+            "column": 2,
+            "index": 68
+        }
+    },
+    "children": [
+        {
+            "type": "Rule",
+            "location": {
+                "start": {
+                    "line": 2,
+                    "column": 1,
+                    "index": 1
+                },
+                "end": {
+                    "line": 10,
+                    "column": 2,
+                    "index": 69
+                }
+            },
+            "selector": [
+                ".ul \/* , .li *\/"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 4,
+                            "column": 5,
+                            "index": 12
+                        },
+                        "end": {
+                            "line": 4,
+                            "column": 18,
+                            "index": 26
+                        }
+                    },
+                    "name": "display",
+                    "value": "block"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 9,
+                            "column": 6,
+                            "index": 54
+                        },
+                        "end": {
+                            "line": 9,
+                            "column": 16,
+                            "index": 65
+                        }
+                    },
+                    "name": "float",
+                    "value": "left"
+                }
+            ]
+        }
+    ]
+}

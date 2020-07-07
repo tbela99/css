@@ -1,0 +1,42 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "Rule",
+            "selector": [
+                ".ul \/* , .li *\/"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "display",
+                    "value": "block"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "float",
+                    "value": "left"
+                }
+            ]
+        },
+        {
+            "type": "Rule",
+            "selector": [
+                "pre",
+                "blockquote"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "border",
+                    "value": "1px solid #999"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "page-break-inside",
+                    "value": "avoid"
+                }
+            ]
+        }
+    ]
+}

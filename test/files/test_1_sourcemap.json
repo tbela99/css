@@ -1,0 +1,537 @@
+{
+    "type": "Stylesheet",
+    "location": {
+        "start": {
+            "line": 1,
+            "column": 1,
+            "index": 0
+        },
+        "end": {
+            "line": 55,
+            "column": 1,
+            "index": 892
+        }
+    },
+    "children": [
+        {
+            "type": "AtRule",
+            "location": {
+                "start": {
+                    "line": 3,
+                    "column": 1,
+                    "index": 2
+                },
+                "end": {
+                    "line": 55,
+                    "column": 1,
+                    "index": 893
+                }
+            },
+            "name": "media",
+            "value": "print",
+            "children": [
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 4,
+                            "column": 5,
+                            "index": 5
+                        },
+                        "end": {
+                            "line": 9,
+                            "column": 5,
+                            "index": 164
+                        }
+                    },
+                    "selector": [
+                        "*"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 5,
+                                    "column": 9,
+                                    "index": 17
+                                },
+                                "end": {
+                                    "line": 5,
+                                    "column": 36,
+                                    "index": 45
+                                }
+                            },
+                            "name": "text-shadow",
+                            "value": "none!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 6,
+                                    "column": 9,
+                                    "index": 55
+                                },
+                                "end": {
+                                    "line": 6,
+                                    "column": 30,
+                                    "index": 77
+                                }
+                            },
+                            "name": "color",
+                            "value": "#000!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 7,
+                                    "column": 9,
+                                    "index": 87
+                                },
+                                "end": {
+                                    "line": 7,
+                                    "column": 42,
+                                    "index": 121
+                                }
+                            },
+                            "name": "background",
+                            "value": "transparent!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 8,
+                                    "column": 9,
+                                    "index": 131
+                                },
+                                "end": {
+                                    "line": 8,
+                                    "column": 35,
+                                    "index": 158
+                                }
+                            },
+                            "name": "box-shadow",
+                            "value": "none!important"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 11,
+                            "column": 5,
+                            "index": 170
+                        },
+                        "end": {
+                            "line": 14,
+                            "column": 5,
+                            "index": 242
+                        }
+                    },
+                    "selector": [
+                        "a[foo=bar]",
+                        "a",
+                        "a:visited"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 13,
+                                    "column": 9,
+                                    "index": 210
+                                },
+                                "end": {
+                                    "line": 13,
+                                    "column": 34,
+                                    "index": 236
+                                }
+                            },
+                            "name": "text-decoration",
+                            "value": "underline"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 16,
+                            "column": 5,
+                            "index": 248
+                        },
+                        "end": {
+                            "line": 18,
+                            "column": 5,
+                            "index": 306
+                        }
+                    },
+                    "selector": [
+                        "a[href]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 17,
+                                    "column": 9,
+                                    "index": 272
+                                },
+                                "end": {
+                                    "line": 17,
+                                    "column": 36,
+                                    "index": 300
+                                }
+                            },
+                            "name": "content",
+                            "value": "\" (\" attr(href)\")\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 20,
+                            "column": 5,
+                            "index": 312
+                        },
+                        "end": {
+                            "line": 22,
+                            "column": 5,
+                            "index": 375
+                        }
+                    },
+                    "selector": [
+                        "abbr[title]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 21,
+                                    "column": 9,
+                                    "index": 340
+                                },
+                                "end": {
+                                    "line": 21,
+                                    "column": 37,
+                                    "index": 369
+                                }
+                            },
+                            "name": "content",
+                            "value": "\" (\" attr(title)\")\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 24,
+                            "column": 5,
+                            "index": 381
+                        },
+                        "end": {
+                            "line": 26,
+                            "column": 5,
+                            "index": 468
+                        }
+                    },
+                    "selector": [
+                        ".ir a:after",
+                        "a[href^=\"javascript:\"]:after",
+                        "a[href^=\"#\"]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 25,
+                                    "column": 9,
+                                    "index": 451
+                                },
+                                "end": {
+                                    "line": 25,
+                                    "column": 19,
+                                    "index": 462
+                                }
+                            },
+                            "name": "content",
+                            "value": "\"\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 28,
+                            "column": 5,
+                            "index": 474
+                        },
+                        "end": {
+                            "line": 31,
+                            "column": 5,
+                            "index": 561
+                        }
+                    },
+                    "selector": [
+                        "pre",
+                        "blockquote"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 29,
+                                    "column": 9,
+                                    "index": 499
+                                },
+                                "end": {
+                                    "line": 29,
+                                    "column": 30,
+                                    "index": 521
+                                }
+                            },
+                            "name": "border",
+                            "value": "1px solid #999"
+                        },
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 30,
+                                    "column": 9,
+                                    "index": 531
+                                },
+                                "end": {
+                                    "line": 30,
+                                    "column": 32,
+                                    "index": 555
+                                }
+                            },
+                            "name": "page-break-inside",
+                            "value": "avoid"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 33,
+                            "column": 5,
+                            "index": 567
+                        },
+                        "end": {
+                            "line": 35,
+                            "column": 5,
+                            "index": 616
+                        }
+                    },
+                    "selector": [
+                        "thead"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 34,
+                                    "column": 9,
+                                    "index": 583
+                                },
+                                "end": {
+                                    "line": 34,
+                                    "column": 35,
+                                    "index": 610
+                                }
+                            },
+                            "name": "display",
+                            "value": "table-header-group"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 37,
+                            "column": 5,
+                            "index": 622
+                        },
+                        "end": {
+                            "line": 39,
+                            "column": 5,
+                            "index": 669
+                        }
+                    },
+                    "selector": [
+                        "tr",
+                        "img"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 38,
+                                    "column": 9,
+                                    "index": 639
+                                },
+                                "end": {
+                                    "line": 38,
+                                    "column": 32,
+                                    "index": 663
+                                }
+                            },
+                            "name": "page-break-inside",
+                            "value": "avoid"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 41,
+                            "column": 5,
+                            "index": 675
+                        },
+                        "end": {
+                            "line": 43,
+                            "column": 5,
+                            "index": 721
+                        }
+                    },
+                    "selector": [
+                        "img"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 42,
+                                    "column": 9,
+                                    "index": 689
+                                },
+                                "end": {
+                                    "line": 42,
+                                    "column": 34,
+                                    "index": 715
+                                }
+                            },
+                            "name": "max-width",
+                            "value": "100%!important"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 47,
+                            "column": 5,
+                            "index": 771
+                        },
+                        "end": {
+                            "line": 50,
+                            "column": 5,
+                            "index": 824
+                        }
+                    },
+                    "selector": [
+                        "p",
+                        "h2",
+                        "h3"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 48,
+                                    "column": 9,
+                                    "index": 789
+                                },
+                                "end": {
+                                    "line": 48,
+                                    "column": 18,
+                                    "index": 799
+                                }
+                            },
+                            "name": "orphans",
+                            "value": "3"
+                        },
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 49,
+                                    "column": 9,
+                                    "index": 809
+                                },
+                                "end": {
+                                    "line": 49,
+                                    "column": 17,
+                                    "index": 818
+                                }
+                            },
+                            "name": "widows",
+                            "value": "3"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 52,
+                            "column": 5,
+                            "index": 830
+                        },
+                        "end": {
+                            "line": 54,
+                            "column": 5,
+                            "index": 875
+                        }
+                    },
+                    "selector": [
+                        "h2",
+                        "h3"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 53,
+                                    "column": 9,
+                                    "index": 846
+                                },
+                                "end": {
+                                    "line": 53,
+                                    "column": 31,
+                                    "index": 869
+                                }
+                            },
+                            "name": "page-break-after",
+                            "value": "avoid"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

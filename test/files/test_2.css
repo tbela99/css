@@ -1,0 +1,15 @@
+
+
+/* comment 1 */
+@media/* comment 2 */ print /* comment 3 */{
+    /* comment 4 */
+    * {/* comment 5 */
+        /* comment 6 */    text-shadow: /* comment 7 */none !important;
+        color: #000 !important;/* comment 8 */
+        background/* comment 9 */: transparent !important;/* comment 10 */
+        box-shadow: none !important/* comment 11*/
+        /* comment 12 */
+    }
+    /* comment 13 */
+}
+

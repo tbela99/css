@@ -1,0 +1,9 @@
+.ul /* , .li */ {
+ display: block;
+ float: left
+}
+pre,
+blockquote {
+ border: 1px solid #999;
+ page-break-inside: avoid
+}

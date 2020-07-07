@@ -1,0 +1,68 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "Comment",
+            "value": "\/* comment 1 *\/"
+        },
+        {
+            "type": "AtRule",
+            "name": "media",
+            "value": "\/* comment 2 *\/ print \/* comment 3 *\/",
+            "children": [
+                {
+                    "type": "Comment",
+                    "value": "\/* comment 4 *\/"
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "*"
+                    ],
+                    "children": [
+                        {
+                            "type": "Comment",
+                            "value": "\/* comment 5 *\/"
+                        },
+                        {
+                            "type": "Comment",
+                            "value": "\/* comment 6 *\/"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "text-shadow",
+                            "value": "\/* comment 7 *\/none!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "color",
+                            "value": "#000!important"
+                        },
+                        {
+                            "type": "Comment",
+                            "value": "\/* comment 8 *\/"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "background\/* comment 9 *\/",
+                            "value": "transparent!important"
+                        },
+                        {
+                            "type": "Comment",
+                            "value": "\/* comment 10 *\/"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "box-shadow",
+                            "value": "none!important\/* comment 11*\/ \/* comment 12 *\/"
+                        }
+                    ]
+                },
+                {
+                    "type": "Comment",
+                    "value": "\/* comment 13 *\/"
+                }
+            ]
+        }
+    ]
+}

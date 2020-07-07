@@ -8,7 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
-- CSS4 colors support
+- support CSS4 colors
 - merge duplicate rules
 - remove duplicate declarations
 - remove empty rules
@@ -16,6 +16,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
 - query the css nodes using the Query Api
+- transform the css output using the Renderer class
 
 ## Installation
 
@@ -347,6 +348,95 @@ div {
 }
 ```
 
+## Transform Rendered CSS
+
+Use the Renderer class to transform the output. the callback returns three types of values
+
+- a Css node that will be rendered in place of the original node
+- a string that will be rendered in place of the original node
+- the constant Renderer::IGNORE_NODE, the node will not be rendered
+
+input Css
+
+```css
+@font-face {
+  font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+.pic {
+  background: no-repeat url("imgs/lizard.png");
+}
+.element {
+  background-image: url("imgs/lizard.png"), url("imgs/star.png");
+}
+```
+
+PHP code
+
+```php
+use TBela\CSS\Element\AtRule;
+use \TBela\CSS\Renderable;
+use \TBela\CSS\Element\Declaration;
+use \TBela\CSS\Property\PropertyInterface;
+use \TBela\CSS\Renderer;
+use \TBela\CSS\Compiler;
+use TBela\CSS\Value;
+use TBela\CSS\Value\CSSFunction;
+
+$element = (new Compiler())->setContent($css)->getData();
+
+$renderer = new Renderer();
+
+$renderer->on('emit', function (Renderable $node) {
+
+    // remove @font-face
+    if ($node instanceof AtRule && $node['name'] == 'font-face') {
+
+        return $this::IGNORE_NODE;
+    }
+
+    // rewrite image url() path for local file
+    if ($node instanceof Declaration || $node instanceof PropertyInterface) {
+
+        if (strpos($node->getValue(), 'url(') !== false) {
+
+            $node = clone $node;
+
+            $node->getValue()->map(function (Value $value): Value {
+
+                if ($value instanceof CSSFunction && $value->name == 'url') {
+
+                    $value->arguments->map(function (Value $value): Value {
+
+                        if (is_file($value->value)) {
+
+                            return Value::getInstance((object) ['type' => $value->type, 'value' => '/'.$value->value]);
+                        }
+
+                        return $value;
+                    });
+                }
+
+                return $value;
+            });
+        }
+    }
+});
+
+echo $renderer->render($element);
+```
+
+Result
+
+```css
+.pic {
+  background: no-repeat url(/imgs/lizard.png);
+}
+.element {
+  background-image: url(/imgs/lizard.png), url(/imgs/star.png);
+}
+```
+
 ## Parser Options
 
 - source: CSS source file. It is only used in the exception error message.
@@ -360,8 +450,8 @@ div {
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
-- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- remove*comments: remove comments. If _compress_ is true, comments are always removed
+- convert*color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
 - remove_empty_nodes: remove empty css rules when the node is rendered

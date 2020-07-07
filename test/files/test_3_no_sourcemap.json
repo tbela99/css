@@ -1,0 +1,41 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "Rule",
+            "selector": [
+                ".foo"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "cursor",
+                    "value": "pointer"
+                }
+            ]
+        },
+        {
+            "type": "Rule",
+            "selector": [
+                "div",
+                ".lawyers \/* mistake happen *\/",
+                "input[type=text]",
+                "input [value=\"type your password\"]",
+                ":first-child",
+                ":nth-child(2n+1)"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "display",
+                    "value": "none"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "whitespace",
+                    "value": "nowrap \/* force it *\/"
+                }
+            ]
+        }
+    ]
+}

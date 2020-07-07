@@ -1,0 +1,94 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "AtRule",
+            "name": "media",
+            "value": "(min-width:980px) and (max-width:1215px)",
+            "children": [
+                {
+                    "type": "Rule",
+                    "selector": [
+                        ".float-cols .control-label"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "float",
+                            "value": "none"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        ".float-cols .controls"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "margin-left",
+                            "value": "0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Rule",
+            "selector": [
+                "table"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "max-width",
+                    "value": "100%"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "background-color",
+                    "value": "transparent"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "border-collapse",
+                    "value": "collapse"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "border-spacing",
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "type": "AtRule",
+            "hasDeclarations": true,
+            "name": "font-face",
+            "value": "",
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "font-family",
+                    "value": "\"Open Sans\""
+                },
+                {
+                    "type": "Declaration",
+                    "name": "font-style",
+                    "value": "normal"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "font-weight",
+                    "value": "400"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "src",
+                    "value": "local(\"Open Sans Regular\"), local(OpenSans-Regular), url(\/1nG\/29hyun\/\/1nG\/29hyun\/\/1nG\/29hyun\/cache\/z\/127.0.0.1\/css\/2TFb@z-mem8YaGs126MiZpBA-UFVZ0e.ttf)format(truetype)"
+                }
+            ]
+        }
+    ]
+}

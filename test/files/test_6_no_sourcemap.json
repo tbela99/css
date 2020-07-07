@@ -1,0 +1,23 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "Rule",
+            "selector": [
+                ".ul \/* , .li *\/"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "name": "display",
+                    "value": "block"
+                },
+                {
+                    "type": "Declaration",
+                    "name": "float",
+                    "value": "left"
+                }
+            ]
+        }
+    ]
+}

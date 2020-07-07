@@ -1,0 +1,12 @@
+.foo {
+ cursor: pointer
+}
+div,
+.lawyers /* mistake happen */,
+input[type=text],
+input [value="type your password"],
+:first-child,
+:nth-child(2n+1) {
+ display: none;
+ whitespace: nowrap /* force it */
+}
