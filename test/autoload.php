@@ -6,11 +6,10 @@ spl_autoload_register(function  ($name) {
 
 	if ($parts[0] == 'TBela' && isset($parts[1]) && $parts[1] == 'CSS') {
 
-		$parts[0] = 'src';
-		unset($parts[1]);
+		array_unshift($parts, 'src');
 	}
 
-	$path = '../'.implode('/', $parts).'.php';
+	$path = __DIR__.'/../'.implode('/', $parts).'.php';
 
 	if (is_file($path)) {
 

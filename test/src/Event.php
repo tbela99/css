@@ -2,50 +2,60 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Element;
-use TBela\CSS\Compiler;
-use TBela\CSS\Parser;
-use TBela\CSS\Renderer;
+use TBela\CSS\Event\Event as EventTest;
 
-// because git changes \n to \r\n at some point, this causes test failure
-function get_content($file) {
-
-    return file_get_contents($file);
-}
-
-
-final class Serialize extends TestCase
+final class Event extends TestCase
 {
     /**
-     * @param Element $element
-     * @param $jsonData
-     * @param string $expected
-     * @dataProvider serializeProvider
+     * @param array $expected
+     * @param array $actual
+     * @dataProvider testEventProvider
      */
-    public function testSerialize(Element $element, $jsonData, $expected): void
+    public function testEvent(array $expected, array $actual): void
     {
 
         $this->assertEquals(
-            $jsonData,
-           json_encode($element)
-        );
-
-        /** @var TYPE_NAME $element */
-        $this->assertEquals(
-            (new Renderer(['convert_color' => true]))->render($element) ,
-            get_content($expected)
+            $expected,
+          $actual
         );
     }
 
 /*
 */
-    public function serializeProvider () {
+    public function testEventProvider () {
 
-        $jsonData = file_get_contents(__DIR__.'/../output/atrules.json');
+        $emitter = new EventTest();
 
-        return [
-            [Element::getInstance(json_decode($jsonData)), $jsonData, __DIR__.'/../output/atrules.css']
+        $data = [];
+
+        $double = function ($x) {
+
+            return 2 * $x;
+        };
+
+        $emitter->on('compute', $double);
+
+        $data[] = [
+
+            [2],
+            $emitter->emit('compute', 1)
         ];
+
+        $data[] = [
+
+            [6],
+            $emitter->emit('compute', 3)
+        ];
+
+        $emitter->off('compute', $double);
+
+        $data[] = [
+
+            [],
+            $emitter->emit('compute', 1)
+        ];
+
+        return $data;
     }
 }
 

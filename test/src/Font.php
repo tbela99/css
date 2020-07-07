@@ -92,7 +92,7 @@ strong {
 
     font: Regular 14px "Bitstream Vera Serif Bold",serif;
 }
-')->compile(), 'strong{font: 14px "Bitstream Vera Serif Bold",serif}'];
+')->compile(), 'strong{font:14px "Bitstream Vera Serif Bold",serif}'];
 
         return $data;
     }

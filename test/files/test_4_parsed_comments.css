@@ -1,0 +1,19 @@
+/* start: @import from files/test_2.css */
+@media all and (min-width: 320px) {
+  /* comment 1 */
+ @media /* comment 2 */ print /* comment 3 */ {
+   /* comment 4 */
+  * {
+    /* comment 5 */
+    /* comment 6 */
+    text-shadow: /* comment 7 */none!important;
+    color: #000!important;
+    /* comment 8 */
+    background/* comment 9 */: #0000!important;
+    /* comment 10 */
+    box-shadow: none!important/* comment 11*/ /* comment 12 */
+  }
+   /* comment 13 */
+ }
+}
+/* end: @import from files/test_2.css */

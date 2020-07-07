@@ -3,43 +3,63 @@
 
 require 'autoload.php';
 
-$css = '@media print {
- @font-face {
-   font-family: Arial, MaHelvetica;
-   src: local("Helvetica Neue Bold"),
-        local("HelveticaNeue-Bold"),
-        url(MgOpenModernaBold.ttf);
-   font-weight: bold
- }
+use TBela\CSS\Element\AtRule;
+use \TBela\CSS\Renderable;
+use \TBela\CSS\Element\Declaration;
+use \TBela\CSS\Property\PropertyInterface;
+use \TBela\CSS\Renderer;
+use \TBela\CSS\Compiler;
+use TBela\CSS\Value;
+use TBela\CSS\Value\CSSFunction;
+
+$element = (new Compiler())->setContent('@font-face {
+  font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
-';
+.pic {
+background: no-repeat url("imgs/lizard.png");
+}
+.element {
+background-image: url("imgs/lizard.png"),
+                  url("imgs/star.png");
+}')->getData();
 
-use \TBela\CSS\Parser;
-use \TBela\CSS\Identity;
-use \TBela\CSS\Compress;
+$renderer = new Renderer();
 
-$parser = new Parser();
-$renderer = new Identity();
-$compressor = new Compress();
+$renderer->on('traverse', function (Renderable $node) {
 
-$parser->setContent($css);
+    // remove @font-face
+    if ($node instanceof AtRule && $node->getName() == 'font-face') {
 
-$stylesheet = $parser->parse();
+        return Renderer::REMOVE_NODE;
+    }
 
-// get @font-face element
-$media = $stylesheet['children'][0];
-$fontFace = $media['children'][0];
+    // rewrite image url() path for local file
+    if ($node instanceof Declaration || $node instanceof PropertyInterface) {
 
-echo $renderer->render($fontFace);
+        if (strpos($node->getValue(), 'url(') !== false) {
 
-echo "\n\n\n";
+            $node = clone $node;
 
-echo $renderer->render($fontFace, null, true);
+            $node->getValue()->map(function (Value $value): Value {
 
-echo "\n\n\n";
+                if ($value instanceof CSSFunction && $value->name == 'url') {
 
-echo $compressor->render($fontFace);
+                    $value->arguments->map(function (Value $value): Value {
 
-echo "\n\n\n";
+                        if (is_file($value->value)) {
 
-echo $compressor->render($fontFace, null, true);
+                            return Value::getInstance((object) ['type' => $value->type, 'value' => '/'.$value->value]);
+                        }
+
+                        return $value;
+                    });
+                }
+
+                return $value;
+            });
+        }
+    }
+});
+
+var_dump($renderer->render($element));

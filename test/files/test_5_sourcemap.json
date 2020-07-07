@@ -1,0 +1,286 @@
+{
+    "type": "Stylesheet",
+    "location": {
+        "start": {
+            "line": 1,
+            "column": 1,
+            "index": 0
+        },
+        "end": {
+            "line": 1,
+            "column": 458,
+            "index": 457
+        }
+    },
+    "children": [
+        {
+            "type": "AtRule",
+            "location": {
+                "start": {
+                    "line": 1,
+                    "column": 1,
+                    "index": 0
+                },
+                "end": {
+                    "line": 1,
+                    "column": 122,
+                    "index": 122
+                }
+            },
+            "name": "media",
+            "value": "(min-width:980px) and (max-width:1215px)",
+            "children": [
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 1,
+                            "index": 0
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 38,
+                            "index": 38
+                        }
+                    },
+                    "selector": [
+                        ".float-cols .control-label"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 1,
+                                    "column": 28,
+                                    "index": 27
+                                },
+                                "end": {
+                                    "line": 1,
+                                    "column": 37,
+                                    "index": 37
+                                }
+                            },
+                            "name": "float",
+                            "value": "none"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 39,
+                            "index": 38
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 74,
+                            "index": 74
+                        }
+                    },
+                    "selector": [
+                        ".float-cols .controls"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "location": {
+                                "start": {
+                                    "line": 1,
+                                    "column": 61,
+                                    "index": 60
+                                },
+                                "end": {
+                                    "line": 1,
+                                    "column": 73,
+                                    "index": 73
+                                }
+                            },
+                            "name": "margin-left",
+                            "value": "0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Rule",
+            "location": {
+                "start": {
+                    "line": 1,
+                    "column": 123,
+                    "index": 122
+                },
+                "end": {
+                    "line": 1,
+                    "column": 214,
+                    "index": 214
+                }
+            },
+            "selector": [
+                "table"
+            ],
+            "children": [
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 129,
+                            "index": 128
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 142,
+                            "index": 142
+                        }
+                    },
+                    "name": "max-width",
+                    "value": "100%"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 144,
+                            "index": 143
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 171,
+                            "index": 171
+                        }
+                    },
+                    "name": "background-color",
+                    "value": "transparent"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 173,
+                            "index": 172
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 196,
+                            "index": 196
+                        }
+                    },
+                    "name": "border-collapse",
+                    "value": "collapse"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 198,
+                            "index": 197
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 213,
+                            "index": 213
+                        }
+                    },
+                    "name": "border-spacing",
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "type": "AtRule",
+            "location": {
+                "start": {
+                    "line": 1,
+                    "column": 215,
+                    "index": 214
+                },
+                "end": {
+                    "line": 1,
+                    "column": 458,
+                    "index": 458
+                }
+            },
+            "hasDeclarations": true,
+            "name": "font-face",
+            "value": "",
+            "children": [
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 226,
+                            "index": 225
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 248,
+                            "index": 248
+                        }
+                    },
+                    "name": "font-family",
+                    "value": "\"Open Sans\""
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 250,
+                            "index": 249
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 266,
+                            "index": 266
+                        }
+                    },
+                    "name": "font-style",
+                    "value": "normal"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 268,
+                            "index": 267
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 282,
+                            "index": 282
+                        }
+                    },
+                    "name": "font-weight",
+                    "value": "400"
+                },
+                {
+                    "type": "Declaration",
+                    "location": {
+                        "start": {
+                            "line": 1,
+                            "column": 284,
+                            "index": 283
+                        },
+                        "end": {
+                            "line": 1,
+                            "column": 457,
+                            "index": 457
+                        }
+                    },
+                    "name": "src",
+                    "value": "local(\"Open Sans Regular\"), local(OpenSans-Regular), url(\/1nG\/29hyun\/\/1nG\/29hyun\/\/1nG\/29hyun\/cache\/z\/127.0.0.1\/css\/2TFb@z-mem8YaGs126MiZpBA-UFVZ0e.ttf)format(truetype)"
+                }
+            ]
+        }
+    ]
+}

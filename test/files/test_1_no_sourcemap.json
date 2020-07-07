@@ -1,0 +1,189 @@
+{
+    "type": "Stylesheet",
+    "children": [
+        {
+            "type": "AtRule",
+            "name": "media",
+            "value": "print",
+            "children": [
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "*"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "text-shadow",
+                            "value": "none!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "color",
+                            "value": "#000!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "background",
+                            "value": "transparent!important"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "box-shadow",
+                            "value": "none!important"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "a[foo=bar]",
+                        "a",
+                        "a:visited"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "text-decoration",
+                            "value": "underline"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "a[href]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "content",
+                            "value": "\" (\" attr(href)\")\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "abbr[title]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "content",
+                            "value": "\" (\" attr(title)\")\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        ".ir a:after",
+                        "a[href^=\"javascript:\"]:after",
+                        "a[href^=\"#\"]:after"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "content",
+                            "value": "\"\""
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "pre",
+                        "blockquote"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "border",
+                            "value": "1px solid #999"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "page-break-inside",
+                            "value": "avoid"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "thead"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "display",
+                            "value": "table-header-group"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "tr",
+                        "img"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "page-break-inside",
+                            "value": "avoid"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "img"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "max-width",
+                            "value": "100%!important"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "p",
+                        "h2",
+                        "h3"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "orphans",
+                            "value": "3"
+                        },
+                        {
+                            "type": "Declaration",
+                            "name": "widows",
+                            "value": "3"
+                        }
+                    ]
+                },
+                {
+                    "type": "Rule",
+                    "selector": [
+                        "h2",
+                        "h3"
+                    ],
+                    "children": [
+                        {
+                            "type": "Declaration",
+                            "name": "page-break-after",
+                            "value": "avoid"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

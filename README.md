@@ -377,7 +377,7 @@ PHP code
 use TBela\CSS\Element\AtRule;
 use \TBela\CSS\Renderable;
 use \TBela\CSS\Element\Declaration;
-use \TBela\CSS\Property\Property;
+use \TBela\CSS\Property\PropertyInterface;
 use \TBela\CSS\Renderer;
 use \TBela\CSS\Compiler;
 use TBela\CSS\Value;
@@ -396,7 +396,7 @@ $renderer->on('emit', function (Renderable $node) {
     }
 
     // rewrite image url() path for local file
-    if ($node instanceof Declaration || $node instanceof Property) {
+    if ($node instanceof Declaration || $node instanceof PropertyInterface) {
 
         if (strpos($node->getValue(), 'url(') !== false) {
 
