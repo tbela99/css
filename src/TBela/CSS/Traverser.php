@@ -3,12 +3,25 @@
 namespace TBela\CSS;
 
 use TBela\CSS\Event\Event;
+use TBela\CSS\Interfaces\RuleListInterface;
 
 class Traverser extends Event
 {
 
     public const IGNORE_NODE = 1;
     public const IGNORE_CHILDREN = 2;
+
+    public function traverse(Element $element) {
+
+        $result = $this->doTraverse($element);
+
+        if (!($result instanceof Element)) {
+
+            return null;
+        }
+
+        return $result;
+    }
 
     protected function process(Element $node, array $data)
     {
@@ -30,27 +43,11 @@ class Traverser extends Event
                 if ($res !== $node) {
 
                     return $res;
-                } else {
-
-                    $result = $res;
-                    break;
                 }
             }
         }
 
         return $node;
-    }
-
-    public function traverse(Element $element) {
-
-        $result = $this->doTraverse($element);
-
-        if (!($result instanceof Element)) {
-
-            return null;
-        }
-
-        return $result;
     }
 
     protected function doTraverse(Element $node)
@@ -73,7 +70,7 @@ class Traverser extends Event
             }
         }
 
-        if ($node === func_get_arg(0) && $node instanceof RuleList) {
+        if ($node === func_get_arg(0) && $node instanceof RuleListInterface) {
 
             $children = $node['children'];
             $node = clone $node;
@@ -93,11 +90,16 @@ class Traverser extends Event
                     $node->append($temp_c);
                 } else if ($temp_c !== static::IGNORE_NODE) {
 
+                    if ($temp_c === static::IGNORE_CHILDREN && $child instanceof RuleListInterface) {
+
+                        $child = clone $child;
+                        $child->removeChildren();
+                    }
+
                     $node->append($child);
                 }
             }
         }
-
 
         $result = $this->process($node, $this->emit('exit', $node));
 
@@ -114,6 +116,12 @@ class Traverser extends Event
 
                 $node = $result;
             }
+        }
+
+        if ($ignore_children && $node instanceof RuleListInterface) {
+
+            $node = clone $node;
+            $node->removeChildren();
         }
 
         return $node;

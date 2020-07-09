@@ -2,21 +2,21 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Documentation](https://img.shields.io/badge/dynamic/json?label=Documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Packagist](https://img.shields.io/packagist/v/tbela99/css.svg)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
-A CSS parser, beautifier and minifier written in PHP.
+A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
 ## Features
 
-- CSS4 colors support
+- support CSS4 colors
 - merge duplicate rules
 - remove duplicate declarations
-- remove empty rules and declarations
+- remove empty rules
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-
-This was originally a PHP port of https://github.com/reworkcss/css
+- query the css nodes using the Query Api
+- transform the css output using the Renderer class
 
 ## Installation
 
@@ -25,6 +25,10 @@ install using [Composer](https://getcomposer.org/)
 ```bash
 $ composer require tbela99/css
 ```
+
+## Requirements
+
+PHP version >= 7.4
 
 ## Usage:
 
@@ -88,7 +92,7 @@ $css = (string) $element;
 // minified output
 $renderer = new Renderer([
   'compress' => true,
-  'convert_color' => true,
+  'convert_color' => 'hex',
   'css_level' => 4,
   'allow_duplicate_declarations' => false
   ]);
@@ -118,9 +122,9 @@ $compiler->setData($ast);
 $css = $compiler->compile();
 ```
 
-## CSS manipulation
+## The CSS Query API
 
-### Example: Extract Font-src
+Example: Extract Font-src declaration
 
 CSS source
 
@@ -167,60 +171,57 @@ h1 {
 }
 ```
 
-php source
+PHP source
 
 ```php
 
-use \TBela\CSS\Parser;
-use \TBela\CSS\Element;
-use \TBela\CSS\Element\AtRule;
-use \TBela\CSS\Element\Stylesheet;
+use \TBela\CSS\Compiler;
+use TBela\CSS\Element\Stylesheet;
 
-$parser = new Parser('', [
-    'silent' => false,
-    'flatten_import' => true
-]);
+$compiler = new Compiler();
 
-$parser->load('./css/manipulate.css');
+$compiler->setContent($css);
+
+$stylesheet = $compiler->getData();
+
+// get all src properties in a @font-face rule
+$nodes = $stylesheet->query('@font-face/src');
+
+echo implode("\n", array_map('trim', $nodes));
+```
+
+result
+
+```css
+@font-face {
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+@media print {
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
+}
+@media print {
+  @font-face {
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+  }
+}
+```
+
+render optimized css
+
+```php
 
 $stylesheet = new Stylesheet();
 
-function getNodes ($data, $stylesheet) {
+foreach($nodes as $node) {
 
-    $nodes = [];
-
-    foreach ($data as $node) {
-
-        if ($node instanceof AtRule) {
-
-            switch ((string) $node->getName()) {
-
-                case 'font-face':
-
-                    foreach ($node as $declaration) {
-
-                        if ((string) $declaration['name'] == 'src') {
-
-                            $stylesheet->append($declaration->copy()->getRoot());
-                            break;
-                        }
-                    }
-
-                    break;
-
-                case 'media':
-
-                    getNodes($node, $stylesheet);
-                    break;
-            }
-        }
-    }
+  $stylesheet->append($node->copy());
 }
 
-getNodes ($parser->parse(), $stylesheet);
-
-// deduplicate rules
-$stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
+$stylesheet = Stylesheet::getInstance($stylesheet, true);
 
 echo $stylesheet;
 ```
@@ -239,7 +240,7 @@ result
 }
 ```
 
-## Build a CSS document
+## Build a CSS Document
 
 ```php
 
@@ -347,7 +348,103 @@ div {
 }
 ```
 
-## Compiler options
+## Transform Rendered CSS
+
+Use the Renderer class to transform the output. the callback returns three types of values
+
+- a Css node that will be rendered in place of the original node
+- a string that will be rendered in place of the original node
+- the constant Renderer::IGNORE_NODE, the node will not be rendered
+
+input Css
+
+```css
+@font-face {
+  font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+.pic {
+  background: no-repeat url("imgs/lizard.png");
+}
+.element {
+  background-image: url("imgs/lizard.png"), url("imgs/star.png");
+}
+```
+
+PHP code
+
+```php
+use TBela\CSS\Element\AtRule;
+use \TBela\CSS\Renderable;
+use \TBela\CSS\Element\Declaration;
+use \TBela\CSS\Property\Property;
+use \TBela\CSS\Renderer;
+use \TBela\CSS\Compiler;
+use TBela\CSS\Value;
+use TBela\CSS\Value\CssUrl;
+
+$element = (new Compiler())->setContent($css)->getData();
+
+$renderer = new Renderer();
+
+$renderer->on('emit', function (Renderable $node) {
+
+    // remove @font-face
+    if ($node instanceof AtRule && $node['name'] == 'font-face') {
+
+        return $this::IGNORE_NODE;
+    }
+
+    // rewrite image url() path for local file
+    if ($node instanceof Declaration || $node instanceof Property) {
+
+        if (strpos($node->getValue(), 'url(') !== false) {
+
+            $node = clone $node;
+
+            $node->getValue()->map(function (Value $value): Value {
+
+                if ($value instanceof CssURL) {
+
+                    $value->arguments->map(function (Value $value): Value {
+
+                        if (is_file($value->value)) {
+
+                            return Value::getInstance((object) ['type' => $value->type, 'value' => '/'.$value->value]);
+                        }
+
+                        return $value;
+                    });
+                }
+
+                return $value;
+            });
+        }
+    }
+});
+
+echo $renderer->render($element);
+```
+
+Result
+
+```css
+.pic {
+  background: no-repeat url(/imgs/lizard.png);
+}
+.element {
+  background-image: url(/imgs/lizard.png), url(/imgs/star.png);
+}
+```
+
+## Parser Options
+
+- flatten_import: process @import directive and import the content into the css. default to false.
+- allow_duplicate_rules: allow duplicated rules. By default duplicate rules are merged
+- allow_duplicate_declarations: allow duplicated declarations in the same rule.
+- sourcemap: include source location data
+
+## Compiler Options
 
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
@@ -356,8 +453,12 @@ div {
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
-- remove_empty_nodes: remove empty css rules
+- remove_empty_nodes: remove empty css rules when the node is rendered
 
-## Requirements
+The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 
-PHP version >= 7.1
+---
+
+Thanks to [Jetbrains](https://jetbrains.com) for providing a free PhpStorm license
+
+This was originally a PHP port of https://github.com/reworkcss/css

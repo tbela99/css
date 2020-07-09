@@ -57,8 +57,6 @@ class Parser
      * @ignore
      */
     public array $options = [
-        'source' => '',
-        'silent' => true,
         'sourcemap' => false,
         'flatten_import' => false,
         'allow_duplicate_rules' => false,

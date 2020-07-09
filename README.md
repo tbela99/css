@@ -377,11 +377,11 @@ PHP code
 use TBela\CSS\Element\AtRule;
 use \TBela\CSS\Renderable;
 use \TBela\CSS\Element\Declaration;
-use \TBela\CSS\Property\PropertyInterface;
+use \TBela\CSS\Property\Property;
 use \TBela\CSS\Renderer;
 use \TBela\CSS\Compiler;
 use TBela\CSS\Value;
-use TBela\CSS\Value\CSSFunction;
+use TBela\CSS\Value\CssUrl;
 
 $element = (new Compiler())->setContent($css)->getData();
 
@@ -396,7 +396,7 @@ $renderer->on('emit', function (Renderable $node) {
     }
 
     // rewrite image url() path for local file
-    if ($node instanceof Declaration || $node instanceof PropertyInterface) {
+    if ($node instanceof Declaration || $node instanceof Property) {
 
         if (strpos($node->getValue(), 'url(') !== false) {
 
@@ -404,7 +404,7 @@ $renderer->on('emit', function (Renderable $node) {
 
             $node->getValue()->map(function (Value $value): Value {
 
-                if ($value instanceof CSSFunction && $value->name == 'url') {
+                if ($value instanceof CssURL) {
 
                     $value->arguments->map(function (Value $value): Value {
 
@@ -439,19 +439,18 @@ Result
 
 ## Parser Options
 
-- source: CSS source file. It is only used in the exception error message.
-- silent: throw an exception if false or silently return an error. default to false
 - flatten_import: process @import directive and import the content into the css. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
+- sourcemap: include source location data
 
 ## Compiler Options
 
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove*comments: remove comments. If _compress_ is true, comments are always removed
-- convert*color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
+- remove_comments: remove comments. If _compress_ is true, comments are always removed
+- convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: will use CSS4 or CSS3 color format. default to _4_
 - compress: produce minified output
 - remove_empty_nodes: remove empty css rules when the node is rendered
