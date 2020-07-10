@@ -9,6 +9,9 @@
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR"
+[ ! -f "../phpunit.phar" ] && \
+wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar && \
+chmod +x ../phpunit.phar
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -23,7 +26,7 @@ fail() {
 
 if [ "$1" = "" ] || [ "${1:0:1}" = "-" ]; then
   skip=""
-  [ "${1:0:1}" = "-" ] && skip="${1#-}"
+  [ -n "$1" ] && [ "${1:0:1}" = "-" ] && skip="${1:1:10}"
   for file in src/*.php
     do
       [ "$file" = "src/$skip.php" ] && continue;
