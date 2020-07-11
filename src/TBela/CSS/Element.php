@@ -355,17 +355,9 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
                                 $next->parent = null;
                                 array_splice($el->ast->children, 0, 0, $next->ast->children);
 
-                                if (isset($next->ast->location)) {
+                                if (isset($next->ast->location) && isset($el->ast->location)) {
 
-                                    if (!isset($el->ast->location)) {
-
-                                        $el->ast->location = $next->ast->location;
-                                    }
-
-                                    else {
-
-                                        $el->ast->location = $next->ast->location;
-                                    }
+                                    $el->ast->location->start = $next->ast->location->start;
                                 }
                             }
 
