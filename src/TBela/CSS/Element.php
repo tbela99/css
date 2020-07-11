@@ -357,14 +357,14 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
                                 if (isset($next->ast->location)) {
 
-                                    if (!isset($el->ast->lcoation)) {
+                                    if (!isset($el->ast->location)) {
 
-                                        $el->ast->lcoation = $next->ast->lcoation;
+                                        $el->ast->location = $next->ast->location;
                                     }
 
                                     else {
 
-                                        $el->ast->lcoation = $next->ast->lcoation;
+                                        $el->ast->location = $next->ast->location;
                                     }
                                 }
                             }
