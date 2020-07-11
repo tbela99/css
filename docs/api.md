@@ -18,8 +18,7 @@ Example
 @media print {
   @font-face {
     font-family: Arial, MaHelvetica;
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }
@@ -84,7 +83,10 @@ Css output
 There are additional settings to control minification.
 
 - _compress_: true/false. Enable minification
-- _rgba_hex_: true/false. Convert rgba and hsla colors to hex
+- _css_level_: 4 or 3. Convert color using the specified CSS level syntax
+- _convert_color_: _boolean_ | _string_ Convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_. if set to false then no conversion is performed. default to _hex_.
+if you want to convert hsla and rgba like colors to hex, to must set css_level to 4 otherwise they will be converted to rgba
+
 
 Example
 

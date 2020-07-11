@@ -15,7 +15,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-- query the css nodes using the Query Api
+- query the css nodes using xpath like syntax
 - transform the css output using the Renderer class
 
 ## Installation
@@ -176,7 +176,6 @@ PHP source
 ```php
 
 use \TBela\CSS\Compiler;
-use TBela\CSS\Element\Stylesheet;
 
 $compiler = new Compiler();
 
@@ -214,14 +213,9 @@ render optimized css
 
 ```php
 
-$stylesheet = new Stylesheet();
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
 
-foreach($nodes as $node) {
-
-  $stylesheet->append($node->copy());
-}
-
-$stylesheet = Stylesheet::getInstance($stylesheet, true);
+$stylesheet->deduplicate();
 
 echo $stylesheet;
 ```
@@ -230,13 +224,12 @@ result
 
 ```css
 @font-face {
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }
 @media print {
-  @font-face {
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
-  }
+ @font-face {
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+ }
 }
 ```
 

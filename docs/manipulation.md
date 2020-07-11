@@ -157,9 +157,6 @@ php source
 ```php
 
 use \TBela\CSS\Parser;
-use \TBela\CSS\Element;
-use \TBela\CSS\Element\AtRule;
-use \TBela\CSS\Element\Stylesheet;
 
 $parser = new Parser();
 
@@ -169,44 +166,13 @@ $parser->setOptions([
                     ]);
 $parser->load('./css/manipulate.css');
 
-$stylesheet = new Stylesheet();
+$stylesheet = $parser->parse();
 
-function getNodes ($data, $stylesheet) {
+// get all src properties in a @font-face rule
+$nodes = $stylesheet->query('@font-face/src');
 
-    $nodes = [];
-
-    foreach ($data as $node) {
-
-        if ($node instanceof AtRule) {
-
-            switch ($node->getName()) {
-
-                case 'font-face':
-
-                    foreach ($node as $declaration) {
-
-                        if ($declaration['name'] == 'src') {
-
-                            $stylesheet->append($declaration->copy()->getRoot());
-                            break;
-                        }
-                    }
-
-                    break;
-
-                case 'media':
-
-                    getNodes($node, $stylesheet);
-                    break;
-            }
-        }
-    }
-}
-
-getNodes ($parser->parse(), $stylesheet);
-
-// deduplicate rules
-$stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
+$stylesheet->deduplicate();
 
 echo $stylesheet;
 ```
@@ -219,8 +185,7 @@ Result
 }
 @media print {
   @font-face {
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf);
   }
 }
 ```
@@ -277,9 +242,6 @@ php source
 ```php
 
 use \TBela\CSS\Parser;
-use \TBela\CSS\Element;
-use \TBela\CSS\Element\AtRule;
-use \TBela\CSS\Element\Stylesheet;
 
 $parser = new Parser();
 
@@ -289,39 +251,13 @@ $parser->setOptions([
                     ]);
 $parser->load('./css/manipulate.css');
 
-$stylesheet = new Stylesheet();
+$stylesheet = $parser->parse();
 
-function getNodes ($data, $stylesheet) {
+// get all src properties in a @font-face rule
+$nodes = $stylesheet->query('@font-face');
 
-    $stack = [$data];
-
-    while ($current = array_shift($stack)) {
-
-        foreach ($current as $node) {
-
-            if ($node instanceof AtRule) {
-
-                switch ($node->getName()) {
-
-                    case 'font-face':
-
-                        $stylesheet->append($node->copy()->getRoot());
-                        break;
-
-                    case 'media':
-
-                        getNodes($node, $stylesheet);
-                        break;
-                }
-            }
-        }
-    }
-}
-
-getNodes ($parser->parse(), $stylesheet);
-
-// deduplicate rules
-$stylesheet = Element::getInstance($parser->deduplicate($stylesheet));
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
+$stylesheet->deduplicate();
 
 echo $stylesheet;
 ```
@@ -336,8 +272,7 @@ Result
 @media print {
   @font-face {
     font-family: Arial, MaHelvetica;
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }

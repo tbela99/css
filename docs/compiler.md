@@ -92,7 +92,7 @@ _boolean_. If false then remove @charset declaration. The default value is _fals
 
 ### convert_color
 
-_boolean_ | _string_ Convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_. if set to false then no conversion is performed. default to _hex_.
+_boolean | string_ Convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_. if set to false then no conversion is performed. default to _hex_.
 if you want to convert hsla and rgba like colors to hex, to must set css_level to 4 otherwise they will be converted to rgba
 
 ### compress
