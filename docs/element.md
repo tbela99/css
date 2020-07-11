@@ -181,9 +181,23 @@ none
 
 \TBela\CSS\Element
 
+### Deduplicate
+
+merge duplicate rules are remove duplicated declarations
+
+#### Arguments
+
+$options: _array_
+ - allow_duplicate_rules: _bool_. if false merge duplicate rules. default false
+ - allow_duplicate_declarations: _bool_. if false remove duplicate declarations. default false
+
+#### Return Type
+
+\TBela\CSS\Element
+
 ### Copy
 
-Clone the element and its parents. returns the copy of the root element
+Clone the element and its parents. returns a copy of the root element
 
 #### Arguments
 
@@ -228,3 +242,15 @@ none
 #### Return Type
 
 _string_
+
+### Query
+
+query nodes using an xpath like syntax. see [query](./query.md)
+
+#### Arguments
+
+- query: string
+
+#### Return Type
+
+_array_

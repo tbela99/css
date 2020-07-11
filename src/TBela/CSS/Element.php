@@ -218,6 +218,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
     /**
      * merge css rules and declarations
+     * @param array $options
      * @return Element
      */
     public function deduplicate(array $options = [])
@@ -353,7 +354,19 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
                                 $next->parent = null;
                                 array_splice($el->ast->children, 0, 0, $next->ast->children);
-                                $el['location']->start = $next['location']->start;
+
+                                if (isset($next->ast->location)) {
+
+                                    if (!isset($el->ast->lcoation)) {
+
+                                        $el->ast->lcoation = $next->ast->lcoation;
+                                    }
+
+                                    else {
+
+                                        $el->ast->lcoation = $next->ast->lcoation;
+                                    }
+                                }
                             }
 
                             if ($total == 1) {

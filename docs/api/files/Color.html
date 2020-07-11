@@ -22,7 +22,7 @@
     <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->    <script type="text/javascript">
         function loadExternalCodeSnippets() {
             Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-                var src = pre.getAttribute('data-src');
+                var src = pre.getAttribute('data-src').replace( /\\/g, '/');
                 var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
                 var language = 'php';
 
@@ -106,7 +106,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="../reports/errors.html">                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">97</span>
+                                <a href="../reports/errors.html">                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">226</span>
                                 </a>
                             </li>
                             <li>
@@ -131,61 +131,91 @@
 <div id="___" class="container-fluid">    <section class="row-fluid">
         <div class="span2 sidebar">    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-toggle" data-toggle="collapse" data-target="#namespace-1564816523"></a>                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            <div class="accordion-heading">                    <a class="accordion-toggle" data-toggle="collapse" data-target="#namespace-1024292173"></a>                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1564816523" class="accordion-body collapsein">
+            <div id="namespace-1024292173" class="accordion-body collapsein">
                 <div class="accordion-inner">    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1078303618"></a>                <a href="../namespaces/TBela.html" style="margin-left: 30px; padding-left: 0">TBela</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1620902785"></a>                <a href="../namespaces/TBela.html" style="margin-left: 30px; padding-left: 0">TBela</a>
             </div>
-            <div id="namespace-1078303618" class="accordion-body collapse">
+            <div id="namespace-1620902785" class="accordion-body collapse">
                 <div class="accordion-inner">    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1250953348"></a>                <a href="../namespaces/TBela.CSS.html" style="margin-left: 30px; padding-left: 0">CSS</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1685189926"></a>                <a href="../namespaces/TBela.CSS.html" style="margin-left: 30px; padding-left: 0">CSS</a>
             </div>
-            <div id="namespace-1250953348" class="accordion-body collapse">
+            <div id="namespace-1685189926" class="accordion-body collapse">
                 <div class="accordion-inner">    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-756742539"></a>                <a href="../namespaces/TBela.CSS.Element.html" style="margin-left: 30px; padding-left: 0">Element</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1488645528"></a>                <a href="../namespaces/TBela.CSS.Element.html" style="margin-left: 30px; padding-left: 0">Element</a>
             </div>
-            <div id="namespace-756742539" class="accordion-body collapse">
+            <div id="namespace-1488645528" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <ul>                            <li class="class"><a href="../classes/TBela.CSS.Element.AtRule.html">AtRule</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Declaration.html">Declaration</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Rule.html">Rule</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Stylesheet.html">Stylesheet</a></li>                    </ul>
+                    <ul>                            <li class="class"><a href="../classes/TBela.CSS.Element.AtRule.html">AtRule</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Declaration.html">Declaration</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Rule.html">Rule</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.RuleSet.html">RuleSet</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.Stylesheet.html">Stylesheet</a></li>                    </ul>
                 </div>
             </div>
         </div>
     </div>    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1600836824"></a>                <a href="../namespaces/TBela.CSS.Elements.html" style="margin-left: 30px; padding-left: 0">Elements</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1017289238"></a>                <a href="../namespaces/TBela.CSS.Event.html" style="margin-left: 30px; padding-left: 0">Event</a>
             </div>
-            <div id="namespace-1600836824" class="accordion-body collapse">
+            <div id="namespace-1017289238" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <ul>                            <li class="class"><a href="../classes/TBela.CSS.Elements.Rules.html">Rules</a></li>                    </ul>
+                    <ul>                            <li class="interface"><a href="../classes/TBela.CSS.Event.EventInterface.html">EventInterface</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Event.Event.html">Event</a></li>                    </ul>
                 </div>
             </div>
         </div>
     </div>    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1207066291"></a>                <a href="../namespaces/TBela.CSS.Property.html" style="margin-left: 30px; padding-left: 0">Property</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1693790109"></a>                <a href="../namespaces/TBela.CSS.Interfaces.html" style="margin-left: 30px; padding-left: 0">Interfaces</a>
             </div>
-            <div id="namespace-1207066291" class="accordion-body collapse">
+            <div id="namespace-1693790109" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <ul>                            <li class="interface"><a href="../classes/TBela.CSS.Property.RenderableProperty.html">RenderableProperty</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.Config.html">Config</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.Property.html">Property</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.PropertyList.html">PropertyList</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.PropertySet.html">PropertySet</a></li>                    </ul>
+                    <ul>                            <li class="interface"><a href="../classes/TBela.CSS.Interfaces.RenderableInterface.html">RenderableInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Interfaces.RenderablePropertyInterface.html">RenderablePropertyInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Interfaces.RuleListInterface.html">RuleListInterface</a></li>                    </ul>
                 </div>
             </div>
         </div>
     </div>    <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
-            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1731589141"></a>                <a href="../namespaces/TBela.CSS.Value.html" style="margin-left: 30px; padding-left: 0">Value</a>
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-191428082"></a>                <a href="../namespaces/TBela.CSS.Parser.html" style="margin-left: 30px; padding-left: 0">Parser</a>
             </div>
-            <div id="namespace-1731589141" class="accordion-body collapse">
+            <div id="namespace-191428082" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <ul>                            <li class="class"><a href="../classes/TBela.CSS.Value.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CSSFunction.html">CSSFunction</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CssString.html">CssString</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.FontWeight.html">FontWeight</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Number.html">Number</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Separator.html">Separator</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Set.html">Set</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Unit.html">Unit</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Whitespace.html">Whitespace</a></li>                    </ul>
+                    <ul>                            <li class="trait"><a href="../classes/TBela.CSS.Parser.AccessTrait.html">AccessTrait</a></li>                            <li class="trait"><a href="../classes/TBela.CSS.Parser.ParserTrait.html">ParserTrait</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Parser.Helper.html">Helper</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Parser.SyntaxError.html">SyntaxError</a></li>                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-347511597"></a>                <a href="../namespaces/TBela.CSS.Property.html" style="margin-left: 30px; padding-left: 0">Property</a>
+            </div>
+            <div id="namespace-347511597" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <ul>                            <li class="class"><a href="../classes/TBela.CSS.Property.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Property.Config.html">Config</a></li>                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-351458804"></a>                <a href="../namespaces/TBela.CSS.Query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-351458804" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <ul>                            <li class="interface"><a href="../classes/TBela.CSS.Query.QueryInterface.html">QueryInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Query.TokenInterface.html">TokenInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Query.TokenSelectInterface.html">TokenSelectInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Query.TokenSelectorInterface.html">TokenSelectorInterface</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.Query.TokenSelectorValueInterface.html">TokenSelectorValueInterface</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Query.Evaluator.html">Evaluator</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Query.Token.html">Token</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Query.TokenSelectorValue.html">TokenSelectorValue</a></li>                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">                    <a class="accordion-togglecollapsed" data-toggle="collapse" data-target="#namespace-1978327319"></a>                <a href="../namespaces/TBela.CSS.Value.html" style="margin-left: 30px; padding-left: 0">Value</a>
+            </div>
+            <div id="namespace-1978327319" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <ul>                            <li class="trait"><a href="../classes/TBela.CSS.Value.ValueTrait.html">ValueTrait</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Comment.html">Comment</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CssAttribute.html">CssAttribute</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CSSFunction.html">CSSFunction</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CssParenthesisExpression.html">CssParenthesisExpression</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CssString.html">CssString</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.CssUrl.html">CssUrl</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.FontFamily.html">FontFamily</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Number.html">Number</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.OutlineColor.html">OutlineColor</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Separator.html">Separator</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Set.html">Set</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Unit.html">Unit</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Value.Whitespace.html">Whitespace</a></li>                    </ul>
                 </div>
             </div>
         </div>
     </div>
-                    <ul>                            <li class="interface"><a href="../classes/TBela.CSS.Rendererable.html">Rendererable</a></li>                            <li class="interface"><a href="../classes/TBela.CSS.RuleList.html">RuleList</a></li>                            <li class="trait"><a href="../classes/TBela.CSS.ArrayTrait.html">ArrayTrait</a></li>                            <li class="trait"><a href="../classes/TBela.CSS.ElementTrait.html">ElementTrait</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Compiler.html">Compiler</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Element.html">Element</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Elements.html">Elements</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Parser.html">Parser</a></li>                            <li class="class"><a href="../classes/TBela.CSS.Renderer.html">Renderer</a></li>                    </ul>
+                    <ul>                            <li class="trait"><a href="../classes/TBela.CSS.ArrayTrait.html">ArrayTrait</a></li>                            <li class="trait"><a href="../classes/TBela.CSS.ElementTrait.html">ElementTrait</a></li>                            <li class="class"><a href="../classes/TBela.CSS.RuleList.html">RuleList</a></li>                    </ul>
                 </div>
             </div>
         </div>
@@ -265,7 +295,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    onMarch 24th, 2020 at 21:35.
+                    onJuly 10th, 2020 at 22:08.
                 </section>
             </section>
         </section>

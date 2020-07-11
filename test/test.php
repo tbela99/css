@@ -8,7 +8,8 @@ use \TBela\CSS\Value;
 
 $data = [];
 
-$css = '@font-face {
+$css = '
+@font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
@@ -23,14 +24,6 @@ h1 {
   font-size: 50px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
-}
-
-@media print, screen and (max-width: 12450px) {
-
-p {
-      color: #f0f0f0;
-      background-color: #030303;
-  }
 }
 
 @media print {
@@ -51,8 +44,8 @@ p {
 
   @font-face {
     font-family: Arial, MaHelvetica;
-    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
-      ;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }';
@@ -61,35 +54,13 @@ $compiler = new Compiler();
 
 $compiler->setContent($css);
 
-$element = $compiler->getData();
+$stylesheet = $compiler->getData();
 
+// get all src properties in a @font-face rule
+$nodes = $stylesheet->query('@font-face/src');
 
-// select @media with value that ends with print
-$context = '@media[@value$="print"]';
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
 
-var_dump($element->query($context));
-die;
+$stylesheet->deduplicate();
 
-$data[] = [
-    [ 0 => '@media print {
- @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
- body {
-   font-family: "Bitstream Vera Serif Bold", serif
- }
- p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
- }
- @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
-}'
-    ],
-    array_map('trim', $element->query($context))];
+echo $stylesheet;

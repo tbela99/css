@@ -1,6 +1,6 @@
 ## Query Api
 
-It allows you to query the CSS node in using and xpath like language. 
+It allows you to query the CSS node in using and xpath like syntax. 
 
 ### Node Selectors
 
@@ -14,11 +14,11 @@ the node selectors are
 - 'a': match all nodes with a selector or name 'a'
 - 'a[2]': match the second node with name or selector equals to 'a'
 - 'a,b': match nodes with name or selector that is either 'a' or 'b'
-- '@media[@value=print]': match all media with value equals to 'print'
-- '@media[@value^=print]': match all media with value that begins with 'print'
+- '@media[@value=print]': match all media with value equals to 'print'. Example: @media print {}
+- '@media[@value^=print]': match all media with value that begins with 'print'. Example: @media print and (max-width: 320px)
 - '@media[@value*=print]': match all media with value that contains 'print'
 - '@media[contains(@value, 'print')]': match all media with value that contains 'print'
-- '@media[@value*=print]': match all media with value that ends with 'print'
+- '@media[@value$=print]': match all media with value that ends with 'print'
 
 ```php
 # get all @font-face in the stylesheet
@@ -27,7 +27,7 @@ $nodes = $element->query('@font-face');
 
 ### Attributes Filters
 
-Nodes can be filtered using attributes. An attribute is contained inside \[ and \]. An attribute name starts with '@'.
+Nodes can be filtered using attributes. An attribute is contained inside '\[' and '\]'. An attribute name starts with '@'.
 Attributes are attribute name (which are @name and @value) or function filter
 
 - @name: this attribute designates either the node selector, the @atRule name or the css declaration name
@@ -43,14 +43,14 @@ $nodes = $element->query('[@name="media"]');
 this attribute designates the css declaration value or @AtRule attributes
 
 ```php
-// match all nodes with a value
+// match all nodes with a value like @media or a declaration node
 $nodes = $element->query('[@value]');
 // match all nodes with value print like @media print {}
 $nodes = $element->query('[@value="print"]');
 ```
 ### Operators
 
-Operators are used inside attributes. They can only be used inside \[ and \]
+Operators are used inside attributes. They can only be used inside '\[' and '\]'
 
 #### equals (=)
 
@@ -75,7 +75,7 @@ $nodes = $element->query('[@value*="print"]');
 
 ### Function Filters
 
-Nodes can be filtered using functions. Functions are 
+Nodes can be filtered using functions. Supported functions are 
 
 #### color(@attr, 'value')
  
@@ -87,7 +87,7 @@ $nodes = $element->query('[color(@value, "white")]');
 ```
 #### contains(@attr, 'value')
 
-match all nodes with attributes that contains the specified value
+match all nodes with attributes that contains the specified value. This is equivalent to using the operator '\*='
 
 ```php
 // match all nodes with value that contains print
@@ -95,7 +95,7 @@ $nodes = $element->query('[contains(@value, "print")]');
 ```
 #### beginswith(@attr, 'value')
 
-match all nodes with attributes that begin with the specified value
+match all nodes with attributes that begin with the specified value. This is equivalent to using the operator '^='
 
 ```php
 // match all nodes with value that contains print
@@ -103,7 +103,7 @@ $nodes = $element->query('[beginswith(@value, "print")]');
 ```
 #### endswith(@attr, 'value')
 
-match all nodes with attributes that end with the specified value
+match all nodes with attributes that end with the specified value. This is equivalent to using the operator '$='
 
 ```php
 // match all nodes with value that contains print
@@ -111,7 +111,7 @@ $nodes = $element->query('[endswith(@value, "print")]');
 ```
 ####  equals(@attr, 'value')
 
-match all nodes with attributes that are equal to the specified value
+match all nodes with attributes that are equal to the specified value. This is equivalent to using the operator '='
 
 ```php
 // match all nodes with value that contains print
@@ -127,7 +127,7 @@ $nodes = $element->query('[empty()]');
 ```
 #### comment()
 
-match comments node
+match comments node. this will not match comments after a node name or inside node value
 
 ```php
 // match all comment nodes

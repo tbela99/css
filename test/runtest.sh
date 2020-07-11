@@ -39,6 +39,6 @@ else
     if [ -f "$file" ]; then
       php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file
     else
-      echo "Invalid test: $1"
+      echo "Invalid test: $1" && exit 1
     fi
 fi

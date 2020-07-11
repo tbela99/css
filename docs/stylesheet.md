@@ -9,7 +9,7 @@ there are several ways to create a stylesheet.
 ### Using AST
 ```php
 
-use \TBela\Element;
+use \TBela\CSS\Element;
 
 $ast = json_decode(file_get_contents('ast.json'));
 
@@ -18,7 +18,7 @@ $stylesheet = Element::getInstance($ast);
 ### Using Parser
 ```php
 
-use \TBela\CSS;
+use \TBela\CSS\Parser;
 
 $parser = new Parser($css);
 
@@ -26,7 +26,7 @@ $parser = new Parser($css);
 $parser->load('template.css');
 
 // or like that
-$parser->seContent($css);
+$parser->setContent($css);
 
 // and then
 $stylesheet = $parser->parse();
@@ -36,7 +36,7 @@ $stylesheet = $parser->parse();
 
 ```php
 
-use \TBela\Compiler;
+use \TBela\CSS\Compiler;
 
 $compiler = new Compiler();
 
