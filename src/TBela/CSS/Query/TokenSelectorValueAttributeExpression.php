@@ -6,7 +6,7 @@ use InvalidArgumentException;
 
 class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterface
 {
-    protected array $value = [];
+    protected $value = [];
 
     /**
      * TokenSelectorValueAttributeExpression constructor.
@@ -37,7 +37,7 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
     /**
      * @inheritDoc
      */
-    public function evaluate(array $context): array
+    public function evaluate(array $context)
     {
         $result = [];
 

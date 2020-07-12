@@ -7,15 +7,15 @@ trait EventTrait {
     /**
      * @var callable[]
      */
-    protected array $events = [];
+    protected $events = [];
 
-    public function on(string $event, callable $callable) {
+    public function on($event, callable $callable) {
 
         $this->events[strtolower($event)][] = $callable;
         return $this;
     }
 
-    public function off(string $event, callable $callable) {
+    public function off($event, callable $callable) {
 
         $event = strtolower($event);
 
@@ -34,7 +34,7 @@ trait EventTrait {
         return $this;
     }
 
-    public function emit(string $event, ...$args): array {
+    public function emit($event, ...$args) {
 
         $result = [];
         $event = strtolower($event);

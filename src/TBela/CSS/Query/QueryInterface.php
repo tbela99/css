@@ -9,5 +9,5 @@ interface QueryInterface
      * @param string $query
      * @return QueryInterface[]
      */
-    public function query(string $query): array;
+    public function query($query);
 }

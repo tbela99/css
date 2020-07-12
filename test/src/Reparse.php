@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+//declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +12,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test1Provider
      */
-    public function test1($expected, $actual): void
+    public function test1($expected, $actual)
     {
 
         $this->assertEquals(
@@ -26,7 +26,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test2Provider
      */
-    public function test2($expected, $actual): void
+    public function test2($expected, $actual)
     {
 
         $this->assertEquals(
@@ -40,7 +40,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test3Provider
      */
-    public function test3($expected, $actual): void
+    public function test3($expected, $actual)
     {
 
         $this->assertEquals(
@@ -54,7 +54,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test4Provider
      */
-    public function test4($expected, $actual): void
+    public function test4($expected, $actual)
     {
 
         $this->assertEquals(
@@ -68,7 +68,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test5Provider
      */
-    public function test5($expected, $actual): void
+    public function test5($expected, $actual)
     {
 
         $this->assertEquals(
@@ -82,7 +82,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test6Provider
      */
-    public function test6($expected, $actual): void
+    public function test6($expected, $actual)
     {
 
         $this->assertEquals(
@@ -96,7 +96,7 @@ final class Reparse extends TestCase
      * @param string $actual
      * @dataProvider test7Provider
      */
-    public function test7($expected, $actual): void
+    public function test7($expected, $actual)
     {
 
         $this->assertEquals(
@@ -170,7 +170,7 @@ final class Reparse extends TestCase
         return $data;
     }
 
-    public function makeTest (int $index) {
+    public function makeTest ($index) {
 
 
         $data = [];

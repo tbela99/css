@@ -20,13 +20,13 @@ class PropertyList implements IteratorAggregate
      * @var Property[]
      * @ignore
      */
-    protected array $properties = [];
+    protected $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected array $options = [];
+    protected $options = [];
 
     /***
      * PropertyList constructor.
@@ -68,7 +68,7 @@ class PropertyList implements IteratorAggregate
             $name = Value::parse($name);
         }
 
-        $propertyName = strtolower($name->render(['remove_comments' => true]));
+        $propertyName = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
 
         if (is_string($value) || is_numeric($value)) {
 

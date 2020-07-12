@@ -11,26 +11,26 @@ class Parser
     /**
      * @var int
      */
-    protected int $position;
+    protected $position;
     /**
      * @var int
      */
-    protected int $last;
+    protected $last;
     /**
      * @var string
      */
-    protected string $string;
+    protected $string;
     /**
      * @var array
      */
-    protected array $tokens;
+    protected $tokens;
 
     /**
      * @param $string
      * @return TokenInterface[]
      * @throws SyntaxError
      */
-    public function parse(string $string): array
+    public function parse($string)
     {
 
         $string = trim($string);
@@ -124,7 +124,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_selectors(): void
+    protected function parse_selectors()
     {
 
         $j = $this->last;
@@ -207,7 +207,7 @@ class Parser
      * @return array
      * @throws SyntaxError
      */
-    protected function parse_selector(string $selector, string $context = 'selector'): array
+    protected function parse_selector($selector, $context = 'selector')
     {
 
         $selector = trim($selector);
@@ -484,7 +484,7 @@ class Parser
      * @param string $context
      * @return object
      */
-    protected function getTokenType(string $token, string $context)
+    protected function getTokenType($token, $context)
     {
 
         $result = (object)['type' => 'string', 'value' => $token];
@@ -501,7 +501,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_path(): void
+    protected function parse_path()
     {
 
         $j = strlen($this->string) - 1;
@@ -531,13 +531,13 @@ class Parser
         }
     }
 
-    protected function is_whitespace($char): bool
+    protected function is_whitespace($char)
     {
 
         return preg_match('#^\s+$#sm', $char);
     }
 
-    protected function match_token($string, $close, $position, $start): string
+    protected function match_token($string, $close, $position, $start)
     {
 
         $j = strlen($string) - 1;

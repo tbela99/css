@@ -17,31 +17,31 @@ class PropertySet
      * @var array
      * @ignore
      */
-    protected array $config;
+    protected $config;
 
     /**
      * @var array
      * @ignore
      */
-    protected array $properties = [];
+    protected $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected array $property_type = [];
+    protected $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected string $shorthand;
+    protected $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct(string $shorthand, array $config)
+    public function __construct($shorthand, array $config)
     {
 
         $this->shorthand = $shorthand;
@@ -69,7 +69,7 @@ class PropertySet
      * @return PropertySet
      * @throws InvalidArgumentException
      */
-    public function set(string $name, Set $value): PropertySet
+    public function set($name, Set $value)
     {
 
         // is valid property
@@ -223,7 +223,7 @@ class PropertySet
      * @return string
      * @ignore
      */
-    protected function reduce(): string
+    protected function reduce()
     {
         $result = [];
 
@@ -309,15 +309,17 @@ class PropertySet
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, Set $value): PropertySet
+    protected function setProperty($name, Set $value)
     {
 
-        if (!isset($this->properties[$name])) {
+        $property = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
 
-            $this->properties[$name] = new Property($name);
+        if (!isset($this->properties[$property])) {
+
+            $this->properties[$property] = new Property($name);
         }
 
-        $this->properties[$name]->setValue($value);
+        $this->properties[$property]->setValue($value);
 
         return $this;
     }
@@ -326,7 +328,7 @@ class PropertySet
      * return Property array
      * @return Property[]
      */
-    public function getProperties(): array {
+    public function getProperties() {
 
         if (count($this->properties) == count($this->config['properties'])) {
 
@@ -346,7 +348,7 @@ class PropertySet
      * @param string $join
      * @return string
      */
-    public function render($join = "\n"): string
+    public function render($join = "\n")
     {
         $glue = ';';
         $value = '';

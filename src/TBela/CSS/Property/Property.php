@@ -26,9 +26,9 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * @var string
      * @ignore
      */
-    protected string $type = 'Property';
+    protected $type = 'Property';
 
-    protected Set $value;
+    protected $value;
 
     /**
      * Property constructor.
@@ -98,6 +98,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
 
     /**
      * convert property to string
+     * @param array $options
      * @return string
      */
     public function render (array $options = []) {

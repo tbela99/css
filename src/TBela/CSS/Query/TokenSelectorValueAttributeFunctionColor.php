@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 
 class TokenSelectorValueAttributeFunctionColor implements TokenSelectorValueInterface
 {
-    protected array $value = [];
+    protected $value = [];
 
     /**
      * TokenSelectorValueAttributeExpression constructor.
@@ -56,7 +56,7 @@ class TokenSelectorValueAttributeFunctionColor implements TokenSelectorValueInte
     /**
      * @inheritDoc
      */
-    public function evaluate(array $context): array
+    public function evaluate(array $context)
     {
         $result = [];
 

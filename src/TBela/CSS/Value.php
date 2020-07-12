@@ -22,17 +22,17 @@ abstract class Value
      * var stdClass;
      * @ignore
      */
-    protected ?stdClass $data = null;
+    protected $data = null;
 
-    protected static array $defaults = [];
+    protected static $defaults = [];
 
-    protected static array $keywords = [];
+    protected static $keywords = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected static array $cache = [];
+    protected static $cache = [];
 
     /**
      * Value constructor.
@@ -89,13 +89,13 @@ abstract class Value
      * @param string $type
      * @return bool
      */
-    public function match(string $type): bool
+    public function match($type)
     {
 
         return strtolower($this->data->type) == $type;
     }
 
-    public static function getClassName(string $type): string {
+    public static function getClassName($type) {
 
         static $classNames = [];
 
@@ -110,7 +110,7 @@ abstract class Value
         return $classNames[$type];
     }
 
-    protected static function type(): string {
+    protected static function type() {
 
         static $types = [];
 
@@ -131,7 +131,7 @@ abstract class Value
      * @param object $token
      * @return bool
      */
-    protected static function matchDefaults ($token) : bool {
+    protected static function matchDefaults ($token) {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
     }
@@ -142,7 +142,7 @@ abstract class Value
      * @param object $previousValue
      * @return bool
      */
-    public static function matchToken ($token, $previousToken = null, $previousValue = null): bool {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null) {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
     }
@@ -152,7 +152,7 @@ abstract class Value
      * @param stdClass $data
      * @return bool
      */
-    protected static function validate($data): bool
+    protected static function validate($data)
     {
 
         return isset($data->value);
@@ -163,7 +163,7 @@ abstract class Value
      * @param stdClass $data
      * @return Value
      */
-    public static function getInstance($data): Value
+    public static function getInstance($data)
     {
 
         if ($data instanceof Value) {
@@ -197,7 +197,7 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         return $this->data->value;
@@ -210,7 +210,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return Set
      */
-    public static function parse(string $string, $property = null, bool $capture_whitespace = true): Set
+    public static function parse($string, $property = null, $capture_whitespace = true)
     {
         if ($string instanceof Set) {
 
@@ -228,7 +228,7 @@ abstract class Value
         }
 
         $string = trim($string);
-        $property = strtolower($property);
+        $property = trim($property);
 
         if ($property !== '') {
 
@@ -249,7 +249,7 @@ abstract class Value
      * @param array $options
      * @return array
      */
-    public static function reduce(array $tokens, array $options = []): array
+    public static function reduce(array $tokens, array $options = [])
     {
         $count = count($tokens) - 1;
 
@@ -301,7 +301,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return Set
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true): Set
+    protected static function doParse($string, $capture_whitespace = true)
     {
 
         return new Set(static::reduce(static::getTokens($string, $capture_whitespace)));
@@ -313,7 +313,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return array|null
      */
-    protected static function getTokens(string $string, $capture_whitespace = true)
+    protected static function getTokens($string, $capture_whitespace = true)
     {
 
         $string = trim($string);
@@ -603,17 +603,18 @@ abstract class Value
      * @param $token
      * @return stdClass
      */
-    protected static function getType(string $token)
+    protected static function getType($token)
     {
 
         $type = new stdClass;
 
         $type->value = $token;
+        $colors = Color::COLORS_NAMES;
 
         if (substr($token, 0, 1) != '#' && is_numeric($token)) {
 
             $type->type = 'number';
-        } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
+        } else if ($token == 'currentcolor' || isset($colors[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
             $type->type = 'color';
             $type->colorType = $token == 'currentcolor' ? 'keyword' : 'hex';
@@ -636,7 +637,7 @@ abstract class Value
      * @return array
      * @ignore
      */
-    public static function keywords(): array
+    public static function keywords()
     {
 
         return static::$keywords;
@@ -648,7 +649,7 @@ abstract class Value
      * @return string|null
      * @ignore
      */
-    public static function matchKeyword($string, array $keywords = null): ?string
+    public static function matchKeyword($string, array $keywords = null)
     {
 
         if (is_null($keywords)) {
@@ -674,7 +675,7 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public static function getNumericValue (?Value $value, array $options = []): ?string {
+    public static function getNumericValue (Value $value = null, array $options = []) {
 
         if (is_null($value) || $value->value === '') {
 
@@ -688,7 +689,7 @@ abstract class Value
      * @param Value $value
      * @return string
      */
-    public static function getRGBValue (Value $value): string {
+    public static function getRGBValue (Value $value) {
 
         return Number::compress($value->unit == '%' ? 255 * $value->value / 100 : $value->value);
     }
@@ -698,7 +699,7 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public static function getAngleValue (?Value $value, array $options = []): ?string {
+    public static function getAngleValue (Value $value = null, array $options = []) {
 
         if (is_null($value) || $value->value === '') {
 

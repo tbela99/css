@@ -9,9 +9,9 @@
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR"
-[ ! -f "../phpunit.phar" ] && \
-wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar && \
-chmod +x ../phpunit.phar
+[ ! -f "../phpunit-5.phar" ] && \
+wget -O ../phpunit-5.phar https://phar.phpunit.de/phpunit-5.phar && \
+chmod +x ../phpunit-5.phar
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -31,13 +31,13 @@ if [ "$1" = "" ] || [ "${1:0:1}" = "-" ]; then
     do
       [ "$file" = "src/$skip.php" ] && continue;
       echo "Run test $file"
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || fail "$file"
+      php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
     done
 else
 
     file="src/$1.php"
     if [ -f "$file" ]; then
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file
+      php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
     else
       echo "Invalid test: $1" && exit 1
     fi

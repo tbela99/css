@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+//declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -20,7 +20,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryProvider
      */
-    public function testQuery(array $expected, array $actual): void
+    public function testQuery(array $expected, array $actual)
     {
 
         $this->assertEquals(
@@ -34,7 +34,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryFunctionsProvider
      */
-    public function testQueryFunctions(array $expected, array $actual): void
+    public function testQueryFunctions(array $expected, array $actual)
     {
 
         $this->assertEquals(
@@ -48,7 +48,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryProviderOr
      */
-    public function testQueryOr(array $expected, array $actual): void
+    public function testQueryOr(array $expected, array $actual)
     {
 
         $this->assertEquals(

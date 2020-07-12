@@ -16,8 +16,8 @@ class SourceLocation implements JsonSerializable {
 
     use AccessTrait;
 
-    protected Position $start;
-    protected Position $end;
+    protected $start;
+    protected $end;
 
     public function __construct(Position $start, Position $end) {
 
@@ -25,29 +25,29 @@ class SourceLocation implements JsonSerializable {
         $this->end = $end;
     }
 
-    public static function getInstance($location): SourceLocation
+    public static function getInstance($location)
     {
 
         return new static(Position::getInstance($location->start), Position::getInstance($location->end));
     }
 
-    public function getStart(): Position {
+    public function getStart() {
 
         return $this->start;
     }
 
-    public function getEnd(): Position {
+    public function getEnd() {
 
         return $this->end;
     }
 
-    public function setStart(Position $start): SourceLocation {
+    public function setStart(Position $start) {
 
         $this->start = $start;
         return $this;
     }
 
-    public function setEnd(Position $end): SourceLocation {
+    public function setEnd(Position $end) {
 
         $this->end = $end;
         return $this;

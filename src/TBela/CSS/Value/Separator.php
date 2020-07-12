@@ -13,7 +13,7 @@ class Separator extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         return $this->data->value;

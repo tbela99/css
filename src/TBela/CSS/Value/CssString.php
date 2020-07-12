@@ -42,7 +42,7 @@ class CssString extends Value
      * @inheritDoc
      * @ignore
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         $q = $this->data->q;

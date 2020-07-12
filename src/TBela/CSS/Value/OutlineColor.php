@@ -13,7 +13,7 @@ class OutlineColor extends Color
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null)
     {
         return $token->type == 'color';
     }

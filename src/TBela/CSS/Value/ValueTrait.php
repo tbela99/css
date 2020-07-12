@@ -16,7 +16,7 @@ trait ValueTrait
      * @param bool $capture_whitespace
      * @return Set
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true): Set
+    protected static function doParse($string, $capture_whitespace = true)
     {
 
         $type = static::type();

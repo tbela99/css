@@ -32,7 +32,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     /**
      * @ignore
      */
-    protected ?RuleListInterface $parent = null;
+    protected $parent = null;
 
     /**
      * Element constructor.
@@ -70,7 +70,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
         }
     }
 
-    protected function createLocation ($location): SourceLocation {
+    protected function createLocation ($location) {
 
         return SourceLocation::getInstance($location);
     }
@@ -80,7 +80,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      * @param Element|object $ast
      * @return mixed
      */
-	public static function getInstance($ast) : Element {
+	public static function getInstance($ast) {
 
         $type = '';
 
@@ -115,7 +115,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      * @return array
      * @throws Parser\SyntaxError
      */
-    public function query(string $query): array {
+    public function query($query) {
 
 	    return (new Evaluator())->evaluate($query, $this);
     }
@@ -204,15 +204,15 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
         return $node;
     }
 
-    public function setLocation(?SourceLocation $location) {
+    public function setLocation(SourceLocation $location = null) {
 
         $this->ast->location = $location;
         return $this;
     }
 
-    public function getLocation(): ?SourceLocation {
+    public function getLocation() {
 
-        return $this->ast->location ?? null;
+        return isset($this->ast->location) ? $this->ast->location : null;
     }
 
 
@@ -255,7 +255,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
         $signature = ['type:' . $this->ast->type];
 
-        $name = $this->ast->name ?? null;
+        $name = isset($this->ast->name) ? $this->ast->name : null;
 
         if (isset($name)) {
 
@@ -267,7 +267,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
             $signature[] = 'name:' . trim($name->render(['remove_comments' => true]));
         }
 
-        $value = $this->ast->value ?? null;
+        $value = isset($this->ast->value) ? $this->ast->value : null;
 
         if (isset($value)) {
 
@@ -279,7 +279,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
             $signature[] = 'value:' . trim($value->render(['remove_comments' => true]));
         }
 
-        $selector = $this->ast->selector ?? null;
+        $selector = isset($this->ast->selector) ? $this->ast->selector : null;
 
         if (isset($selector)) {
 
@@ -294,7 +294,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
                 }, $selector));
         }
 
-        $vendor = $this->ast->vendor ?? null;
+        $vendor = isset($this->ast->vendor) ? $this->ast->vendor : null;
 
         if (isset($vendor)) {
 
@@ -312,7 +312,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      */
     protected function deduplicateRules(array $options = [])
     {
-        if (!is_null($this->ast->children ?? null)) {
+        if (!is_null(isset($this->ast->children) ? $this->ast->children : null)) {
 
             if (empty($options['allow_duplicate_rules'])) {
 

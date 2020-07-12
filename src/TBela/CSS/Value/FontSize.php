@@ -12,7 +12,7 @@ class FontSize extends Value
 {
 
     use ValueTrait;
-    protected static array $keywords = [
+    protected static $keywords = [
         'xx-small',
         'x-small',
         'small',
@@ -25,12 +25,12 @@ class FontSize extends Value
         'smaller'
     ];
 
-    protected static array $defaults = ['medium'];
+    protected static $defaults = ['medium'];
 
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null)
     {
         if (($token->type == 'number' && $token->value == 0) || ($token->type == 'unit' && !in_array($token->unit, ['turn', 'rad', 'grad', 'deg']))) {
 
@@ -48,7 +48,7 @@ class FontSize extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         $value = $this->data->value;

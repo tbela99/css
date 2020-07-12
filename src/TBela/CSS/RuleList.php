@@ -40,7 +40,7 @@ abstract class RuleList extends Element implements RuleListInterface
      * @param ...Element|null $replacement
      * @return Element[]
      */
-    public function splice(int $offset, int $length = null, $replacement = null): array {
+    public function splice($offset, $length = null, $replacement = null) {
 
         if(!empty($this->ast->isLeaf)) {
 
@@ -134,7 +134,7 @@ abstract class RuleList extends Element implements RuleListInterface
     public function getChildren()
     {
 
-        return $this->ast->children ?? [];
+        return isset($this->ast->children) ? $this->ast->children : [];
     }
 
     public function setChildren(array $elements) {

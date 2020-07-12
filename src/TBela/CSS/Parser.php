@@ -29,34 +29,34 @@ class Parser
 
     use ParserTrait;
 
-    protected Position $currentPosition;
-    protected Position $previousPosition;
-    protected int $end = 0;
+    protected $currentPosition;
+    protected $previousPosition;
+    protected $end = 0;
 
 
-    protected array $errors = [];
-    protected array $warnings = [];
+    protected $errors = [];
+    protected $warnings = [];
 
-    protected ?RuleListInterface $ast = null;
+    protected $ast = null;
 
     /**
      * css data
      * @var string
      * @ignore
      */
-    public string $css = '';
+    public $css = '';
 
     /**
      * @var string
      * @ignore
      */
-    protected string $path = '';
+    protected $path = '';
 
     /**
      * @var array
      * @ignore
      */
-    public array $options = [
+    public $options = [
         'sourcemap' => false,
         'flatten_import' => false,
         'allow_duplicate_rules' => false,
@@ -85,7 +85,7 @@ class Parser
      * @throws Exception
      */
 
-    public function load(string $file): Parser
+    public function load($file)
     {
 
         $this->path = $file;
@@ -100,7 +100,7 @@ class Parser
      * @return Parser
      * @throws Exception
      */
-    public function append(string $file): Parser
+    public function append($file)
     {
 
         return $this->appendContent($this->getFileContent($file));
@@ -111,7 +111,7 @@ class Parser
      * @return Parser
      * @throws SyntaxError
      */
-    public function merge(Parser $parser): Parser
+    public function merge(Parser $parser)
     {
 
         if (is_null($this->ast)) {
@@ -128,7 +128,7 @@ class Parser
      * @return Parser
      * @throws SyntaxError
      */
-    public function appendContent($css): Parser
+    public function appendContent($css)
     {
 
         $this->css .= rtrim($css);
@@ -161,7 +161,7 @@ class Parser
     /**
      * @return string
      */
-    public function getContent(): string {
+    public function getContent() {
 
         return $this->css;
     }
@@ -201,7 +201,7 @@ class Parser
      * @return RuleListInterface|null
      * @throws SyntaxError
      */
-    public function parse(): RuleListInterface
+    public function parse()
     {
 
         $this->ast = null;
@@ -233,7 +233,7 @@ class Parser
      * @throws Exception
      * @ignore
      */
-    protected function expand(string $css, $path = null)
+    protected function expand($css, $path = null)
     {
 
         if (!is_null($path) && $path !== '') {
@@ -541,7 +541,7 @@ class Parser
      * @return Position
      * @ignore
      */
-    protected function update(Position $position, string $string): Position
+    protected function update(Position $position, $string)
     {
 
         $j = strlen($string);
@@ -586,7 +586,7 @@ class Parser
      * @return Position
      * @ignore
      */
-    protected function getNextPosition(string $input, int $currentIndex, int $currentLine, int $currentColumn): Position
+    protected function getNextPosition($input, $currentIndex, $currentLine, $currentColumn)
     {
 
         $j = strlen($input);
@@ -621,7 +621,7 @@ class Parser
      * @param string $block
      * @return string
      */
-    protected function getBlockType(string $block): string
+    protected function getBlockType($block)
     {
 
         return substr(static::substr($block, 0, strlen($block) - 1, [';', '{']), -1) == '{' ? 'block' : 'statement';
@@ -633,7 +633,7 @@ class Parser
      * @return mixed|Element
      * @ignore
      */
-    protected function parseComment(string $comment, Position $position)
+    protected function parseComment($comment, Position $position)
     {
 
         $this->update($position, $comment);
@@ -662,7 +662,7 @@ class Parser
      * @throws Exception
      * @ignore
      */
-    protected function parseAtRule(string $rule, Position $position, string $blockType = '')
+    protected function parseAtRule($rule, Position $position, $blockType = '')
     {
 
         if (substr($rule, 0, 1) != '@') {
@@ -720,7 +720,7 @@ class Parser
      * @return false|Element
      * @ignore
      */
-    protected function parseSelector(string $rule, Position $position)
+    protected function parseSelector($rule, Position $position)
     {
 
         $selector = rtrim($rule, "{\n\t\r");
@@ -760,7 +760,7 @@ class Parser
      * @throws Exception
      * @ignore
      */
-    protected function parseDeclarations(RuleListInterface $rule, string $block, Position $position)
+    protected function parseDeclarations(RuleListInterface $rule, $block, Position $position)
     {
 
         $j = strlen($block) - 1;

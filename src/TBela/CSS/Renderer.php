@@ -31,55 +31,55 @@ class Renderer implements EventInterface
      * @var bool minify output
      * @ignore
      */
-    protected bool $compress = false;
+    protected $compress = false;
 
     /**
      * @var int CSS level 3|4
      * @ignore
      */
-    protected int $css_level = 4;
+    protected $css_level = 4;
 
     /**
      * @var string line indention
      * @ignore
      */
-    protected string $indent = ' ';
+    protected $indent = ' ';
 
     /**
      * @var string line separator
      * @ignore
      */
-    protected string $glue = "\n";
+    protected $glue = "\n";
 
     /**
      * @var string token separator
      * @ignore
      */
-    protected string $separator = ' ';
+    protected $separator = ' ';
 
     /**
      * @var bool preserve charset
      * @ignore
      */
-    protected bool $charset = false;
+    protected $charset = false;
 
     /**
      * @var bool allow rbga hex color
      * @ignore
      */
-    protected bool $convert_color = false;
+    protected $convert_color = false;
 
     /**
      * @var bool remove comments
      * @ignore
      */
-    protected bool $remove_comments = false;
+    protected $remove_comments = false;
 
     /**
      * @var bool remove empty node
      * @ignore
      */
-    protected bool $remove_empty_nodes = false;
+    protected $remove_empty_nodes = false;
 
     /**
      * @var bool|array|string true|false or a list of exceptions
@@ -116,7 +116,7 @@ class Renderer implements EventInterface
      * @return string
      * @throws Exception
      */
-    public function render(RenderableInterface $element, ?int $level = null, $parent = false)
+    public function render(RenderableInterface $element, $level = null, $parent = false)
     {
 
         foreach ($this->emit('traverse', $element, $level) as $result) {
@@ -327,7 +327,13 @@ class Renderer implements EventInterface
 
 
         $value = $element->getValue();
-        return trim((is_string($value) ? Value::parse($value) : $value)->render($this->getOptions()));
+
+        if (is_string($value)) {
+
+            $value = Value::parse($value);
+        }
+
+        return trim($value->render($this->getOptions()));
     }
 
     /**

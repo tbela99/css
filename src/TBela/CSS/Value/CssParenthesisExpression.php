@@ -10,12 +10,12 @@ use \TBela\CSS\Value;
  */
 class CssParenthesisExpression extends Value {
 
-    protected static function validate($data): bool {
+    protected static function validate($data) {
 
         return isset($data->name) && $data->name === '' && isset($data->arguments);
     }
 
-    public function render(array $options = []): string {
+    public function render(array $options = []) {
 
         $filler = !empty($options['compress']) ? '' : ' ';
 

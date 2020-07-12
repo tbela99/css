@@ -1,7 +1,6 @@
 {
   "name": "tbela99/css",
   "description": "A CSS parser and minifier written in PHP",
-  "version": "0.1-rc2",
   "type": "library",
   "keywords": [
     "CSS",
@@ -21,6 +20,6 @@
     }
   ],
   "require": {
-    "php": ">=7.4"
+    "php": ">=5.6"
   }
 }

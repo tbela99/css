@@ -17,7 +17,7 @@ trait ElementTrait  {
      * @return Set
      * @throws Exception
      */
-    public function getName(bool $getVendor = true): Set {
+    public function getName($getVendor = true) {
 
         $vendor = $this->getVendor();
 
@@ -74,7 +74,7 @@ trait ElementTrait  {
      * set vendor prefix
      * @return string
      */
-    public function getVendor () : string {
+    public function getVendor () {
 
         if (isset($this->ast->vendor)) {
 

@@ -17,31 +17,31 @@ class PropertyMap
      * @var array
      * @ignore
      */
-    protected array $config;
+    protected $config;
 
     /**
      * @var Property[]
      * @ignore
      */
-    protected array $properties = [];
+    protected $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected array $property_type = [];
+    protected $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected string $shorthand;
+    protected $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct(string $shorthand, array $config)
+    public function __construct($shorthand, array $config)
     {
 
         $this->shorthand = $shorthand;
@@ -71,30 +71,32 @@ class PropertyMap
      * @param Set $value
      * @return PropertyMap
      */
-    public function set(string $name, Set $value)
+    public function set($name, Set $value)
     {
 
+        $property = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
+
         // is valid property
-        if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
+        if (($this->shorthand != $property) && !in_array($property, $this->config['properties'])) {
 
             throw new InvalidArgumentException('Invalid property ' . $name, 400);
         }
 
-        if (isset($this->properties[$this->shorthand]) || $name == $this->shorthand) {
+        if (isset($this->properties[$this->shorthand]) || $property == $this->shorthand) {
 
             // the type matches the shorthand - example system font
-            if ($name != $this->shorthand) {
+            if ($property != $this->shorthand) {
 
                 foreach ($this->properties[$this->shorthand]->getValue() as $val) {
 
                     if ($val->type == $this->shorthand) {
 
-                        if (!isset($this->properties[$name])) {
+                        if (!isset($this->properties[$property])) {
 
-                            $this->properties[$name] = new Property($name);
+                            $this->properties[$property] = new Property($name);
                         }
 
-                        $this->properties[$name]->setValue($value);
+                        $this->properties[$property]->setValue($value);
                         return $this;
                     }
                 }
@@ -114,12 +116,12 @@ class PropertyMap
             }
         } else {
 
-            if (!isset($this->properties[$name])) {
+            if (!isset($this->properties[$property])) {
 
-                $this->properties[$name] = new Property($name);
+                $this->properties[$property] = new Property($name);
             }
 
-            $this->properties[$name]->setValue($value);
+            $this->properties[$property]->setValue($value);
 
             if (!empty($this->config['settings']['compute'])) {
 
@@ -292,7 +294,7 @@ class PropertyMap
      * compute shorthand property
      * @return $this
      */
-    protected function computeProperties(): PropertyMap
+    protected function computeProperties()
     {
 
         foreach ($this->config['pattern'] as $pattern) {

@@ -15,7 +15,7 @@ class Compiler {
      * @var array|string[]
      * @ignore
      */
-    protected array $properties = [
+    protected $properties = [
         'indent',
         'glue',
         'separator',
@@ -32,13 +32,13 @@ class Compiler {
      * @var array
      * @ignore
      */
-    protected array $options = [];
+    protected $options = [];
 
     /**
      * @var Element
      * @ignore
      */
-    protected Element $data;
+    protected $data;
 
     /**
      * Compiler constructor.
@@ -67,7 +67,7 @@ class Compiler {
         return $this;
     }
 
-    public function getOptions(): array {
+    public function getOptions() {
 
         return $this->options;
     }

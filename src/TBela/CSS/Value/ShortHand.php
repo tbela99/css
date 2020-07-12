@@ -15,7 +15,7 @@ class ShortHand extends Value
      * @var array
      * @ignore
      */
-    protected static array $patterns = [
+    protected static $patterns = [
 
         /*
         'keyword',
@@ -35,7 +35,7 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true): Set
+    protected static function doParse($string, $capture_whitespace = true)
     {
 
         $keyword = static::matchKeyword($string);
@@ -84,7 +84,7 @@ class ShortHand extends Value
 
                         $className = static::getClassName($pattern['type']) . '::matchToken';
 
-                        if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous)) {
+                        if (call_user_func($className, $tokens[$i], isset($tokens[$i - 1]) ? $tokens[$i - 1] : null, $previous)) {
 
                             array_splice($patterns, $key, 1);
 

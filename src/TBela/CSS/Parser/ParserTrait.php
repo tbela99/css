@@ -9,7 +9,7 @@ trait ParserTrait
      * @param string $string
      * @return false|string
      */
-    public static function stripQuotes(string $string, bool $force = false) {
+    public static function stripQuotes($string, $force = false) {
 
         $q = substr($string, 0, 1);
 
@@ -72,7 +72,7 @@ trait ParserTrait
      * @param array $char_stop
      * @return false|string
      */
-    protected static function substr(string $string, int $startPosition, int $endPosition, array $char_stop) {
+    protected static function substr($string, $startPosition, $endPosition, array $char_stop) {
 
         if ($startPosition < 0 || substr($string, $startPosition, 1) === false) {
 

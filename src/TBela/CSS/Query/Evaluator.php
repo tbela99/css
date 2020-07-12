@@ -13,7 +13,7 @@ class Evaluator
      * @return QueryInterface[]
      * @throws SyntaxError
      */
-    public function evaluate(string $expression, QueryInterface $context)
+    public function evaluate($expression, QueryInterface $context)
     {
 
         $tokens = (new Parser())->parse($expression);
@@ -48,7 +48,7 @@ class Evaluator
          */
         foreach ($result as $key => $element) {
 
-            $index = spl_object_id($element);
+            $index = spl_object_hash($element);
 
             if (!isset($info[$index])) {
 

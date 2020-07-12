@@ -11,7 +11,7 @@ use \TBela\CSS\Value;
  */
 class FontWeight extends Value
 {
-    protected static array $keywords = [
+    protected static $keywords = [
         'thin' => '100',
         'hairline' => '100',
         'extra light' => '200',
@@ -33,12 +33,12 @@ class FontWeight extends Value
         'bolder' => 'bolder'
     ];
 
-    protected static array $defaults = ['normal', '400', 'regular'];
+    protected static $defaults = ['normal', '400', 'regular'];
 
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         $value = static::matchKeyword($this->data->value);
@@ -64,7 +64,7 @@ class FontWeight extends Value
      * @param string $type
      * @return bool
      */
-    public function match($type): bool
+    public function match($type)
     {
 
         return $type == 'font-weight';
@@ -73,7 +73,7 @@ class FontWeight extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null)
     {
 
         if ($token->type == 'number' && $token->value > 0 && $token->value <= 1000) {
@@ -99,7 +99,7 @@ class FontWeight extends Value
      * @inheritDoc
      * @throws \Exception
      */
-    protected static function doParse($string, $capture_whitespace = true): Set
+    protected static function doParse($string, $capture_whitespace = true)
     {
 
         $type = static::type();
@@ -133,7 +133,7 @@ class FontWeight extends Value
         return new Set(static::reduce($tokens));
     }
 
-    public static function keywords() : array
+    public static function keywords()
     {
 
         return array_keys(static::$keywords);

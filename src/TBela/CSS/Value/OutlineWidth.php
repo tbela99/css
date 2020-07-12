@@ -10,7 +10,7 @@ class OutlineWidth extends Unit
 {
     use ValueTrait;
 
-    protected static array $keywords = [
+    protected static $keywords = [
         'thin',
         'medium',
         'thick'
@@ -19,7 +19,7 @@ class OutlineWidth extends Unit
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null)
     {
 
         return $token->type == 'unit' || ($token->type == 'number' && $token->value == 0);

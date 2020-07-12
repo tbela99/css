@@ -8,8 +8,8 @@ use TBela\CSS\Interfaces\RuleListInterface;
 class Traverser extends Event
 {
 
-    public const IGNORE_NODE = 1;
-    public const IGNORE_CHILDREN = 2;
+    const IGNORE_NODE = 1;
+    const IGNORE_CHILDREN = 2;
 
     public function traverse(Element $element) {
 
