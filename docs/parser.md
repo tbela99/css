@@ -183,6 +183,54 @@ none
 
 string. the css content that will be parsed
 
+### Append
+
+Parse a css file and append the result to the existing ast
+
+#### Parameters
+
+- $file: _string_. the file to parse
+
+#### Return type
+
+\TBela\CSS\Parser
+
+#### Throws
+
+\TBela\CSS\Parser\SyntaxError
+
+### appendContent
+
+Parse a css content and append the result to the existing ast
+
+#### Parameters
+
+- $css: _string_. the css to parse
+
+#### Return type
+
+\TBela\CSS\Parser
+
+#### Throws
+
+\TBela\CSS\Parser\SyntaxError
+
+### Merge
+
+Merge ast of the specified parser instance into this instance ast
+
+#### Parameters
+
+- $parser: _\TBela\CSS\Parser_. 
+
+#### Return type
+
+\TBela\CSS\Parser
+
+#### Throws
+
+\TBela\CSS\Parser\SyntaxError
+
 ### GetErrors
 
 #### Parameters
