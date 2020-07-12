@@ -5,7 +5,7 @@ namespace TBela\CSS\Property;
 Config::load(dirname(__DIR__).'/config.json');
 
 /**
- * Property cvonfiguration manager class
+ * Property configuration manager class
  * @package TBela\CSS\Property
  * @ignore
  */

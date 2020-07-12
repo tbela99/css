@@ -1,1 +1,481 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1210pt" height="3068" viewBox="0 0 1210 2301.17"><g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 2297.17)"><title>G</title><polygon fill="#fff" stroke="#fff" points="-4 5 -4 -2297.17 1207 -2297.17 1207 5 -4 5"/><g id="clust1" class="cluster"><title>cluster_Global</title><path fill="none" stroke="gray" d="M20,-85.17C20,-85.17 1182,-85.17 1182,-85.17 1188,-85.17 1194,-91.17 1194,-97.17 1194,-97.17 1194,-2273.17 1194,-2273.17 1194,-2279.17 1188,-2285.17 1182,-2285.17 1182,-2285.17 20,-2285.17 20,-2285.17 14,-2285.17 8,-2279.17 8,-2273.17 8,-2273.17 8,-97.17 8,-97.17 8,-91.17 14,-85.17 20,-85.17"/><text x="601" y="-2272.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Global</text></g><g id="clust2" class="cluster"><title>cluster_\TBela</title><path fill="none" stroke="gray" d="M268,-137.17C268,-137.17 1174,-137.17 1174,-137.17 1180,-137.17 1186,-143.17 1186,-149.17 1186,-149.17 1186,-1931.17 1186,-1931.17 1186,-1937.17 1180,-1943.17 1174,-1943.17 1174,-1943.17 268,-1943.17 268,-1943.17 262,-1943.17 256,-1937.17 256,-1931.17 256,-1931.17 256,-149.17 256,-149.17 256,-143.17 262,-137.17 268,-137.17"/><text x="721" y="-1930.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">TBela</text></g><g id="clust3" class="cluster"><title>cluster_\TBela\CSS</title><path fill="none" stroke="gray" d="M276,-145.17C276,-145.17 1166,-145.17 1166,-145.17 1172,-145.17 1178,-151.17 1178,-157.17 1178,-157.17 1178,-1903.17 1178,-1903.17 1178,-1909.17 1172,-1915.17 1166,-1915.17 1166,-1915.17 276,-1915.17 276,-1915.17 270,-1915.17 264,-1909.17 264,-1903.17 264,-1903.17 264,-157.17 264,-157.17 264,-151.17 270,-145.17 276,-145.17"/><text x="721" y="-1902.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">CSS</text></g><g id="clust4" class="cluster"><title>cluster_\TBela\CSS\Element</title><path fill="none" stroke="gray" d="M771,-1357.17C771,-1357.17 1114,-1357.17 1114,-1357.17 1120,-1357.17 1126,-1363.17 1126,-1369.17 1126,-1369.17 1126,-1633.17 1126,-1633.17 1126,-1639.17 1120,-1645.17 1114,-1645.17 1114,-1645.17 771,-1645.17 771,-1645.17 765,-1645.17 759,-1639.17 759,-1633.17 759,-1633.17 759,-1369.17 759,-1369.17 759,-1363.17 765,-1357.17 771,-1357.17"/><text x="942.5" y="-1632.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Element</text></g><g id="clust5" class="cluster"><title>cluster_\TBela\CSS\Event</title><path fill="none" stroke="gray" d="M758,-1277.17C758,-1277.17 1095,-1277.17 1095,-1277.17 1101,-1277.17 1107,-1283.17 1107,-1289.17 1107,-1289.17 1107,-1337.17 1107,-1337.17 1107,-1343.17 1101,-1349.17 1095,-1349.17 1095,-1349.17 758,-1349.17 758,-1349.17 752,-1349.17 746,-1343.17 746,-1337.17 746,-1337.17 746,-1289.17 746,-1289.17 746,-1283.17 752,-1277.17 758,-1277.17"/><text x="926.5" y="-1336.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Event</text></g><g id="clust6" class="cluster"><title>cluster_\TBela\CSS\Interfaces</title><path fill="none" stroke="gray" d="M284,-1465.17C284,-1465.17 476,-1465.17 476,-1465.17 482,-1465.17 488,-1471.17 488,-1477.17 488,-1477.17 488,-1633.17 488,-1633.17 488,-1639.17 482,-1645.17 476,-1645.17 476,-1645.17 284,-1645.17 284,-1645.17 278,-1645.17 272,-1639.17 272,-1633.17 272,-1633.17 272,-1477.17 272,-1477.17 272,-1471.17 278,-1465.17 284,-1465.17"/><text x="380" y="-1632.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Interfaces</text></g><g id="clust7" class="cluster"><title>cluster_\TBela\CSS\Parser</title><path fill="none" stroke="gray" d="M1030,-1653.17C1030,-1653.17 1114,-1653.17 1114,-1653.17 1120,-1653.17 1126,-1659.17 1126,-1665.17 1126,-1665.17 1126,-1875.17 1126,-1875.17 1126,-1881.17 1120,-1887.17 1114,-1887.17 1114,-1887.17 1030,-1887.17 1030,-1887.17 1024,-1887.17 1018,-1881.17 1018,-1875.17 1018,-1875.17 1018,-1665.17 1018,-1665.17 1018,-1659.17 1024,-1653.17 1030,-1653.17"/><text x="1072" y="-1874.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Parser</text></g><g id="clust8" class="cluster"><title>cluster_\TBela\CSS\Property</title><path fill="none" stroke="gray" d="M567,-1519.17C567,-1519.17 623,-1519.17 623,-1519.17 629,-1519.17 635,-1525.17 635,-1531.17 635,-1531.17 635,-1633.17 635,-1633.17 635,-1639.17 629,-1645.17 623,-1645.17 623,-1645.17 567,-1645.17 567,-1645.17 561,-1645.17 555,-1639.17 555,-1633.17 555,-1633.17 555,-1531.17 555,-1531.17 555,-1525.17 561,-1519.17 567,-1519.17"/><text x="595" y="-1632.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Property</text></g><g id="clust9" class="cluster"><title>cluster_\TBela\CSS\Query</title><path fill="none" stroke="gray" d="M714,-927.17C714,-927.17 1151,-927.17 1151,-927.17 1157,-927.17 1163,-933.17 1163,-939.17 1163,-939.17 1163,-1257.17 1163,-1257.17 1163,-1263.17 1157,-1269.17 1151,-1269.17 1151,-1269.17 714,-1269.17 714,-1269.17 708,-1269.17 702,-1263.17 702,-1257.17 702,-1257.17 702,-939.17 702,-939.17 702,-933.17 708,-927.17 714,-927.17"/><text x="932.5" y="-1256.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Query</text></g><g id="clust10" class="cluster"><title>cluster_\TBela\CSS\Value</title><path fill="none" stroke="gray" d="M775,-253.17C775,-253.17 1158,-253.17 1158,-253.17 1164,-253.17 1170,-259.17 1170,-265.17 1170,-265.17 1170,-907.17 1170,-907.17 1170,-913.17 1164,-919.17 1158,-919.17 1158,-919.17 775,-919.17 775,-919.17 769,-919.17 763,-913.17 763,-907.17 763,-907.17 763,-265.17 763,-265.17 763,-259.17 769,-253.17 775,-253.17"/><text x="966.5" y="-906.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Value</text></g><g id="clust11" class="cluster"><title>cluster_Global\TBela</title><path fill="none" stroke="gray" d="M761,-1995.17C761,-1995.17 859,-1995.17 859,-1995.17 865,-1995.17 871,-2001.17 871,-2007.17 871,-2007.17 871,-2127.17 871,-2127.17 871,-2133.17 865,-2139.17 859,-2139.17 859,-2139.17 761,-2139.17 761,-2139.17 755,-2139.17 749,-2133.17 749,-2127.17 749,-2127.17 749,-2007.17 749,-2007.17 749,-2001.17 755,-1995.17 761,-1995.17"/><text x="810" y="-2126.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">TBela</text></g><g id="clust12" class="cluster"><title>cluster_Global\TBela\CSS</title><path fill="none" stroke="gray" d="M769,-2003.17C769,-2003.17 851,-2003.17 851,-2003.17 857,-2003.17 863,-2009.17 863,-2015.17 863,-2015.17 863,-2099.17 863,-2099.17 863,-2105.17 857,-2111.17 851,-2111.17 851,-2111.17 769,-2111.17 769,-2111.17 763,-2111.17 757,-2105.17 757,-2099.17 757,-2099.17 757,-2015.17 757,-2015.17 757,-2009.17 763,-2003.17 769,-2003.17"/><text x="810" y="-2098.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">CSS</text></g><g id="clust13" class="cluster"><title>cluster_Global\TBela\CSS\Value</title><path fill="none" stroke="gray" d="M777,-2011.17C777,-2011.17 843,-2011.17 843,-2011.17 849,-2011.17 855,-2017.17 855,-2023.17 855,-2023.17 855,-2071.17 855,-2071.17 855,-2077.17 849,-2083.17 843,-2083.17 843,-2083.17 777,-2083.17 777,-2083.17 771,-2083.17 765,-2077.17 765,-2071.17 765,-2071.17 765,-2023.17 765,-2023.17 765,-2017.17 771,-2011.17 777,-2011.17"/><text x="810" y="-2070.37" fill="gray" font-family="Times,serif" font-size="11" text-anchor="middle">Value</text></g><g id="node1" class="node"><title>\\TBela\\CSS\\Element\\AtRule</title><polygon fill="none" stroke="#000" points="1100.5 -1509.17 1043.5 -1509.17 1043.5 -1473.17 1100.5 -1473.17 1100.5 -1509.17"/><text x="1072" y="-1488.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">AtRule</text></g><g id="node5" class="node"><title>\\TBela\\CSS\\Element\\RuleSet</title><polygon fill="none" stroke="#000" points="852.5 -1509.17 767.5 -1509.17 767.5 -1473.17 852.5 -1473.17 852.5 -1509.17"/><text x="776" y="-1494.87" font-family="Courier,monospace" font-size="11" text-anchor="start">«abstract»</text><text x="786" y="-1483.87" font-family="Courier,monospace" font-size="11" text-anchor="start">RuleSet</text></g><g id="edge1" class="edge"><title>\\TBela\\CSS\\Element\\AtRule-&gt;\\TBela\\CSS\\Element\\RuleSet</title><path fill="none" stroke="#000" d="M1043.18,-1491.17C1000.22,-1491.17 917.073,-1491.17 862.821,-1491.17"/><polygon fill="none" stroke="#000" points="862.71 -1487.67 852.71 -1491.17 862.71 -1494.67 862.71 -1487.67"/></g><g id="node2" class="node"><title>\\TBela\\CSS\\Element\\Comment</title><polygon fill="none" stroke="#000" points="1104 -1455.17 1040 -1455.17 1040 -1419.17 1104 -1419.17 1104 -1455.17"/><text x="1072" y="-1434.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Comment</text></g><g id="node49" class="node"><title>Element</title><ellipse cx="380" cy="-57.17" fill="none" stroke="#000" rx="50.091" ry="18"/><text x="380" y="-53.47" font-family="Times,serif" font-size="14" text-anchor="middle">Element</text></g><g id="edge2" class="edge"><title>\\TBela\\CSS\\Element\\Comment-&gt;Element</title><path fill="none" stroke="#000" d="M1039.65,-1436.29C1019.89,-1433.94 995.621,-1427.39 982,-1410.17 821.662,-1207.41 1085.47,-438.99 910,-249.17 879.836,-216.538 839.589,-269.191 811,-235.17"/></g><g id="node3" class="node"><title>\\TBela\\CSS\\Element\\Declaration</title><polygon fill="none" stroke="#000" points="1117.5 -1401.17 1026.5 -1401.17 1026.5 -1365.17 1117.5 -1365.17 1117.5 -1401.17"/><text x="1072" y="-1380.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Declaration</text></g><g id="edge3" class="edge"><title>\\TBela\\CSS\\Element\\Declaration-&gt;Element</title><path fill="none" stroke="#000" d="M1026.45,-1378.57C1009.93,-1374.51 992.634,-1367 982,-1353.17 832.157,-1158.26 1077.17,-429.441 910,-249.17 879.784,-216.586 845.673,-262.963 811,-235.17"/><path fill="none" stroke="#000" d="M809,-235.17C770.972,-204.688 747.201,-229.396 702,-211.17 598.789,-169.554 591.211,-122.786 488,-81.17 471.843,-74.6552 453.565,-69.7313 436.747,-66.0934"/><polygon fill="none" stroke="#000" points="436.995 -62.572 426.496 -63.992 435.589 -69.429 436.995 -62.572"/></g><g id="node4" class="node"><title>\\TBela\\CSS\\Element\\Rule</title><polygon fill="none" stroke="#000" points="1099 -1563.17 1045 -1563.17 1045 -1527.17 1099 -1527.17 1099 -1563.17"/><text x="1072" y="-1542.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Rule</text></g><g id="node40" class="node"><title>\\TBela\\CSS\\RuleList</title><polygon fill="none" stroke="#000" points="637.5 -1509.17 552.5 -1509.17 552.5 -1473.17 637.5 -1473.17 637.5 -1509.17"/><text x="561" y="-1494.87" font-family="Courier,monospace" font-size="11" text-anchor="start">«abstract»</text><text x="567.5" y="-1483.87" font-family="Courier,monospace" font-size="11" text-anchor="start">RuleList</text></g><g id="edge4" class="edge"><title>\\TBela\\CSS\\Element\\Rule-&gt;\\TBela\\CSS\\RuleList</title><path fill="none" stroke="#000" d="M1044.68,-1549.79C987.891,-1559.46 855.424,-1580.26 811,-1572.17"/><path fill="none" stroke="#000" d="M809,-1572.17C748.389,-1561.13 682.702,-1533.55 640.542,-1513.64"/><polygon fill="none" stroke="#000" points="641.924 -1510.42 631.392 -1509.26 638.904 -1516.73 641.924 -1510.42"/></g><g id="edge5" class="edge"><title>\\TBela\\CSS\\Element\\RuleSet-&gt;\\TBela\\CSS\\RuleList</title><path fill="none" stroke="#000" d="M767.426,-1491.17C733.231,-1491.17 684.595,-1491.17 647.857,-1491.17"/><polygon fill="none" stroke="#000" points="647.833 -1487.67 637.833 -1491.17 647.833 -1494.67 647.833 -1487.67"/></g><g id="node6" class="node"><title>\\TBela\\CSS\\Element\\Stylesheet</title><polygon fill="none" stroke="#000" points="1114 -1617.17 1030 -1617.17 1030 -1581.17 1114 -1581.17 1114 -1617.17"/><text x="1072" y="-1596.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Stylesheet</text></g><g id="edge6" class="edge"><title>\\TBela\\CSS\\Element\\Stylesheet-&gt;\\TBela\\CSS\\RuleList</title><path fill="none" stroke="#000" d="M1029.75,-1592.55C997.29,-1587.57 950.869,-1580.99 910,-1577.17 866.135,-1573.07 854.343,-1580.06 811,-1572.17"/></g><g id="node7" class="node"><title>\\TBela\\CSS\\Event\\Event</title><polygon fill="none" stroke="#000" points="1099 -1321.17 1045 -1321.17 1045 -1285.17 1099 -1285.17 1099 -1321.17"/><text x="1072" y="-1300.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Event</text></g><g id="node8" class="node"><title>\\TBela\\CSS\\Event\\EventInterface</title><polygon fill="none" stroke="#000" points="865.5 -1321.17 754.5 -1321.17 754.5 -1285.17 865.5 -1285.17 865.5 -1321.17"/><text x="810" y="-1300.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">EventInterface</text></g><g id="edge7" class="edge"><title>\\TBela\\CSS\\Event\\Event-&gt;\\TBela\\CSS\\Event\\EventInterface</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1044.64,-1303.17C1005.4,-1303.17 930.427,-1303.17 875.964,-1303.17"/><polygon fill="none" stroke="#000" points="875.705 -1299.67 865.704 -1303.17 875.704 -1306.67 875.705 -1299.67"/></g><g id="node9" class="node"><title>\\TBela\\CSS\\Interfaces\\RenderableInterface</title><polygon fill="none" stroke="#000" points="452.5 -1617.17 307.5 -1617.17 307.5 -1581.17 452.5 -1581.17 452.5 -1617.17"/><text x="380" y="-1596.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">RenderableInterface</text></g><g id="node10" class="node"><title>\\TBela\\CSS\\Interfaces\\RenderablePropertyInterface</title><polygon fill="none" stroke="#000" points="479.5 -1563.17 280.5 -1563.17 280.5 -1527.17 479.5 -1527.17 479.5 -1563.17"/><text x="380" y="-1542.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">RenderablePropertyInterface</text></g><g id="node11" class="node"><title>\\TBela\\CSS\\Interfaces\\RuleListInterface</title><polygon fill="none" stroke="#000" points="445.5 -1509.17 314.5 -1509.17 314.5 -1473.17 445.5 -1473.17 445.5 -1509.17"/><text x="380" y="-1488.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">RuleListInterface</text></g><g id="node46" class="node"><title>IteratorAggregate</title><ellipse cx="112" cy="-1819.17" fill="none" stroke="#000" rx="96.383" ry="18"/><text x="112" y="-1815.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">IteratorAggregate</text></g><g id="edge30" class="edge"><title>\\TBela\\CSS\\Interfaces\\RuleListInterface-&gt;IteratorAggregate</title><path fill="none" stroke="#000" d="M314.488,-1494.26C294.056,-1497.97 272.515,-1505.04 256,-1518.17 166.284,-1589.49 129.787,-1730.68 117.868,-1790.89"/><polygon fill="none" stroke="#000" points="114.408 -1790.35 115.98 -1800.83 121.285 -1791.66 114.408 -1790.35"/></g><g id="node12" class="node"><title>\\TBela\\CSS\\Parser\\Helper</title><polygon fill="none" stroke="#000" points="1100.5 -1859.17 1043.5 -1859.17 1043.5 -1823.17 1100.5 -1823.17 1100.5 -1859.17"/><text x="1072" y="-1838.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Helper</text></g><g id="node13" class="node"><title>\\TBela\\CSS\\Parser\\SyntaxError</title><polygon fill="none" stroke="#000" points="1117.5 -1805.17 1026.5 -1805.17 1026.5 -1769.17 1117.5 -1769.17 1117.5 -1805.17"/><text x="1072" y="-1784.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">SyntaxError</text></g><g id="node44" class="node"><title>Exception</title><ellipse cx="810" cy="-1969.17" fill="none" stroke="#000" rx="57.69" ry="18"/><text x="810" y="-1965.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">Exception</text></g><g id="edge8" class="edge"><title>\\TBela\\CSS\\Parser\\SyntaxError-&gt;Exception</title><path fill="none" stroke="#000" d="M1026.42,-1796.54C1011.71,-1800.7 995.627,-1806.45 982,-1814.17 920.194,-1849.19 861.982,-1910.04 832.028,-1944.15"/><polygon fill="none" stroke="#000" points="829.291 -1941.97 825.381 -1951.81 834.578 -1946.55 829.291 -1941.97"/></g><g id="node14" class="node"><title>\\TBela\\CSS\\Parser\\AccessTrait</title><polygon fill="none" stroke="#000" points="1117.5 -1751.17 1026.5 -1751.17 1026.5 -1715.17 1117.5 -1715.17 1117.5 -1751.17"/><text x="1072" y="-1730.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">AccessTrait</text></g><g id="node15" class="node"><title>\\TBela\\CSS\\Parser\\ParserTrait</title><polygon fill="none" stroke="#000" points="1117.5 -1697.17 1026.5 -1697.17 1026.5 -1661.17 1117.5 -1661.17 1117.5 -1697.17"/><text x="1072" y="-1676.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">ParserTrait</text></g><g id="node16" class="node"><title>\\TBela\\CSS\\Property\\Comment</title><polygon fill="none" stroke="#000" points="627 -1617.17 563 -1617.17 563 -1581.17 627 -1581.17 627 -1617.17"/><text x="595" y="-1596.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Comment</text></g><g id="node45" class="node"><title>ArrayAccess</title><ellipse cx="380" cy="-111.17" fill="none" stroke="#000" rx="69.588" ry="18"/><text x="380" y="-107.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">ArrayAccess</text></g><g id="edge9" class="edge"><title>\\TBela\\CSS\\Property\\Comment-&gt;ArrayAccess</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M562.683,-1583.68C558.524,-1580.41 554.754,-1576.58 552,-1572.17 394.81,-1320.32 382.095,-320.848 381.085,-139.476"/><polygon fill="none" stroke="#000" points="384.584 -139.381 381.036 -129.398 377.584 -139.415 384.584 -139.381"/></g><g id="edge10" class="edge"><title>\\TBela\\CSS\\Property\\Comment-&gt;\\TBela\\CSS\\Interfaces\\RenderableInterface</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M562.571,-1599.17C536.345,-1599.17 497.762,-1599.17 462.899,-1599.17"/><polygon fill="none" stroke="#000" points="462.699 -1595.67 452.699 -1599.17 462.699 -1602.67 462.699 -1595.67"/></g><g id="node17" class="node"><title>\\TBela\\CSS\\Property\\Config</title><polygon fill="none" stroke="#000" points="623.5 -1563.17 566.5 -1563.17 566.5 -1527.17 623.5 -1527.17 623.5 -1563.17"/><text x="595" y="-1542.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Config</text></g><g id="node18" class="node"><title>\\TBela\\CSS\\Query\\Evaluator</title><polygon fill="none" stroke="#000" points="1110.5 -1241.17 1033.5 -1241.17 1033.5 -1205.17 1110.5 -1205.17 1110.5 -1241.17"/><text x="1072" y="-1220.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Evaluator</text></g><g id="node19" class="node"><title>\\TBela\\CSS\\Query\\Token</title><polygon fill="none" stroke="#000" points="1114.5 -1133.17 1029.5 -1133.17 1029.5 -1097.17 1114.5 -1097.17 1114.5 -1133.17"/><text x="1038" y="-1118.87" font-family="Courier,monospace" font-size="11" text-anchor="start">«abstract»</text><text x="1055" y="-1107.87" font-family="Courier,monospace" font-size="11" text-anchor="start">Token</text></g><g id="node22" class="node"><title>\\TBela\\CSS\\Query\\TokenInterface</title><polygon fill="none" stroke="#000" points="865.5 -1025.17 754.5 -1025.17 754.5 -989.17 865.5 -989.17 865.5 -1025.17"/><text x="810" y="-1004.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">TokenInterface</text></g><g id="edge11" class="edge"><title>\\TBela\\CSS\\Query\\Token-&gt;\\TBela\\CSS\\Query\\TokenInterface</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1029.36,-1103.92C1014.28,-1099.49 997.214,-1094.04 982,-1088.17 937.602,-1071.03 888.689,-1047.35 854.591,-1030.02"/><polygon fill="none" stroke="#000" points="855.879 -1026.74 845.382 -1025.31 852.692 -1032.98 855.879 -1026.74"/></g><g id="node20" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorValue</title><polygon fill="none" stroke="#000" points="1141.5 -1187.17 1002.5 -1187.17 1002.5 -1151.17 1141.5 -1151.17 1141.5 -1187.17"/><text x="1038" y="-1172.87" font-family="Courier,monospace" font-size="11" text-anchor="start">«abstract»</text><text x="1011" y="-1161.87" font-family="Courier,monospace" font-size="11" text-anchor="start">TokenSelectorValue</text></g><g id="node25" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorValueInterface</title><polygon fill="none" stroke="#000" points="909.5 -1187.17 710.5 -1187.17 710.5 -1151.17 909.5 -1151.17 909.5 -1187.17"/><text x="810" y="-1166.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">TokenSelectorValueInterface</text></g><g id="edge12" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectorValue-&gt;\\TBela\\CSS\\Query\\TokenSelectorValueInterface</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1002.35,-1169.17C977.157,-1169.17 947.978,-1169.17 920.114,-1169.17"/><polygon fill="none" stroke="#000" points="919.918 -1165.67 909.918 -1169.17 919.918 -1172.67 919.918 -1165.67"/></g><g id="node21" class="node"><title>\\TBela\\CSS\\Query\\QueryInterface</title><polygon fill="none" stroke="#000" points="1127.5 -1079.17 1016.5 -1079.17 1016.5 -1043.17 1127.5 -1043.17 1127.5 -1079.17"/><text x="1072" y="-1058.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">QueryInterface</text></g><g id="node23" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectInterface</title><polygon fill="none" stroke="#000" points="1148 -1025.17 996 -1025.17 996 -989.17 1148 -989.17 1148 -1025.17"/><text x="1072" y="-1004.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">TokenSelectInterface</text></g><g id="edge31" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectInterface-&gt;\\TBela\\CSS\\Query\\TokenInterface</title><path fill="none" stroke="#000" d="M995.797,-1007.17C957.824,-1007.17 912.215,-1007.17 875.81,-1007.17"/><polygon fill="none" stroke="#000" points="875.799 -1003.67 865.799 -1007.17 875.799 -1010.67 875.799 -1003.67"/></g><g id="node24" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorInterface</title><polygon fill="none" stroke="#000" points="1154.5 -971.17 989.5 -971.17 989.5 -935.17 1154.5 -935.17 1154.5 -971.17"/><text x="1072" y="-950.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">TokenSelectorInterface</text></g><g id="edge32" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectorInterface-&gt;\\TBela\\CSS\\Query\\TokenInterface</title><path fill="none" stroke="#000" d="M989.448,-970.108C952.715,-977.737 909.96,-986.617 875.511,-993.772"/><polygon fill="none" stroke="#000" points="874.644 -990.377 865.565 -995.837 876.068 -997.23 874.644 -990.377"/></g><g id="node26" class="node"><title>\\TBela\\CSS\\Value\\Comment</title><polygon fill="none" stroke="#000" points="1104 -675.17 1040 -675.17 1040 -639.17 1104 -639.17 1104 -675.17"/><text x="1072" y="-654.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Comment</text></g><g id="node50" class="node"><title>Value</title><ellipse cx="595" cy="-59.17" fill="none" stroke="#000" rx="36.294" ry="18"/><text x="595" y="-55.47" font-family="Times,serif" font-size="14" text-anchor="middle">Value</text></g><g id="edge15" class="edge"><title>\\TBela\\CSS\\Value\\Comment-&gt;Value</title><path fill="none" stroke="#000" d="M1039.84,-655.709C1020.42,-653.099 996.459,-646.482 982,-630.17 859.568,-492.048 1036.3,-355.765 910,-221.17 879.02,-188.155 844.103,-228.057 811,-197.17"/></g><g id="node27" class="node"><title>\\TBela\\CSS\\Value\\CssAttribute</title><polygon fill="none" stroke="#000" points="1121 -621.17 1023 -621.17 1023 -585.17 1121 -585.17 1121 -621.17"/><text x="1072" y="-600.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">CssAttribute</text></g><g id="edge16" class="edge"><title>\\TBela\\CSS\\Value\\CssAttribute-&gt;Value</title><path fill="none" stroke="#000" d="M1022.85,-598.269C1007.87,-594.438 992.54,-587.755 982,-576.17 873.663,-457.086 1021.67,-337.135 910,-221.17 878.596,-188.558 844.103,-228.057 811,-197.17"/></g><g id="node28" class="node"><title>\\TBela\\CSS\\Value\\CSSFunction</title><polygon fill="none" stroke="#000" points="1117.5 -567.17 1026.5 -567.17 1026.5 -531.17 1117.5 -531.17 1117.5 -567.17"/><text x="1072" y="-546.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">CSSFunction</text></g><g id="edge17" class="edge"><title>\\TBela\\CSS\\Value\\CSSFunction-&gt;Value</title><path fill="none" stroke="#000" d="M1026.31,-544.845C1010.36,-541.142 993.514,-534.394 982,-522.17 887.685,-422.044 1007.12,-318.582 910,-221.17 878.035,-189.107 844.103,-228.057 811,-197.17"/></g><g id="node29" class="node"><title>\\TBela\\CSS\\Value\\CssParenthesisExpression</title><polygon fill="none" stroke="#000" points="1161.5 -513.17 982.5 -513.17 982.5 -477.17 1161.5 -477.17 1161.5 -513.17"/><text x="1072" y="-492.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">CssParenthesisExpression</text></g><g id="edge18" class="edge"><title>\\TBela\\CSS\\Value\\CssParenthesisExpression-&gt;Value</title><path fill="none" stroke="#000" d="M992.935,-476.984C988.982,-474.42 985.293,-471.499 982,-468.17 901.587,-386.875 992.686,-300.153 910,-221.17 877.261,-189.898 844.103,-228.057 811,-197.17"/></g><g id="node30" class="node"><title>\\TBela\\CSS\\Value\\CssString</title><polygon fill="none" stroke="#000" points="848.5 -675.17 771.5 -675.17 771.5 -639.17 848.5 -639.17 848.5 -675.17"/><text x="810" y="-654.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">CssString</text></g><g id="edge19" class="edge"><title>\\TBela\\CSS\\Value\\CssString-&gt;Value</title><path fill="none" stroke="#000" d="M799.61,-639.116C779.329,-599.513 730.934,-501.644 702,-415.17 662.319,-296.577 681.047,-258.583 638,-141.17 630.933,-121.894 620.394,-101.333 611.641,-85.6212"/><polygon fill="none" stroke="#000" points="614.453 -83.485 606.469 -76.52 608.367 -86.944 614.453 -83.485"/></g><g id="node31" class="node"><title>\\TBela\\CSS\\Value\\CssUrl</title><polygon fill="none" stroke="#000" points="1100.5 -405.17 1043.5 -405.17 1043.5 -369.17 1100.5 -369.17 1100.5 -405.17"/><text x="1072" y="-384.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">CssUrl</text></g><g id="node51" class="node"><title>CssFunction</title><ellipse cx="810" cy="-59.17" fill="none" stroke="#000" rx="69.588" ry="18"/><text x="810" y="-55.47" font-family="Times,serif" font-size="14" text-anchor="middle">CssFunction</text></g><g id="edge20" class="edge"><title>\\TBela\\CSS\\Value\\CssUrl-&gt;CssFunction</title><path fill="none" stroke="#000" d="M1043.44,-385.008C1024.11,-382.146 998.82,-375.513 982,-360.17 919.256,-302.937 952.936,-256.443 910,-183.17 888.353,-146.228 856.498,-108.435 834.81,-84.4417"/><polygon fill="none" stroke="#000" points="837.204 -81.874 827.874 -76.855 832.038 -86.597 837.204 -81.874"/></g><g id="node32" class="node"><title>\\TBela\\CSS\\Value\\FontFamily</title><polygon fill="none" stroke="#000" points="1114 -783.17 1030 -783.17 1030 -747.17 1114 -747.17 1114 -783.17"/><text x="1072" y="-762.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">FontFamily</text></g><g id="edge21" class="edge"><title>\\TBela\\CSS\\Value\\FontFamily-&gt;\\TBela\\CSS\\Value\\CssString</title><path fill="none" stroke="#000" d="M1029.81,-754.053C1014.61,-749.593 997.364,-744.102 982,-738.17 937.602,-721.028 888.689,-697.346 854.591,-680.016"/><polygon fill="none" stroke="#000" points="855.879 -676.744 845.382 -675.308 852.692 -682.977 855.879 -676.744"/></g><g id="node33" class="node"><title>\\TBela\\CSS\\Value\\Number</title><polygon fill="none" stroke="#000" points="838.5 -406.17 781.5 -406.17 781.5 -370.17 838.5 -370.17 838.5 -406.17"/><text x="810" y="-385.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Number</text></g><g id="edge22" class="edge"><title>\\TBela\\CSS\\Value\\Number-&gt;Value</title><path fill="none" stroke="#000" d="M797.245,-370.013C761.584,-314.931 654.531,-149.577 612.859,-85.2105"/><polygon fill="none" stroke="#000" points="615.574 -82.964 607.201 -76.472 609.698 -86.768 615.574 -82.964"/></g><g id="node34" class="node"><title>\\TBela\\CSS\\Value\\OutlineColor</title><polygon fill="none" stroke="#000" points="1121 -837.17 1023 -837.17 1023 -801.17 1121 -801.17 1121 -837.17"/><text x="1072" y="-816.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">OutlineColor</text></g><g id="node43" class="node"><title>Color</title><ellipse cx="810" cy="-2037.17" fill="none" stroke="#000" rx="36.294" ry="18"/><text x="810" y="-2033.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">Color</text></g><g id="edge23" class="edge"><title>\\TBela\\CSS\\Value\\OutlineColor-&gt;Color</title><path fill="none" stroke="#000" d="M1022.82,-823.029C1007.47,-826.75 991.913,-833.629 982,-846.17 820.604,-1050.36 1079.02,-1817.25 910,-2015.17 897.012,-2030.38 876.06,-2036.42 856.768,-2038.44"/><polygon fill="none" stroke="#000" points="856.308 -2034.96 846.583 -2039.17 856.807 -2041.95 856.308 -2034.96"/></g><g id="node35" class="node"><title>\\TBela\\CSS\\Value\\Separator</title><polygon fill="none" stroke="#000" points="1110.5 -459.17 1033.5 -459.17 1033.5 -423.17 1110.5 -423.17 1110.5 -459.17"/><text x="1072" y="-438.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Separator</text></g><g id="edge24" class="edge"><title>\\TBela\\CSS\\Value\\Separator-&gt;Value</title><path fill="none" stroke="#000" d="M1033.4,-437.463C1015.88,-433.971 995.887,-427.215 982,-414.17 915.271,-351.488 978.479,-281.935 910,-221.17 876.136,-191.12 844.103,-228.057 811,-197.17"/><path fill="none" stroke="#000" d="M809,-197.17C752.907,-144.831 674.585,-99.8507 630.219,-76.4302"/><polygon fill="none" stroke="#000" points="631.772 -73.293 621.288 -71.765 628.531 -79.497 631.772 -73.293"/></g><g id="node36" class="node"><title>\\TBela\\CSS\\Value\\Set</title><polygon fill="none" stroke="#000" points="1099 -891.17 1045 -891.17 1045 -855.17 1099 -855.17 1099 -891.17"/><text x="1072" y="-870.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Set</text></g><g id="edge25" class="edge"><title>\\TBela\\CSS\\Value\\Set-&gt;IteratorAggregate</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1044.71,-880.35C1023.88,-887.533 996.035,-900.802 982,-923.17 913.129,-1032.93 1004.41,-1998.42 910,-2087.17 673.932,-2309.09 248.132,-1944.77 139.026,-1843.92"/><polygon fill="none" stroke="#000" points="141.142 -1841.1 131.437 -1836.85 136.372 -1846.23 141.142 -1841.1"/></g><g id="node47" class="node"><title>JsonSerializable</title><ellipse cx="810" cy="-2185.17" fill="none" stroke="#000" rx="85.285" ry="18"/><text x="810" y="-2181.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">JsonSerializable</text></g><g id="edge26" class="edge"><title>\\TBela\\CSS\\Value\\Set-&gt;JsonSerializable</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1044.69,-880.338C1023.85,-887.514 995.998,-900.778 982,-923.17 836.861,-1155.34 1077.51,-1936.59 910,-2153.17 904.36,-2160.46 897.033,-2166.12 888.917,-2170.5"/><polygon fill="none" stroke="#000" points="887.399 -2167.35 879.843 -2174.78 890.381 -2173.68 887.399 -2167.35"/></g><g id="node48" class="node"><title>Countable</title><ellipse cx="810" cy="-2239.17" fill="none" stroke="#000" rx="58.49" ry="18"/><text x="810" y="-2235.47" fill="gray" font-family="Times,serif" font-size="14" text-anchor="middle">Countable</text></g><g id="edge27" class="edge"><title>\\TBela\\CSS\\Value\\Set-&gt;Countable</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M1044.67,-880.328C1023.83,-887.498 995.968,-900.76 982,-923.17 830.247,-1166.64 1090.43,-1989.12 910,-2212.17 901.696,-2222.43 889.904,-2229.02 877.338,-2233.19"/><polygon fill="none" stroke="#000" points="876.296 -2229.85 867.623 -2235.94 878.198 -2236.59 876.296 -2229.85"/></g><g id="node37" class="node"><title>\\TBela\\CSS\\Value\\Unit</title><polygon fill="none" stroke="#000" points="1099 -729.17 1045 -729.17 1045 -693.17 1099 -693.17 1099 -729.17"/><text x="1072" y="-708.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Unit</text></g><g id="edge28" class="edge"><title>\\TBela\\CSS\\Value\\Unit-&gt;\\TBela\\CSS\\Value\\Number</title><path fill="none" stroke="#000" d="M1044.86,-708.421C1025.74,-705.265 1000.09,-698.522 982,-684.17 890.118,-611.266 838.188,-474.512 819.285,-415.944"/><polygon fill="none" stroke="#000" points="822.58 -414.756 816.236 -406.271 815.904 -416.861 822.58 -414.756"/></g><g id="node38" class="node"><title>\\TBela\\CSS\\Value\\Whitespace</title><polygon fill="none" stroke="#000" points="1114 -351.17 1030 -351.17 1030 -315.17 1114 -315.17 1114 -351.17"/><text x="1072" y="-330.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">Whitespace</text></g><g id="edge29" class="edge"><title>\\TBela\\CSS\\Value\\Whitespace-&gt;Value</title><path fill="none" stroke="#000" d="M1029.65,-329.421C1012.82,-325.87 994.433,-319.079 982,-306.17 894.655,-215.48 1009.71,-109.062 910,-32.17 827.334,31.5802 693.476,-14.6909 630.648,-42.3988"/><polygon fill="none" stroke="#000" points="628.868 -39.362 621.194 -46.667 631.748 -45.742 628.868 -39.362"/></g><g id="node39" class="node"><title>\\TBela\\CSS\\Value\\ValueTrait</title><polygon fill="none" stroke="#000" points="1114 -297.17 1030 -297.17 1030 -261.17 1114 -261.17 1114 -297.17"/><text x="1072" y="-276.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">ValueTrait</text></g><g id="edge13" class="edge"><title>\\TBela\\CSS\\RuleList-&gt;Element</title><path fill="none" stroke="#000" d="M593.918,-1472.88C593.047,-1315.4 583.495,-191.691 488,-81.17 476.138,-67.4421 458.281,-60.6089 440.534,-57.4397"/><polygon fill="none" stroke="#000" points="440.536 -53.905 430.145 -55.973 439.557 -60.837 440.536 -53.905"/></g><g id="edge14" class="edge"><title>\\TBela\\CSS\\RuleList-&gt;\\TBela\\CSS\\Interfaces\\RuleListInterface</title><path fill="none" stroke="#000" stroke-dasharray="1 5" d="M552.426,-1491.17C525.005,-1491.17 488.299,-1491.17 455.888,-1491.17"/><polygon fill="none" stroke="#000" points="455.534 -1487.67 445.534 -1491.17 455.534 -1494.67 455.534 -1487.67"/></g><g id="node41" class="node"><title>\\TBela\\CSS\\ArrayTrait</title><polygon fill="none" stroke="#000" points="1114 -243.17 1030 -243.17 1030 -207.17 1114 -207.17 1114 -243.17"/><text x="1072" y="-222.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">ArrayTrait</text></g><g id="node42" class="node"><title>\\TBela\\CSS\\ElementTrait</title><polygon fill="none" stroke="#000" points="1121 -189.17 1023 -189.17 1023 -153.17 1121 -153.17 1121 -189.17"/><text x="1072" y="-168.37" font-family="Courier,monospace" font-size="11" text-anchor="middle">ElementTrait</text></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.30.1 (20180420.1509)
+ -->
+<!-- Title: G Pages: 1 -->
+<svg width="1210pt" height="2313pt"
+ viewBox="0.00 0.00 1210.00 2312.71" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 2308.71)">
+<title>G</title>
+<polygon fill="white" stroke="white" points="-4,5 -4,-2308.71 1207,-2308.71 1207,5 -4,5"/>
+<g id="clust1" class="cluster"><title>cluster_Global</title>
+<path fill="none" stroke="gray" d="M20,-140.712C20,-140.712 1182,-140.712 1182,-140.712 1188,-140.712 1194,-146.712 1194,-152.712 1194,-152.712 1194,-2284.71 1194,-2284.71 1194,-2290.71 1188,-2296.71 1182,-2296.71 1182,-2296.71 20,-2296.71 20,-2296.71 14,-2296.71 8,-2290.71 8,-2284.71 8,-2284.71 8,-152.712 8,-152.712 8,-146.712 14,-140.712 20,-140.712"/>
+<text text-anchor="middle" x="601" y="-2283.91" font-family="Times,serif" font-size="11.00" fill="gray">Global</text>
+</g>
+<g id="clust2" class="cluster"><title>cluster_\TBela</title>
+<path fill="none" stroke="gray" d="M268,-148.712C268,-148.712 1174,-148.712 1174,-148.712 1180,-148.712 1186,-154.712 1186,-160.712 1186,-160.712 1186,-1942.71 1186,-1942.71 1186,-1948.71 1180,-1954.71 1174,-1954.71 1174,-1954.71 268,-1954.71 268,-1954.71 262,-1954.71 256,-1948.71 256,-1942.71 256,-1942.71 256,-160.712 256,-160.712 256,-154.712 262,-148.712 268,-148.712"/>
+<text text-anchor="middle" x="721" y="-1941.91" font-family="Times,serif" font-size="11.00" fill="gray">TBela</text>
+</g>
+<g id="clust3" class="cluster"><title>cluster_\TBela\CSS</title>
+<path fill="none" stroke="gray" d="M276,-156.712C276,-156.712 1166,-156.712 1166,-156.712 1172,-156.712 1178,-162.712 1178,-168.712 1178,-168.712 1178,-1914.71 1178,-1914.71 1178,-1920.71 1172,-1926.71 1166,-1926.71 1166,-1926.71 276,-1926.71 276,-1926.71 270,-1926.71 264,-1920.71 264,-1914.71 264,-1914.71 264,-168.712 264,-168.712 264,-162.712 270,-156.712 276,-156.712"/>
+<text text-anchor="middle" x="721" y="-1913.91" font-family="Times,serif" font-size="11.00" fill="gray">CSS</text>
+</g>
+<g id="clust4" class="cluster"><title>cluster_\TBela\CSS\Property</title>
+<path fill="none" stroke="gray" d="M567,-1745.71C567,-1745.71 623,-1745.71 623,-1745.71 629,-1745.71 635,-1751.71 635,-1757.71 635,-1757.71 635,-1859.71 635,-1859.71 635,-1865.71 629,-1871.71 623,-1871.71 623,-1871.71 567,-1871.71 567,-1871.71 561,-1871.71 555,-1865.71 555,-1859.71 555,-1859.71 555,-1757.71 555,-1757.71 555,-1751.71 561,-1745.71 567,-1745.71"/>
+<text text-anchor="middle" x="595" y="-1858.91" font-family="Times,serif" font-size="11.00" fill="gray">Property</text>
+</g>
+<g id="clust5" class="cluster"><title>cluster_\TBela\CSS\Value</title>
+<path fill="none" stroke="gray" d="M775,-990.712C775,-990.712 1158,-990.712 1158,-990.712 1164,-990.712 1170,-996.712 1170,-1002.71 1170,-1002.71 1170,-1644.71 1170,-1644.71 1170,-1650.71 1164,-1656.71 1158,-1656.71 1158,-1656.71 775,-1656.71 775,-1656.71 769,-1656.71 763,-1650.71 763,-1644.71 763,-1644.71 763,-1002.71 763,-1002.71 763,-996.712 769,-990.712 775,-990.712"/>
+<text text-anchor="middle" x="966.5" y="-1643.91" font-family="Times,serif" font-size="11.00" fill="gray">Value</text>
+</g>
+<g id="clust6" class="cluster"><title>cluster_\TBela\CSS\Query</title>
+<path fill="none" stroke="gray" d="M714,-640.712C714,-640.712 1151,-640.712 1151,-640.712 1157,-640.712 1163,-646.712 1163,-652.712 1163,-652.712 1163,-970.712 1163,-970.712 1163,-976.712 1157,-982.712 1151,-982.712 1151,-982.712 714,-982.712 714,-982.712 708,-982.712 702,-976.712 702,-970.712 702,-970.712 702,-652.712 702,-652.712 702,-646.712 708,-640.712 714,-640.712"/>
+<text text-anchor="middle" x="932.5" y="-969.912" font-family="Times,serif" font-size="11.00" fill="gray">Query</text>
+</g>
+<g id="clust7" class="cluster"><title>cluster_\TBela\CSS\Parser</title>
+<path fill="none" stroke="gray" d="M1030,-1664.71C1030,-1664.71 1114,-1664.71 1114,-1664.71 1120,-1664.71 1126,-1670.71 1126,-1676.71 1126,-1676.71 1126,-1886.71 1126,-1886.71 1126,-1892.71 1120,-1898.71 1114,-1898.71 1114,-1898.71 1030,-1898.71 1030,-1898.71 1024,-1898.71 1018,-1892.71 1018,-1886.71 1018,-1886.71 1018,-1676.71 1018,-1676.71 1018,-1670.71 1024,-1664.71 1030,-1664.71"/>
+<text text-anchor="middle" x="1072" y="-1885.91" font-family="Times,serif" font-size="11.00" fill="gray">Parser</text>
+</g>
+<g id="clust8" class="cluster"><title>cluster_\TBela\CSS\Element</title>
+<path fill="none" stroke="gray" d="M771,-344.712C771,-344.712 1114,-344.712 1114,-344.712 1120,-344.712 1126,-350.712 1126,-356.712 1126,-356.712 1126,-620.712 1126,-620.712 1126,-626.712 1120,-632.712 1114,-632.712 1114,-632.712 771,-632.712 771,-632.712 765,-632.712 759,-626.712 759,-620.712 759,-620.712 759,-356.712 759,-356.712 759,-350.712 765,-344.712 771,-344.712"/>
+<text text-anchor="middle" x="942.5" y="-619.912" font-family="Times,serif" font-size="11.00" fill="gray">Element</text>
+</g>
+<g id="clust9" class="cluster"><title>cluster_\TBela\CSS\Interfaces</title>
+<path fill="none" stroke="gray" d="M284,-1718.71C284,-1718.71 476,-1718.71 476,-1718.71 482,-1718.71 488,-1724.71 488,-1730.71 488,-1730.71 488,-1886.71 488,-1886.71 488,-1892.71 482,-1898.71 476,-1898.71 476,-1898.71 284,-1898.71 284,-1898.71 278,-1898.71 272,-1892.71 272,-1886.71 272,-1886.71 272,-1730.71 272,-1730.71 272,-1724.71 278,-1718.71 284,-1718.71"/>
+<text text-anchor="middle" x="380" y="-1885.91" font-family="Times,serif" font-size="11.00" fill="gray">Interfaces</text>
+</g>
+<g id="clust10" class="cluster"><title>cluster_\TBela\CSS\Event</title>
+<path fill="none" stroke="gray" d="M758,-264.712C758,-264.712 1095,-264.712 1095,-264.712 1101,-264.712 1107,-270.712 1107,-276.712 1107,-276.712 1107,-324.712 1107,-324.712 1107,-330.712 1101,-336.712 1095,-336.712 1095,-336.712 758,-336.712 758,-336.712 752,-336.712 746,-330.712 746,-324.712 746,-324.712 746,-276.712 746,-276.712 746,-270.712 752,-264.712 758,-264.712"/>
+<text text-anchor="middle" x="926.5" y="-323.912" font-family="Times,serif" font-size="11.00" fill="gray">Event</text>
+</g>
+<g id="clust11" class="cluster"><title>cluster_Global\TBela</title>
+<path fill="none" stroke="gray" d="M728,-2080.71C728,-2080.71 892,-2080.71 892,-2080.71 898,-2080.71 904,-2086.71 904,-2092.71 904,-2092.71 904,-2212.71 904,-2212.71 904,-2218.71 898,-2224.71 892,-2224.71 892,-2224.71 728,-2224.71 728,-2224.71 722,-2224.71 716,-2218.71 716,-2212.71 716,-2212.71 716,-2092.71 716,-2092.71 716,-2086.71 722,-2080.71 728,-2080.71"/>
+<text text-anchor="middle" x="810" y="-2211.91" font-family="Times,serif" font-size="11.00" fill="gray">TBela</text>
+</g>
+<g id="clust12" class="cluster"><title>cluster_Global\TBela\CSS</title>
+<path fill="none" stroke="gray" d="M736,-2088.71C736,-2088.71 884,-2088.71 884,-2088.71 890,-2088.71 896,-2094.71 896,-2100.71 896,-2100.71 896,-2184.71 896,-2184.71 896,-2190.71 890,-2196.71 884,-2196.71 884,-2196.71 736,-2196.71 736,-2196.71 730,-2196.71 724,-2190.71 724,-2184.71 724,-2184.71 724,-2100.71 724,-2100.71 724,-2094.71 730,-2088.71 736,-2088.71"/>
+<text text-anchor="middle" x="810" y="-2183.91" font-family="Times,serif" font-size="11.00" fill="gray">CSS</text>
+</g>
+<g id="clust13" class="cluster"><title>cluster_Global\TBela\CSS\Value</title>
+<path fill="none" stroke="gray" d="M744,-2096.71C744,-2096.71 876,-2096.71 876,-2096.71 882,-2096.71 888,-2102.71 888,-2108.71 888,-2108.71 888,-2156.71 888,-2156.71 888,-2162.71 882,-2168.71 876,-2168.71 876,-2168.71 744,-2168.71 744,-2168.71 738,-2168.71 732,-2162.71 732,-2156.71 732,-2156.71 732,-2108.71 732,-2108.71 732,-2102.71 738,-2096.71 744,-2096.71"/>
+<text text-anchor="middle" x="810" y="-2155.91" font-family="Times,serif" font-size="11.00" fill="gray">Value</text>
+</g>
+<!-- \\TBela\\CSS\\Property\\Comment -->
+<g id="node1" class="node"><title>\\TBela\\CSS\\Property\\Comment</title>
+<polygon fill="none" stroke="black" points="627,-1843.71 563,-1843.71 563,-1807.71 627,-1807.71 627,-1843.71"/>
+<text text-anchor="middle" x="595" y="-1822.91" font-family="Courier,monospace" font-size="11.00">Comment</text>
+</g>
+<!-- ArrayAccess -->
+<g id="node44" class="node"><title>ArrayAccess</title>
+<ellipse fill="none" stroke="black" cx="380" cy="-1980.71" rx="69.5877" ry="18"/>
+<text text-anchor="middle" x="380" y="-1977.01" font-family="Times,serif" font-size="14.00" fill="gray">ArrayAccess</text>
+</g>
+<!-- \\TBela\\CSS\\Property\\Comment&#45;&gt;ArrayAccess -->
+<g id="edge1" class="edge"><title>\\TBela\\CSS\\Property\\Comment&#45;&gt;ArrayAccess</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M562.796,-1841.03C559.083,-1843.15 555.406,-1845.4 552,-1847.71 520.966,-1868.77 517.399,-1879.42 488,-1902.71 463.61,-1922.03 435.1,-1942.73 413.644,-1957.94"/>
+<polygon fill="none" stroke="black" points="411.356,-1955.27 405.207,-1963.9 415.394,-1960.99 411.356,-1955.27"/>
+</g>
+<!-- \\TBela\\CSS\\Interfaces\\RenderableInterface -->
+<g id="node36" class="node"><title>\\TBela\\CSS\\Interfaces\\RenderableInterface</title>
+<polygon fill="none" stroke="black" points="452.5,-1816.71 307.5,-1816.71 307.5,-1780.71 452.5,-1780.71 452.5,-1816.71"/>
+<text text-anchor="middle" x="380" y="-1795.91" font-family="Courier,monospace" font-size="11.00">RenderableInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Property\\Comment&#45;&gt;\\TBela\\CSS\\Interfaces\\RenderableInterface -->
+<g id="edge2" class="edge"><title>\\TBela\\CSS\\Property\\Comment&#45;&gt;\\TBela\\CSS\\Interfaces\\RenderableInterface</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M562.571,-1821.73C536.345,-1818.4 497.762,-1813.51 462.899,-1809.09"/>
+<polygon fill="none" stroke="black" points="463.06,-1805.59 452.699,-1807.8 462.18,-1812.53 463.06,-1805.59"/>
+</g>
+<!-- \\TBela\\CSS\\Property\\Config -->
+<g id="node2" class="node"><title>\\TBela\\CSS\\Property\\Config</title>
+<polygon fill="none" stroke="black" points="623.5,-1789.71 566.5,-1789.71 566.5,-1753.71 623.5,-1753.71 623.5,-1789.71"/>
+<text text-anchor="middle" x="595" y="-1768.91" font-family="Courier,monospace" font-size="11.00">Config</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Number -->
+<g id="node3" class="node"><title>\\TBela\\CSS\\Value\\Number</title>
+<polygon fill="none" stroke="black" points="838.5,-1250.71 781.5,-1250.71 781.5,-1214.71 838.5,-1214.71 838.5,-1250.71"/>
+<text text-anchor="middle" x="810" y="-1229.91" font-family="Courier,monospace" font-size="11.00">Number</text>
+</g>
+<!-- Value -->
+<g id="node49" class="node"><title>Value</title>
+<ellipse fill="none" stroke="black" cx="595" cy="-114.712" rx="36.2938" ry="18"/>
+<text text-anchor="middle" x="595" y="-111.012" font-family="Times,serif" font-size="14.00">Value</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Number&#45;&gt;Value -->
+<g id="edge3" class="edge"><title>\\TBela\\CSS\\Value\\Number&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M798.603,-1214.63C776.342,-1174.92 724.283,-1076.43 702,-986.712 657.197,-806.314 719.849,-319.599 638,-152.712 634.916,-146.424 630.298,-140.694 625.237,-135.698"/>
+<polygon fill="none" stroke="black" points="627.428,-132.962 617.634,-128.923 622.772,-138.189 627.428,-132.962"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\CSSFunction -->
+<g id="node4" class="node"><title>\\TBela\\CSS\\Value\\CSSFunction</title>
+<polygon fill="none" stroke="black" points="1117.5,-1412.71 1026.5,-1412.71 1026.5,-1376.71 1117.5,-1376.71 1117.5,-1412.71"/>
+<text text-anchor="middle" x="1072" y="-1391.91" font-family="Courier,monospace" font-size="11.00">CSSFunction</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\CSSFunction&#45;&gt;Value -->
+<g id="edge4" class="edge"><title>\\TBela\\CSS\\Value\\CSSFunction&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M1026.1,-1391.58C1009.72,-1388.05 992.637,-1381.12 982,-1367.71 828.799,-1174.58 1049.25,-464.138 910,-260.712 876.973,-212.463 712.85,-153.244 635.921,-127.582"/>
+<polygon fill="none" stroke="black" points="636.699,-124.153 626.106,-124.332 634.499,-130.798 636.699,-124.153"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\Set -->
+<g id="node5" class="node"><title>\\TBela\\CSS\\Value\\Set</title>
+<polygon fill="none" stroke="black" points="1099,-1574.71 1045,-1574.71 1045,-1538.71 1099,-1538.71 1099,-1574.71"/>
+<text text-anchor="middle" x="1072" y="-1553.91" font-family="Courier,monospace" font-size="11.00">Set</text>
+</g>
+<!-- IteratorAggregate -->
+<g id="node45" class="node"><title>IteratorAggregate</title>
+<ellipse fill="none" stroke="black" cx="112" cy="-1880.71" rx="96.3833" ry="18"/>
+<text text-anchor="middle" x="112" y="-1877.01" font-family="Times,serif" font-size="14.00" fill="gray">IteratorAggregate</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Set&#45;&gt;IteratorAggregate -->
+<g id="edge5" class="edge"><title>\\TBela\\CSS\\Value\\Set&#45;&gt;IteratorAggregate</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1044.87,-1557.54C1024.71,-1559.64 997.691,-1565.9 982,-1583.71 855.644,-1727.13 1056.03,-1884.39 910,-2007.71 882.241,-2031.15 289.964,-2020.62 256,-2007.71 202.945,-1987.55 156.988,-1937.7 132.302,-1906.79"/>
+<polygon fill="none" stroke="black" points="134.83,-1904.34 125.916,-1898.61 129.314,-1908.65 134.83,-1904.34"/>
+</g>
+<!-- JsonSerializable -->
+<g id="node46" class="node"><title>JsonSerializable</title>
+<ellipse fill="none" stroke="black" cx="810" cy="-2054.71" rx="85.2851" ry="18"/>
+<text text-anchor="middle" x="810" y="-2051.01" font-family="Times,serif" font-size="14.00" fill="gray">JsonSerializable</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Set&#45;&gt;JsonSerializable -->
+<g id="edge6" class="edge"><title>\\TBela\\CSS\\Value\\Set&#45;&gt;JsonSerializable</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1044.84,-1557.52C1024.66,-1559.61 997.64,-1565.86 982,-1583.71 851.716,-1732.43 1038.93,-1872.82 910,-2022.71 903.902,-2029.8 896.221,-2035.33 887.847,-2039.65"/>
+<polygon fill="none" stroke="black" points="886.197,-2036.55 878.53,-2043.86 889.084,-2042.93 886.197,-2036.55"/>
+</g>
+<!-- Countable -->
+<g id="node47" class="node"><title>Countable</title>
+<ellipse fill="none" stroke="black" cx="810" cy="-1980.71" rx="58.4896" ry="18"/>
+<text text-anchor="middle" x="810" y="-1977.01" font-family="Times,serif" font-size="14.00" fill="gray">Countable</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Set&#45;&gt;Countable -->
+<g id="edge7" class="edge"><title>\\TBela\\CSS\\Value\\Set&#45;&gt;Countable</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1044.76,-1558.8C1025.33,-1561.61 999.337,-1568.22 982,-1583.71 867.036,-1686.45 826.462,-1879.99 814.921,-1952.41"/>
+<polygon fill="none" stroke="black" points="811.418,-1952.16 813.367,-1962.57 818.338,-1953.22 811.418,-1952.16"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\OutlineColor -->
+<g id="node6" class="node"><title>\\TBela\\CSS\\Value\\OutlineColor</title>
+<polygon fill="none" stroke="black" points="1121,-1358.71 1023,-1358.71 1023,-1322.71 1121,-1322.71 1121,-1358.71"/>
+<text text-anchor="middle" x="1072" y="-1337.91" font-family="Courier,monospace" font-size="11.00">OutlineColor</text>
+</g>
+<!-- Color -->
+<g id="node51" class="node"><title>Color</title>
+<ellipse fill="none" stroke="black" cx="810" cy="-114.712" rx="36.2938" ry="18"/>
+<text text-anchor="middle" x="810" y="-111.012" font-family="Times,serif" font-size="14.00">Color</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\OutlineColor&#45;&gt;Color -->
+<g id="edge12" class="edge"><title>\\TBela\\CSS\\Value\\OutlineColor&#45;&gt;Color</title>
+<path fill="none" stroke="black" d="M1022.84,-1336.84C1007.49,-1333.12 991.928,-1326.24 982,-1313.71 826.42,-1117.37 1029.31,-408.986 910,-188.712 896.077,-163.007 868.937,-143.705 846.59,-131.269"/>
+<polygon fill="none" stroke="black" points="848.145,-128.132 837.673,-126.522 844.855,-134.311 848.145,-128.132"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\FontFamily -->
+<g id="node7" class="node"><title>\\TBela\\CSS\\Value\\FontFamily</title>
+<polygon fill="none" stroke="black" points="1114,-1520.71 1030,-1520.71 1030,-1484.71 1114,-1484.71 1114,-1520.71"/>
+<text text-anchor="middle" x="1072" y="-1499.91" font-family="Courier,monospace" font-size="11.00">FontFamily</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssString -->
+<g id="node12" class="node"><title>\\TBela\\CSS\\Value\\CssString</title>
+<polygon fill="none" stroke="black" points="848.5,-1412.71 771.5,-1412.71 771.5,-1376.71 848.5,-1376.71 848.5,-1412.71"/>
+<text text-anchor="middle" x="810" y="-1391.91" font-family="Courier,monospace" font-size="11.00">CssString</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\FontFamily&#45;&gt;\\TBela\\CSS\\Value\\CssString -->
+<g id="edge13" class="edge"><title>\\TBela\\CSS\\Value\\FontFamily&#45;&gt;\\TBela\\CSS\\Value\\CssString</title>
+<path fill="none" stroke="black" d="M1029.8,-1493.83C1014.28,-1489.56 996.813,-1483.62 982,-1475.71 945.507,-1456.22 947.206,-1434.8 910,-1416.71 894.134,-1409 875.52,-1403.95 858.742,-1400.67"/>
+<polygon fill="none" stroke="black" points="859.033,-1397.16 848.572,-1398.84 857.797,-1404.05 859.033,-1397.16"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\Unit -->
+<g id="node8" class="node"><title>\\TBela\\CSS\\Value\\Unit</title>
+<polygon fill="none" stroke="black" points="1099,-1466.71 1045,-1466.71 1045,-1430.71 1099,-1430.71 1099,-1466.71"/>
+<text text-anchor="middle" x="1072" y="-1445.91" font-family="Courier,monospace" font-size="11.00">Unit</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Unit&#45;&gt;\\TBela\\CSS\\Value\\Number -->
+<g id="edge14" class="edge"><title>\\TBela\\CSS\\Value\\Unit&#45;&gt;\\TBela\\CSS\\Value\\Number</title>
+<path fill="none" stroke="black" d="M1044.9,-1444.64C1026.28,-1440.85 1001.23,-1433.9 982,-1421.71 913.407,-1378.23 855.275,-1299.95 827.86,-1259.12"/>
+<polygon fill="none" stroke="black" points="830.768,-1257.17 822.33,-1250.76 824.931,-1261.04 830.768,-1257.17"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssAttribute -->
+<g id="node9" class="node"><title>\\TBela\\CSS\\Value\\CssAttribute</title>
+<polygon fill="none" stroke="black" points="1121,-1142.71 1023,-1142.71 1023,-1106.71 1121,-1106.71 1121,-1142.71"/>
+<text text-anchor="middle" x="1072" y="-1121.91" font-family="Courier,monospace" font-size="11.00">CssAttribute</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssAttribute&#45;&gt;Value -->
+<g id="edge16" class="edge"><title>\\TBela\\CSS\\Value\\CssAttribute&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M1022.89,-1120.8C1007.54,-1117.07 991.973,-1110.2 982,-1097.71 841.616,-921.86 1059.41,-255.959 910,-87.7118 880.25,-54.2117 848.861,-92.6665 811,-68.7118"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\Separator -->
+<g id="node10" class="node"><title>\\TBela\\CSS\\Value\\Separator</title>
+<polygon fill="none" stroke="black" points="1110.5,-1304.71 1033.5,-1304.71 1033.5,-1268.71 1110.5,-1268.71 1110.5,-1304.71"/>
+<text text-anchor="middle" x="1072" y="-1283.91" font-family="Courier,monospace" font-size="11.00">Separator</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Separator&#45;&gt;Value -->
+<g id="edge19" class="edge"><title>\\TBela\\CSS\\Value\\Separator&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M1033.41,-1284.97C1015,-1282.02 994.214,-1275.17 982,-1259.71 820.208,-1054.99 1082.31,-283.666 910,-87.7118 880.415,-54.0662 848.861,-92.6665 811,-68.7118"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssParenthesisExpression -->
+<g id="node11" class="node"><title>\\TBela\\CSS\\Value\\CssParenthesisExpression</title>
+<polygon fill="none" stroke="black" points="1161.5,-1196.71 982.5,-1196.71 982.5,-1160.71 1161.5,-1160.71 1161.5,-1196.71"/>
+<text text-anchor="middle" x="1072" y="-1175.91" font-family="Courier,monospace" font-size="11.00">CssParenthesisExpression</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssParenthesisExpression&#45;&gt;Value -->
+<g id="edge21" class="edge"><title>\\TBela\\CSS\\Value\\CssParenthesisExpression&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M990.896,-1160.45C987.614,-1157.89 984.613,-1155 982,-1151.71 834.481,-966.239 1067.04,-265.193 910,-87.7118 880.311,-54.1582 848.861,-92.6665 811,-68.7118"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssString&#45;&gt;Value -->
+<g id="edge23" class="edge"><title>\\TBela\\CSS\\Value\\CssString&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M788.359,-1376.59C762.808,-1352.71 720.419,-1308.06 702,-1259.71 614.279,-1029.44 744.415,-374.96 638,-152.712 634.976,-146.395 630.383,-140.652 625.33,-135.653"/>
+<polygon fill="none" stroke="black" points="627.52,-132.916 617.725,-128.879 622.864,-138.144 627.52,-132.916"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\Whitespace -->
+<g id="node13" class="node"><title>\\TBela\\CSS\\Value\\Whitespace</title>
+<polygon fill="none" stroke="black" points="1114,-1250.71 1030,-1250.71 1030,-1214.71 1114,-1214.71 1114,-1250.71"/>
+<text text-anchor="middle" x="1072" y="-1229.91" font-family="Courier,monospace" font-size="11.00">Whitespace</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Whitespace&#45;&gt;Value -->
+<g id="edge24" class="edge"><title>\\TBela\\CSS\\Value\\Whitespace&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M1029.78,-1230.32C1012.33,-1227.07 993.435,-1220.14 982,-1205.71 827.345,-1010.62 1074.67,-274.429 910,-87.7118 880.365,-54.1099 848.861,-92.6665 811,-68.7118"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\Comment -->
+<g id="node14" class="node"><title>\\TBela\\CSS\\Value\\Comment</title>
+<polygon fill="none" stroke="black" points="1104,-1088.71 1040,-1088.71 1040,-1052.71 1104,-1052.71 1104,-1088.71"/>
+<text text-anchor="middle" x="1072" y="-1067.91" font-family="Courier,monospace" font-size="11.00">Comment</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\Comment&#45;&gt;Value -->
+<g id="edge25" class="edge"><title>\\TBela\\CSS\\Value\\Comment&#45;&gt;Value</title>
+<path fill="none" stroke="black" d="M1039.72,-1069.77C1019.99,-1067.4 995.735,-1060.85 982,-1043.71 848.75,-877.48 1051.78,-246.727 910,-87.7118 880.183,-54.2713 848.861,-92.6665 811,-68.7118"/>
+<path fill="none" stroke="black" d="M809,-68.7118C751.544,-32.3598 669.786,-69.7176 626.162,-95.2092"/>
+<polygon fill="none" stroke="black" points="624.226,-92.2892 617.455,-100.438 627.83,-98.2904 624.226,-92.2892"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssUrl -->
+<g id="node15" class="node"><title>\\TBela\\CSS\\Value\\CssUrl</title>
+<polygon fill="none" stroke="black" points="1100.5,-1628.71 1043.5,-1628.71 1043.5,-1592.71 1100.5,-1592.71 1100.5,-1628.71"/>
+<text text-anchor="middle" x="1072" y="-1607.91" font-family="Courier,monospace" font-size="11.00">CssUrl</text>
+</g>
+<!-- CssFunction -->
+<g id="node43" class="node"><title>CssFunction</title>
+<ellipse fill="none" stroke="black" cx="810" cy="-2122.71" rx="69.5877" ry="18"/>
+<text text-anchor="middle" x="810" y="-2119.01" font-family="Times,serif" font-size="14.00" fill="gray">CssFunction</text>
+</g>
+<!-- \\TBela\\CSS\\Value\\CssUrl&#45;&gt;CssFunction -->
+<g id="edge26" class="edge"><title>\\TBela\\CSS\\Value\\CssUrl&#45;&gt;CssFunction</title>
+<path fill="none" stroke="black" d="M1043.2,-1619.04C1022.96,-1626.6 996.632,-1639.8 982,-1660.71 868.39,-1823.07 1046.11,-1956.69 910,-2100.71 903.805,-2107.27 896.126,-2112.08 887.805,-2115.58"/>
+<polygon fill="none" stroke="black" points="886.429,-2112.36 878.181,-2119.01 888.776,-2118.95 886.429,-2112.36"/>
+</g>
+<!-- \\TBela\\CSS\\Value\\ValueTrait -->
+<g id="node16" class="node"><title>\\TBela\\CSS\\Value\\ValueTrait</title>
+<polygon fill="none" stroke="black" points="1114,-1034.71 1030,-1034.71 1030,-998.712 1114,-998.712 1114,-1034.71"/>
+<text text-anchor="middle" x="1072" y="-1013.91" font-family="Courier,monospace" font-size="11.00">ValueTrait</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\Evaluator -->
+<g id="node17" class="node"><title>\\TBela\\CSS\\Query\\Evaluator</title>
+<polygon fill="none" stroke="black" points="1110.5,-954.712 1033.5,-954.712 1033.5,-918.712 1110.5,-918.712 1110.5,-954.712"/>
+<text text-anchor="middle" x="1072" y="-933.912" font-family="Courier,monospace" font-size="11.00">Evaluator</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\Token -->
+<g id="node18" class="node"><title>\\TBela\\CSS\\Query\\Token</title>
+<polygon fill="none" stroke="black" points="1114.5,-846.712 1029.5,-846.712 1029.5,-810.712 1114.5,-810.712 1114.5,-846.712"/>
+<text text-anchor="start" x="1038" y="-832.412" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
+<text text-anchor="start" x="1055" y="-821.412" font-family="Courier,monospace" font-size="11.00">Token</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenInterface -->
+<g id="node20" class="node"><title>\\TBela\\CSS\\Query\\TokenInterface</title>
+<polygon fill="none" stroke="black" points="865.5,-738.712 754.5,-738.712 754.5,-702.712 865.5,-702.712 865.5,-738.712"/>
+<text text-anchor="middle" x="810" y="-717.912" font-family="Courier,monospace" font-size="11.00">TokenInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\Token&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface -->
+<g id="edge15" class="edge"><title>\\TBela\\CSS\\Query\\Token&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1029.36,-817.464C1014.28,-813.027 997.214,-807.586 982,-801.712 937.602,-784.57 888.689,-760.888 854.591,-743.558"/>
+<polygon fill="none" stroke="black" points="855.879,-740.286 845.382,-738.849 852.692,-746.518 855.879,-740.286"/>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectorValue -->
+<g id="node19" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorValue</title>
+<polygon fill="none" stroke="black" points="1141.5,-900.712 1002.5,-900.712 1002.5,-864.712 1141.5,-864.712 1141.5,-900.712"/>
+<text text-anchor="start" x="1038" y="-886.412" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
+<text text-anchor="start" x="1011" y="-875.412" font-family="Courier,monospace" font-size="11.00">TokenSelectorValue</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectorValueInterface -->
+<g id="node21" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorValueInterface</title>
+<polygon fill="none" stroke="black" points="909.5,-900.712 710.5,-900.712 710.5,-864.712 909.5,-864.712 909.5,-900.712"/>
+<text text-anchor="middle" x="810" y="-879.912" font-family="Courier,monospace" font-size="11.00">TokenSelectorValueInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectorValue&#45;&gt;\\TBela\\CSS\\Query\\TokenSelectorValueInterface -->
+<g id="edge17" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectorValue&#45;&gt;\\TBela\\CSS\\Query\\TokenSelectorValueInterface</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1002.35,-882.712C977.157,-882.712 947.978,-882.712 920.114,-882.712"/>
+<polygon fill="none" stroke="black" points="919.918,-879.212 909.918,-882.712 919.918,-886.212 919.918,-879.212"/>
+</g>
+<!-- \\TBela\\CSS\\Query\\QueryInterface -->
+<g id="node22" class="node"><title>\\TBela\\CSS\\Query\\QueryInterface</title>
+<polygon fill="none" stroke="black" points="1127.5,-792.712 1016.5,-792.712 1016.5,-756.712 1127.5,-756.712 1127.5,-792.712"/>
+<text text-anchor="middle" x="1072" y="-771.912" font-family="Courier,monospace" font-size="11.00">QueryInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectInterface -->
+<g id="node23" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectInterface</title>
+<polygon fill="none" stroke="black" points="1148,-738.712 996,-738.712 996,-702.712 1148,-702.712 1148,-738.712"/>
+<text text-anchor="middle" x="1072" y="-717.912" font-family="Courier,monospace" font-size="11.00">TokenSelectInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectInterface&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface -->
+<g id="edge30" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectInterface&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface</title>
+<path fill="none" stroke="black" d="M995.797,-720.712C957.824,-720.712 912.215,-720.712 875.81,-720.712"/>
+<polygon fill="none" stroke="black" points="875.799,-717.212 865.799,-720.712 875.799,-724.212 875.799,-717.212"/>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectorInterface -->
+<g id="node24" class="node"><title>\\TBela\\CSS\\Query\\TokenSelectorInterface</title>
+<polygon fill="none" stroke="black" points="1154.5,-684.712 989.5,-684.712 989.5,-648.712 1154.5,-648.712 1154.5,-684.712"/>
+<text text-anchor="middle" x="1072" y="-663.912" font-family="Courier,monospace" font-size="11.00">TokenSelectorInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Query\\TokenSelectorInterface&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface -->
+<g id="edge31" class="edge"><title>\\TBela\\CSS\\Query\\TokenSelectorInterface&#45;&gt;\\TBela\\CSS\\Query\\TokenInterface</title>
+<path fill="none" stroke="black" d="M989.448,-683.65C952.715,-691.279 909.96,-700.158 875.511,-707.313"/>
+<polygon fill="none" stroke="black" points="874.644,-703.919 865.565,-709.379 876.068,-710.772 874.644,-703.919"/>
+</g>
+<!-- \\TBela\\CSS\\Parser\\SyntaxError -->
+<g id="node25" class="node"><title>\\TBela\\CSS\\Parser\\SyntaxError</title>
+<polygon fill="none" stroke="black" points="1117.5,-1870.71 1026.5,-1870.71 1026.5,-1834.71 1117.5,-1834.71 1117.5,-1870.71"/>
+<text text-anchor="middle" x="1072" y="-1849.91" font-family="Courier,monospace" font-size="11.00">SyntaxError</text>
+</g>
+<!-- Exception -->
+<g id="node48" class="node"><title>Exception</title>
+<ellipse fill="none" stroke="black" cx="810" cy="-2250.71" rx="57.6901" ry="18"/>
+<text text-anchor="middle" x="810" y="-2247.01" font-family="Times,serif" font-size="14.00" fill="gray">Exception</text>
+</g>
+<!-- \\TBela\\CSS\\Parser\\SyntaxError&#45;&gt;Exception -->
+<g id="edge8" class="edge"><title>\\TBela\\CSS\\Parser\\SyntaxError&#45;&gt;Exception</title>
+<path fill="none" stroke="black" d="M1065.03,-1870.93C1047.5,-1922.46 992.216,-2072.04 910,-2172.71 891.834,-2194.96 866.273,-2214.89 845.674,-2229.04"/>
+<polygon fill="none" stroke="black" points="843.537,-2226.26 837.186,-2234.74 847.439,-2232.07 843.537,-2226.26"/>
+</g>
+<!-- \\TBela\\CSS\\Parser\\Helper -->
+<g id="node26" class="node"><title>\\TBela\\CSS\\Parser\\Helper</title>
+<polygon fill="none" stroke="black" points="1100.5,-1816.71 1043.5,-1816.71 1043.5,-1780.71 1100.5,-1780.71 1100.5,-1816.71"/>
+<text text-anchor="middle" x="1072" y="-1795.91" font-family="Courier,monospace" font-size="11.00">Helper</text>
+</g>
+<!-- \\TBela\\CSS\\Parser\\AccessTrait -->
+<g id="node27" class="node"><title>\\TBela\\CSS\\Parser\\AccessTrait</title>
+<polygon fill="none" stroke="black" points="1117.5,-1762.71 1026.5,-1762.71 1026.5,-1726.71 1117.5,-1726.71 1117.5,-1762.71"/>
+<text text-anchor="middle" x="1072" y="-1741.91" font-family="Courier,monospace" font-size="11.00">AccessTrait</text>
+</g>
+<!-- \\TBela\\CSS\\Parser\\ParserTrait -->
+<g id="node28" class="node"><title>\\TBela\\CSS\\Parser\\ParserTrait</title>
+<polygon fill="none" stroke="black" points="1117.5,-1708.71 1026.5,-1708.71 1026.5,-1672.71 1117.5,-1672.71 1117.5,-1708.71"/>
+<text text-anchor="middle" x="1072" y="-1687.91" font-family="Courier,monospace" font-size="11.00">ParserTrait</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\Declaration -->
+<g id="node29" class="node"><title>\\TBela\\CSS\\Element\\Declaration</title>
+<polygon fill="none" stroke="black" points="1117.5,-442.712 1026.5,-442.712 1026.5,-406.712 1117.5,-406.712 1117.5,-442.712"/>
+<text text-anchor="middle" x="1072" y="-421.912" font-family="Courier,monospace" font-size="11.00">Declaration</text>
+</g>
+<!-- Element -->
+<g id="node50" class="node"><title>Element</title>
+<ellipse fill="none" stroke="black" cx="380" cy="-72.7118" rx="50.0912" ry="18"/>
+<text text-anchor="middle" x="380" y="-69.0118" font-family="Times,serif" font-size="14.00">Element</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\Declaration&#45;&gt;Element -->
+<g id="edge9" class="edge"><title>\\TBela\\CSS\\Element\\Declaration&#45;&gt;Element</title>
+<path fill="none" stroke="black" d="M1026.13,-420.556C1010.16,-416.873 993.343,-410.095 982,-397.712 876.787,-282.849 1018.43,-166.546 910,-54.7118 878.485,-22.2067 850.146,-53.4583 811,-30.7118"/>
+</g>
+<!-- \\TBela\\CSS\\Element\\Rule -->
+<g id="node30" class="node"><title>\\TBela\\CSS\\Element\\Rule</title>
+<polygon fill="none" stroke="black" points="1099,-550.712 1045,-550.712 1045,-514.712 1099,-514.712 1099,-550.712"/>
+<text text-anchor="middle" x="1072" y="-529.912" font-family="Courier,monospace" font-size="11.00">Rule</text>
+</g>
+<!-- \\TBela\\CSS\\RuleList -->
+<g id="node40" class="node"><title>\\TBela\\CSS\\RuleList</title>
+<polygon fill="none" stroke="black" points="637.5,-550.712 552.5,-550.712 552.5,-514.712 637.5,-514.712 637.5,-550.712"/>
+<text text-anchor="start" x="561" y="-536.412" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
+<text text-anchor="start" x="567.5" y="-525.412" font-family="Courier,monospace" font-size="11.00">RuleList</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\Rule&#45;&gt;\\TBela\\CSS\\RuleList -->
+<g id="edge10" class="edge"><title>\\TBela\\CSS\\Element\\Rule&#45;&gt;\\TBela\\CSS\\RuleList</title>
+<path fill="none" stroke="black" d="M1044.93,-539.886C998.233,-551.935 897.167,-574.388 811,-568.712"/>
+<path fill="none" stroke="black" d="M809,-568.712C753.395,-565.049 690.581,-553.51 647.66,-544.472"/>
+<polygon fill="none" stroke="black" points="648.245,-541.018 637.734,-542.352 646.782,-547.863 648.245,-541.018"/>
+</g>
+<!-- \\TBela\\CSS\\Element\\AtRule -->
+<g id="node31" class="node"><title>\\TBela\\CSS\\Element\\AtRule</title>
+<polygon fill="none" stroke="black" points="1100.5,-496.712 1043.5,-496.712 1043.5,-460.712 1100.5,-460.712 1100.5,-496.712"/>
+<text text-anchor="middle" x="1072" y="-475.912" font-family="Courier,monospace" font-size="11.00">AtRule</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\RuleSet -->
+<g id="node32" class="node"><title>\\TBela\\CSS\\Element\\RuleSet</title>
+<polygon fill="none" stroke="black" points="852.5,-514.712 767.5,-514.712 767.5,-478.712 852.5,-478.712 852.5,-514.712"/>
+<text text-anchor="start" x="776" y="-500.412" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
+<text text-anchor="start" x="786" y="-489.412" font-family="Courier,monospace" font-size="11.00">RuleSet</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\AtRule&#45;&gt;\\TBela\\CSS\\Element\\RuleSet -->
+<g id="edge11" class="edge"><title>\\TBela\\CSS\\Element\\AtRule&#45;&gt;\\TBela\\CSS\\Element\\RuleSet</title>
+<path fill="none" stroke="black" d="M1043.18,-480.638C1000.22,-483.612 917.073,-489.368 862.821,-493.124"/>
+<polygon fill="none" stroke="black" points="862.445,-489.642 852.71,-493.824 862.928,-496.625 862.445,-489.642"/>
+</g>
+<!-- \\TBela\\CSS\\Element\\RuleSet&#45;&gt;\\TBela\\CSS\\RuleList -->
+<g id="edge18" class="edge"><title>\\TBela\\CSS\\Element\\RuleSet&#45;&gt;\\TBela\\CSS\\RuleList</title>
+<path fill="none" stroke="black" d="M767.426,-503.738C733.231,-509.518 684.595,-517.738 647.857,-523.947"/>
+<polygon fill="none" stroke="black" points="647.11,-520.524 637.833,-525.641 648.276,-527.426 647.11,-520.524"/>
+</g>
+<!-- \\TBela\\CSS\\Element\\Stylesheet -->
+<g id="node33" class="node"><title>\\TBela\\CSS\\Element\\Stylesheet</title>
+<polygon fill="none" stroke="black" points="1114,-604.712 1030,-604.712 1030,-568.712 1114,-568.712 1114,-604.712"/>
+<text text-anchor="middle" x="1072" y="-583.912" font-family="Courier,monospace" font-size="11.00">Stylesheet</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\Stylesheet&#45;&gt;\\TBela\\CSS\\RuleList -->
+<g id="edge20" class="edge"><title>\\TBela\\CSS\\Element\\Stylesheet&#45;&gt;\\TBela\\CSS\\RuleList</title>
+<path fill="none" stroke="black" d="M1029.58,-583.758C978.276,-580.121 888.205,-573.798 811,-568.712"/>
+</g>
+<!-- \\TBela\\CSS\\Element\\Comment -->
+<g id="node34" class="node"><title>\\TBela\\CSS\\Element\\Comment</title>
+<polygon fill="none" stroke="black" points="1104,-388.712 1040,-388.712 1040,-352.712 1104,-352.712 1104,-388.712"/>
+<text text-anchor="middle" x="1072" y="-367.912" font-family="Courier,monospace" font-size="11.00">Comment</text>
+</g>
+<!-- \\TBela\\CSS\\Element\\Comment&#45;&gt;Element -->
+<g id="edge29" class="edge"><title>\\TBela\\CSS\\Element\\Comment&#45;&gt;Element</title>
+<path fill="none" stroke="black" d="M1039.73,-367.697C1020.52,-364.224 996.832,-356.756 982,-340.712 893.022,-244.461 1003.09,-146.989 910,-54.7118 877.846,-22.8389 851.254,-51.4337 811,-30.7118"/>
+<path fill="none" stroke="black" d="M809,-30.7118C680.247,35.5678 500.913,-22.6926 421.547,-54.8264"/>
+<polygon fill="none" stroke="black" points="419.835,-51.7465 411.924,-58.7943 422.504,-58.2179 419.835,-51.7465"/>
+</g>
+<!-- \\TBela\\CSS\\Interfaces\\RenderablePropertyInterface -->
+<g id="node35" class="node"><title>\\TBela\\CSS\\Interfaces\\RenderablePropertyInterface</title>
+<polygon fill="none" stroke="black" points="479.5,-1870.71 280.5,-1870.71 280.5,-1834.71 479.5,-1834.71 479.5,-1870.71"/>
+<text text-anchor="middle" x="380" y="-1849.91" font-family="Courier,monospace" font-size="11.00">RenderablePropertyInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Interfaces\\RuleListInterface -->
+<g id="node37" class="node"><title>\\TBela\\CSS\\Interfaces\\RuleListInterface</title>
+<polygon fill="none" stroke="black" points="445.5,-1762.71 314.5,-1762.71 314.5,-1726.71 445.5,-1726.71 445.5,-1762.71"/>
+<text text-anchor="middle" x="380" y="-1741.91" font-family="Courier,monospace" font-size="11.00">RuleListInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Interfaces\\RuleListInterface&#45;&gt;IteratorAggregate -->
+<g id="edge32" class="edge"><title>\\TBela\\CSS\\Interfaces\\RuleListInterface&#45;&gt;IteratorAggregate</title>
+<path fill="none" stroke="black" d="M314.393,-1753.42C295.042,-1757.46 274.152,-1763.31 256,-1771.71 210.109,-1792.96 165.032,-1830.97 138.117,-1856.01"/>
+<polygon fill="none" stroke="black" points="135.562,-1853.61 130.694,-1863.02 140.368,-1858.7 135.562,-1853.61"/>
+</g>
+<!-- \\TBela\\CSS\\Event\\Event -->
+<g id="node38" class="node"><title>\\TBela\\CSS\\Event\\Event</title>
+<polygon fill="none" stroke="black" points="1099,-308.712 1045,-308.712 1045,-272.712 1099,-272.712 1099,-308.712"/>
+<text text-anchor="middle" x="1072" y="-287.912" font-family="Courier,monospace" font-size="11.00">Event</text>
+</g>
+<!-- \\TBela\\CSS\\Event\\EventInterface -->
+<g id="node39" class="node"><title>\\TBela\\CSS\\Event\\EventInterface</title>
+<polygon fill="none" stroke="black" points="865.5,-308.712 754.5,-308.712 754.5,-272.712 865.5,-272.712 865.5,-308.712"/>
+<text text-anchor="middle" x="810" y="-287.912" font-family="Courier,monospace" font-size="11.00">EventInterface</text>
+</g>
+<!-- \\TBela\\CSS\\Event\\Event&#45;&gt;\\TBela\\CSS\\Event\\EventInterface -->
+<g id="edge22" class="edge"><title>\\TBela\\CSS\\Event\\Event&#45;&gt;\\TBela\\CSS\\Event\\EventInterface</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M1044.64,-290.712C1005.4,-290.712 930.427,-290.712 875.964,-290.712"/>
+<polygon fill="none" stroke="black" points="875.705,-287.212 865.704,-290.712 875.704,-294.212 875.705,-287.212"/>
+</g>
+<!-- \\TBela\\CSS\\RuleList&#45;&gt;Element -->
+<g id="edge27" class="edge"><title>\\TBela\\CSS\\RuleList&#45;&gt;Element</title>
+<path fill="none" stroke="black" d="M585.65,-514.679C552.874,-443.896 432.896,-184.789 393.573,-99.8653"/>
+<polygon fill="none" stroke="black" points="396.67,-98.2234 389.292,-90.6197 390.318,-101.165 396.67,-98.2234"/>
+</g>
+<!-- \\TBela\\CSS\\RuleList&#45;&gt;\\TBela\\CSS\\Interfaces\\RuleListInterface -->
+<g id="edge28" class="edge"><title>\\TBela\\CSS\\RuleList&#45;&gt;\\TBela\\CSS\\Interfaces\\RuleListInterface</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M590.824,-550.785C566.922,-686.789 415.403,-1548.96 385.955,-1716.52"/>
+<polygon fill="none" stroke="black" points="382.478,-1716.08 384.195,-1726.53 389.373,-1717.29 382.478,-1716.08"/>
+</g>
+<!-- \\TBela\\CSS\\ArrayTrait -->
+<g id="node41" class="node"><title>\\TBela\\CSS\\ArrayTrait</title>
+<polygon fill="none" stroke="black" points="1114,-254.712 1030,-254.712 1030,-218.712 1114,-218.712 1114,-254.712"/>
+<text text-anchor="middle" x="1072" y="-233.912" font-family="Courier,monospace" font-size="11.00">ArrayTrait</text>
+</g>
+<!-- \\TBela\\CSS\\ElementTrait -->
+<g id="node42" class="node"><title>\\TBela\\CSS\\ElementTrait</title>
+<polygon fill="none" stroke="black" points="1121,-200.712 1023,-200.712 1023,-164.712 1121,-164.712 1121,-200.712"/>
+<text text-anchor="middle" x="1072" y="-179.912" font-family="Courier,monospace" font-size="11.00">ElementTrait</text>
+</g>
+</g>
+</svg>
