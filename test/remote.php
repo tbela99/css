@@ -16,6 +16,13 @@ $localName = './remote_files/vue.css';
 
 $parser = (new Parser())->load(is_file($localName) ? $localName : 'https://unpkg.com/docsify/lib/themes/vue.css');
 
+$stylesheet = $parser->parse();
+
+if (!is_file($localName)) {
+
+    file_put_contents($localName, $stylesheet);
+}
+
 $stylesheet = (new Traverser())->on('enter', function ($node) {
 
     if ($node->getType() == 'Declaration') {
@@ -31,7 +38,7 @@ $stylesheet = (new Traverser())->on('enter', function ($node) {
                 $url = $value->value;
                 $parts = explode('/', parse_url($url)['path']);
 
-                $localName = './remote_files/'.crc32($url).'-'.end($parts);
+                $localName = './remote_files/'.base_convert(crc32($url), 10, 36).'-'.end($parts);
 
                 if (!is_file($localName)) {
 
@@ -61,6 +68,6 @@ $stylesheet = (new Traverser())->on('enter', function ($node) {
         });
     }
 
-})->traverse($parser->parse());
+})->traverse($stylesheet);
 
 file_put_contents('./remote_files/vue-transformed.css', $stylesheet);
