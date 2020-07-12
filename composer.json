@@ -20,6 +20,9 @@
       "role": "Developer"
     }
   ],
+  "archive": {
+    "exclude": ["*.sh", "*.phar", "test/", "tool/", "docs/"]
+  },
   "require": {
     "php": ">=7.4"
   }

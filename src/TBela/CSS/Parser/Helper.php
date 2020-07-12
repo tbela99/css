@@ -106,6 +106,13 @@ class Helper
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
         }
 
+        if (!empty($curlOptions['follow_redirect'])) {
+
+            unset($curlOptions['follow_redirect']);
+
+            $curlOptions[CURLOPT_FOLLOWLOCATION] = true;
+        }
+
         if (!empty($curlOptions)) {
 
             curl_setopt_array($ch, $curlOptions);
