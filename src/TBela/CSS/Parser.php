@@ -300,11 +300,15 @@ class Parser
             throw new Exception('File Not Found', 404);
         }
 
-        $content = Helper::fetchContent($file);
+        else {
+
+            $content = Helper::fetchContent($file, [], ['follow_redirect' => true]);
+        }
+
 
         if ($content === false) {
 
-            throw new Exception('File Not Found', 404);
+            throw new Exception(sprintf('File Not Found "%s"', $file), 404);
         }
 
         return $this->expand($content, dirname($file));
