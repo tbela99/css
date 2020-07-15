@@ -386,10 +386,7 @@ class Renderer implements EventInterface
 
             if (trim($output) === '') {
 
-//                if ($glue == ';' || $glue === '') {
-
                     continue;
-//                }
 
             } else if ($el['type'] != 'Comment') {
 
@@ -416,6 +413,7 @@ class Renderer implements EventInterface
 
         $i = count($result);
 
+        // remove identical rules
         while ($i--) {
 
             if (!isset($hash[$result[$i]])) {

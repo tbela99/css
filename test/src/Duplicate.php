@@ -57,7 +57,7 @@ final class Duplicate extends TestCase
         $data = [];
 
         $file = './css/color.css';
-        $parser->setOptions(['allow_duplicate_declarations' => true]);
+        $parser->setOptions(['allow_duplicate_declarations' => false]);
         $compiler->setOptions(['allow_duplicate_declarations' => true, 'convert_color' => 'hex']);
 
             $data[] = [

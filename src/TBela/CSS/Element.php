@@ -221,10 +221,12 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      * @param array $options
      * @return Element
      */
-    public function deduplicate(array $options = [])
+    public function deduplicate(array $options = ['allow_duplicate_rules' => ['font-face']])
     {
 
-        if ((empty($options['allow_duplicate_rules']) || empty($options['allow_duplicate_declarations']) || $options['allow_duplicate_declarations'] !== true)) {
+        if ((empty($options['allow_duplicate_rules']) ||
+            $options['allow_duplicate_rules'] !== true ||
+            empty($options['allow_duplicate_declarations']) || $options['allow_duplicate_declarations'] !== true)) {
 
             switch ($this->ast->type) {
 
@@ -314,11 +316,14 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     {
         if (!is_null(isset($this->ast->children) ? $this->ast->children : null)) {
 
-            if (empty($options['allow_duplicate_rules'])) {
+            if (empty($options['allow_duplicate_rules']) ||
+                is_array($options['allow_duplicate_rules'])) {
 
                 $signature = '';
                 $total = count($this->ast->children);
                 $el = null;
+
+                $allowed = is_array($options['allow_duplicate_rules']) ? $options['allow_duplicate_rules'] : [];
 
                 while ($total--) {
 
@@ -337,6 +342,22 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
                         while ($total > 1 && (string) $next->ast->type == 'Comment') {
 
                             $next = $this->ast->children[--$total - 1];
+                        }
+
+                        if (!empty($allowed) &&
+                            (
+                                ($next->ast->type == 'AtRule' && in_array(trim($next->ast->name->render(['remove_comments' => true])), $allowed)) ||
+                                ($next->ast->type == 'Rule' &&
+                                    array_intersect(
+                                        array_map(function (Set $selector) {
+
+                                            return trim($selector->render(['remove_comments' => true]));
+
+                                        }, $next->ast->selector), $allowed))
+                            )
+                        ) {
+
+                            continue;
                         }
 
                         if ($signature === '') {

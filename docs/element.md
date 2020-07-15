@@ -26,7 +26,7 @@ $parser = new Parser($css);
 $parser->load('template.css');
 
 // or
-$parser->seContent($css);
+$parser->setContent($css);
 
 // and then
 $stylesheet = $parser->parse();
