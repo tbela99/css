@@ -103,15 +103,17 @@ class Helper
             // Turn on SSL certificate verfication
             curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         }
 
-        if (!empty($curlOptions['follow_redirect'])) {
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
 
-            unset($curlOptions['follow_redirect']);
+        // google font send a different response when this header is missing
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
 
-            $curlOptions[CURLOPT_FOLLOWLOCATION] = true;
-        }
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'
+        ]);
 
         if (!empty($curlOptions)) {
 
@@ -125,11 +127,6 @@ class Helper
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($options));
         }
 
-        // 1 second for a connection timeout with curl
-        //    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-        // Try using this instead of the php set_time_limit function call
-        //    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-        // Causes curl to return the result on success which should help us avoid using the writeback option
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         $result = curl_exec($ch);
@@ -141,7 +138,6 @@ class Helper
         }
 
         curl_close($ch);
-
         return $result;
     }
 }

@@ -1,6 +1,6 @@
 ## CSS Api
 
-The documentation generated from the source code using phpdocs is available [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tbela99/css/master/docs/api/index.html)
+The documentation generated from the source code using phpdocs is available [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tbela99/css/master/docs/api/html/index.html)
 
 ## Rendering an Element
 

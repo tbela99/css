@@ -85,7 +85,7 @@ class Renderer implements EventInterface
      * @var bool|array|string true|false or a list of exceptions
      * @ignore
      */
-    protected $allow_duplicate_declarations = false;
+    protected bool $allow_duplicate_declarations = false;
 
     /**
      * Identity constructor.
@@ -380,10 +380,7 @@ class Renderer implements EventInterface
 
             if (trim($output) === '') {
 
-//                if ($glue == ';' || $glue === '') {
-
                     continue;
-//                }
 
             } else if ($el['type'] != 'Comment') {
 
@@ -410,6 +407,7 @@ class Renderer implements EventInterface
 
         $i = count($result);
 
+        // remove identical rules
         while ($i--) {
 
             if (!isset($hash[$result[$i]])) {

@@ -80,7 +80,7 @@ class Compiler {
      */
     public function setContent ($css) {
 
-        $this->data = Element::getInstance((new Parser($css, $this->options))->parse());
+        $this->data = (new Parser($css, $this->options))->parse();
         return $this;
     }
 
@@ -92,7 +92,7 @@ class Compiler {
      */
     public function load ($file) {
 
-        $this->data = Element::getInstance((new Parser('', $this->options))->load($file)->parse());
+        $this->data = (new Parser('', $this->options))->load($file)->parse();
         return $this;
     }
 
@@ -103,7 +103,7 @@ class Compiler {
      */
     public function setData ($ast) {
 
-        $this->data = Element::getInstance($ast);
+        $this->data = $ast instanceof Element ? $ast : Element::getInstance($ast);
         return $this;
     }
 

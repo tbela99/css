@@ -44,7 +44,7 @@ class Parser
      * @var string
      * @ignore
      */
-    public string $css = '';
+    protected string $css = '';
 
     /**
      * @var string
@@ -56,10 +56,10 @@ class Parser
      * @var array
      * @ignore
      */
-    public array $options = [
+    protected array $options = [
         'sourcemap' => false,
         'flatten_import' => false,
-        'allow_duplicate_rules' => false,
+        'allow_duplicate_rules' => ['font-face'],
         'allow_duplicate_declarations' => false
     ];
 
@@ -213,6 +213,8 @@ class Parser
 //
 //        $ast = clone $this->ast;
 
+        $this->ast->deduplicate($this->options);
+
         if (empty($this->options['sourcemap'])) {
 
             return (new Traverser())->on('enter', function (Element $element) {
@@ -302,9 +304,8 @@ class Parser
 
         else {
 
-            $content = Helper::fetchContent($file, [], ['follow_redirect' => true]);
+            $content = Helper::fetchContent($file);
         }
-
 
         if ($content === false) {
 
