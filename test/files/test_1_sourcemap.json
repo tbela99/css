@@ -190,7 +190,7 @@
                                 }
                             },
                             "name": "content",
-                            "value": "\" (\" attr(href)\")\""
+                            "value": "\" (\" attr(href) \")\""
                         }
                     ]
                 },
@@ -227,7 +227,7 @@
                                 }
                             },
                             "name": "content",
-                            "value": "\" (\" attr(title)\")\""
+                            "value": "\" (\" attr(title) \")\""
                         }
                     ]
                 },
