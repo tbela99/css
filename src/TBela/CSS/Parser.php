@@ -81,15 +81,16 @@ class Parser
     /**
      * load css content from a file
      * @param string $file
+     * @param string $media
      * @return Parser
      * @throws Exception
      */
 
-    public function load(string $file): Parser
+    public function load(string $file, string $media = ''): Parser
     {
 
         $this->path = $file;
-        $this->css = $this->getFileContent($file);
+        $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
         return $this;
     }
@@ -97,13 +98,15 @@ class Parser
     /**
      * parse css file and append to the existing AST
      * @param string $file
+     * @param string $media
      * @return Parser
+     * @throws SyntaxError
      * @throws Exception
      */
-    public function append(string $file): Parser
+    public function append(string $file, string $media = ''): Parser
     {
 
-        return $this->appendContent($this->getFileContent($file));
+        return $this->appendContent($this->getFileContent($file, $media));
     }
 
     /**
@@ -284,19 +287,22 @@ class Parser
     }
 
     /**
-     * @param $file
+     * @param string $file
+     * @param string $media
      * @return string|bool
      * @throws Exception
      * @ignore
      */
-    protected function getFileContent($file)
+    protected function getFileContent(string $file, string $media = '')
     {
 
         if (!preg_match('#^(https?:)//#', $file)) {
 
             if (is_file($file)) {
 
-                return $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
+                $content = $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
+
+                return $media === '' ? $content : '@media '.$media.' {'.$content.'}';
             }
 
             throw new Exception('File Not Found', 404);
