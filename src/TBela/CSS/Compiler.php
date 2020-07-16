@@ -87,12 +87,14 @@ class Compiler {
     /**
      * load css content from a file
      * @param string $file
+     * @param string $media
      * @return $this
+     * @throws Parser\SyntaxError
      * @throws Exception
      */
-    public function load ($file) {
+    public function load ($file, $media = '') {
 
-        $this->data = (new Parser('', $this->options))->load($file)->parse();
+        $this->data = (new Parser('', $this->options))->load($file, $media)->parse();
         return $this;
     }
 
