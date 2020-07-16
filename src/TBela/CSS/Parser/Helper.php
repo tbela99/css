@@ -28,7 +28,7 @@ class Helper
      * @return string
      * @ignore
      */
-    public static function resolvePath(string $file, string $path = '')
+    public static function resolvePath($file, $path = '')
     {
 
         if ($path !== '') {
@@ -87,7 +87,7 @@ class Helper
      * @return bool|string
      * @ignore
      */
-    public static function fetchContent(string $url, array $options = [], array $curlOptions = [])
+    public static function fetchContent($url, array $options = [], array $curlOptions = [])
     {
 
         if (strpos($url, '//') === 0) {
