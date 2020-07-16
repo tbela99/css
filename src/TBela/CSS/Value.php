@@ -265,7 +265,7 @@ abstract class Value
 
                     array_splice($tokens, $j, 1);
                 }
-                else if (in_array($token->type, ['css-parenthesis-expression', 'css-function', 'css-url']) && $tokens[$j + 1]->type == 'whitespace') {
+                else if ($token->type == 'css-parenthesis-expression' && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
                 } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {

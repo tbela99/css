@@ -58,7 +58,7 @@
                         {
                             "type": "Declaration",
                             "name": "content",
-                            "value": "\" (\" attr(href)\")\""
+                            "value": "\" (\" attr(href) \")\""
                         }
                     ]
                 },
@@ -71,7 +71,7 @@
                         {
                             "type": "Declaration",
                             "name": "content",
-                            "value": "\" (\" attr(title)\")\""
+                            "value": "\" (\" attr(title) \")\""
                         }
                     ]
                 },

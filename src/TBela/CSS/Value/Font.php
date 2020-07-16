@@ -18,7 +18,7 @@ class Font extends ShortHand
      * @var array
      * @ignore
      */
-    protected static $keywords = ['caption', 'icon', 'menu', 'message-box', 'small-caption', 'status-bar'];
+    protected static $keywords = ['unset', 'inherit', 'caption', 'icon', 'menu', 'message-box', 'small-caption', 'status-bar'];
 
     /**
      * @var array
