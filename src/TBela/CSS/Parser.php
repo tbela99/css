@@ -407,7 +407,7 @@ class Parser
     }
 
     /**
-     * @return RuleListInterface|null
+     * @return stdClass|null
      * @throws SyntaxError
      * @throws Exception
      * @ignore
@@ -733,7 +733,7 @@ class Parser
 
     /**
      * @param string $rule
-     * @param Position $position
+     * @param stdClass $position
      * @return false|stdClass
      * @ignore
      */
