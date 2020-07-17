@@ -130,7 +130,7 @@ final class Properties extends TestCase
         $data[] = [$property, 'margin-top', '1px \9', 'margin-top: 1px \9'];
         $data[] = [$property, 'margin-right', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9'];
         $data[] = [$property, 'margin-bottom', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9;'."\n".'margin-bottom: 1px \9'];
-        $data[] = [$property, 'margin-left', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9;'."\n".'margin-bottom: 1px \9;'."\n".'margin-left: 1px \9'];
+        $data[] = [$property, 'margin-left', '1px \9', 'margin: 1px \9'];
 
         return $data;
     }
