@@ -4,22 +4,13 @@ namespace TBela\CSS;
 
 use Exception;
 use stdClass;
-use TBela\CSS\Element\Rule;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
-use TBela\CSS\Parser\SourceLocation;
 use TBela\CSS\Parser\ParserTrait;
-use TBela\CSS\Parser\Position;
 use TBela\CSS\Parser\SyntaxError;
 use function preg_replace_callback;
 use function str_replace;
 use function substr;
-
-// http://www.w3.org/TR/CSS21/grammar.html
-/**
- * @ignore
- */
-// const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 
 /**
  * Css Parser
@@ -30,14 +21,44 @@ class Parser
 
     use ParserTrait;
 
+    /**
+     * @var stdClass
+     * @ignore
+     */
     protected $currentPosition;
+    /**
+     * @var stdClass
+     * @ignore
+     */
     protected $previousPosition;
+    /**
+     * @var int
+     * @ignore
+     */
     protected $end = 0;
 
+    /**
+     * @var array
+     * @ignore
+     */
     protected $errors = [];
+    /**
+     * @var array
+     * @ignore
+     */
     protected $warnings = [];
 
+    /**
+     * @var stdClass|null
+     * @ignore
+     */
     protected $ast = null;
+
+    /**
+     * @var RuleListInterface|null
+     * @ignore
+     */
+    protected $element = null;
 
     /**
      * css data
@@ -93,6 +114,7 @@ class Parser
         $this->path = $file;
         $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
+        $this->element = null;
         return $this;
     }
 
@@ -159,6 +181,7 @@ class Parser
         $this->css = $css;
         $this->path = '';
         $this->ast = null;
+        $this->element = null;
         return $this;
     }
 
@@ -213,12 +236,16 @@ class Parser
 //
             $this->doParse();
         }
+
+        if (is_null($this->element)) {
+
+            $this->element = Element::getInstance($this->ast)->deduplicate($this->options);
+        }
 //
-//        $ast = clone $this->ast;
-
-        $ast = Element::getInstance($this->ast);
-
-        $ast->deduplicate($this->options);
+        /**
+         * @var RuleListInterface $element
+         */
+        $element = clone $this->element;
 
         if (empty($this->options['sourcemap'])) {
 
@@ -226,10 +253,10 @@ class Parser
 
                 $element->setLocation(null);
 
-            })->traverse($ast);
+            })->traverse($element);
         }
 
-        return $ast;
+        return $element;
     }
 
     /**
