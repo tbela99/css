@@ -258,49 +258,6 @@ class PropertySet
             }
         }
 
-        $separator = Config::getProperty($this->config['shorthand'] . '.separator', ' ');
-
-        if ($separator != ' ') {
-
-            $separator = ' '.$separator.' ';
-        }
-
-        // does not match the pattern
-        // check if properties are set to the same value
-        if (empty($result)) {
-
-            if (isset($this->config['value_map']) && count($this->properties) == count($this->config['properties'])) {
-
-                foreach ($this->properties as $key => $property) {
-
-                    $result[$key] = trim($property->getValue()->render(['remove_comments' => true]));
-                }
-
-                foreach ($this->config['value_map'] as $key => $mapping) {
-
-                    foreach ($mapping as $value) {
-
-                        if ($result[$key] == $result[$this->config['properties'][$value]]) {
-
-                            unset($result[$key]);
-                            break;
-                        }
-
-                        break 2;
-                    }
-                }
-
-                if (count($result) == 1) {
-
-                    reset($this->properties);
-
-                    return current($this->properties)->getValue();
-                }
-            }
-
-                return false;
-        }
-
         if (isset($this->config['value_map'])) {
 
             foreach ($result as $index => $values) {
@@ -334,6 +291,13 @@ class PropertySet
 
                 }, $this->config['pattern']));
             }
+        }
+
+        $separator = Config::getProperty($this->config['shorthand'] . '.separator', ' ');
+
+        if ($separator != ' ') {
+
+            $separator = ' '.$separator.' ';
         }
 
         return implode($separator, $result);
