@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use JsonSerializable;
 use ArrayAccess;
 use stdClass;
+use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\SourceLocation;
 use TBela\CSS\Query\Evaluator;
@@ -40,7 +41,9 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      * @param RuleListInterface|null $parent
      * @throws Exception
      */
-    public function __construct($ast = null, RuleListInterface $parent = null) {
+    public function __construct($ast = null, $parent = null) {
+
+        assert(is_null($parent) || $parent instanceof RuleListInterface);
 
         $this->ast = (object) ['type' => str_ireplace(Element::class.'\\', '', get_class($this))];
 
@@ -69,6 +72,11 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
             $parent->append($this);
         }
     }
+
+    /**
+     * @param $location
+     * @return SourceLocation
+     */
 
     protected function createLocation ($location) {
 
@@ -115,6 +123,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      * @return array
      * @throws Parser\SyntaxError
      */
+
     public function query($query) {
 
 	    return (new Evaluator())->evaluate($query, $this);
@@ -137,16 +146,16 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
     /**
      * return Value\Set|string
-     * @return Value\Set|string
+     * @return string
      */
-    public function getValue () {
+    public function getValue() {
 
-        if (isset($this->ast->value)) {
+        if (isset($this->ast->name) && !((isset($this->ast->value) ? $this->ast->value : '') instanceof Set)) {
 
-            return $this->ast->value;
+            $this->ast->value = Value::parse(isset($this->ast->value) ? $this->ast->value : '', $this->ast->name);
         }
 
-        return new Set;
+        return isset($this->ast->value) ? $this->ast->value : '';
     }
 
     /**
@@ -156,7 +165,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
      */
     public function setValue ($value) {
 
-        $this->ast->value = $value instanceof Set ? $value : Value::parse($value);
+        $this->ast->value = $value; // instanceof Set ? $value : Value::parse($value, $this->ast->name ?? '');
         return $this;
     }
 
@@ -204,11 +213,21 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
         return $node;
     }
 
-    public function setLocation(SourceLocation $location = null) {
+    /**
+     * @param SourceLocation|null $location
+     * @return Element
+     */
+    public function setLocation($location) {
+
+        assert(is_null($location) || $location instanceof SourceLocation);
 
         $this->ast->location = $location;
         return $this;
     }
+
+    /**
+     * @return SourceLocation|null
+     */
 
     public function getLocation() {
 
@@ -261,39 +280,21 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
         if (isset($name)) {
 
-            if (is_string($name)) {
-
-                $name = Value::parse($name);
-            }
-
-            $signature[] = 'name:' . trim($name->render(['remove_comments' => true]));
+            $signature[] = 'name:' . $name;
         }
 
         $value = isset($this->ast->value) ? $this->ast->value : null;
 
         if (isset($value)) {
 
-            if (is_string($value)) {
-
-                $value = Value::parse($value);
-            }
-
-            $signature[] = 'value:' . trim($value->render(['remove_comments' => true]));
+            $signature[] = 'value:' . $value;
         }
 
         $selector = isset($this->ast->selector) ? $this->ast->selector : null;
 
         if (isset($selector)) {
 
-            $signature[] = 'selector:' . implode(',', array_map(function ($selector) {
-
-                    if (is_string($selector)) {
-
-                        $selector = Value::parse($selector);
-                    }
-
-                    return trim($selector->render(['remove_comments' => true]));
-                }, $selector));
+            $signature[] = 'selector:' . implode(',', $selector);
         }
 
         $vendor = isset($this->ast->vendor) ? $this->ast->vendor : null;
@@ -304,6 +305,69 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
         }
 
         return implode(':', $signature);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTrailingComments ($comments) {
+
+        return $this->setComments($comments, 'trailing');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTrailingComments() {
+
+        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments : null;
+    }
+
+    /**
+     * @param string[]|Value\Comment[]|null $comments
+     * @return Element
+     */
+    protected function setComments($comments, $type) {
+
+        if (empty($comments)) {
+
+            unset($this->ast->{$type.'comments'});
+            return $this;
+        }
+
+        $this->ast->{$type.'comments'} = array_map(function ($comment) {
+
+            if (is_string($comment)) {
+
+                return $comment;
+            }
+
+            if ((isset($comment->type) ? $comment->type : null) != 'Comment') {
+
+                throw new InvalidArgumentException('Comment expected');
+            }
+
+            return $comment->value;
+
+        }, $comments);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLeadingComments($comments) {
+
+        return $this->setComments($comments, 'leading');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLeadingComments() {
+
+        return isset($this->ast->leadingcomments) ? $this->ast->leadingcomments : null;
     }
 
     /**
@@ -346,14 +410,9 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
                         if (!empty($allowed) &&
                             (
-                                ($next->ast->type == 'AtRule' && in_array(trim($next->ast->name->render(['remove_comments' => true])), $allowed)) ||
+                                ($next->ast->type == 'AtRule' && in_array($next->ast->name, $allowed)) ||
                                 ($next->ast->type == 'Rule' &&
-                                    array_intersect(
-                                        array_map(function (Set $selector) {
-
-                                            return trim($selector->render(['remove_comments' => true]));
-
-                                        }, $next->ast->selector), $allowed))
+                                    array_intersect($next->ast->selector, $allowed))
                             )
                         ) {
 

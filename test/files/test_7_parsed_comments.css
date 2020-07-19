@@ -1,4 +1,4 @@
-.ul {
+.ul /* , .li */ {
  display: block;
  float: left
 }

@@ -19,11 +19,19 @@ class SourceLocation implements JsonSerializable {
     protected $start;
     protected $end;
 
-    public function __construct(Position $start, Position $end) {
+    public function __construct($start, $end) {
+
+        assert($start instanceof Position);
+        assert($end instanceof Position);
 
         $this->start = $start;
         $this->end = $end;
     }
+
+    /**
+     * @param $location
+     * @return SourceLocation
+     */
 
     public static function getInstance($location)
     {
@@ -31,23 +39,43 @@ class SourceLocation implements JsonSerializable {
         return new static(Position::getInstance($location->start), Position::getInstance($location->end));
     }
 
+    /**
+     * @return Position
+     */
     public function getStart() {
 
         return $this->start;
     }
+
+    /**
+     * @return Position
+     */
 
     public function getEnd() {
 
         return $this->end;
     }
 
-    public function setStart(Position $start) {
+    /**
+     * @param Position $start
+     * @return SourceLocation
+     */
+    public function setStart($start) {
+
+        assert($start instanceof Position);
 
         $this->start = $start;
         return $this;
     }
 
-    public function setEnd(Position $end) {
+
+    /**
+     * @param Position $end
+     * @return SourceLocation
+     */
+    public function setEnd($end) {
+
+        assert($end instanceof Position);
 
         $this->end = $end;
         return $this;

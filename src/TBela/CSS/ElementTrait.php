@@ -17,13 +17,14 @@ trait ElementTrait  {
      * @return Set
      * @throws Exception
      */
+
     public function getName($getVendor = true) {
 
         $vendor = $this->getVendor();
 
         if ($getVendor && $vendor !== '') {
 
-            return (new Set())->merge(Value::parse('-'.$vendor.'-'), $this->ast->name);
+            return '-'.$vendor.'-'.$this->ast->name;
         }
 
         return $this->ast->name;
@@ -36,15 +37,16 @@ trait ElementTrait  {
      */
     public function setName ($name) {
 
-        if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
+        $name = trim($name);
+        if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', $name, $match)) {
 
             $this->ast->vendor =  $match[2];
-            $this->ast->name = Value::parse($match[3]);
+            $this->ast->name = $match[3];
         }
 
         else {
 
-            $this->ast->name = Value::parse($name);
+            $this->ast->name = (string) $name;
         }
 
         return $this;
@@ -74,7 +76,8 @@ trait ElementTrait  {
      * set vendor prefix
      * @return string
      */
-    public function getVendor () {
+
+    public function getVendor() {
 
         if (isset($this->ast->vendor)) {
 

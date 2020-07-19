@@ -137,41 +137,10 @@ final class Reparse extends TestCase
 
     public function test7Provider() {
 
-        $data = [];
-
-        $parser = new Parser();
-        $parser->setOptions(['sourcemap' => true])->load(__DIR__.'/../files/test_6.css');
-        $parser->appendContent('
-    pre,blockquote {
-        border: 1px solid #999;
-        page-break-inside: avoid
-    }
-');
-
-        $data[] = [
-
-            file_get_contents(__DIR__.'/../files/test_7_parsed.css'),
-            (string) $parser->parse()
-        ];
-
-        $data[] = [
-
-            file_get_contents(__DIR__.'/../files/test_7_sourcemap.json'),
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
-        ];
-
-        $parser->setOptions(['sourcemap' => false]);
-        $data[] = [
-
-            file_get_contents(__DIR__.'/../files/test_7_no_sourcemap.json'),
-            json_encode($parser->parse(), JSON_PRETTY_PRINT)
-        ];
-
-        return $data;
+        return $this->makeTest(7);
     }
 
     public function makeTest ($index) {
-
 
         $data = [];
 

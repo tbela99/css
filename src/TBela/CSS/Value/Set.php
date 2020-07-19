@@ -60,13 +60,13 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
                 return $value->type != 'comment';
             });
 
-            if (count($filter) != count($data)) {
-
-                $data = Value::reduce($data);
-            }
+//            if (count($filter) != count($data)) {
+//
+//                $data = Value::reduce($data);
+//            }
         }
 
-        return implode(','.(isset($options['compress']) ? $options['compress'] : false ? '' : ' '), array_map(function ($data) use($options) {
+        return implode(','.((isset($options['compress']) ? $options['compress'] : false) ? '' : ' '), array_map(function ($data) use($options) {
 
             $result = '';
             foreach($data as $item) {
@@ -165,11 +165,12 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param Set[] $replacement
      * @return Set
      */
+    /*
     public function splice ($index, $length = null, Set ...$replacement) {
 
         $value = array_splice($this->data, $index, $length, $replacement);
         return new Set([$value]);
-    }
+    }*/
 
     /**
      * add an item to the set

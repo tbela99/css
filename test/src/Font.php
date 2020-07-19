@@ -12,11 +12,23 @@ final class Font extends TestCase
     /**
      * @param string $css
      * @param string $expected
-     * @dataProvider fontProvider
      * @dataProvider fontWeightProvider
-     * @dataProvider fontComputeProvider
      */
     public function testFontWeight($css, $expected)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $css
+        );
+    }
+
+    /**
+     * @param string $css
+     * @param string $expected
+     * @dataProvider fontComputeProvider
+     */
+    public function testComputeFont($css, $expected)
     {
 
         $this->assertEquals(

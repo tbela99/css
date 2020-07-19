@@ -4,7 +4,10 @@
         {
             "type": "Rule",
             "selector": [
-                ".ul \/* , .li *\/"
+                ".ul"
+            ],
+            "leadingcomments": [
+                "\/* , .li *\/"
             ],
             "children": [
                 {

@@ -63,7 +63,7 @@
                                 }
                             },
                             "name": "text-shadow",
-                            "value": "none!important"
+                            "value": "none !important"
                         },
                         {
                             "type": "Declaration",
@@ -80,7 +80,7 @@
                                 }
                             },
                             "name": "color",
-                            "value": "#000!important"
+                            "value": "#000 !important"
                         },
                         {
                             "type": "Declaration",
@@ -97,7 +97,7 @@
                                 }
                             },
                             "name": "background",
-                            "value": "transparent!important"
+                            "value": "transparent !important"
                         },
                         {
                             "type": "Declaration",
@@ -114,7 +114,7 @@
                                 }
                             },
                             "name": "box-shadow",
-                            "value": "none!important"
+                            "value": "none !important"
                         }
                     ]
                 },
@@ -433,7 +433,7 @@
                                 }
                             },
                             "name": "max-width",
-                            "value": "100%!important"
+                            "value": "100% !important"
                         }
                     ]
                 },

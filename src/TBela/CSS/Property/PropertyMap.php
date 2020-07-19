@@ -71,7 +71,7 @@ class PropertyMap
      * @param Set $value
      * @return PropertyMap
      */
-    public function set($name, Set $value)
+    public function set($name, $value, $leadingcomments = null, $trailingcomments = null)
     {
 
         $property = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
@@ -82,7 +82,12 @@ class PropertyMap
             throw new InvalidArgumentException('Invalid property ' . $name, 400);
         }
 
-        if (isset($this->properties[$this->shorthand]) || $property == $this->shorthand) {
+        if (is_string($value)) {
+
+            $value = Value::parse($value, $name);
+        }
+
+        if (isset($this->properties[$this->shorthand]) || $name == $this->shorthand) {
 
             // the type matches the shorthand - example system font
             if ($property != $this->shorthand) {
@@ -96,7 +101,18 @@ class PropertyMap
                             $this->properties[$property] = new Property($name);
                         }
 
-                        $this->properties[$property]->setValue($value);
+                        $this->properties[$name]->setValue($value);
+
+                        if (!is_null($leadingcomments)) {
+
+                            $this->properties[$name]->setLeadingComments($leadingcomments);
+                        }
+
+                        if (!is_null($trailingcomments)) {
+
+                            $this->properties[$name]->setTrailingComments($trailingcomments);
+                        }
+
                         return $this;
                     }
                 }
@@ -112,6 +128,17 @@ class PropertyMap
             if ($name == $this->shorthand) {
 
                 $this->properties[$this->shorthand]->setValue($value);
+
+                if (!is_null($leadingcomments)) {
+
+                    $this->properties[$this->shorthand]->setLeadingComments($leadingcomments);
+                }
+
+                if (!is_null($trailingcomments)) {
+
+                    $this->properties[$this->shorthand]->setTrailingComments($trailingcomments);
+                }
+
                 return $this;
             }
         } else {
@@ -122,6 +149,16 @@ class PropertyMap
             }
 
             $this->properties[$property]->setValue($value);
+
+            if (!is_null($leadingcomments)) {
+
+                $this->properties[$name]->setLeadingComments($leadingcomments);
+            }
+
+            if (!is_null($trailingcomments)) {
+
+                $this->properties[$name]->setTrailingComments($trailingcomments);
+            }
 
             if (!empty($this->config['settings']['compute'])) {
 
@@ -150,6 +187,11 @@ class PropertyMap
             }
         }
 
+        if (!is_object($value)) {
+
+            $value = Value::parse($value, $name);
+        }
+
         foreach ($value as $val) {
 
             if (isset($properties[$val->type])) {
@@ -162,11 +204,6 @@ class PropertyMap
                     $values[$val->type]['value'] = new Set([$val]);
                 }
             }
-
-         //   else {
-
-                // should not happen
-        //    }
         }
 
         foreach ($values as $key => $val) {
@@ -239,6 +276,17 @@ class PropertyMap
         }
 
         $this->properties[$this->shorthand]->setValue(new Set(Value::reduce($data, ['remove_defaults' => true])));
+
+        if (!is_null($leadingcomments)) {
+
+            $this->properties[$this->shorthand]->setLeadingComments($leadingcomments);
+        }
+
+        if (!is_null($trailingcomments)) {
+
+            $this->properties[$this->shorthand]->setTrailingComments($trailingcomments);
+        }
+
         return $this;
     }
 

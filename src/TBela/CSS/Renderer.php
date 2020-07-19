@@ -5,14 +5,10 @@ namespace TBela\CSS;
 use Exception;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\AtRule;
-
-// use TBela\CSS\Element\Comment;
-use TBela\CSS\Element\Declaration;
 use TBela\CSS\Event\EventInterface;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Property\PropertyList;
-use TBela\CSS\Property\RenderablePropertyInterface;
 use TBela\CSS\Value\Set;
 use function is_string;
 
@@ -188,7 +184,9 @@ class Renderer implements EventInterface
     protected function renderRule(Rule $element, $level, $indent)
     {
 
-        if (empty($element['selector'])) {
+        $selector = $element->getSelector();
+
+        if (empty($selector)) {
 
             throw new Exception('The selector cannot be empty');
         }
@@ -200,7 +198,19 @@ class Renderer implements EventInterface
             return '';
         }
 
-        return $this->renderSelector($element['selector'], $indent) . $this->indent . '{' .
+        $result = $indent . implode(',' . $this->glue . $indent, $selector);
+
+        if (!$this->remove_comments) {
+
+            $comments = $element->getLeadingComments();
+
+            if (!empty($comments)) {
+
+                $result .= ($this->compress ? '' : ' ').implode(' ', $comments);
+            }
+        }
+
+        return $result . $this->indent . '{' .
             $this->glue .
             $output . $this->glue .
             $indent .
@@ -225,17 +235,7 @@ class Renderer implements EventInterface
         }
 
         $output = '@' . $this->renderName($element);
-
-        $value = $this->renderValue($element);
-
-        if ($output == '@import') {
-
-            // rewrite atrule @import url(https://foobar) -> @import https://foobar
-            $value = preg_replace_callback('#url\(\s*(["\']?)(.*?)\1\)#s', function ($matches) {
-
-                return trim($matches[2]);
-            }, $value);
-        }
+            $value = $this->renderValue($element);
 
         if ($value !== '') {
 
@@ -246,9 +246,8 @@ class Renderer implements EventInterface
 
             else {
 
-                $output .= $this->separator . $value;
+                $output .= rtrim($this->separator . $value);
             }
-
         }
 
         if ($element->isLeaf()) {
@@ -275,10 +274,13 @@ class Renderer implements EventInterface
 
     protected function renderProperty(RenderableInterface $element)
     {
-        $name = $element->getName()->render(['remove_comments' => $this->remove_comments]);
+        $name = $this->renderName($element);
         $value = $element->getValue();
 
-        $options = ['compress' => $this->compress, 'remove_comments' => $this->remove_comments, 'css_level' => $this->css_level, 'convert_color' => $this->convert_color === true ? 'hex' : $this->convert_color];
+        $options = [
+            'compress' => $this->compress,
+            'css_level' => $this->css_level,
+            'convert_color' => $this->convert_color === true ? 'hex' : $this->convert_color];
 
         if (empty($this->compress)) {
 
@@ -301,6 +303,16 @@ class Renderer implements EventInterface
             $value = 0;
         }
 
+        if(!$this->remove_comments) {
+
+            $comments = $element->getTrailingComments();
+
+            if (!empty($comments)) {
+
+                $value .= ' '.implode(' ', $comments);
+            }
+        }
+
         return trim($name).':'.$this->indent.trim($value);
     }
 
@@ -313,18 +325,33 @@ class Renderer implements EventInterface
     protected function renderName(RenderableInterface $element)
     {
 
-        return trim($element->getName()->render(['remove_comments' => $this->getOptions('remove_comments')]));
+        $result = $element->getName();
+
+        if (!$this->remove_comments) {
+
+            $comments = $element->getLeadingComments();
+
+            if (!empty($comments)) {
+
+                $result.= ' '.implode(' ', $comments);
+            }
+        }
+
+        return $result;
     }
 
     /**
      * render a value
      * @param Element $element
      * @return string
+     * @return string
      * @ignore
      */
     protected function renderValue(Element $element)
     {
+        $result = $element->getValue();
 
+        if (!($result instanceof Set)) {
 
         $value = $element->getValue();
 
@@ -336,27 +363,25 @@ class Renderer implements EventInterface
         return trim($value->render($this->getOptions()));
     }
 
-    /**
-     * render a selector
-     * @param array $selector
-     * @param string $indent
-     * @return string
-     * @ignore
-     */
-    protected function renderSelector(array $selector, $indent)
-    {
+        $result = $result->render($this->getOptions());
 
-        $options = $this->getOptions();
-        return $indent . implode(',' . $this->glue . $indent, array_map(function (Set $selector) use($options) {
+        if (!$this->remove_comments) {
 
-            return trim($selector->render($options));
-        }, $selector));
+            $trailingComments = $element['trailingcomments'];
+
+            if (!empty($trailingComments)) {
+
+                $result .= ($this->compress ? '' : ' ').implode(' ', $trailingComments);
+            }
+        }
+
+        return $result;
     }
 
     /**
      * render a list
      * @param RuleList $element
-     * @param int $level
+     * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
