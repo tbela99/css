@@ -66,10 +66,11 @@ class PropertySet
      * set property value
      * @param string $name
      * @param Set $value
+     * @param array|null $leadingcomments
+     * @param array|null $trailingcomments
      * @return PropertySet
-     * @throws InvalidArgumentException
      */
-    public function set(string $name, Set $value): PropertySet
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null): PropertySet
     {
 
         // is valid property
@@ -88,6 +89,16 @@ class PropertySet
                 foreach ($this->config['properties'] as $property) {
 
                     $this->setProperty($property, $value);
+
+                    if (!is_null($leadingcomments)) {
+
+                        $this->properties[$property]->setLeadingComments($leadingcomments);
+                    }
+
+                    if (!is_null($trailingcomments)) {
+
+                        $this->properties[$property]->setTrailingComments($trailingcomments);
+                    }
                 }
             }
 
@@ -102,14 +113,33 @@ class PropertySet
                         $separator = ' '.$separator.' ';
                     }
 
-                    $this->setProperty($property, Value::parse(implode($separator, $values), $property));
+                    $this->setProperty($property, implode($separator, $values));
+
+                    if (!is_null($leadingcomments)) {
+
+                        $this->properties[$property]->setLeadingComments($leadingcomments);
+                    }
+
+                    if (!is_null($trailingcomments)) {
+
+                        $this->properties[$property]->setTrailingComments($trailingcomments);
+                    }
                 }
             }
-
 
         } else {
 
             $this->setProperty($name, $value);
+
+            if (!is_null($leadingcomments)) {
+
+                $this->properties[$name]->setLeadingComments($leadingcomments);
+            }
+
+            if (!is_null($trailingcomments)) {
+
+                $this->properties[$name]->setTrailingComments($trailingcomments);
+            }
         }
 
         return $this;
@@ -121,8 +151,13 @@ class PropertySet
      * @return array|bool
      * @ignore
      */
-    protected function expand(Set $value)
+    protected function expand($value)
     {
+
+        if (is_string($value)) {
+
+            $value = Value::parse($value, $this->shorthand);
+        }
 
         $pattern = explode(' ', $this->config['pattern']);
         $value_map = [];
@@ -306,11 +341,11 @@ class PropertySet
     /**
      * set property
      * @param string $name
-     * @param Set|string $value
+     * @param string $value
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, Set $value): PropertySet
+    protected function setProperty($name, $value): PropertySet
     {
 
         if (!isset($this->properties[$name])) {

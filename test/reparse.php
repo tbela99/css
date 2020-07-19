@@ -55,7 +55,7 @@ use \TBela\CSS\Renderer;
 //file_put_contents('files/test_7_no_sourcemap.json', json_encode($parser->parse(), JSON_PRETTY_PRINT));
 //die;
 
-for ($i = 1; $i <= 6; $i++) {
+for ($i = 1; $i <= 7; $i++) {
 
     $renderer = new Renderer();
     $parser = (new Parser())->setOptions(['sourcemap' => true])->load('files/test_'.$i.'.css');

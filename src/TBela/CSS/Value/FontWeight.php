@@ -45,15 +45,20 @@ class FontWeight extends Value
 
         if (!empty($options['compress'])) {
 
-            if (!is_null($value)) {
+            if (isset(static::$keywords[$value])) {
 
-                return static::$keywords[$value];
+                $value = static::$keywords[$value];
             }
 
             if (is_numeric($value)) {
 
                 return Number::compress($value);
             }
+        }
+
+        if (array_key_exists($value, static::$keywords) && strpos($value, ' ') !== false) {
+
+            return '"' . $value . '"';
         }
 
         return $this->data->value;
@@ -109,7 +114,7 @@ class FontWeight extends Value
 
         if (!is_null($matchKeyword)) {
 
-            return new Set([(object) ['type' => $type, 'value' => $matchKeyword]]);
+            return new Set([(object)['type' => $type, 'value' => $matchKeyword]]);
         }
 
         foreach ($tokens as $key => $token) {
@@ -133,7 +138,7 @@ class FontWeight extends Value
         return new Set(static::reduce($tokens));
     }
 
-    public static function keywords() : array
+    public static function keywords(): array
     {
 
         return array_keys(static::$keywords);

@@ -33,15 +33,16 @@ class PropertyList implements IteratorAggregate
      * @param RuleList|null $list
      * @param array $options
      */
-    public function __construct(RuleList $list = null, $options = [])
+    public function __construct(RuleList $list = null, array $options = [])
     {
+
         $this->options = $options;
 
         if ((is_callable([$list, 'hasDeclarations']) && $list->hasDeclarations()) || $list instanceof Rule) {
 
             foreach ($list as $element) {
 
-                $this->set($element['name'], $element['value'], $element['type']);
+                $this->set($element['name'], $element['value'], $element['type'], $element['leadingcomments'], $element['trailingcomments']);
             }
         }
 
@@ -49,13 +50,15 @@ class PropertyList implements IteratorAggregate
 
     /**
      * set property
-     * @param string $name
+     * @param string|null $name
      * @param Value|string $value
      * @param string|null $propertyType
+     * @param array|null $leadingcomments
+     * @param array|null $trailingcomments
      * @return $this
      */
 
-    public function set($name, $value, $propertyType = null) {
+    public function set(?string $name, $value, $propertyType = null, ?array $leadingcomments = null, ?array $trailingcomments = null) {
 
         if ($propertyType == 'Comment') {
 
@@ -63,29 +66,36 @@ class PropertyList implements IteratorAggregate
             return $this;
         }
 
-        if (!($name instanceof Set)) {
-
-            $name = Value::parse($name);
-        }
-
-        $propertyName = strtolower($name->render(['remove_comments' => true]));
-
-        if (is_string($value) || is_numeric($value)) {
-
-            $value = Value::parse($value, $name);
-        }
+        $name = (string) $name;
+//
+//        if (is_string($value) || is_numeric($value)) {
+//
+//            $value = Value::parse($value, $name);
+//        }
 //        $propertyName
         if(!empty($this->options['allow_duplicate_declarations'])) {
 
             if ($this->options['allow_duplicate_declarations'] === true ||
                 (is_array($this->options['allow_duplicate_declarations']) && in_array($name, $this->options['allow_duplicate_declarations']))) {
 
-                $this->properties[] = (new Property($name, $propertyType))->setValue($value);
+                $property = (new Property($name))->setValue($value);
+
+                if (!empty($leadingcomments)) {
+
+                    $property->setLeadingComments($leadingcomments);
+                }
+
+                if (!empty($trailingcomments)) {
+
+                    $property->setTrailingComments($trailingcomments);
+                }
+
+                $this->properties[] = $property;
                 return $this;
             }
         }
 
-        $shorthand = Config::getProperty($propertyName.'.shorthand');
+        $shorthand = Config::getProperty($name.'.shorthand');
 
         // is is an shorthand property?
         if (!is_null($shorthand)) {
@@ -97,12 +107,12 @@ class PropertyList implements IteratorAggregate
                 $this->properties[$shorthand] = new PropertySet($shorthand, $config);
             }
 
-            $this->properties[$shorthand]->set($name, $value);
+            $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
         }
 
         else {
 
-            $shorthand = Config::getPath('map.'.$propertyName.'.shorthand');
+            $shorthand = Config::getPath('map.'.$name.'.shorthand');
 
             // is is an shorthand property?
             if (!is_null($shorthand)) {
@@ -114,20 +124,29 @@ class PropertyList implements IteratorAggregate
                     $this->properties[$shorthand] = new PropertyMap($shorthand, $config);
                 }
 
-                $this->properties[$shorthand]->set($name, $value);
+                $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
             }
 
             else {
 
                 // regular property
-                if (!isset($this->properties[$propertyName])) {
+                if (!isset($this->properties[$name])) {
 
-                    $this->properties[$propertyName] = new Property($name, Config::getProperty($name . '.type'));
+                    $this->properties[$name] = new Property($name);
                 }
 
-                $this->properties[$propertyName]->setValue($value);
-            }
+                $property = $this->properties[$name]->setValue($value);
 
+                if (!empty($leadingcomments)) {
+
+                    $property->setLeadingComments($leadingcomments);
+                }
+
+                if (!empty($trailingcomments)) {
+
+                    $property->setTrailingComments($trailingcomments);
+                }
+            }
         }
 
         return $this;

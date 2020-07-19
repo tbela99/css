@@ -11,11 +11,58 @@ class Rule extends RuleList {
 
     /**
      * Return the css selectors
-     * @return array
+     * @return string[]
      */
     public function getSelector () {
 
         return $this->ast->selector;
+    }
+
+    protected function parseSelector($selectors) {
+
+        if (is_array($selectors)) {
+
+            $selectors = implode(',', $selectors);
+        }
+
+        if (strpos($selectors, '/*') !== false || strpos($selectors, '[') !== false) {
+
+            $selectors = Value::parse($selectors);
+
+            $comments = [];
+
+            $selectors->filter(function ($node) use(&$comments) {
+
+                if ($node->type == 'Comment') {
+
+                    $comments[] = $node;
+                    return false;
+                }
+
+                return true;
+            });
+
+            if (!empty($comments)) {
+
+                $this->setLeadingComments($comments);
+            }
+
+            $selectors = Value::reduce($selectors->split(','));
+        }
+
+        else {
+
+            $selectors = array_map('trim', explode(',', $selectors));
+        }
+
+        $result = [];
+
+        foreach ($selectors as $selector) {
+
+            $result[trim($selector)] = $selector;
+        }
+
+       return array_values($result);
     }
 
     /**
@@ -25,25 +72,7 @@ class Rule extends RuleList {
      */
     public function setSelector ($selectors) {
 
-        if (!is_array($selectors)) {
-
-            $selectors = Value::parse(array_unique($selectors))->split(',');
-        }
-
-        $unique = [];
-
-        foreach ($selectors as $selector) {
-
-            if (is_string($selector)) {
-
-                $selector = Value::parse($selector);
-            }
-
-            $unique[trim($selector->render(['remove_comments' => true]))] = $selector;
-        }
-
-        $this->ast->selector = array_values($unique);
-
+        $this->ast->selector = $this->parseSelector($selectors);
         return $this;
     }
 
@@ -54,20 +83,19 @@ class Rule extends RuleList {
      */
     public function addSelector($selector) {
 
-        if (!is_array($selector)) {
+        $result = [];
 
-            $selector = array_map('trim', explode(',', $selector));
+        foreach ($this->ast->selector as $r) {
+
+            $result[trim($r)] = $r;
         }
 
-        if (!isset($this->ast->selector)) {
+        foreach ($this->parseSelector($selector) as $r) {
 
-            $this->ast->selector = [];
+            $result[trim($r)] = $r;
         }
 
-        array_splice($this->ast->selector, count($this->ast->selector), 0, $selector);
-
-        $this->ast->selector = array_unique($this->ast->selector);
-
+        $this->ast->selector[] = array_values($result);
         return $this;
     }
 

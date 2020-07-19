@@ -165,11 +165,12 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param Set[] $replacement
      * @return Set
      */
+    /*
     public function splice (int $index, int $length = null, Set ...$replacement): Set {
 
         $value = array_splice($this->data, $index, $length, $replacement);
         return new Set([$value]);
-    }
+    }*/
 
     /**
      * add an item to the set

@@ -2,13 +2,36 @@
 
 namespace TBela\CSS\Interfaces;
 
+use TBela\CSS\Element;
+
 /**
  * Interface Renderable
  * @package TBela\CSS
- * @method string getType()
- * @method \TBela\CSS\Value\Set getName()
- * @method \TBela\CSS\Value\Set getValue()
+ * @method getName(): string;
+ * @method getType(): string;
+ * @method getValue(): \TBela\CSS\Value\Set;
  */
 interface RenderableInterface {
 
+    /**
+     * @param array|null $comments
+     * @return RenderableInterface
+     */
+    public function setTrailingComments(?array $comments): RenderableInterface;
+
+    /**
+     * @return string[]|null
+     */
+    public function getTrailingComments(): ?array;
+
+    /**
+     * @param string[]|null $comments
+     * @return RenderableInterface
+     */
+    public function setLeadingComments(?array $comments): RenderableInterface;
+
+    /**
+     * @return string[]|null
+     */
+    public function getLeadingComments(): ?array;
 }

@@ -1,15 +1,15 @@
 /* comment 1 */
-@media /* comment 2 */ print /* comment 3 */ {
+@media print /* comment 2 */ /* comment 3 */ {
   /* comment 4 */
  * {
    /* comment 5 */
    /* comment 6 */
-   text-shadow: /* comment 7 */none!important;
+   text-shadow: none!important /* comment 7 */;
    color: #000!important;
    /* comment 8 */
    background/* comment 9 */: #0000!important;
    /* comment 10 */
-   box-shadow: none!important/* comment 11*/ /* comment 12 */
+   box-shadow: none!important /* comment 11*/ /* comment 12 */
  }
   /* comment 13 */
 }
