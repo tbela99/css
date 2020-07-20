@@ -78,4 +78,9 @@ interface RuleListInterface extends IteratorAggregate {
      * @return Element
      */
     public function removeChildren();
+
+    /**
+     * @return RuleListInterface
+     */
+    public function computeShortHand();
 }

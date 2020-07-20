@@ -73,10 +73,11 @@ class Traverser extends Event
         if ($node === func_get_arg(0) && $node instanceof RuleListInterface) {
 
             $children = $node['children'];
-            $node = clone $node;
-            $node->removeChildren();
 
             if ($ignore_children) {
+
+                $node = clone $node;
+                $node->removeChildren();
 
                 return $node;
             }

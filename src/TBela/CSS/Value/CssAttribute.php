@@ -19,4 +19,9 @@ class CssAttribute extends Value {
 
         return '['. $this->data->arguments->render($options).']';
     }
+
+    public function getHash() {
+
+        return '['. $this->data->arguments->getHash().']';
+    }
 }

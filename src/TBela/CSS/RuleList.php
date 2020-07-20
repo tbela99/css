@@ -5,8 +5,11 @@ namespace TBela\CSS;
 use ArrayIterator;
 use InvalidArgumentException;
 use TBela\CSS\Element\Comment;
+use TBela\CSS\Element\Declaration;
 use TBela\CSS\Element\Stylesheet;
 use TBela\CSS\Interfaces\RuleListInterface;
+use TBela\CSS\Property\Property;
+use TBela\CSS\Property\PropertyList;
 use Traversable;
 use function in_array;
 
@@ -32,6 +35,46 @@ abstract class RuleList extends Element implements RuleListInterface
         $comment->setValue('/* ' . $value . ' */');
 
         return $this->append($comment);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function computeShortHand() {
+
+        (new Traverser())->on('enter', function ($node) {
+
+            /**
+             * @var RuleListInterface $node
+             */
+            $nodeType = $node->getType();
+
+            if ($nodeType == 'Rule' || ($nodeType == 'AtRule' && $node->hasDeclarations())) {
+
+                $propertyList = new PropertyList($node, ['compute_shorthand' => true]);
+
+                $node->removeChildren();
+
+                foreach ($propertyList as $property) {
+
+                    if ($property->getType() == 'Comment') {
+
+                        $node->addComment($property->getValue());
+                    }
+
+                    /**
+                     * @var Declaration $declaration
+                     * @var Property $property
+                     */
+                    $declaration = $node->addDeclaration($property->getName(), $property->getValue());
+                    $declaration->setLeadingComments($property->getLeadingComments());
+                    $declaration->setTrailingComments($property->getTrailingComments());
+                }
+            }
+
+        })->traverse($this);
+
+        return $this;
     }
 
     /**

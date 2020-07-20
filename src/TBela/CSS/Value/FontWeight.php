@@ -104,11 +104,12 @@ class FontWeight extends Value
      * @inheritDoc
      * @throws \Exception
      */
-    protected static function doParse($string, $capture_whitespace = true)
+
+    protected static function doParse($string, $capture_whitespace = true, $context = '')
     {
 
         $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
+        $tokens = static::getTokens($string, $capture_whitespace, $context);
 
         $matchKeyword = static::matchKeyword($string);
 
@@ -142,5 +143,15 @@ class FontWeight extends Value
     {
 
         return array_keys(static::$keywords);
+    }
+
+    public function getHash() {
+
+        if (is_null($this->hash)) {
+
+            $this->hash = $this->render(['compress' => true]);
+        }
+
+        return $this->hash;
     }
 }

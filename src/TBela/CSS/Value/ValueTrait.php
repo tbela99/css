@@ -16,11 +16,12 @@ trait ValueTrait
      * @param bool $capture_whitespace
      * @return Set
      */
-    protected static function doParse($string, $capture_whitespace = true)
+
+    protected static function doParse($string, $capture_whitespace = true, $context = '')
     {
 
         $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
+        $tokens = static::getTokens($string, $capture_whitespace, $context);
 
         foreach ($tokens as $key => $token) {
 

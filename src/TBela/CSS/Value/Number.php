@@ -30,6 +30,11 @@ class Number extends Value
         }
     }
 
+    public function getHash() {
+
+        return $this->data->value;
+    }
+
     /**
      * @inheritDoc
      */

@@ -38,4 +38,9 @@ class FontVariant extends Value
 
         return $token->type == static::type();
     }
+
+    public function getHash() {
+
+        return $this->data->value;
+    }
 }

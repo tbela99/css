@@ -17,4 +17,9 @@ class CssUrl extends CssFunction {
 
         return $this->data->name.'('. preg_replace('~^(["\'])([^\s\\1]+)\\1$~', '$2', $this->data->arguments->render($options)).')';
     }
+
+    public function getHash() {
+
+        return $this->data->name.'('. $this->data->arguments->getHash().')';
+    }
 }

@@ -33,4 +33,12 @@ class Whitespace extends Value {
     {
         return ' ';
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHash()
+    {
+        return ' ';
+    }
 }
