@@ -93,11 +93,12 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function getHash() {
 
-        return $this->name.':'.$this->value->render(['css_level' => 4, 'convert_color' => true, 'compress' => true]);
+        return $this->name.':'.$this->value->getHash();
     }
 
     /**
      * convert property to string
+     * @param array $options
      * @return string
      */
     public function render (array $options = []) {

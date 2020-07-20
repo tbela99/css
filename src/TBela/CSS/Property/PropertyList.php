@@ -26,7 +26,11 @@ class PropertyList implements IteratorAggregate
      * @var array
      * @ignore
      */
-    protected array $options = [];
+    protected array $options = [
+
+        'compute_shorthand' => true,
+        'allow_duplicate_declarations' => false
+    ];
 
     /***
      * PropertyList constructor.
@@ -36,7 +40,7 @@ class PropertyList implements IteratorAggregate
     public function __construct(RuleList $list = null, array $options = [])
     {
 
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
 
         if ((is_callable([$list, 'hasDeclarations']) && $list->hasDeclarations()) || $list instanceof Rule) {
 
@@ -45,7 +49,6 @@ class PropertyList implements IteratorAggregate
                 $this->set($element['name'], $element['value'], $element['type'], $element['leadingcomments'], $element['trailingcomments']);
             }
         }
-
     }
 
     /**
@@ -93,6 +96,24 @@ class PropertyList implements IteratorAggregate
                 $this->properties[] = $property;
                 return $this;
             }
+        }
+
+        if (empty($this->options['compute_shorthand'])) {
+
+            $property = (new Property($name))->setValue($value);
+
+            if (!empty($leadingcomments)) {
+
+                $property->setLeadingComments($leadingcomments);
+            }
+
+            if (!empty($trailingcomments)) {
+
+                $property->setTrailingComments($trailingcomments);
+            }
+
+            $this->properties[$name] = $property;
+            return $this;
         }
 
         $shorthand = Config::getProperty($name.'.shorthand');

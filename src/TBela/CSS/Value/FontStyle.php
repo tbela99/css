@@ -12,6 +12,7 @@ class FontStyle extends Value
 {
 
     use ValueTrait;
+
     protected static array $keywords = [
         'normal',
         'italic',
@@ -43,5 +44,10 @@ class FontStyle extends Value
         }
 
         return $token->type == static::type();
+    }
+
+    public function getHash() {
+
+        return $this->data->value;
     }
 }

@@ -20,11 +20,11 @@ class FontFamily extends CssString
      * @inheritDoc
      * @throws \Exception
      */
-    protected static function doParse($string, $capture_whitespace = true): Set
+    protected static function doParse($string, $capture_whitespace = true, $context = ''): Set
     {
 
         $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace);
+        $tokens = static::getTokens($string, $capture_whitespace, $context);
 
         foreach ($tokens as $token) {
 

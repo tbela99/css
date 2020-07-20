@@ -54,4 +54,14 @@ class Unit extends Number {
 
         return $this->data->value.$unit;
     }
+
+    public function getHash() {
+
+        if (is_null($this->hash)) {
+
+            $this->hash = $this->render(['compress' => true]);
+        }
+
+        return $this->hash;
+    }
 }

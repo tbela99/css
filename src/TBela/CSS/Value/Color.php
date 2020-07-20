@@ -82,6 +82,16 @@ class Color extends Value
         }
     }
 
+    public function getHash() {
+
+        if (is_null($this->hash)) {
+
+            $this->hash = $this->render(['convert_color' => 'hex']);
+        }
+
+        return $this->hash;
+    }
+
     /**
      * @inheritDoc
      */

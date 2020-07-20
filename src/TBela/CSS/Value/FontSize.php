@@ -12,6 +12,7 @@ class FontSize extends Value
 {
 
     use ValueTrait;
+
     protected static array $keywords = [
         'xx-small',
         'x-small',
@@ -69,5 +70,15 @@ class FontSize extends Value
         }
 
         return $value;
+    }
+
+    public function getHash() {
+
+        if (is_null($this->hash)) {
+
+            $this->hash = $this->render(['compress' => true]);
+        }
+
+        return $this->hash;
     }
 }

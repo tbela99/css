@@ -21,4 +21,9 @@ class CssParenthesisExpression extends Value {
 
         return $filler.'('. $this->data->arguments->render($options).')'.$filler;
     }
+
+    public function getHash() {
+
+        return '('. $this->data->arguments->getHash().')';
+    }
 }

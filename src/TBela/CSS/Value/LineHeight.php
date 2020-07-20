@@ -87,4 +87,14 @@ class LineHeight extends Value
 
         return $prefix.$value;
     }
+
+    public function getHash() {
+
+        if (is_null($this->hash)) {
+
+            $this->hash = $this->render(['compress' => true]);
+        }
+
+        return $this->hash;
+    }
 }
