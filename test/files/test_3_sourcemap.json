@@ -66,11 +66,14 @@
             },
             "selector": [
                 "div",
-                ".lawyers \/* mistake happen *\/",
+                ".lawyers",
                 "input[type=text]",
                 "input [value=\"type your password\"]",
                 ":first-child",
                 ":nth-child(2n+1)"
+            ],
+            "leadingcomments": [
+                "\/* mistake happen *\/"
             ],
             "children": [
                 {
@@ -105,7 +108,10 @@
                         }
                     },
                     "name": "whitespace",
-                    "value": "nowrap \/* force it *\/"
+                    "value": "nowrap",
+                    "trailingcomments": [
+                        "\/* force it *\/"
+                    ]
                 }
             ]
         }

@@ -77,7 +77,11 @@
                         }
                     },
                     "name": "media",
-                    "value": "\/* comment 2 *\/ print \/* comment 3 *\/",
+                    "value": "print",
+                    "trailingcomments": [
+                        "\/* comment 2 *\/",
+                        "\/* comment 3 *\/"
+                    ],
                     "children": [
                         {
                             "type": "Comment",
@@ -160,7 +164,10 @@
                                         }
                                     },
                                     "name": "text-shadow",
-                                    "value": "\/* comment 7 *\/none!important"
+                                    "value": "none!important",
+                                    "trailingcomments": [
+                                        "\/* comment 7 *\/"
+                                    ]
                                 },
                                 {
                                     "type": "Declaration",
@@ -177,7 +184,7 @@
                                         }
                                     },
                                     "name": "color",
-                                    "value": "#000!important"
+                                    "value": "#000 !important"
                                 },
                                 {
                                     "type": "Comment",
@@ -210,7 +217,7 @@
                                         }
                                     },
                                     "name": "background\/* comment 9 *\/",
-                                    "value": "transparent!important"
+                                    "value": "transparent !important"
                                 },
                                 {
                                     "type": "Comment",
@@ -243,7 +250,11 @@
                                         }
                                     },
                                     "name": "box-shadow",
-                                    "value": "none!important\/* comment 11*\/ \/* comment 12 *\/"
+                                    "value": "none!important",
+                                    "trailingcomments": [
+                                        "\/* comment 11*\/",
+                                        "\/* comment 12 *\/"
+                                    ]
                                 }
                             ]
                         },

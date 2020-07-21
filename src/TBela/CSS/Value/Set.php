@@ -44,34 +44,29 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
         return null;
     }
 
+    public function getHash() {
+
+        return implode(',', array_map(function (Value $value) {
+
+            return $value->getHash();
+
+        }, $this->data));
+    }
+
     /**
      * Convert this object to string
      * @param array $options
      * @return string
      */
-    public function render (array $options = []): string {
-
-        $data = $this->data;
-
-        if (!empty($options['remove_comments']) || !empty($options['compress'])) {
-
-            $filter = array_filter($data, function (Value $value) {
-
-                return $value->type != 'comment';
-            });
-
-            if (count($filter) != count($data)) {
-
-                $data = Value::reduce($data);
-            }
-        }
+    public function render (array $options = []) {
 
         return implode(','.($options['compress'] ?? false ? '' : ' '), array_map(function ($data) use($options) {
 
             $result = '';
+
             foreach($data as $item) {
 
-                $result .= call_user_func([$item, 'render'], $options);
+                $result .= $item->render($options);
             }
 
             return $result;
@@ -165,11 +160,12 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
      * @param Set[] $replacement
      * @return Set
      */
+    /*
     public function splice (int $index, int $length = null, Set ...$replacement): Set {
 
         $value = array_splice($this->data, $index, $length, $replacement);
         return new Set([$value]);
-    }
+    }*/
 
     /**
      * add an item to the set

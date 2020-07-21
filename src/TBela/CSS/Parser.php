@@ -3,22 +3,15 @@
 namespace TBela\CSS;
 
 use Exception;
-use TBela\CSS\Element\Rule;
+use stdClass;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
-use TBela\CSS\Parser\SourceLocation;
 use TBela\CSS\Parser\ParserTrait;
-use TBela\CSS\Parser\Position;
 use TBela\CSS\Parser\SyntaxError;
+use TBela\CSS\Value\Set;
 use function preg_replace_callback;
 use function str_replace;
 use function substr;
-
-// http://www.w3.org/TR/CSS21/grammar.html
-/**
- * @ignore
- */
-// const COMMENT_REGEXP = '/\/\*(.*?)\*\//sm';
 
 /**
  * Css Parser
@@ -29,22 +22,22 @@ class Parser
 
     use ParserTrait;
 
-    protected Position $currentPosition;
-    protected Position $previousPosition;
+    protected stdClass $currentPosition;
+    protected stdClass $previousPosition;
     protected int $end = 0;
-
 
     protected array $errors = [];
     protected array $warnings = [];
 
-    protected ?RuleListInterface $ast = null;
+    protected ?stdClass $ast = null;
+    protected ?RuleListInterface $element = null;
 
     /**
      * css data
      * @var string
      * @ignore
      */
-    public string $css = '';
+    protected string $css = '';
 
     /**
      * @var string
@@ -56,10 +49,11 @@ class Parser
      * @var array
      * @ignore
      */
-    public array $options = [
+    protected array $options = [
         'sourcemap' => false,
         'flatten_import' => false,
-        'allow_duplicate_rules' => false,
+        // allow_duplicate_declarations =>
+        'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
     ];
 
@@ -81,29 +75,33 @@ class Parser
     /**
      * load css content from a file
      * @param string $file
+     * @param string $media
      * @return Parser
      * @throws Exception
      */
 
-    public function load(string $file): Parser
+    public function load($file, $media = '')
     {
 
         $this->path = $file;
-        $this->css = $this->getFileContent($file);
+        $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
+        $this->element = null;
         return $this;
     }
 
     /**
      * parse css file and append to the existing AST
      * @param string $file
+     * @param string $media
      * @return Parser
+     * @throws SyntaxError
      * @throws Exception
      */
-    public function append(string $file): Parser
+    public function append($file, $media = '')
     {
 
-        return $this->appendContent($this->getFileContent($file));
+        return $this->appendContent($this->getFileContent($file, $media));
     }
 
     /**
@@ -111,8 +109,10 @@ class Parser
      * @return Parser
      * @throws SyntaxError
      */
-    public function merge(Parser $parser): Parser
+    public function merge($parser)
     {
+
+        assert($parser instanceof Parser);
 
         if (is_null($this->ast)) {
 
@@ -128,7 +128,7 @@ class Parser
      * @return Parser
      * @throws SyntaxError
      */
-    public function appendContent($css): Parser
+    public function appendContent($css)
     {
 
         $this->css .= rtrim($css);
@@ -155,13 +155,15 @@ class Parser
         $this->css = $css;
         $this->path = '';
         $this->ast = null;
+        $this->element = null;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getContent(): string {
+    public function getContent()
+    {
 
         return $this->css;
     }
@@ -193,6 +195,7 @@ class Parser
             }
         }
 
+        $this->ast = null;
         return $this;
     }
 
@@ -201,28 +204,34 @@ class Parser
      * @return RuleListInterface|null
      * @throws SyntaxError
      */
-    public function parse(): RuleListInterface
+    public function parse()
     {
 
-        $this->ast = null;
-
-//        if (is_null($this->ast)) {
+        if (is_null($this->ast)) {
 //
             $this->doParse();
-//        }
+        }
+
+        if (is_null($this->element)) {
+
+            $this->element = Element::getInstance($this->ast)->deduplicate($this->options);
+        }
 //
-//        $ast = clone $this->ast;
+        /**
+         * @var RuleListInterface $element
+         */
+        $element = clone $this->element;
 
         if (empty($this->options['sourcemap'])) {
 
             return (new Traverser())->on('enter', function (Element $element) {
 
-                $element['location'] = null;
+                $element->setLocation(null);
 
-            })->traverse($this->ast);
+            })->traverse($element);
         }
 
-        return $this->ast;
+        return $element;
     }
 
     /**
@@ -233,7 +242,7 @@ class Parser
      * @throws Exception
      * @ignore
      */
-    protected function expand(string $css, $path = null)
+    protected function expand($css, $path = null)
     {
 
         if (!is_null($path) && $path !== '') {
@@ -282,29 +291,33 @@ class Parser
     }
 
     /**
-     * @param $file
+     * @param string $file
+     * @param string $media
      * @return string|bool
      * @throws Exception
      * @ignore
      */
-    protected function getFileContent($file)
+    protected function getFileContent($file, $media = '')
     {
 
         if (!preg_match('#^(https?:)//#', $file)) {
 
             if (is_file($file)) {
 
-                return $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
+                $content = $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
+
+                return $media === '' ? $content : '@media ' . $media . ' {' . $content . '}';
             }
 
             throw new Exception('File Not Found', 404);
-        }
+        } else {
 
-        $content = Helper::fetchContent($file);
+            $content = Helper::fetchContent($file);
+        }
 
         if ($content === false) {
 
-            throw new Exception('File Not Found', 404);
+            throw new Exception(sprintf('File Not Found "%s"', $file), 404);
         }
 
         return $this->expand($content, dirname($file));
@@ -375,17 +388,26 @@ class Parser
 
         if (is_null($this->ast)) {
 
-            $this->ast = Element::getInstance((object)[
+            $this->ast = (object)[
                 'type' => 'Stylesheet',
-                'location' => new SourceLocation(
-                    new Position(1, 1, 0),
-                    new Position(1, 1, 0)
-                )]);
+                'location' => (object)[
+                    'start' => (object)[
+                        'line' => 1,
+                        'column' => 1,
+                        'index' => 0
+                    ],
+                    'end' => (object)[
+                        'line' => 1,
+                        'column' => 1,
+                        'index' => 0
+                    ]
+                ]
+            ];
         }
     }
 
     /**
-     * @return RuleListInterface|null
+     * @return stdClass|null
      * @throws SyntaxError
      * @throws Exception
      * @ignore
@@ -407,7 +429,7 @@ class Parser
         $this->getRoot();
 
         $this->end = strlen($this->css);
-        $start = $this->ast['location']->start;
+        $start = $this->ast->location->start;
         $this->currentPosition = clone $start;
 
         $this->currentPosition->index = 0;
@@ -417,11 +439,11 @@ class Parser
     }
 
     /**
-     * @return RuleListInterface
+     * @return stdClass|null
      * @throws SyntaxError
-     * @throws Exception
      */
-    protected function analyse() {
+    protected function analyse()
+    {
 
         while ($this->next()) {
 
@@ -435,7 +457,7 @@ class Parser
                     $comment = substr($this->css, $this->currentPosition->index) . '*/';
                 }
 
-                $this->ast->append($this->parseComment($comment, clone $this->currentPosition));
+                $this->ast->children[] = $this->parseComment($comment, clone $this->currentPosition);
 
                 $this->update($this->currentPosition, $comment);
                 $this->currentPosition->index += strlen($comment);
@@ -456,7 +478,7 @@ class Parser
                     //     continue;
                 } else {
 
-                    $this->ast->append($node);
+                    $this->ast->children[] = $node;
                 }
 
                 $this->update($this->currentPosition, $substr);
@@ -491,16 +513,16 @@ class Parser
 
                 } else {
 
-                    $this->ast->append($node);
+                    $this->ast->children[] = $node;
 
-                    $type = $node['type'] == 'Rule' ? 'statement' : $type;
+                    $type = $node->type == 'Rule' ? 'statement' : $type;
 
                     $this->update($this->currentPosition, $substr);
                     $this->currentPosition->index += strlen($substr);
 
                     if ($type == 'block') {
 
-                        $parser = (new Parser($block))->setOptions(array_merge($this->options, ['flatten_import' => false]));
+                        $parser = new Parser($block, array_merge($this->options, ['flatten_import' => false]));
                         $parser->path = $this->path;
                         $parser->ast = $node;
 
@@ -523,25 +545,25 @@ class Parser
                 $position = clone $this->currentPosition;
                 $position->column--;
 
-                $node['location']->start = clone $this->previousPosition;
-                $node['location']->end = $position;
+                $node->location->start = clone $this->previousPosition;
+                $node->location->end = $position;
             }
         }
 
-        $this->ast['location']->end->line = $this->currentPosition->line;
-        $this->ast['location']->end->index = max(0, $this->currentPosition->index - 1);
-        $this->ast['location']->end->column = max($this->currentPosition->column - 1, 1);
+        $this->ast->location->end->line = $this->currentPosition->line;
+        $this->ast->location->end->index = max(0, $this->currentPosition->index - 1);
+        $this->ast->location->end->column = max($this->currentPosition->column - 1, 1);
 
-        return $this->ast->deduplicate($this->options);
+        return $this->ast;
     }
 
     /**
-     * @param Position $position
+     * @param stdClass $position
      * @param string $string
-     * @return Position
+     * @return stdClass
      * @ignore
      */
-    protected function update(Position $position, string $string): Position
+    protected function update($position, string $string)
     {
 
         $j = strlen($string);
@@ -583,19 +605,18 @@ class Parser
      * @param int $currentIndex
      * @param int $currentLine
      * @param int $currentColumn
-     * @return Position
+     * @return stdClass
      * @ignore
      */
-    protected function getNextPosition(string $input, int $currentIndex, int $currentLine, int $currentColumn): Position
+    protected function getNextPosition($input, $currentIndex, $currentLine, $currentColumn)
     {
+
+        assert(is_int($currentIndex));
+        assert(is_int($currentLine));
+        assert(is_int($currentColumn));
 
         $j = strlen($input);
         $i = $currentIndex;
-
-        if ($currentIndex < 0) {
-
-            echo new Exception('$currentIndex is ' . $currentIndex);
-        }
 
         while ($i < $j) {
 
@@ -614,14 +635,14 @@ class Parser
             }
         }
 
-        return new Position($currentLine, $currentColumn, $i);
+        return (object)['line' => $currentLine, 'column' => $currentColumn, 'index' => $i];
     }
 
     /**
      * @param string $block
      * @return string
      */
-    protected function getBlockType(string $block): string
+    protected function getBlockType($block)
     {
 
         return substr(static::substr($block, 0, strlen($block) - 1, [';', '{']), -1) == '{' ? 'block' : 'statement';
@@ -629,40 +650,41 @@ class Parser
 
     /**
      * @param string $comment
-     * @param Position $position
-     * @return mixed|Element
+     * @param stdClass $position
+     * @return stdClass
      * @ignore
      */
-    protected function parseComment(string $comment, Position $position)
+    protected function parseComment($comment, $position)
     {
 
         $this->update($position, $comment);
 
         $position->column--;
-        $position->index += $this->ast['location']->start->index + strlen($comment);
+        $position->index += $this->ast->location->start->index + strlen($comment);
 
-        return Element::getInstance((object)[
+        return (object)[
             'type' => 'Comment',
-            'location' => new SourceLocation(
-                new Position(
-                    $this->currentPosition->line,
-                    $this->currentPosition->column,
-                    $this->ast['location']->start->index + $this->currentPosition->index),
-                $position),
+            'location' => (object)[
+                'start' => (object)[
+                    'line' => $this->currentPosition->line,
+                    'column' => $this->currentPosition->column,
+                    'index' => $this->ast->location->start->index + $this->currentPosition->index
+                ],
+                'end' => $position
+            ],
             'value' => $comment
-        ]);
+        ];
     }
 
     /**
      * parse @rule like @import, @charset
      * @param string $rule
-     * @param Position $position
+     * @param stdClass $position
      * @param string $blockType
-     * @return false|Element
-     * @throws Exception
+     * @return false|stdClass
      * @ignore
      */
-    protected function parseAtRule(string $rule, Position $position, string $blockType = '')
+    protected function parseAtRule($rule, $position, $blockType = '')
     {
 
         if (substr($rule, 0, 1) != '@') {
@@ -689,16 +711,19 @@ class Parser
         $data = [
 
             'type' => 'AtRule',
-            'location' => new SourceLocation($currentPosition, new Position($position->line,
-                    $position->column,
-                    $this->ast['location']->start->index + $position->index
-                )
-            ),
+            'location' => (object)[
+                'start' => $currentPosition,
+                'end' => (object)[
+                        'line' => $position->line,
+                        'column' => $position->column,
+                        'index' => $this->ast->location->start->index + $position->index
+                ]
+            ],
             'isLeaf' => $isLeaf,
             'hasDeclarations' => !$isLeaf && $blockType == 'statement',
-            'name' => Value::parse($matches[7]),
-            'vendor' => Value::parse($matches[3]),
-            'value' => Value::parse(trim($matches[8]))
+            'name' => trim($matches[7]),
+            'vendor' => $matches[3],
+            'value' => trim($matches[8])
         ];
 
         if (empty($matches[3])) {
@@ -706,21 +731,81 @@ class Parser
             unset($data['vendor']);
         }
 
-        /**
-         * @var \TBela\CSS\Element\AtRule $node
-         */
-        $node = Element::getInstance((object) $data);
+        return $this->doParseComments((object)$data);
+    }
+
+    protected function doParseComments($node) {
+
+        if (isset($node->value) && strpos($node->value, '/*') !== false) {
+
+            $trailing = [];
+
+            if (!($node->value instanceof Set)) {
+
+                $node->value = Value::parse($node->value, $node->name);
+            }
+
+            $node->value->filter(function (Value $value) use(&$trailing) {
+
+                if ($value->type == 'Comment') {
+
+                    $trailing[] = $value;
+                    return false;
+                }
+
+                return true;
+            });
+
+            if (!empty($trailing)) {
+
+                $node->value = Value::parse(trim($node->value), $node->name);
+                $node->trailingcomments = $trailing;
+            }
+        }
+
+        if (isset($node->selector) || (isset($node->name) && !is_string($node->name))) {
+
+            $leading = [];
+
+            $property = property_exists($node, 'selector') ? 'selector' : 'name';
+
+            if (strpos($node->{$property}, '/*') === false) {
+
+                return $node;
+            }
+
+            if (!is_object($node->{$property})) {
+
+                $node->{$property} = Value::parse($node->{$property});
+            }
+
+            $node->{$property}->filter(function (Value $value) use(&$leading) {
+
+                if ($value->type == 'Comment') {
+
+                    $leading[] = $value;
+                    return false;
+                }
+
+                return true;
+            });
+
+            if (!empty($leading)) {
+
+                $node->leadingcomments = $leading;
+            }
+        }
 
         return $node;
     }
 
     /**
      * @param string $rule
-     * @param Position $position
-     * @return false|Element
+     * @param stdClass $position
+     * @return false|stdClass
      * @ignore
      */
-    protected function parseSelector(string $rule, Position $position)
+    protected function parseSelector($rule, $position)
     {
 
         $selector = rtrim($rule, "{\n\t\r");
@@ -733,34 +818,28 @@ class Parser
         $currentPosition = clone $position;
         $this->update($position, $rule);
         $position->column--;
-        $position->index += $this->ast['location']->start->index + strlen($rule);
+        $position->index += $this->ast->location->start->index + strlen($rule);
 
-        $value = Value::parse($rule);
-
-        if (trim($value->render(['remove_comments'])) === '') {
-
-            return false;
-        }
-
-        return Element::getInstance((object)[
+        return  $this->doParseComments((object)[
 
             'type' => 'Rule',
-            'location' => new SourceLocation(
-                $currentPosition,
-                $position),
-            'selector' => Value::parse(rtrim($rule, "{\n\t\r"))->split(',')
+            'location' => (object)[
+
+                'start' => $currentPosition,
+                'end' => $position
+            ],
+            'selector' => rtrim($rule, "{\n\t\r")
         ]);
     }
 
     /**
-     * @param RuleListInterface $rule
+     * @param stdClass $rule
      * @param string $block
-     * @param Position $position
-     * @return Rule
-     * @throws Exception
+     * @param stdClass $position
+     * @return stdClass
      * @ignore
      */
-    protected function parseDeclarations(RuleListInterface $rule, string $block, Position $position)
+    protected function parseDeclarations($rule, $block, $position)
     {
 
         $j = strlen($block) - 1;
@@ -810,23 +889,25 @@ class Parser
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
 
-                $rule->append(Element::getInstance((object)[
+                $rule->children[] = (object)[
 
                     'type' => 'Comment',
-                    'location' => new SourceLocation(
-                        new Position(
-                            $currentPosition->line,
-                            $currentPosition->column,
-                            $this->ast['location']->start->index + $currentPosition->index
-                        ),
-                        new Position(
-                            $position->line,
-                            $position->column - 1,
-                            $this->ast['location']->start->index + $position->index
-                        )
-                    ),
+                    'location' => (object)[
+                        'start' => (object)[
+
+                            'line' => $currentPosition->line,
+                            'column' => $currentPosition->column,
+                            'index' => $this->ast->location->start->index + $currentPosition->index
+                        ],
+                        'end' => (object)[
+
+                            'line' => $position->line,
+                            'column' => $position->column - 1,
+                            'index' => $this->ast->location->start->index + $position->index
+                        ]
+                    ],
                     'value' => $comment
-                ]));
+                ];
 
                 $i += strlen($comment) - 1;
                 continue;
@@ -853,27 +934,33 @@ class Parser
                 $declaration = (object)array_merge(
                     [
                         'type' => 'Declaration',
-                        'location' => new SourceLocation(
-                            new Position(
-                                $currentPosition->line,
-                                $currentPosition->column,
-                                $currentPosition->index),
-                            new Position(
-                                $endPosition->line,
-                                $endPosition->column - 1,
-                                $currentPosition->index + strlen($value)
-                            )
-                        )
+                        'location' => (object)[
+                            'start' => (object)[
+
+                                'line' => $currentPosition->line,
+                                'column' => $currentPosition->column,
+                                'index' => $currentPosition->index
+                            ],
+                            'end' => (object)[
+
+                                'line' => $endPosition->line,
+                                'column' => $endPosition->column - 1,
+                                'index' => $currentPosition->index + strlen($value)
+                            ]
+                        ]
                     ],
                     $this->parseVendor(trim($declaration[0])),
                     [
                         'value' => rtrim($declaration[1], "\n\r\t ;}")
                     ]);
 
-                $declaration->name = Value::parse($declaration->name);
-                $declaration->value = Value::parse($declaration->value, $declaration->name);
+                $declaration->name = trim($declaration->name);
+                $declaration->value = trim($declaration->value);
 
-                $rule->append(Element::getInstance($declaration));
+                $declaration = $this->doParseComments($declaration);
+                $declaration->name = trim($declaration->name);
+
+                $rule->children[] = $declaration;
             }
 
         } while ($i < $j);

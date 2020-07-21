@@ -28,6 +28,8 @@ abstract class Value
 
     protected static array $keywords = [];
 
+    protected ?string $hash = null;
+
     /**
      * @var array
      * @ignore
@@ -79,9 +81,15 @@ abstract class Value
      * @return bool
      * @ignore
      */
-    public function __isset ($name)  {
+    public function __isset($name)
+    {
 
         return isset($this->data->{$name});
+    }
+
+    public function getHash() {
+
+        return $this->data->value;
     }
 
     /**
@@ -95,22 +103,24 @@ abstract class Value
         return strtolower($this->data->type) == $type;
     }
 
-    public static function getClassName(string $type): string {
+    public static function getClassName(string $type): string
+    {
 
         static $classNames = [];
 
         if (!isset($classNames[$type])) {
 
-            $classNames[$type] = Value::class.'\\'.preg_replace_callback('#(^|-)([a-z])#', function ($matches) {
+            $classNames[$type] = Value::class . '\\' . preg_replace_callback('#(^|-)([a-z])#', function ($matches) {
 
-                return strtoupper($matches[2]);
-            }, $type);
+                    return strtoupper($matches[2]);
+                }, $type);
         }
 
         return $classNames[$type];
     }
 
-    protected static function type(): string {
+    protected static function type(): string
+    {
 
         static $types = [];
 
@@ -120,7 +130,7 @@ abstract class Value
 
             $types[static::class] = preg_replace_callback('#(^|[^A-Z])([A-Z])#', function ($matches) {
 
-                return (empty($matches[1]) ? '' : $matches[1].'-').strtolower($matches[2]);
+                return (empty($matches[1]) ? '' : $matches[1] . '-') . strtolower($matches[2]);
             }, end($name));
         }
 
@@ -131,7 +141,8 @@ abstract class Value
      * @param object $token
      * @return bool
      */
-    protected static function matchDefaults ($token) : bool {
+    protected static function matchDefaults($token): bool
+    {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
     }
@@ -142,7 +153,8 @@ abstract class Value
      * @param object $previousValue
      * @return bool
      */
-    public static function matchToken ($token, $previousToken = null, $previousValue = null): bool {
+    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
     }
@@ -210,21 +222,16 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return Set
      */
-    public static function parse(string $string, $property = null, bool $capture_whitespace = true): Set
+    public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = ''): Set
     {
         if ($string instanceof Set) {
 
             return $string;
         }
 
-        if ($property instanceof Set) {
+        if (trim($property) === '') {
 
-            $property = $property->render(['remove_comments' => true]);
-
-            if (trim($property) === '') {
-
-                $property = null;
-            }
+            $property = null;
         }
 
         $string = trim($string);
@@ -236,11 +243,11 @@ abstract class Value
 
             if (is_callable([$className, 'doParse'])) {
 
-                return call_user_func([$className, 'doParse'], $string, $capture_whitespace);
+                return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context);
             }
         }
 
-        return static::doParse($string, $capture_whitespace);
+        return static::doParse($string, $capture_whitespace, $context);
     }
 
     /**
@@ -264,20 +271,17 @@ abstract class Value
                 if ($token->type == 'whitespace' && (in_array($tokens[$j + 1]->type, ['separator', 'whitespace', 'css-parenthesis-expression']) || ($tokens[$j + 1]->type == 'css-string' && $tokens[$j + 1]->value == '!important'))) {
 
                     array_splice($tokens, $j, 1);
-                }
-                else if (in_array($token->type, ['css-parenthesis-expression', 'css-function', 'css-url']) && $tokens[$j + 1]->type == 'whitespace') {
+                } else if ($token->type == 'css-parenthesis-expression' && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
                 } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
-                }
-
-                else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
+                } else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
 
                     $className = static::getClassName($token->type);
 
-                    if (is_callable($className.'::matchDefaults') && call_user_func($className.'::matchDefaults', $token)) {
+                    if (is_callable($className . '::matchDefaults') && call_user_func($className . '::matchDefaults', $token)) {
 
                         // remove item
                         array_splice($tokens, $j, 1);
@@ -299,21 +303,23 @@ abstract class Value
      * parse a css value
      * @param string $string
      * @param bool $capture_whitespace
+     * @param string $context
      * @return Set
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = ''): Set
     {
 
-        return new Set(static::reduce(static::getTokens($string, $capture_whitespace)));
+        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context)));
     }
 
     /**
      * parse a css value
      * @param Set|string $string
      * @param bool $capture_whitespace
+     * @param string $context
      * @return array|null
      */
-    protected static function getTokens(string $string, $capture_whitespace = true)
+    protected static function getTokens(string $string, $capture_whitespace = true, $context = '')
     {
 
         $string = trim($string);
@@ -369,11 +375,11 @@ abstract class Value
                 case '"':
                 case "'":
 
-                if ($buffer !== '') {
+                    if ($buffer !== '') {
 
-                    $tokens[] = static::getType($buffer);
-                    $buffer = '';
-                }
+                        $tokens[] = static::getType($buffer);
+                        $buffer = '';
+                    }
 
                     $next = $i;
 
@@ -433,7 +439,7 @@ abstract class Value
                         if (trim($buffer) !== '') {
 
                             $tokens[] = static::getType($buffer);
-                            $buffer = '';
+                            //   $buffer = '';
                         }
 
                         $token = new stdClass;
@@ -455,76 +461,77 @@ abstract class Value
                     break;
                 case '(':
 
-                //    if ($string[$i - 1] != '\\') {
-
-
                     $params = static::_close($string, ')', '(', $i, $j);
 
-                        if ($params !== false) {
+                    if ($params !== false) {
 
-                            $token = new stdClass;
+                        $token = new stdClass;
 
-                            if (preg_match('#^(-([a-zA-Z]+)-(\S+))#i', $buffer, $matches)) {
+                        if (preg_match('#^(-([a-zA-Z]+)-(\S+))#i', $buffer, $matches)) {
 
-                                $token->name = $matches[3];
-                                $token->vendor = $matches[2];
-                            } else {
-
-                                $token->name = $buffer;
-                            }
-
-                            if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'])) {
-
-                                $token->type = 'color';
-                            } else if ($token->name == 'url') {
-
-                                $token->type = 'css-url';
-                            } else {
-
-                                $token->type = $token->name === '' ? 'css-parenthesis-expression' : 'css-function';
-                            }
-
-                            $str = substr($params, 1, -1);
-
-                            if ($buffer == 'url') {
-
-                                $t = new stdClass;
-
-                                $t->type = 'css-string';
-                                $t->value = $str;
-                                $token->arguments = new Set([$t]);
-                            }
-
-                            else {
-
-                                if (in_array($buffer, ['or', 'and'])) {
-
-                                    $token->name = '';
-                                    $token->type = 'css-parenthesis-expression';
-                                    $tokens[] = static::getType($buffer);
-                                }
-
-                                $token->arguments = static::parse($str, null, $capture_whitespace);
-                            }
-
-                            $tokens[] = $token;
-
-                            $buffer = '';
-                            $i += strlen($params) - 1;
+                            $token->name = $matches[3];
+                            $token->vendor = $matches[2];
                         } else {
 
-                            $tokens[] = static::getType($buffer . substr($string, $i));
-                            $i = $j;
+                            $token->name = $buffer;
                         }
 
-                        break;
-                  //  }
+                        if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'])) {
+
+                            $token->type = 'color';
+                        } else if ($token->name == 'url') {
+
+                            $token->type = 'css-url';
+                        } else {
+
+                            $token->type = $token->name === '' ? 'css-parenthesis-expression' : 'css-function';
+                        }
+
+                        $str = substr($params, 1, -1);
+
+                        if ($buffer == 'url') {
+
+                            $t = new stdClass;
+
+                            $t->type = 'css-string';
+                            $t->value = $str;
+                            $token->arguments = new Set([$t]);
+                        } else {
+
+                            if (in_array($buffer, ['or', 'and'])) {
+
+                                $token->name = '';
+                                $token->type = 'css-parenthesis-expression';
+                                $tokens[] = static::getType($buffer);
+                            }
+
+                            $token->arguments = static::parse($str, null, $capture_whitespace, $token->type);
+                        }
+
+                        $tokens[] = $token;
+
+                        $buffer = '';
+                        $i += strlen($params) - 1;
+                    } else {
+
+                        $tokens[] = static::getType($buffer . substr($string, $i));
+                        $i = $j;
+                    }
+
+                    break;
+                //  }
 
                 case ',':
                 case '/':
                 case '+':
                 case '=':
-            //    case ':':
+                case ':':
+
+                    if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
+
+                        $buffer .= $string[$i];
+                        continue 2;
+                    }
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
@@ -674,7 +681,8 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public static function getNumericValue (?Value $value, array $options = []): ?string {
+    public static function getNumericValue(?Value $value, array $options = []): ?string
+    {
 
         if (is_null($value) || $value->value === '') {
 
@@ -688,7 +696,8 @@ abstract class Value
      * @param Value $value
      * @return string
      */
-    public static function getRGBValue (Value $value): string {
+    public static function getRGBValue(Value $value): string
+    {
 
         return Number::compress($value->unit == '%' ? 255 * $value->value / 100 : $value->value);
     }
@@ -698,7 +707,8 @@ abstract class Value
      * @param array $options
      * @return string
      */
-    public static function getAngleValue (?Value $value, array $options = []): ?string {
+    public static function getAngleValue(?Value $value, array $options = []): ?string
+    {
 
         if (is_null($value) || $value->value === '') {
 
@@ -718,10 +728,10 @@ abstract class Value
                 // do nothing
                 return floatval((string)$value->value);
 
-        //    case 'deg':
-        //    default:
+            //    case 'deg':
+            //    default:
 
-        //        break;
+            //        break;
         }
 
         return floatval((string)$value->value) / 360;

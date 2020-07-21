@@ -20,6 +20,13 @@
       "role": "Developer"
     }
   ],
+  "archive": {
+    "exclude": ["*.sh", "*.phar", "test/", "tool/", "docs/"]
+  },
+  "autoload": {
+    "psr-4": {
+      "TBela\\CSS": "src/TBela/CSS"
+    },
   "require": {
     "php": ">=7.4"
   }

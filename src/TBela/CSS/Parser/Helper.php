@@ -6,11 +6,12 @@ class Helper
 {
 
     /**
-     * @ignore
      * @return string
      * @ignore
+     * @ignore
      */
-    public static function getCurrentDirectory() {
+    public static function getCurrentDirectory()
+    {
 
         if (isset($_SERVER['PWD'])) {
 
@@ -27,7 +28,7 @@ class Helper
      * @return string
      * @ignore
      */
-    public static function resolvePath($file, $path = '')
+    public static function resolvePath(string $file, string $path = '')
     {
 
         if ($path !== '') {
@@ -42,7 +43,7 @@ class Helper
                     }
                 }
 
-                $file = $path.$file;
+                $file = $path . $file;
             }
         }
 
@@ -71,14 +72,12 @@ class Helper
             }
 
             $file = implode('/', $return);
-        }
-
-        else {
+        } else {
 
             $file = preg_replace(['#/\./#', '#^\./#'], ['/', ''], $file);
         }
 
-        return preg_replace('#^'.preg_quote(static::getCurrentDirectory().'/', '#').'#', '', $file);
+        return preg_replace('#^' . preg_quote(static::getCurrentDirectory() . '/', '#') . '#', '', $file);
     }
 
     /**
@@ -88,7 +87,7 @@ class Helper
      * @return bool|string
      * @ignore
      */
-    public static function fetchContent($url, $options = [], $curlOptions = [])
+    public static function fetchContent(string $url, array $options = [], array $curlOptions = [])
     {
 
         if (strpos($url, '//') === 0) {
@@ -98,13 +97,20 @@ class Helper
 
         $ch = curl_init($url);
 
-        if (strpos($url, 'https://') === 0) {
+        // Turn on SSL certificate verfication
+        curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
-            // Turn on SSL certificate verfication
-            curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . '/cacert.pem');
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
-        }
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // enable compression
+        curl_setopt($ch, CURLOPT_ENCODING, '');
+
+        // google font sends a different response when this header is missing
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'
+        ]);
 
         if (!empty($curlOptions)) {
 
@@ -118,11 +124,6 @@ class Helper
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($options));
         }
 
-        // 1 second for a connection timeout with curl
-        //    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-        // Try using this instead of the php set_time_limit function call
-        //    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-        // Causes curl to return the result on success which should help us avoid using the writeback option
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         $result = curl_exec($ch);
@@ -134,7 +135,6 @@ class Helper
         }
 
         curl_close($ch);
-
         return $result;
     }
 }

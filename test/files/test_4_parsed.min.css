@@ -1,1 +1,1 @@
-@media all and(min-width: 320px){@media print{*{text-shadow:none!important;color:#000!important;background:#0000!important;box-shadow:none!important}}}
+@media all and(min-width:320px){@media print{*{text-shadow:none!important;color:#000!important;background/* comment 9 */:#0000!important;box-shadow:none!important}}}

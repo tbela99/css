@@ -4,9 +4,11 @@ namespace TBela\CSS\Element ;
 
 use Exception;
 use InvalidArgumentException;
+use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\RuleList;
 use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Rule;
+use TBela\CSS\Traverser;
 
 /**
  * Rules container

@@ -4,6 +4,7 @@ namespace TBela\CSS\Property;
 
 use ArrayAccess;
 use TBela\CSS\ArrayTrait;
+use TBela\CSS\Element;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Value;
 use TBela\CSS\Value\Set;
@@ -11,6 +12,7 @@ use TBela\CSS\Value\Set;
 /**
  * Comment property class
  * @package TBela\CSS\Property
+ * @method  getName()
  */
 class Comment implements ArrayAccess, RenderableInterface {
 
@@ -45,18 +47,13 @@ class Comment implements ArrayAccess, RenderableInterface {
      */
     public function setValue($value) {
 
-        if (!($value instanceof Set)) {
-
-            $value = Value::parse($value);
-        }
-
         $this->value = $value;
         return $this;
     }
 
     /**
      * Return the object value
-     * @return Set
+     * @return string
      */
     public function getValue() {
 
@@ -74,7 +71,6 @@ class Comment implements ArrayAccess, RenderableInterface {
 
     /**
      * Converty this object to string
-     * @param bool $compress
      * @param array $options
      * @return string
      */
@@ -96,5 +92,37 @@ class Comment implements ArrayAccess, RenderableInterface {
     {
 
         return $this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTrailingComments(?array $comments): RenderableInterface
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTrailingComments(): ?array
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLeadingComments(?array $comments): RenderableInterface
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLeadingComments(): ?array
+    {
+        return null;
     }
 }

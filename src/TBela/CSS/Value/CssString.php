@@ -38,6 +38,11 @@ class CssString extends Value
         parent::__construct($data);
     }
 
+    public function getHash() {
+
+        return $this->data->value;
+    }
+
     /**
      * @inheritDoc
      * @ignore

@@ -19,4 +19,14 @@ class CSSFunction extends Value {
 
         return $this->data->name.'('. $this->data->arguments->render($options).')';
     }
+
+    public function getValue() {
+
+        return $this->data->arguments->{0}->value;
+    }
+
+    public function getHash() {
+
+        return $this->data->name.'('. $this->data->arguments->getHash().')';
+    }
 }

@@ -28,7 +28,10 @@
                 }
             },
             "selector": [
-                ".ul \/* , .li *\/"
+                ".ul"
+            ],
+            "leadingcomments": [
+                "\/* , .li *\/"
             ],
             "children": [
                 {

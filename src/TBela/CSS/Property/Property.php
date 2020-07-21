@@ -21,7 +21,11 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * @var string
      * @ignore
      */
-    protected $name;
+    protected string $name;
+
+    protected ?array $leadingcomments = null;
+
+    protected ?array $trailingcomments = null;
     /**
      * @var string
      * @ignore
@@ -37,11 +41,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     public function __construct($name)
     {
 
-        if (is_string($name)) {
-
-            $name = Value::parse($name);
-        }
-        $this->name = $name;
+        $this->name = (string) $name;
     }
 
     /**
@@ -51,12 +51,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function setValue($value) {
 
-        if (is_string($value)) {
-
-            $value = Value::parse($value, $this->name);
-        }
-
-        $this->value = $value;
+        $this->value = !($value instanceof Set) ? Value::parse($value, $this->name) : $value;
         return $this;
     }
 
@@ -66,12 +61,17 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function getValue() {
 
+        if (!($this->value instanceof Set)) {
+
+            $this->value = Value::parse($this->value, $this->name);
+        }
+
         return $this->value;
     }
 
     /**
      * get the property name
-     * @return Set
+     * @return string
      */
     public function getName() {
 
@@ -93,16 +93,31 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function getHash() {
 
-        return $this->name->render(['remove_comments' => true]).':'.$this->value->render(['remove_comments' => true, 'css_level' => 4, 'convert_color' => true, 'compress' => true]);
+        return $this->name.':'.$this->value->getHash();
     }
 
     /**
      * convert property to string
+     * @param array $options
      * @return string
      */
     public function render (array $options = []) {
 
-        return $this->name->render($options).': '.$this->value->render($options);
+        $result = $this->name;
+
+        if (!empty($this->leadingcomments)) {
+
+            $result .= ' '.implode(' ', $this->leadingcomments);
+        }
+
+        $result .= ': '.$this->value->render($options);
+
+        if (!empty($this->trailingcomments)) {
+
+            $result .= ' '.implode(' ', $this->trailingcomments);
+        }
+
+        return $result;
     }
 
     /**
@@ -112,5 +127,39 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     public function __toString () {
 
         return $this->render();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTrailingComments(?array $comments): RenderableInterface
+    {
+        $this->trailingcomments = $comments;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTrailingComments(): ?array
+    {
+        return $this->trailingcomments;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLeadingComments(?array $comments): RenderableInterface
+    {
+        $this->leadingcomments = $comments;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLeadingComments(): ?array
+    {
+        return $this->leadingcomments;
     }
 }
