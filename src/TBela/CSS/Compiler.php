@@ -94,11 +94,8 @@ class Compiler {
      * @return $this
      * @throws Parser\SyntaxError
      */
-<<<<<<< HEAD
-    public function load ($file, $media = '') {
-=======
-    public function load (string $file, array $options = [], string $media = '') {
->>>>>>> v.next
+
+    public function load ($file, array $options = [], $media = '') {
 
         $this->data = (new Parser('', $options))->load($file, $media)->parse();
         return $this;
