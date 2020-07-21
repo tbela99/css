@@ -29,12 +29,7 @@
       "docs/"
     ]
   },
-  "autoload": {
-    "psr-4": {
-      "TBela\\CSS": "src/TBela/CSS"
-    },
-    "require": {
-      "php": ">=7.4"
-    }
+  "require": {
+    "php": ">=7.4"
   }
 }
