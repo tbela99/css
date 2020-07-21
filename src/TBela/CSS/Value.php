@@ -28,6 +28,9 @@ abstract class Value
 
     protected static $keywords = [];
 
+    /**
+     * @var string|null
+     */
     protected $hash = null;
 
     /**
@@ -141,7 +144,9 @@ abstract class Value
      * @param object $token
      * @return bool
      */
+
     protected static function matchDefaults($token)
+
     {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
@@ -153,6 +158,7 @@ abstract class Value
      * @param object $previousValue
      * @return bool
      */
+
     public static function matchToken($token, $previousToken = null, $previousValue = null)
     {
 
@@ -220,9 +226,12 @@ abstract class Value
      * @param string $string
      * @param string|Set|null $property
      * @param bool $capture_whitespace
+     * @param string $context
      * @return Set
      */
+
     public static function parse($string, $property = null, $capture_whitespace = true, $context = '')
+
     {
         if ($string instanceof Set) {
 
@@ -308,6 +317,7 @@ abstract class Value
      */
 
     protected static function doParse($string, $capture_whitespace = true, $context = '')
+
     {
 
         return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context)));
@@ -686,6 +696,7 @@ abstract class Value
      */
 
     public static function getNumericValue($value, array $options = [])
+
     {
 
         if (is_null($value) || $value->value === '') {
@@ -702,6 +713,7 @@ abstract class Value
      */
 
     public static function getRGBValue(Value $value)
+
     {
 
         return Number::compress($value->unit == '%' ? 255 * $value->value / 100 : $value->value);

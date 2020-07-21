@@ -18,6 +18,7 @@ trait ValueTrait
      */
 
     protected static function doParse($string, $capture_whitespace = true, $context = '')
+
     {
 
         $type = static::type();
