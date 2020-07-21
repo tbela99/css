@@ -2,7 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use stdClass;
 use \TBela\CSS\Value;
 
 /**

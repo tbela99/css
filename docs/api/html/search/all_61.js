@@ -8,7 +8,7 @@ var searchData=
   ['addselector',['addSelector',['../df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html#a6ff91a8b0ba6ee370fd2132a394086af',1,'TBela::CSS::Element::Rule']]],
   ['addset',['addSet',['../dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html#ae1216b3afb4ae59249b1c8c7e7a610a9',1,'TBela::CSS::Property::Config']]],
   ['analyse',['analyse',['../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a91a54d88bb56a4a971eee063cc33d2e3',1,'TBela::CSS::Parser']]],
-  ['append',['append',['../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#aaba431944ae645f298ee740cce11e6b5',1,'TBela\CSS\Interfaces\RuleListInterface\append()'],['../d8/d8b/classTBela_1_1CSS_1_1Parser.html#ae505bc6f67ff016460694501060c8028',1,'TBela\CSS\Parser\append()'],['../db/dd6/classTBela_1_1CSS_1_1RuleList.html#ac4c89d390b424fcb47f72f92402ef20f',1,'TBela\CSS\RuleList\append()']]],
+  ['append',['append',['../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#aaba431944ae645f298ee740cce11e6b5',1,'TBela\CSS\Interfaces\RuleListInterface\append()'],['../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a8ca09238379da7c848f12e8f2335d463',1,'TBela\CSS\Parser\append()'],['../db/dd6/classTBela_1_1CSS_1_1RuleList.html#ac4c89d390b424fcb47f72f92402ef20f',1,'TBela\CSS\RuleList\append()']]],
   ['appendcontent',['appendContent',['../d8/d8b/classTBela_1_1CSS_1_1Parser.html#afcd4f61841b1483b8919822638847ee9',1,'TBela::CSS::Parser']]],
   ['atrule',['AtRule',['../d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html',1,'TBela::CSS::Element']]]
 ];

@@ -111,7 +111,7 @@ _boolean_. Default _false_. allow duplicate rules or merge them into one rule
 
 ### allow_duplicate_declarations
 
-_boolean_|_string_|_array_. Default _false_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
+_boolean_|_string_|_array_. Default _['font-face']_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
 
 ### sourcemap
 
@@ -161,6 +161,7 @@ Configure the parser options.
 #### Parameters
 
 - \$file: _string_. load a css file
+- \$media: _string_. optional the css media type
 
 #### Return type
 
@@ -193,6 +194,7 @@ Parse a css file and append the result to the existing ast
 #### Parameters
 
 - $file: _string_. the file to parse
+- $media: _string_. optional, the css media type
 
 #### Return type
 

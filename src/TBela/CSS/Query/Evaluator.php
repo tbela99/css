@@ -4,7 +4,6 @@ namespace TBela\CSS\Query;
 
 use TBela\CSS\Parser\SyntaxError;
 
-
 class Evaluator
 {
     /**

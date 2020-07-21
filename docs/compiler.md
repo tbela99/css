@@ -115,6 +115,10 @@ _boolean_. If true then remove empty css rules and media queries. The default va
 
 _boolean_|_string_|_array_. If false then duplicated declarations are removed. if it is set to a string or and array, only the specified properties duplicates are allowed. The default value is _\['background-image'\]_
 
+### compute_shorthand
+
+_boolean_. compute shorthand properties. default true
+
 ## Compiler Methods
 
 ### Constructor
@@ -154,6 +158,19 @@ Configure the compiler options.
 #### Parameters
 
 - \$css: _string_. css string
+- \$options: _array_, optional parser options
+
+#### Return type
+
+\TBela\CSS\Compiler instance
+
+### Load
+
+#### Parameters
+
+- \$file: _string_. css file path or url
+- \$options: _array_, optional parser options
+- \$media: _string_, optional the css media type
 
 #### Return type
 

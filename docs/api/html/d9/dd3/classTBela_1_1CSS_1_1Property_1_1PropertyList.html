@@ -123,11 +123,11 @@ $(document).ready(function(){initNavTree('d9/dd3/classTBela_1_1CSS_1_1Property_1
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acdf0e832bbbecde717b8ef8f86ccc8e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdf0e832bbbecde717b8ef8f86ccc8e8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>__construct</b> (<a class="el" href="../../db/dd6/classTBela_1_1CSS_1_1RuleList.html">RuleList</a> $list=null, $options=[])</td></tr>
-<tr class="separator:acdf0e832bbbecde717b8ef8f86ccc8e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac12d582c32e69f163dd89a25da1b47d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#ac12d582c32e69f163dd89a25da1b47d6">set</a> ($name, $value, $propertyType=null)</td></tr>
-<tr class="separator:ac12d582c32e69f163dd89a25da1b47d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b7f1f1ab1127a5bd43144edd0e2049a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b7f1f1ab1127a5bd43144edd0e2049a"></a>
+array&#160;</td><td class="memItemRight" valign="bottom"><b>__construct</b> (<a class="el" href="../../db/dd6/classTBela_1_1CSS_1_1RuleList.html">RuleList</a> $list=null, array $options=[])</td></tr>
+<tr class="separator:a6b7f1f1ab1127a5bd43144edd0e2049a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d1aec1be716cacbf5329728015d39bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a0d1aec1be716cacbf5329728015d39bc">set</a> (?string $name, $value, $propertyType=null,?array $leadingcomments=null,?array $trailingcomments=null)</td></tr>
+<tr class="separator:a0d1aec1be716cacbf5329728015d39bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad177e029f93f5576d616daa46fde6372"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#ad177e029f93f5576d616daa46fde6372">render</a> ($glue= ';', $join=&quot;\n&quot;)</td></tr>
 <tr class="separator:ad177e029f93f5576d616daa46fde6372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a1d2049a827502785183572b16ef49d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a3a1d2049a827502785183572b16ef49d">__toString</a> ()</td></tr>
@@ -140,8 +140,7 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a4e211591a824cbec3c9db962a2d263a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e211591a824cbec3c9db962a2d263a5"></a>
 array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []</td></tr>
 <tr class="separator:a4e211591a824cbec3c9db962a2d263a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a97407ec1367efd8930381cc379c429"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a97407ec1367efd8930381cc379c429"></a>
-array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</td></tr>
+<tr class="memitem:a0a97407ec1367efd8930381cc379c429"><td class="memItemLeft" align="right" valign="top">array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b></td></tr>
 <tr class="separator:a0a97407ec1367efd8930381cc379c429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -214,14 +213,14 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 
 </div>
 </div>
-<a class="anchor" id="ac12d582c32e69f163dd89a25da1b47d6"></a>
+<a class="anchor" id="a0d1aec1be716cacbf5329728015d39bc"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">TBela\CSS\Property\PropertyList::set </td>
           <td>(</td>
-          <td class="paramtype">&#160;</td>
+          <td class="paramtype">?string&#160;</td>
           <td class="paramname"><em>$name</em>, </td>
         </tr>
         <tr>
@@ -234,7 +233,19 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$propertyType</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>$propertyType</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">?array&#160;</td>
+          <td class="paramname"><em>$leadingcomments</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">?array&#160;</td>
+          <td class="paramname"><em>$trailingcomments</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -246,14 +257,40 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 <p>set property </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">string</td><td class="paramname">$name</td><td></td></tr>
+    <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$name</td><td></td></tr>
     <tr><td class="paramtype"><a class="el" href="../../dd/dca/classTBela_1_1CSS_1_1Value.html">Value</a>&#160;|&#160;string</td><td class="paramname">$value</td><td></td></tr>
     <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$propertyType</td><td></td></tr>
+    <tr><td class="paramtype">array&#160;|&#160;null</td><td class="paramname">$leadingcomments</td><td></td></tr>
+    <tr><td class="paramtype">array&#160;|&#160;null</td><td class="paramname">$trailingcomments</td><td></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>$this </dd></dl>
 
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a0a97407ec1367efd8930381cc379c429"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">array TBela\CSS\Property\PropertyList::$options</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= [</div>
+<div class="line"></div>
+<div class="line">        <span class="stringliteral">&#39;compute_shorthand&#39;</span> =&gt; <span class="keyword">true</span></div>
+</div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
