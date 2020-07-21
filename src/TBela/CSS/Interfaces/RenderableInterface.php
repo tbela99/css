@@ -2,8 +2,6 @@
 
 namespace TBela\CSS\Interfaces;
 
-use TBela\CSS\Element;
-
 /**
  * Interface Renderable
  * @package TBela\CSS

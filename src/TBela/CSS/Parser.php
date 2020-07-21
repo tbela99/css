@@ -82,7 +82,6 @@ class Parser
     protected $options = [
         'sourcemap' => false,
         'flatten_import' => false,
-        // allow_duplicate_declarations =>
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
     ];

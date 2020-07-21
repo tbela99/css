@@ -25,9 +25,9 @@ var hierarchy =
         [ "TBela\\CSS\\RuleList", "db/dd6/classTBela_1_1CSS_1_1RuleList.html", [
           [ "TBela\\CSS\\Element\\Rule", "df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html", null ],
           [ "TBela\\CSS\\Element\\RuleSet", "d9/d56/classTBela_1_1CSS_1_1Element_1_1RuleSet.html", [
-            [ "TBela\\CSS\\Element\\AtRule", "d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html", null ]
-          ] ],
-          [ "TBela\\CSS\\Element\\Stylesheet", "d2/d6b/classTBela_1_1CSS_1_1Element_1_1Stylesheet.html", null ]
+            [ "TBela\\CSS\\Element\\AtRule", "d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html", null ],
+            [ "TBela\\CSS\\Element\\Stylesheet", "d2/d6b/classTBela_1_1CSS_1_1Element_1_1Stylesheet.html", null ]
+          ] ]
         ] ]
       ] ]
     ] ],

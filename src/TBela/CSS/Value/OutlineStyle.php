@@ -2,7 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use \Exception;
 use \TBela\CSS\Value;
 
 /**

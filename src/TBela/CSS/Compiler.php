@@ -24,6 +24,7 @@ class Compiler {
         'compress',
         'css_level',
         'remove_comments',
+        'compute_shorthand',
         'remove_empty_nodes',
         'allow_duplicate_declarations'
     ];
@@ -75,12 +76,13 @@ class Compiler {
     /**
      * set css content
      * @param string $css
+     * @param array $options
      * @return Compiler
-     * @throws Exception
+     * @throws Parser\SyntaxError
      */
-    public function setContent ($css) {
+    public function setContent ($css, array $options = []) {
 
-        $this->data = (new Parser($css, $this->options))->parse();
+        $this->data = (new Parser($css, $options))->parse();
         return $this;
     }
 
@@ -88,13 +90,17 @@ class Compiler {
      * load css content from a file
      * @param string $file
      * @param string $media
+     * @param array $options
      * @return $this
      * @throws Parser\SyntaxError
-     * @throws Exception
      */
+<<<<<<< HEAD
     public function load ($file, $media = '') {
+=======
+    public function load (string $file, array $options = [], string $media = '') {
+>>>>>>> v.next
 
-        $this->data = (new Parser('', $this->options))->load($file, $media)->parse();
+        $this->data = (new Parser('', $options))->load($file, $media)->parse();
         return $this;
     }
 

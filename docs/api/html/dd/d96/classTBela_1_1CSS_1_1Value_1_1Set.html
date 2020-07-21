@@ -128,6 +128,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a44cebea8d852d00de84e66014cdbb469"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32a4946e03abdddf7f3331422a73eb74"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a32a4946e03abdddf7f3331422a73eb74">__get</a> ($name)</td></tr>
 <tr class="separator:a32a4946e03abdddf7f3331422a73eb74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af088aaf11d12e6517b059415704ccc9a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af088aaf11d12e6517b059415704ccc9a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>getHash</b> ()</td></tr>
+<tr class="separator:af088aaf11d12e6517b059415704ccc9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0126ae96b7af9eb2e55abf60e773e8c2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a0126ae96b7af9eb2e55abf60e773e8c2">render</a> (array $options=[])</td></tr>
 <tr class="separator:a0126ae96b7af9eb2e55abf60e773e8c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb6150ab811409fa42b198a25e6c1b86"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#acb6150ab811409fa42b198a25e6c1b86">filter</a> (callable $filter)</td></tr>
@@ -138,8 +141,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a08e08cfceecf80e015e33a2c6fe01a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a614556806590f8e717ad78fc26bb385e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a614556806590f8e717ad78fc26bb385e">split</a> (string $separator)</td></tr>
 <tr class="separator:a614556806590f8e717ad78fc26bb385e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3f309407737d4dbc7082cfae9006c8d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ab3f309407737d4dbc7082cfae9006c8d">splice</a> (int $index, int $length=null, Set...$replacement)</td></tr>
-<tr class="separator:ab3f309407737d4dbc7082cfae9006c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ed89e98b7315208135861d15aa5a4ed"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a4ed89e98b7315208135861d15aa5a4ed">add</a> (<a class="el" href="../../dd/dca/classTBela_1_1CSS_1_1Value.html">Value</a> $value)</td></tr>
 <tr class="separator:a4ed89e98b7315208135861d15aa5a4ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3c3c5ba82ced572bf0753fa7ad91b1d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ad3c3c5ba82ced572bf0753fa7ad91b1d">__toString</a> ()</td></tr>
@@ -243,7 +244,16 @@ Protected Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>add an item to the set </p>
+<p>append the second set data to the first set data </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">int</td><td class="paramname">$index</td><td></td></tr>
+    <tr><td class="paramtype">int&#160;|&#160;null</td><td class="paramname">$length</td><td></td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">Set[]</td><td>$replacement </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html">Set</a> add an item to the set </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype"><a class="el" href="../../dd/dca/classTBela_1_1CSS_1_1Value.html">Value</a></td><td class="paramname">$value</td><td></td></tr>
@@ -252,7 +262,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>$this </dd></dl>
 
-<p>Referenced by <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a577f447be350f701dcbb9dbdfc1a9772">TBela\CSS\Property\PropertyMap\set()</a>.</p>
+<p>Referenced by <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#aff3f70d25c98592c0e0ea400915e6c97">TBela\CSS\Property\PropertyMap\set()</a>.</p>
 
 </div>
 </div>
@@ -270,7 +280,7 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
 
-<p>Referenced by <a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a08e08cfceecf80e015e33a2c6fe01a35">TBela\CSS\Value\Set\merge()</a>, and <a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a0126ae96b7af9eb2e55abf60e773e8c2">TBela\CSS\Value\Set\render()</a>.</p>
+<p>Referenced by <a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a08e08cfceecf80e015e33a2c6fe01a35">TBela\CSS\Value\Set\merge()</a>.</p>
 
 </div>
 </div>
@@ -398,49 +408,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
 
-<p>Referenced by <a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ad3c3c5ba82ced572bf0753fa7ad91b1d">TBela\CSS\Value\Set\__toString()</a>, <a class="el" href="../../d8/d23/classTBela_1_1CSS_1_1Element.html#a1699e013a7f15070d721e5befefee4a5">TBela\CSS\Element\deduplicateRules()</a>, <a class="el" href="../../dd/dca/classTBela_1_1CSS_1_1Value.html#a190295aac2ff5f56586ecdb518ab848c">TBela\CSS\Value\parse()</a>, <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#a3ae7579127fafe636f1e9c48d00179ed">TBela\CSS\Renderer\renderProperty()</a>, and <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#a69c57b5b7bd30e35ee003aeca3de1d6b">TBela\CSS\Renderer\renderSelector()</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab3f309407737d4dbc7082cfae9006c8d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">TBela\CSS\Value\Set::splice </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>$index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>$length</em> = <code>null</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Set...&#160;</td>
-          <td class="paramname"><em>$replacement</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>append the second set data to the first set data </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$index</td><td></td></tr>
-    <tr><td class="paramtype">int&#160;|&#160;null</td><td class="paramname">$length</td><td></td></tr>
-    <tr><td class="paramtype"></td><td class="paramname">Set[]</td><td>$replacement </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html">Set</a> </dd></dl>
+<p>Referenced by <a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ad3c3c5ba82ced572bf0753fa7ad91b1d">TBela\CSS\Value\Set\__toString()</a>, and <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#a3ae7579127fafe636f1e9c48d00179ed">TBela\CSS\Renderer\renderProperty()</a>.</p>
 
 </div>
 </div>

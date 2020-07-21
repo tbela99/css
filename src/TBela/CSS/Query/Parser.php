@@ -5,7 +5,6 @@ namespace TBela\CSS\Query;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
 
-
 class Parser
 {
     /**

@@ -1,7 +1,20 @@
 # Rule
 
 implement css rule
+
 ## Methods
+
+### computeShortHand
+
+Compute shorthand Css properties
+
+#### Arguments
+
+none
+
+#### Return Type
+
+\TBela\CSS\Element\Rule
 
 ### getSelector
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TBela\CSS\Query;
-
 
 class TokenSelectorValueAttributeTest extends TokenSelectorValueAttribute
 {
