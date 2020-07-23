@@ -102,7 +102,7 @@ div {
  max-width: 100%;
  border-width: 0
 }
-@namespace svg url(http://www.w3.org/2000/svg);t
+@namespace svg url(http://www.w3.org/2000/svg);
 ```
 
 ## Methods
