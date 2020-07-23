@@ -103,7 +103,7 @@ h1 {
 
 ### flatten_import
 
-_boolean_. Default _ ['@font-face']_. Replace the @import directive with actual content
+_boolean_. Default _['@font-face']_. Replace the @import directive with actual content
 
 ### allow_duplicate_rules
 
