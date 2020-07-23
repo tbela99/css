@@ -23,12 +23,12 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 install using [Composer](https://getcomposer.org/)
 
 ```bash
-$ composer require tbela99/css
+$ composer require 'tbela99/css:dev-php56-backport'
 ```
 
 ## Requirements
 
-PHP version >= 7.4
+PHP version 5.6 or later
 
 ## Usage:
 
@@ -380,7 +380,7 @@ $element = (new Compiler())->setContent($css)->getData();
 
 $renderer = new Renderer();
 
-$renderer->on('emit', function (Renderable $node) {
+$renderer->on('enter', function (Renderable $node) {
 
     // remove @font-face
     if ($node instanceof AtRule && $node['name'] == 'font-face') {
