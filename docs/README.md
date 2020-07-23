@@ -380,7 +380,7 @@ $element = (new Compiler())->setContent($css)->getData();
 
 $renderer = new Renderer();
 
-$renderer->on('emit', function (Renderable $node) {
+$renderer->on('enter', function (Renderable $node) {
 
     // remove @font-face
     if ($node instanceof AtRule && $node['name'] == 'font-face') {
