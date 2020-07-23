@@ -7,7 +7,6 @@ use IteratorAggregate;
 use TBela\CSS\Value;
 use TBela\CSS\RuleList;
 use TBela\CSS\Element\Rule;
-use TBela\CSS\Value\Set;
 
 /**
  * Property list

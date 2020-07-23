@@ -2,18 +2,26 @@
 <?php
 
 require 'autoload.php';
+use \TBela\CSS\Element\Stylesheet;
 
-use TBela\CSS\Compiler;
-use TBela\CSS\Parser;
-use \TBela\CSS\Value;
+$stylesheet = new Stylesheet();
 
-$parser = new Parser();
-$compiler = new Compiler();
+$rule = $stylesheet->addRule('div');
 
-$data = [];
+$rule->addDeclaration('background-color', 'white');
+$rule->addDeclaration('color', 'black');
 
-$file = './css/color.css';
-$parser->setOptions(['allow_duplicate_declarations' => true, 'allow_duplicate_rules' => ['p']])->load($file);
-$compiler->setOptions(['allow_duplicate_declarations' => true, 'convert_color' => 'hex']);
+$media = $stylesheet->addAtRule('media', 'print');
+$media->append($rule);
 
-echo $compiler->setData($parser->parse())->compile();
+$div = $stylesheet->addRule('div');
+
+$div->addDeclaration('max-width', '100%');
+$div->addDeclaration('border-width', '0px');
+
+
+$media->append($div);
+
+$stylesheet->insert($div, 0);
+
+echo $stylesheet;

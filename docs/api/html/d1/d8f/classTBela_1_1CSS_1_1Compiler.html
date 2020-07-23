@@ -120,10 +120,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a32b87622d8133e67a03602939853e496"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a32b87622d8133e67a03602939853e496"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>getOptions</b> ()</td></tr>
 <tr class="separator:a32b87622d8133e67a03602939853e496"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e3667cc0a407640e0ffa80331b8e315"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#a1e3667cc0a407640e0ffa80331b8e315">setContent</a> ($css)</td></tr>
-<tr class="separator:a1e3667cc0a407640e0ffa80331b8e315"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac20a26a885745989658cd2d6dbb67973"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#ac20a26a885745989658cd2d6dbb67973">load</a> ($file)</td></tr>
-<tr class="separator:ac20a26a885745989658cd2d6dbb67973"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d9397a56c0777cd1db6ee23054010b1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#a3d9397a56c0777cd1db6ee23054010b1">setContent</a> ($css, array $options=[])</td></tr>
+<tr class="separator:a3d9397a56c0777cd1db6ee23054010b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a577f50922468c850abc9de729f86a513"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#a577f50922468c850abc9de729f86a513">load</a> (string $file, array $options=[], string $media= '')</td></tr>
+<tr class="separator:a577f50922468c850abc9de729f86a513"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52917828fd7d53debeb35de008e62bff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#a52917828fd7d53debeb35de008e62bff">setData</a> ($ast)</td></tr>
 <tr class="separator:a52917828fd7d53debeb35de008e62bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ea4077ade4530b2de9b84e9bc12062f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html#a3ea4077ade4530b2de9b84e9bc12062f">getData</a> ()</td></tr>
@@ -207,16 +207,32 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 
 </div>
 </div>
-<a class="anchor" id="ac20a26a885745989658cd2d6dbb67973"></a>
+<a class="anchor" id="a577f50922468c850abc9de729f86a513"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">TBela\CSS\Compiler::load </td>
           <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$file</em></td><td>)</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>$file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">array&#160;</td>
+          <td class="paramname"><em>$options</em> = <code>[]</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>$media</em> = <code>''</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -224,20 +240,22 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">string</td><td class="paramname">$file</td><td></td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$media</td><td></td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$options</td><td></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>$this </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">Exception</td><td></td></tr>
+    <tr><td class="paramname">Parser\SyntaxError</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a1e3667cc0a407640e0ffa80331b8e315"></a>
+<a class="anchor" id="a3d9397a56c0777cd1db6ee23054010b1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -245,8 +263,18 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
           <td class="memname">TBela\CSS\Compiler::setContent </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$css</em></td><td>)</td>
+          <td class="paramname"><em>$css</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">array&#160;</td>
+          <td class="paramname"><em>$options</em> = <code>[]</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -254,13 +282,14 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">string</td><td class="paramname">$css</td><td></td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$options</td><td></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../d1/d8f/classTBela_1_1CSS_1_1Compiler.html">Compiler</a> </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">Exception</td><td></td></tr>
+    <tr><td class="paramname">Parser\SyntaxError</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -344,6 +373,7 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$options</b> = []</t
 <div class="line">        <span class="stringliteral">&#39;compress&#39;</span>,</div>
 <div class="line">        <span class="stringliteral">&#39;css_level&#39;</span>,</div>
 <div class="line">        <span class="stringliteral">&#39;remove_comments&#39;</span>,</div>
+<div class="line">        <span class="stringliteral">&#39;compute_shorthand&#39;</span>,</div>
 <div class="line">        <span class="stringliteral">&#39;remove_empty_nodes&#39;</span>,</div>
 <div class="line">        <span class="stringliteral">&#39;allow_duplicate_declarations&#39;</span></div>
 <div class="line">    ]</div>

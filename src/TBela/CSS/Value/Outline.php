@@ -2,10 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use \Exception;
-use stdClass;
-use \TBela\CSS\Value;
-
 // pattern font-style font-variant font-weight font-stretch font-size / line-height <'font-family'>
 
 /**

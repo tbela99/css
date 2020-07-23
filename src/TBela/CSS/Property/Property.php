@@ -1,6 +1,7 @@
 <?php
 
 namespace TBela\CSS\Property;
+
 use ArrayAccess;
 use TBela\CSS\ArrayTrait;
 use TBela\CSS\Interfaces\RenderableInterface;

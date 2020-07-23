@@ -104,3 +104,56 @@ div {
 }
 @namespace svg url(http://www.w3.org/2000/svg);t
 ```
+
+## Methods
+
+### computeShortHand
+
+Compute shorthand Css properties
+
+#### Arguments
+
+none
+
+#### Return Type
+
+\TBela\CSS\Stylesheet
+
+### AddRule
+
+Add a Rule.
+
+#### Arguments
+
+\TBela\CSS\Element\Rule
+
+#### Return Type
+
+\TBela\CSS\Element\Rule
+
+### AddAtRule
+
+Add at-rule
+
+#### Arguments
+
+- name: _string_
+- value: _string_
+- type: _int_, optional. Determine the type of children for this rule. Values are:
+
+> AtRule::ELEMENT_AT_RULE_LIST
+
+Accept Rule as children. Example: @media
+
+> AtRule::ELEMENT_AT_DECLARATIONS_LIST
+
+Accept Declaration as children. Example: @viewport
+
+> AtRule::ELEMENT_AT_NO_LIST
+
+Does not accept any child. Example: @namespace
+
+#### Return Type
+
+\TBela\CSS\Element\AtRule
+
