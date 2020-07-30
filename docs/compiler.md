@@ -30,7 +30,7 @@ body {
 Produce minified output
 
 ```php
-$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
+$compiler->setOptions(['compress' => true, 'convert_color' => 'hex']);
 
 echo $compiler->compile();
 ```
@@ -54,7 +54,7 @@ file_put_contents('ast.json', $compiler->getData());
 // ...
 $ast = json_decode(file_get_contents('ast.json'));
 
-$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
+$compiler->setOptions(['compress' => true, 'convert_color' => 'hex']);
 $compiler->setData($ast);
 
 echo $compiler->compile();
@@ -66,7 +66,7 @@ Load a css string
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler->setOptions(['compress' => true, 'rgba_hex' => true]);
+$compiler->setOptions(['compress' => true, 'convert_color' => 'hex']);
 $compiler->setContent('body { border: 0px; }');
 
 echo $compiler->compile();

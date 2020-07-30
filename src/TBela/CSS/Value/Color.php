@@ -78,6 +78,18 @@ class Color extends Value
 
                     $data->rgba = ColorUtil::cmyk2rgba_values(static::getNumericValue($data->arguments->{0}), static::getNumericValue($data->arguments->{2}), static::getNumericValue($data->arguments->{4}), static::getNumericValue($data->arguments->{6}), $a);
                     break;
+
+//                case 'lab':
+//
+//                    $a = static::getNumericValue($data->arguments->{4});
+//
+//                    if ($a == 1) {
+//
+//                        $a = null;
+//                    }
+//
+//                    $data->rgba = ColorUtil::lab2rgba(static::getNumericValue($data->arguments->{0}), static::getNumericValue($data->arguments->{1}), static::getNumericValue($data->arguments->{2}), static::getNumericValue($data->arguments->{6}), $a);
+//                    break;
             }
         }
     }

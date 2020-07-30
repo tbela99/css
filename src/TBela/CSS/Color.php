@@ -6,10 +6,23 @@ use TBela\CSS\Value\Number;
 use TBela\CSS\Value\Number as ValueNumber;
 
 /**
- * Class Color
+ * Color conversion utils
+ *
+ * convert:
+ * - hwb <=> rgba
+ * - hex <=> rgba
+ * - hsla <=> rgba
+ * - cmyk <=> rgba
+ * - lab <=>
+ * - lch <=>
+ *
  */
 class Color
 {
+
+    const REF_X = 95.047; // Observer= 2°, Illuminant= D65
+    const REF_Y = 100.0;
+    const REF_Z = 108.883;
 
     // name to color
     const COLORS_NAMES = [
@@ -569,6 +582,174 @@ class Color
         return $result;
     }
 
+    /*
+     // rgba <=> lab <=> lc
+    public static function rgba2lab($r, $g, $b, $a = null)
+    {
+
+        $xyz = static::rgba2xyz($r, $g, $b);
+
+        return static::xyz2lab($xyz[0], $xyz[1], $xyz[2], $a);
+    }
+
+    public static function rgba2lch($r, $g, $b, $a = null)
+    {
+
+        $xyz = static::rgba2xyz($r, $g, $b);
+        $lab = static::xyz2lab($xyz[0], $xyz[1], $xyz[2]);
+        $lch = static::lab2lch($lab[0], $lab[1], $lab[2]);
+
+        if (!is_null($a) && $a != 1) {
+
+            $lch[] = $a;
+        }
+
+        return $lch;
+    }
+
+    public static function rgba2xyz($r, $g, $b, $a = null)
+    {
+
+        $r = static::pivotRgb($r / 255);
+        $g = static::pivotRgb($g / 255);
+        $b = static::pivotRgb($b / 255);
+
+        // Observer. = 2°, Illuminant = D65
+        $xyz = [
+            $r * 0.4124 + $g * 0.3576 + $b * 0.1805,
+            $r * 0.2126 + $g * 0.7152 + $b * 0.0722,
+            $r * 0.0193 + $g * 0.1192 + $b * 0.9505,
+        ];
+
+        if (!is_null($a) && $a != 1) {
+
+            $xyz[] = $a;
+        }
+
+        return $xyz;
+    }
+
+    public static function xyz2lab($x, $y, $z, $a = null)
+    {
+
+        $x1 = static::pivotXyz($x / static::REF_X);
+        $y1 = static::pivotXyz($y / static::REF_Y);
+        $z1 = static::pivotXyz($z / static::REF_Z);
+
+        $lab = [116 * $y1 - 16, 500 * ($x1 - $y1), 200 * ($y1 - $z1)];
+
+        if (!is_null($a) && $a != 1) {
+
+            $lab[] = $a;
+        }
+
+        return $lab;
+    }
+
+    public static function lab2xyz($L, $A, $B, $a = null)
+    {
+
+        $var_Y = ($L + 16) / 116;
+        $var_X = $A / 500 + $var_Y;
+        $var_Z = $var_Y - $B / 200;
+
+        $Y_3 = $var_Y ** 3;
+        $X_3 = $var_X ** 3;
+        $Z_3 = $var_Z ** 3;
+
+        $var_Y = $Y_3 > 0.008856 ? $Y_3 : ($var_Y - 16 / 116) / 7.787;
+        $var_X = $X_3 > 0.008856 ? $X_3 : ($var_X - 16 / 116) / 7.787;
+        $var_Z = $Z_3 > 0.008856 ? $Z_3 : ($var_Z - 16 / 116) / 7.787;
+
+        $xyz = [$var_X * static::REF_X, $var_Y * static::REF_Y, $var_Z * static::REF_Z];
+
+        if (!is_null($a) && $a != 1) {
+
+            $xyz[] = $a;
+        }
+
+        return $xyz;
+    }
+
+    public static function xyz2rgb($X, $Y, $Z, $a = null)
+    {
+        //X, Y and Z input refer to a D65/2° standard illuminant.
+        //sR, sG and sB (standard RGB) output range = 0 ÷ 255
+
+        $var_X = $X / 100;
+        $var_Y = $Y / 100;
+        $var_Z = $Z / 100;
+
+        $var_R = $var_X * 3.2406 + $var_Y * -1.5372 + $var_Z * -0.4986;
+        $var_G = $var_X * -0.9689 + $var_Y * 1.8758 + $var_Z * 0.0415;
+        $var_B = $var_X * 0.0557 + $var_Y * -0.204 + $var_Z * 1.057;
+
+        $var_R = $var_R > 0.0031308 ? 1.055 * ($var_R ** (1 / 2.4)) - 0.055 : 12.92 * $var_R;
+        $var_G = $var_G > 0.0031308 ? 1.055 * ($var_G ** (1 / 2.4)) - 0.055 : 12.92 * $var_G;
+        $var_B = $var_B > 0.0031308 ? 1.055 * ($var_B ** (1 / 2.4)) - 0.055 : 12.92 * $var_B;
+
+        return [round($var_R * 255), round($var_G * 255), round($var_B * 255)];
+    }
+
+    public static function lab2rgba($L, $A, $B, $a = null)
+    {
+
+        $xyz = static::lab2xyz($L, $A, $B);
+        return static::xyz2rgb($xyz[0], $xyz[1], $xyz[2], $a);
+    }
+
+    public static function lab2lch($L, $A, $B, $a = null)
+    {
+
+        $H = atan2($B, $A); //Quadrant by signs
+
+        $H = $H > 0 ? $H * 180 / M_PI : 360 - abs($H) * 180 / M_PI;
+
+        $C = sqrt($A * $A + $B * $B);
+
+        $lch = [$L, $C, $H];
+
+        if (!is_null($a) && $a != 1) {
+
+            $lch[] = $a;
+        }
+
+        return $lch;
+    }
+
+    public static function lch2lab($L, $C, $H, $a = null)
+    {
+
+        $var_H = ($H * M_PI) / 180;
+
+        $A = cos($var_H) * $C;
+        $B = sin($var_H) * $C;
+
+        $lab = [$L, $A, $B];
+
+        if (!is_null($a) && $a != 1) {
+
+            $lab[] = $a;
+        }
+
+        return $lab;
+    }
+
+    public static function lch2rgba($L, $C, $H, $a = null) {
+
+        $lab = static::lch2lab($L, $C, $H);
+        $xyz = static::lab2xyz($lab[0], $lab[1], $lab[2]);
+        $rgba = static::xyz2rgb($xyz[0], $xyz[1], $xyz[2]);
+
+        if (!is_null($a) && $a != 1) {
+
+            $rgba[] = $a;
+        }
+
+        return $rgba;
+    }
+    */
+
     protected static function rgb2hue($r, $g, $b, $fallback = 0)
     {
 
@@ -580,20 +761,16 @@ class Color
         if ($delta > 0) {
 
             // calculate segment
-            $segment = $value === $r
-                ? ($g - $b) / $delta
-                : $value === $g
-                    ? ($b - $r) / $delta
-                    : ($r - $g) / $delta;
+            $segment = $value === $r ? ($g - $b) / $delta : ($value === $g
+                ? ($b - $r) / $delta
+                : ($r - $g) / $delta);
 
             // calculate shift
-            $shift = $value === $r
-                ? $segment < 0
-                    ? 360 / 60
-                    : 0 / 60
-                : $value === $g
-                    ? 120 / 60
-                    : 240 / 60;
+            $shift = $value === $r ? $segment < 0
+                ? 360 / 60
+                : 0 / 60 : ($value === $g
+                ? 120 / 60
+                : 240 / 60);
 
             // calculate hue
             return ($segment + $shift) * 60;
@@ -679,9 +856,21 @@ class Color
                 $color .= $matches[4];
             }
 
-        //    return $color;
+            //    return $color;
         }
 
         return strlen($str) <= strlen($color) ? $str : $color;
+    }
+
+    protected static function pivotRgb($n)
+    {
+
+        return ($n > 0.04045 ? (($n + 0.055) / 1.055) ** 2.4 : $n / 12.92) * 100;
+    }
+
+    protected static function pivotXyz($n)
+    {
+
+        return $n > 0.008856 ? $n ** (1 / 3) : 7.787 * $n + 16 / 116;
     }
 }

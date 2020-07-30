@@ -110,7 +110,7 @@ $parser = new Parser();
 $renderer = new Renderer();
 
 // convert rgba to hex, not required here
-$renderer->setOptions(['rgba_hex' => true, 'compress' => true]);
+$renderer->setOptions(['convert_color' => 'hex', 'compress' => true]);
 
 $parser->setContent($css);
 
