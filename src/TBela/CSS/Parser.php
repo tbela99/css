@@ -124,11 +124,16 @@ class Parser
     /**
      * parse css and append to the existing AST
      * @param string $css
+     * @param string $media
      * @return Parser
      * @throws SyntaxError
      */
-    public function appendContent($css)
+    public function appendContent($css, $media = '')
     {
+        if ($media !== '' && $media != 'all') {
+
+            $css = '@media '.$media.' { '.rtrim($css).' }';
+        }
 
         $this->css .= rtrim($css);
         $this->end = strlen($this->css);
@@ -146,10 +151,16 @@ class Parser
     /**
      * set css content
      * @param string $css
+     * @param string $media
      * @return Parser
      */
-    public function setContent($css)
+    public function setContent($css, $media = '')
     {
+
+        if ($media !== '' && $media != 'all') {
+
+            $css = '@media '.$media. '{ '.rtrim($css).' }';
+        }
 
         $this->css = $css;
         $this->path = '';
@@ -305,7 +316,7 @@ class Parser
 
                 $content = $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
 
-                return $media === '' ? $content : '@media ' . $media . ' {' . $content . '}';
+                return $media === '' || $media == 'all' ? $content : '@media ' . $media . ' {' . $content . '}';
             }
 
             throw new Exception('File Not Found', 404);
@@ -348,7 +359,7 @@ class Parser
 
                 $media = trim($match[8]);
 
-                if (strpos($media, ' ') !== false) {
+                if (strpos($media, ' ') !== false ) {
 
                     $media = ' ' . $media;
                 }
@@ -357,7 +368,7 @@ class Parser
 
                 if ($css !== false) {
 
-                    if ($media !== '') {
+                    if ($media !== '' && $media !== 'all') {
 
                         $css = '@media ' . $media . " {\n" . $css . "\n}\n";
                     }

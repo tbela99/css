@@ -50,12 +50,20 @@ interface RuleListInterface extends IteratorAggregate {
     public function support (Element $child);
 
     /**
-     * append child node
-     * @param Element[] $elements
+     * append child nodes
+     * @param Element|Element[] $elements
      * @return Element
      * @throws Exception
      */
     public function append(Element ...$elements);
+
+    /**
+     * append css text to this node
+     * @param string $css
+     * @return Element
+     * @throws Exception
+     */
+    public function appendCss($css);
 
     /**
      * insert a child node at the specified position
