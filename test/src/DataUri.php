@@ -16,7 +16,7 @@ final class DataUri extends TestCase
      * @param string $expected
      * @dataProvider DataUriProvider
      */
-    public function testDataUri($parsed, $expected): void
+    public function testDataUri($parsed, $expected)
     {
         $this->assertEquals(
             $expected,
