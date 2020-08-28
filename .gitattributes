@@ -10,3 +10,5 @@ phpdocumentor.sh export-ignore
 phpunit.phar export-ignore
 phpDocumentor.phar export-ignore
 README.md export-ignore
+# exclude all files in test/ from stats
+test/* linguist-vendored

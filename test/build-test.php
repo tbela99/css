@@ -35,7 +35,7 @@ use \TBela\CSS\Compiler;
      }
 
      $compiler->setData($parser->load($file)->parse());
-     $compiler->setOptions(['compress' => false, 'rgba_hex' => false]);
+     $compiler->setOptions(['compress' => false, 'convert_color' => false]);
 
      file_put_contents('./output/'.basename($file), $compiler->compile());
 

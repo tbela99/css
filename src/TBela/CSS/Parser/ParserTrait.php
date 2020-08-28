@@ -138,6 +138,19 @@ trait ParserTrait
 
                     break;
 
+                case '(':
+
+                    $substr = static::_close($string, ')', '(', $startPosition, $endPosition, true);
+
+                    if($substr === false) {
+
+                        return false;
+                    }
+
+                    $buffer .= $substr;
+                    $startPosition += strlen($substr) - 1;
+                    break;
+
                 case '"':
                 case "'":
 

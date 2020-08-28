@@ -488,7 +488,9 @@ abstract class Value
                             $token->name = $buffer;
                         }
 
-                        if (in_array(strtolower($token->name), ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'])) {
+                        if (in_array(strtolower($token->name), [
+                            'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk' //, 'lab', 'lch' //
+                        ])) {
 
                             $token->type = 'color';
                         } else if ($token->name == 'url') {
