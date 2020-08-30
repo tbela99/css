@@ -181,6 +181,11 @@ trait ParserTrait
         $count = 1;
         $i = $start;
 
+        if (\substr($string, $start, 1) === $search) {
+
+            return $search;
+        }
+
         while (++$i <= $end) {
 
             switch ($string[$i]) {

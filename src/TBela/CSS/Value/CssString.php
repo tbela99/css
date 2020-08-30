@@ -24,7 +24,7 @@ class CssString extends Value
             $data->q = $q;
             $data->value = substr($data->value, 1, -1);
 
-            if (preg_match('#^[\w_-]+$#', $data->value)) {
+            if (preg_match('#^[\w_-]+$#', $data->value) && !is_numeric(\substr($data->value, 0 , 1))) {
 
                 $data->q = '';
             }
