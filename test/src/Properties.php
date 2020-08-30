@@ -118,6 +118,14 @@ final class Properties extends TestCase
         $data[] = [$property1, 'margin-left', '0px', 'margin: 0 0 15px'];
         $data[] = [$property1, 'margin-top', '15px', 'margin: 15px 0'];
         $data[] = [$property1, 'margin-left', '0', 'margin: 15px 0'];
+        $data[] = [$property1, 'margin', '0 auto', 'margin: 0 auto'];
+
+        $property4 = new PropertyList();
+
+        $data[] = [$property4, 'margin-top', '5px \9', 'margin-top: 5px \9'];
+        $data[] = [$property4, 'margin-left', '5px \9', "margin-top: 5px \\9;\nmargin-left: 5px \\9"];
+        $data[] = [$property4, 'margin-bottom', '5px \9', "margin-top: 5px \\9;\nmargin-left: 5px \\9;\nmargin-bottom: 5px \\9"];
+        $data[] = [$property4, 'margin-right', '5px \9', 'margin: 5px \9'];
 
         return $data;
     }
@@ -130,7 +138,7 @@ final class Properties extends TestCase
         $data[] = [$property, 'margin-top', '1px \9', 'margin-top: 1px \9'];
         $data[] = [$property, 'margin-right', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9'];
         $data[] = [$property, 'margin-bottom', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9;'."\n".'margin-bottom: 1px \9'];
-        $data[] = [$property, 'margin-left', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9;'."\n".'margin-bottom: 1px \9;'."\n".'margin-left: 1px \9'];
+        $data[] = [$property, 'margin-left', '1px \9', 'margin: 1px \9'];
         return $data;
     }
 }

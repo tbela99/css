@@ -12,7 +12,6 @@ use TBela\CSS\Value\Set;
  */
 class PropertySet
 {
-
     /**
      * @var array
      * @ignore
@@ -82,52 +81,59 @@ class PropertySet
         // $name is shorthand -> expand
         if ($this->shorthand == $name) {
 
-            $result = $this->expand($value);
+            foreach ($this->config['properties'] as $property) {
 
-            if ($result == false) {
-
-                foreach ($this->config['properties'] as $property) {
-
-                    $this->setProperty($property, $value);
-
-                    if (!is_null($leadingcomments)) {
-
-                        $this->properties[$property]->setLeadingComments($leadingcomments);
-                    }
-
-                    if (!is_null($trailingcomments)) {
-
-                        $this->properties[$property]->setTrailingComments($trailingcomments);
-                    }
-                }
+                unset($this->properties[$property]);
             }
 
-            else {
+            if (is_string($value)) {
 
-                foreach ($result as $property => $values) {
+                $value = Value::parse($value);
+            }
 
-                    $separator = Config::getProperty($property.'.separator', ' ');
+            $result = $this->expand($value);
 
-                    if ($separator != ' ') {
+            if (is_array($result)) {
 
-                        $separator = ' '.$separator.' ';
-                    }
+                $this->expandProperties($result, $leadingcomments, $trailingcomments);
+                unset($this->properties[$this->shorthand]);
+            } else {
 
-                    $this->setProperty($property, implode($separator, $values));
+                $this->setProperty($name, $value);
 
-                    if (!is_null($leadingcomments)) {
+                if (!is_null($leadingcomments)) {
 
-                        $this->properties[$property]->setLeadingComments($leadingcomments);
-                    }
+                    $this->properties[$name]->setLeadingComments($leadingcomments);
+                }
 
-                    if (!is_null($trailingcomments)) {
+                if (!is_null($trailingcomments)) {
 
-                        $this->properties[$property]->setTrailingComments($trailingcomments);
-                    }
+                    $this->properties[$name]->setTrailingComments($trailingcomments);
                 }
             }
 
         } else {
+
+            if (isset($this->properties[$this->shorthand])) {
+
+                $shorthandValue = $this->properties[$this->shorthand]->getValue();
+
+                $result = $this->expand($shorthandValue);
+
+                if ($result !== false) {
+
+                    $this->expandProperties($result);
+                } else {
+
+                    foreach ($this->config['properties'] as $property) {
+
+                        $this->properties[$property] = (new Property($property))->setValue(clone $shorthandValue);
+                    }
+                }
+
+
+                unset($this->properties[$this->shorthand]);
+            }
 
             $this->setProperty($name, $value);
 
@@ -139,6 +145,34 @@ class PropertySet
             if (!is_null($trailingcomments)) {
 
                 $this->properties[$name]->setTrailingComments($trailingcomments);
+            }
+        }
+
+        return $this;
+    }
+
+    protected function expandProperties(array $result, $leadingcomments = null, $trailingcomments = null)
+    {
+
+        foreach ($result as $property => $values) {
+
+            $separator = Config::getProperty($property . '.separator', ' ');
+
+            if ($separator != ' ') {
+
+                $separator = ' ' . $separator . ' ';
+            }
+
+            $this->setProperty($property, implode($separator, $values));
+
+            if (!is_null($leadingcomments)) {
+
+                $this->properties[$property]->setLeadingComments($leadingcomments);
+            }
+
+            if (!is_null($trailingcomments)) {
+
+                $this->properties[$property]->setTrailingComments($trailingcomments);
             }
         }
 
@@ -178,20 +212,39 @@ class PropertySet
             }
         }
 
+        $vmap = $value_map;
+
         foreach ($pattern as $key => $match) {
 
             foreach ($value_map as $index => $map) {
 
                 foreach ($map as $i => $v) {
 
-                    if ($v->match($match)) {
+                    if ($v->type == 'whitespace') {
+
+                        unset($vmap[$index][$i]);
+                    } else if ($v->match($match)) {
 
                         $values[$index][$match][] = $v;
-                        array_splice($value_map[$index], $i, 1);
+                        unset($vmap[$index][$i]);
                         break;
                     }
                 }
+
+                if (empty($vmap[$index])) {
+
+                    unset($value_map[$index]);
+                } else {
+
+                    $value_map[$index] = $vmap[$index];
+                }
             }
+        }
+
+        // does not match the pattern
+        if (!empty($value_map)) {
+
+            return false;
         }
 
         // value_map must be empty!!!
@@ -231,14 +284,14 @@ class PropertySet
 
                         if (isset($this->config['value_map'][$property])) {
 
-                                foreach ($this->config['value_map'][$property] as $item) {
+                            foreach ($this->config['value_map'][$property] as $item) {
 
-                                    if (isset($list[$item])) {
+                                if (isset($list[$item])) {
 
-                                        $key = $item;
-                                        break;
-                                    }
+                                    $key = $item;
+                                    break;
                                 }
+                            }
                         }
                     }
 
@@ -301,7 +354,7 @@ class PropertySet
 
                     $prop = $this->config['properties'][$set[0]];
 
-                    if (isset($values[$property][1]) && isset($values[$prop][1]) && (string) $values[$property][1] == (string) $values[$prop][1]) {
+                    if (isset($values[$property][1]) && isset($values[$prop][1]) && (string)$values[$property][1] == (string)$values[$prop][1]) {
 
                         unset($values[$property]);
                         continue;
@@ -332,7 +385,7 @@ class PropertySet
 
         if ($separator != ' ') {
 
-            $separator = ' '.$separator.' ';
+            $separator = ' ' . $separator . ' ';
         }
 
         return implode($separator, $result);
@@ -364,13 +417,41 @@ class PropertySet
      * return Property array
      * @return Property[]
      */
-    public function getProperties() {
+    public function getProperties()
+    {
 
+        // match pattern
         if (count($this->properties) == count($this->config['properties'])) {
 
             $value = $this->reduce();
 
             if ($value !== false && $value !== '') {
+
+                return [(new Property($this->config['shorthand']))->setValue($value)];
+            }
+
+            // does not match pattern, still check for identical values
+            $canReduce = true;
+            $hash = '';
+            $value = null;
+
+            foreach ($this->properties as $property) {
+
+                if ($hash === '') {
+
+                    $value = $property->getValue();
+                    $hash = $value->getHash();
+                    continue;
+                }
+
+                else if ($hash !== $property->getValue()->getHash()) {
+
+                    $canReduce = false;
+                    break;
+                }
+            }
+
+            if ($canReduce) {
 
                 return [(new Property($this->config['shorthand']))->setValue($value)];
             }
@@ -396,7 +477,7 @@ class PropertySet
 
             if ($value !== false) {
 
-                return $this->config['shorthand'].': '.$value;
+                return $this->config['shorthand'] . ': ' . $value;
             }
         }
 
