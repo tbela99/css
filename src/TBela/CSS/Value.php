@@ -496,6 +496,9 @@ abstract class Value
                         } else if ($token->name == 'url') {
 
                             $token->type = 'css-url';
+                        }else if ($token->name == 'format') {
+
+                            $token->type = 'css-src-format';
                         } else {
 
                             $token->type = $token->name === '' ? 'css-parenthesis-expression' : 'css-function';

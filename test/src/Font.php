@@ -37,6 +37,35 @@ final class Font extends TestCase
         );
     }
 
+    /**
+     * @param string $css
+     * @param string $expected
+     * @dataProvider fontSrcProvider
+     */
+    public function testfontSrcProvider($css, $expected): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $css
+        );
+    }
+
+    public function fontSrcProvider () {
+
+        $data = [];
+
+        $parser = new Parser("@font-face{font-family:'CenturyGothic';src:url('/CenturyGothic.woff') format('woff');font-weight:400;}");
+
+        $data[] = [(string) $parser->parse(), '@font-face {
+  font-family: CenturyGothic;
+  font-weight: 400;
+  src: url(/CenturyGothic.woff) format("woff")
+}'];
+
+        return $data;
+    }
+
     public function fontComputeProvider () {
 
         $data = [];
