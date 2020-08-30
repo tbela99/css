@@ -32,6 +32,12 @@ background:red;
  background: red
 }'];
 
+        $data[] = [(string) (new Parser('div[data-elem-id="a1587819236980"]{
+background:red;
+}'))->parse(), 'div[data-elem-id=a1587819236980] {
+ background: red
+}'];
+
         return $data;
     }
 }
