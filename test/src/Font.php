@@ -42,7 +42,7 @@ final class Font extends TestCase
      * @param string $expected
      * @dataProvider fontSrcProvider
      */
-    public function testfontSrcProvider($css, $expected): void
+    public function testfontSrcProvider($css, $expected)
     {
 
         $this->assertEquals(
