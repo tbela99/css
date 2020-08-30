@@ -10,7 +10,7 @@ class CssSrcFormat extends CssFunction {
 
     protected static function validate($data): bool {
 
-        return $data->name ?? null === 'css-src-format' && isset($data->arguments) && $data->arguments instanceof Set;
+        return $data->name ?? null === 'format' && isset($data->arguments) && $data->arguments instanceof Set;
     }
 
     public function render(array $options = []): string {
