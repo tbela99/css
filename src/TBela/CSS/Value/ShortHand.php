@@ -35,7 +35,7 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = ''): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
         $keyword = static::matchKeyword($string);
@@ -45,7 +45,7 @@ class ShortHand extends Value
             return new Set([(object) ['value' => $keyword, 'type' => static::type()]]);
         }
 
-        $tokens = static::getTokens($string, $capture_whitespace, $context);
+        $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
 
         foreach (static::$patterns as $patterns) {
 

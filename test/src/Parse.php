@@ -40,6 +40,58 @@ final class Parse extends TestCase
  color: scroll
 }'];
 
+        $data[] = [(string) (new Parser('div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse(), 'div[data-elem-id="1587819338886"] {
+ color: #000;
+ z-index: 5;
+ top: calc(50vh - 375px + 325px);
+ left: calc(50% - 600px + 26px);
+ width: 610px;
+ background: red
+}'];
+        $data[] = [(new Renderer(['compress' => true]))->render((new Parser('div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse()), 'div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}'];
+
+        $data[] = [(string) (new Parser('div + div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse(), 'div+div[data-elem-id="1587819338886"] {
+ color: #000;
+ z-index: 5;
+ top: calc(50vh - 375px + 325px);
+ left: calc(50% - 600px + 26px);
+ width: 610px;
+ background: red
+}'];
+        $data[] = [(new Renderer(['compress' => true]))->render((new Parser('div + div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse()), 'div+div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}'];
+
         return $data;
     }
 }
