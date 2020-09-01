@@ -222,7 +222,7 @@ abstract class Value
      * @param bool $capture_whitespace
      * @return Set
      */
-    public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = ''): Set
+    public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
         if ($string instanceof Set) {
 
@@ -243,11 +243,11 @@ abstract class Value
 
             if (is_callable([$className, 'doParse'])) {
 
-                return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context);
+                return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
             }
         }
 
-        return static::doParse($string, $capture_whitespace, $context);
+        return static::doParse($string, $capture_whitespace, $context, $contextName);
     }
 
     /**
@@ -304,12 +304,13 @@ abstract class Value
      * @param string $string
      * @param bool $capture_whitespace
      * @param string $context
+     * @param string $contextName
      * @return Set
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = ''): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
-        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context)));
+        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context, $contextName)));
     }
 
     /**
@@ -317,6 +318,7 @@ abstract class Value
      * @param Set|string $string
      * @param bool $capture_whitespace
      * @param string $context
+     * @param string $contextName
      * @return array|null
      */
     protected static function getTokens(string $string, $capture_whitespace = true, $context = '', $contextName = '')
