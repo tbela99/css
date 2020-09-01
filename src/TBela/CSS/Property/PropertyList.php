@@ -71,7 +71,6 @@ class PropertyList implements IteratorAggregate
 
         $name = (string) $name;
 
-//        $propertyName
         if(!empty($this->options['allow_duplicate_declarations'])) {
 
             if ($this->options['allow_duplicate_declarations'] === true ||
