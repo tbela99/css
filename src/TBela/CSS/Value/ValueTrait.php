@@ -12,15 +12,13 @@ trait ValueTrait
 {
 
     /**
-     * @param string $string
-     * @param bool $capture_whitespace
-     * @return Set
+     * @inheritDoc
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = ''): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
         $type = static::type();
-        $tokens = static::getTokens($string, $capture_whitespace, $context);
+        $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
 
         foreach ($tokens as $key => $token) {
 
