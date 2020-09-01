@@ -274,7 +274,7 @@ abstract class Value
                 } else if ($token->type == 'css-parenthesis-expression' && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
-                } else if ($token->type == 'separator' && $tokens[$j + 1]->type == 'whitespace') {
+                } else if (in_array($token->type, ['separator', 'operator']) && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
                 } else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
@@ -319,7 +319,7 @@ abstract class Value
      * @param string $context
      * @return array|null
      */
-    protected static function getTokens(string $string, $capture_whitespace = true, $context = '')
+    protected static function getTokens(string $string, $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $string = trim($string);
@@ -510,7 +510,7 @@ abstract class Value
                                 $tokens[] = static::getType($buffer);
                             }
 
-                            $token->arguments = static::parse($str, null, $capture_whitespace, $token->type);
+                            $token->arguments = static::parse($str, null, $capture_whitespace, $token->type, $token->name);
                         }
 
                         $tokens[] = $token;
@@ -525,10 +525,29 @@ abstract class Value
 
                     break;
                 //  }
-
-                case ',':
                 case '/':
                 case '+':
+                case '-':
+
+                    if ($string[$i] == '-' && trim(\substr($buffer, -1)) !== '') {
+
+                        $buffer .= $string[$i];
+                        break;
+                    }
+
+                    if ($context == 'css-function' && preg_match('#^[a-zA-Z0-9_-]+$#', $contextName)) {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                        }
+
+                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
+                        $buffer = '';
+                        break;
+                    }
+
+                case ',':
                 case '=':
                 case ':':
 

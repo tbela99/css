@@ -69,12 +69,7 @@ class PropertyList implements IteratorAggregate
         }
 
         $name = (string) $name;
-//
-//        if (is_string($value) || is_numeric($value)) {
-//
-//            $value = Value::parse($value, $name);
-//        }
-//        $propertyName
+
         if(!empty($this->options['allow_duplicate_declarations'])) {
 
             if ($this->options['allow_duplicate_declarations'] === true ||
