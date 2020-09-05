@@ -526,38 +526,10 @@ abstract class Value
                     }
 
                     break;
-                //  }
+
                 case '/':
                 case '+':
                 case '-':
-
-                    if ($string[$i] == '-' && trim(\substr($buffer, -1)) !== '') {
-
-                        $buffer .= $string[$i];
-                        break;
-                    }
-
-                    if ($context == 'css-function' && preg_match('#^[a-zA-Z0-9_-]+$#', $contextName)) {
-
-                        if ($buffer !== '') {
-
-                            $tokens[] = static::getType($buffer);
-                        }
-
-                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
-                        $buffer = '';
-                        break;
-                    }
-
-                case ',':
-                case '=':
-                case ':':
-
-                    if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
-
-                        $buffer .= $string[$i];
-                        continue 2;
-                    }
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
@@ -582,6 +554,46 @@ abstract class Value
                             $buffer = '';
                             break;
                         }
+                    }
+
+                    $prev = trim(substr($string, $i - 1, 1));
+                    $next = trim(substr($string, $i + 1, 1));
+
+                    if ($prev !== '' && $next !== '') {
+
+                        $buffer .= $string[$i];
+                        break;
+                    }
+
+                    if (in_array($string[$i], ['+', '-']) &&
+                        (is_numeric(substr($string, $i + 1, 1)) ||
+                        (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
+                    ) {
+
+                        $buffer .= $string[$i];
+                        break;
+                    }
+
+                    if ($context !== '' && $prev === '' && $next === '' && preg_match('#^[a-zA-Z0-9_-]*$#', $contextName)) {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                        }
+
+                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
+                        $buffer = '';
+                        break;
+                    }
+
+                case ',':
+                case '=':
+                case ':':
+
+                    if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
+
+                        $buffer .= $string[$i];
+                        continue 2;
                     }
 
                     if ($buffer !== '') {
@@ -615,7 +627,7 @@ abstract class Value
 
                         if ($buffer !== '') {
 
-                            $tokens[] = static::getType($buffer);
+                            $tokens[] = static::getType(rtrim($buffer));
                             $buffer = '';
                         }
                     }

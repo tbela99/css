@@ -118,15 +118,15 @@ class ShortHand extends Value
                     }
                 }
 
-                $mandatory = array_values(array_filter($patterns, function ($pattern) {
+//                $mandatory = array_values(array_filter($patterns, function ($pattern) {
+//
+//                    return empty($pattern['optional']);
+//                }));
 
-                    return empty($pattern['optional']);
-                }));
-
-                if (!empty($mandatory)) {
-
-                    throw new Exception(' Invalid "'.static::type().'" definition, missing \'' . $mandatory[0]['type'] . '\' definition in "' . $string . '"', 400);
-                }
+//                if (!empty($mandatory)) {
+//
+//                    throw new Exception(' Invalid "'.static::type().'" definition, missing \'' . $mandatory[0]['type'] . '\' definition in "' . $string . '"', 400);
+//                }
 
                 $i = count($tokens);
 
