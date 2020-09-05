@@ -220,6 +220,8 @@ abstract class Value
      * @param string $string
      * @param string|Set|null $property
      * @param bool $capture_whitespace
+     * @param string $context
+     * @param string $contextName
      * @return Set
      */
     public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
@@ -243,7 +245,15 @@ abstract class Value
 
             if (is_callable([$className, 'doParse'])) {
 
-                return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
+                try {
+
+                    return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
+                }
+
+                catch (\Exception $e) {
+
+                    // failed to parse css property
+                }
             }
         }
 
@@ -512,7 +522,7 @@ abstract class Value
                                 $tokens[] = static::getType($buffer);
                             }
 
-                            $token->arguments = static::parse($str, null, $capture_whitespace, $token->type, $token->name);
+                            $token->arguments = Value::parse($str, null, $capture_whitespace, $token->type, $token->name);
                         }
 
                         $tokens[] = $token;
