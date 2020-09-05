@@ -14,7 +14,7 @@ class Operator extends Value
     /**
      * @inheritDoc
      */
-    public function match (string $type): bool {
+    public function match ($type) {
 
         return $this->data->type == $type;
     }
@@ -22,7 +22,7 @@ class Operator extends Value
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool
+    protected static function validate($data)
     {
 
         return isset($data->value) && $data->value !== '';
@@ -31,7 +31,7 @@ class Operator extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         return ' '.$this->data->value.' ';

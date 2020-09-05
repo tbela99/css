@@ -36,7 +36,8 @@ class ShortHand extends Value
      * @throws Exception
      */
 
-    protected static function doParse($string, $capture_whitespace = true, $context = '') {
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '') {
+
 
         $keyword = static::matchKeyword($string);
 
@@ -45,7 +46,7 @@ class ShortHand extends Value
             return new Set([(object) ['value' => $keyword, 'type' => static::type()]]);
         }
 
-        $tokens = static::getTokens($string, $capture_whitespace, $context);
+        $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
 
         foreach (static::$patterns as $patterns) {
 
@@ -122,7 +123,7 @@ class ShortHand extends Value
 
                     return empty($pattern['optional']);
                 }));
-
+//
                 if (!empty($mandatory)) {
 
                     throw new Exception(' Invalid "'.static::type().'" definition, missing \'' . $mandatory[0]['type'] . '\' definition in "' . $string . '"', 400);

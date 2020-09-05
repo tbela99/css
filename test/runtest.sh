@@ -12,6 +12,17 @@ cd "$DIR"
 [ ! -f "../phpunit-5.phar" ] && \
 wget -O ../phpunit-5.phar https://phar.phpunit.de/phpunit-5.phar && \
 chmod +x ../phpunit-5.phar
+whichphp() {
+
+        if [ -f '/bin/php56' ]; then
+                echo '/bin/php56'
+        elif [ -f '/bin/php5.6' ]; then
+                echo '/bin/php5.6'
+        elif [ -f '/bin/php' ]; then
+                echo '/bin/php'
+        fi
+}
+php56=whichphp
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php

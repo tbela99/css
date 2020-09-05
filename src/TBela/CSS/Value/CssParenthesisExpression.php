@@ -17,9 +17,7 @@ class CssParenthesisExpression extends Value {
 
     public function render(array $options = []) {
 
-        $filler = !empty($options['compress']) ? '' : ' ';
-
-        return $filler.'('. $this->data->arguments->render($options).')'.$filler;
+        return '('. $this->data->arguments->render($options).')';
     }
 
     public function getHash() {

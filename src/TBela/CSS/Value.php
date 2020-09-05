@@ -227,10 +227,11 @@ abstract class Value
      * @param string|Set|null $property
      * @param bool $capture_whitespace
      * @param string $context
+     * @param string $contextName
      * @return Set
      */
 
-    public static function parse($string, $property = null, $capture_whitespace = true, $context = '')
+    public static function parse($string, $property = null, $capture_whitespace = true, $context = '', $contextName = '')
 
     {
         if ($string instanceof Set) {
@@ -252,11 +253,19 @@ abstract class Value
 
             if (is_callable([$className, 'doParse'])) {
 
-                return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context);
+                try {
+
+                    return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
+                }
+
+                catch (\Exception $e) {
+
+                    // failed to parse css property
+                }
             }
         }
 
-        return static::doParse($string, $capture_whitespace, $context);
+        return static::doParse($string, $capture_whitespace, $context, $contextName);
     }
 
     /**
@@ -313,14 +322,15 @@ abstract class Value
      * @param string $string
      * @param bool $capture_whitespace
      * @param string $context
+     * @param string $contextName
      * @return Set
      */
 
-    protected static function doParse($string, $capture_whitespace = true, $context = '')
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
 
     {
 
-        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context)));
+        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context, $contextName)));
     }
 
     /**
@@ -328,6 +338,7 @@ abstract class Value
      * @param Set|string $string
      * @param bool $capture_whitespace
      * @param string $context
+     * @param string $contextName
      * @return array|null
      */
     protected static function getTokens($string, $capture_whitespace = true, $context = '', $contextName = '')
@@ -521,7 +532,7 @@ abstract class Value
                                 $tokens[] = static::getType($buffer);
                             }
 
-                            $token->arguments = static::parse($str, null, $capture_whitespace, $token->type, $token->name);
+                            $token->arguments = Value::parse($str, null, $capture_whitespace, $token->type, $token->name);
                         }
 
                         $tokens[] = $token;
@@ -535,38 +546,10 @@ abstract class Value
                     }
 
                     break;
-                //  }
+
                 case '/':
                 case '+':
                 case '-':
-
-                    if ($string[$i] == '-' && trim(\substr($buffer, -1)) !== '') {
-
-                        $buffer .= $string[$i];
-                        break;
-                    }
-
-                    if ($context == 'css-function' && preg_match('#^[a-zA-Z0-9_-]+$#', $contextName)) {
-
-                        if ($buffer !== '') {
-
-                            $tokens[] = static::getType($buffer);
-                        }
-
-                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
-                        $buffer = '';
-                        break;
-                    }
-
-                case ',':
-                case '=':
-                case ':':
-
-                    if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
-
-                        $buffer .= $string[$i];
-                        continue 2;
-                    }
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
@@ -591,6 +574,46 @@ abstract class Value
                             $buffer = '';
                             break;
                         }
+                    }
+
+                    $prev = trim(substr($string, $i - 1, 1));
+                    $next = trim(substr($string, $i + 1, 1));
+
+                    if ($prev !== '' && $next !== '') {
+
+                        $buffer .= $string[$i];
+                        break;
+                    }
+
+                    if (in_array($string[$i], ['+', '-']) &&
+                        (is_numeric(substr($string, $i + 1, 1)) ||
+                        (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
+                    ) {
+
+                        $buffer .= $string[$i];
+                        break;
+                    }
+
+                    if ($context !== '' && $prev === '' && $next === '' && preg_match('#^[a-zA-Z0-9_-]*$#', $contextName)) {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                        }
+
+                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
+                        $buffer = '';
+                        break;
+                    }
+
+                case ',':
+                case '=':
+                case ':':
+
+                    if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
+
+                        $buffer .= $string[$i];
+                        continue 2;
                     }
 
                     if ($buffer !== '') {
@@ -624,7 +647,7 @@ abstract class Value
 
                         if ($buffer !== '') {
 
-                            $tokens[] = static::getType($buffer);
+                            $tokens[] = static::getType(rtrim($buffer));
                             $buffer = '';
                         }
                     }
