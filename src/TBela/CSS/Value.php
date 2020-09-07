@@ -87,7 +87,8 @@ abstract class Value
         return isset($this->data->{$name});
     }
 
-    public function getHash() {
+    public function getHash()
+    {
 
         return $this->data->value;
     }
@@ -248,9 +249,7 @@ abstract class Value
                 try {
 
                     return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
-                }
-
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
 
                     // failed to parse css property
                 }
@@ -303,6 +302,18 @@ abstract class Value
                         }
                     }
                 }
+            }
+        }
+
+        while (true) {
+
+            // remove leading whitespace
+            if (isset($tokens[0]) && $tokens[0]->type == 'whitespace') {
+
+                array_shift($tokens);
+            } else {
+
+                break;
             }
         }
 
@@ -496,7 +507,7 @@ abstract class Value
                         } else if ($token->name == 'url') {
 
                             $token->type = 'css-url';
-                        }else if ($token->name == 'format') {
+                        } else if ($token->name == 'format') {
 
                             $token->type = 'css-src-format';
                         } else {
@@ -577,7 +588,7 @@ abstract class Value
 
                     if (in_array($string[$i], ['+', '-']) &&
                         (is_numeric(substr($string, $i + 1, 1)) ||
-                        (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
+                            (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
                     ) {
 
                         $buffer .= $string[$i];
@@ -591,7 +602,7 @@ abstract class Value
                             $tokens[] = static::getType($buffer);
                         }
 
-                        $tokens[] = (object) ['type' => 'operator', 'value' => $string[$i]];
+                        $tokens[] = (object)['type' => 'operator', 'value' => $string[$i]];
                         $buffer = '';
                         break;
                     }
@@ -703,7 +714,7 @@ abstract class Value
      * @return string|null
      * @ignore
      */
-    public static function matchKeyword($string, array $keywords = null): ?string
+    public static function matchKeyword(string $string, array $keywords = null): ?string
     {
 
         if (is_null($keywords)) {
