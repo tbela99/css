@@ -91,6 +91,21 @@ final class Font extends TestCase
         $propertyList->set('font-weight', '400');
         $data[] = [(string) $propertyList, 'font: italic small-caps 16px/2 "Fira Sans", serif'];
 
+        $propertyList->set('font', '400 var(--default-font-size) \'Trebuchet MS\', sans-serif');
+        $data[] = [(string) $propertyList, 'font: 400 var(--default-font-size) \'Trebuchet MS\', sans-serif'];
+
+        $propertyList->set('font-size', '16px');
+        $data[] = [(string) $propertyList, "font: 400 var(--default-font-size) 'Trebuchet MS', sans-serif;\nfont-size: 16px"];
+
+        $propertyList->set('font', '11px \'Trebuchet MS\', sans-serif');
+        $data[] = [(string) $propertyList, "font: 11px 'Trebuchet MS', sans-serif"];
+
+        $propertyList->set('font-size', '16px');
+        $data[] = [(string) $propertyList, "font: 16px 'Trebuchet MS', sans-serif"];
+
+        $propertyList->set('font-weight', 'bold');
+        $data[] = [(string) $propertyList, "font: bold 16px 'Trebuchet MS', sans-serif"];
+
         return $data;
     }
 

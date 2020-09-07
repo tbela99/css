@@ -1,5 +1,5 @@
 /* start: @import from files/test_2.css */
-@media all and (min-width:320px) {
+@media all and(min-width:320px) {
   /* comment 1 */
  @media print /* comment 2 */ /* comment 3 */ {
    /* comment 4 */
