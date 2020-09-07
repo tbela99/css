@@ -4,6 +4,7 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
+use TBela\CSS\Value\Font;
 use TBela\CSS\Value\Set;
 
 /**
@@ -89,6 +90,19 @@ class PropertyMap
 
             // the type matches the shorthand - example system font
             if ($name != $this->shorthand) {
+
+                try {
+
+                    // can we parse this shorthand?
+                    Font::matchPattern($this->properties[$this->shorthand]->getValue()->toArray());
+                }
+
+                catch (\Exception $e) {
+
+                    // no? append the new property
+                    $this->properties[$name] = (new Property($name))->setValue($value);
+                    return $this;
+                }
 
                 foreach ($this->properties[$this->shorthand]->getValue() as $val) {
 
