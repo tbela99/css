@@ -5,7 +5,7 @@ namespace TBela\CSS\Query;
 use InvalidArgumentException;
 use TBela\CSS\Value;
 
-class TokenSelectorValueAttributeFunctionEquals implements TokenSelectorValueInterface
+class TokenSelectorValueAttributeFunctionEndswith implements TokenSelectorValueInterface
 {
     /**
      * @var TokenSelectorValueAttributeExpression

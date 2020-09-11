@@ -1,16 +1,72 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Parser as CssParser;
+use TBela\CSS\Query\Parser as QueryParser;
+
 require 'autoload.php';
 
-use TBela\CSS\Property\PropertyList;
+//$query = 'span[@name="foo"] [@name="bar"]';
+//$css = file_get_contents(__DIR__.'/query/style.css');
+//
+//$parser = new Parser();
+//
+//echo $parser->parse($query)."\n";
+// var_dump($parser->parse($query));
 
-$property = new PropertyList();
+$css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
 
-//$property->set('outline', 'thick');
-$property->set('outline-width', '0px');
-$property->set('outline-style', 'none');
-$property->set('outline-color', 'rebeccapurple');
-//$property->set('outline', 'none');
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
 
-echo $property;
+@media print, screen and (max-width: 12450px) {
+
+p {
+      color: #f0f0f0;
+      background-color: #030303;
+  }
+}
+
+@media print {
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
+
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+      ;
+    font-weight: bold;
+  }
+}';
+
+$query = '@font-face/src/..|html, body[@name="foo bar"] | span[@name="foo"] [@name="bar"] |.nav, @media, p:before/content/.. | body
+,header';
+$query = '// @font-face / src / .. | @media[@value^=print][1],p';
+
+//echo (new QueryParser())->parse($query);
+
+echo implode("\n", (new CssParser($css))->parse()->query($query));

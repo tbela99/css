@@ -78,4 +78,27 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
 
         return $result;
     }
+
+    /**
+     * @param array $options
+     * @return string
+     */
+    public function render(array $options = []) {
+
+        $result = '';
+
+        foreach ($this->value as $value) {
+
+            if ($value->type == 'attribute_name') {
+
+                $result .= '@';
+            }
+
+            $q = $value->q ?? '';
+
+            $result .= $q.$value->value.$q;
+        }
+
+        return $result;
+    }
 }

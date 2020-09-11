@@ -15,37 +15,16 @@ class Evaluator
     public function evaluate(string $expression, QueryInterface $context)
     {
 
-        $tokens = (new Parser())->parse($expression);
+        $tokenList = (new Parser())->parse($expression);
 
-        if ($tokens === []) {
-
-            return [];
-        }
-
-        $result = [$context];
-        $j = count($tokens);
-
-        for($i = 0; $i < $j; $i++) {
-
-            $result = $tokens[$i]->filter($result);
-
-            if (empty($result)) {
-
-                break;
-            }
-        }
-
-        if (count($result) < 2) {
-
-            return $result;
-        }
+        $results = $tokenList->filter([$context]);
 
         $info = [];
 
         /**
          * @var \TBela\CSS\Element $element
          */
-        foreach ($result as $key => $element) {
+        foreach ($results as $key => $element) {
 
             $index = spl_object_id($element);
 
@@ -89,7 +68,7 @@ class Evaluator
 
         foreach ($info as $value) {
 
-            $res[] = $result[$value['key']];
+            $res[] = $results[$value['key']];
         }
 
         return $res;

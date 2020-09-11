@@ -52,6 +52,8 @@ operator = != or =
 #$expression = '/.field p, a >   span, div#id span.can /background[2]';
 $expression='[@name]';
 #$expression='[equals(@name, "color")][not(color(@value, "white"))]';
+#$expression='[beginswith(@name, "color")][not(color(@value, "white"))]';
+#$expression='[endswith(@name, "color")][not(color(@value, "white"))]';
 #$expression='[color(@value, "red")]';
 #$expression = '[equals(@name, "src")]/..';
 #$expression = '[equals(@value, print)]';
@@ -70,6 +72,11 @@ $expression='[@name]';
 #$expression = '[@value=@value]';
 #$expression = '// @font-face / src / ..';
 #$expression = '//* / color/ ..';
+#$expression = '// @font-face / src / ..';
+#$expression = '// @font-face / src / .. | body | p:before';
+#$expression = 'h1,a';
+#$expression = 'span a, div';
+$expression = 'h1,h2, a';
 
 echo "parse expression $expression\n\n";
 
@@ -106,6 +113,10 @@ span {
 color: #343434;
 }
 
+span a, div {
+
+color: white;
+}
 h1,h2, a {
   color: #fff;
   font-size: 50px;

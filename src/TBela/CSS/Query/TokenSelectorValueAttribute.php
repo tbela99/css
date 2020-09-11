@@ -53,4 +53,13 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         return $this->expression->evaluate($context);
     }
+
+    /**
+     * @param array $options
+     * @return string
+     */
+    public function render(array $options = []) {
+
+        return '['.$this->expression->render($options).']';
+    }
 }

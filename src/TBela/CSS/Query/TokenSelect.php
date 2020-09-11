@@ -105,4 +105,31 @@ class TokenSelect extends Token implements TokenSelectInterface
 
         return array_values($result);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options = [])
+    {
+
+        if (isset($this->context)) {
+
+            if ($this->context == 'root') {
+
+                return '//'.(isset($this->node) ? $this->node : '');
+            }
+        }
+
+        if($this->node == 'self_or_descendants') {
+
+            return '';
+        }
+
+        if ($this->node == '>') {
+
+            return '/';
+        }
+
+        return '/'.$this->node;
+    }
 }
