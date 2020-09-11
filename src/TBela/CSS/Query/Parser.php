@@ -287,7 +287,7 @@ class Parser
                         $result[] = (object)['type' => 'string', 'value' => $buffer, 'q' => preg_match('#^[a-zA-Z_@-][a-zA-Z0-9_@-]+$#', $buffer) ? '' : $selector[$i]];
 
                         $i += strlen($match) - 1;
-                    $buffer = '';
+                        $buffer = '';
                         break;
 
                     case ',':
@@ -331,7 +331,7 @@ class Parser
                                 }
                             }
 
-                             else {
+                            else {
 
                                 $buffer .= $selector[$i];
                             }
@@ -421,8 +421,8 @@ class Parser
                                 else if (count($data->value) == 3) {
 
                                     if ($data->value[1]->type == 'operator' &&
-                                    $data->value[0]->type == $data->value[2]->type &&
-                                    $data->value[2]->value === $data->value[2]->value) {
+                                        $data->value[0]->type == $data->value[2]->type &&
+                                        $data->value[2]->value === $data->value[2]->value) {
 
                                         $data = [];
                                     }
@@ -566,7 +566,7 @@ class Parser
 
             $this->position += 1;
             $this->tokens[] = (object)['type' => 'select', 'node' => '*'];
-        } else {
+        } else if ($substr !== false) {
             $token = substr($substr, 0, 1);
 
             if ($token == '/') {
@@ -574,6 +574,8 @@ class Parser
                 //    $this->position++;
                 $this->tokens[] = (object)['type' => 'select', 'node' => '>'];
             } else if ($token !== '') {
+
+                var_dump($token, $substr);
 
                 throw new SyntaxError(sprintf('expected "%s" at position %d', $token, $this->position));
             }

@@ -10,7 +10,7 @@ class TokenSelectorValueAttributeFunctionContains implements TokenSelectorValueI
     /**
      * @var TokenSelectorValueAttributeExpression
      */
-    protected TokenSelectorValueAttributeExpression $expression;
+    protected $expression;
 
     /**
      * TokenSelectorValueAttributeExpression constructor.
@@ -24,7 +24,7 @@ class TokenSelectorValueAttributeFunctionContains implements TokenSelectorValueI
     /**
      * @inheritDoc
      */
-    public function evaluate(array $context): array {
+    public function evaluate(array $context) {
 
        return $this->expression->evaluate($context);
     }

@@ -94,7 +94,7 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
                 $result .= '@';
             }
 
-            $q = $value->q ?? '';
+            $q = isset($value->q) ? $value->q : '';
 
             $result .= $q.$value->value.$q;
         }

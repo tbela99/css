@@ -22,7 +22,7 @@ whichphp() {
                 echo '/bin/php'
         fi
 }
-php56=whichphp
+php56=$(whichphp)
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
