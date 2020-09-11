@@ -32,6 +32,20 @@ final class Query extends TestCase
     /**
      * @param array $expected
      * @param array $actual
+     * @dataProvider querySelectorProvider
+     */
+    public function testQuerySelector(array $expected, array $actual)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
      * @dataProvider queryFunctionsProvider
      */
     public function testQueryFunctions(array $expected, array $actual)
@@ -507,6 +521,107 @@ p {
         return $data;
     }
 
+    public function querySelectorProvider () {
+
+        $data = [];
+
+        $css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+@media print, screen and (max-width: 12450px) {
+
+p {
+      color: #f0f0f0;
+      background-color: #030303;
+  }
+}
+
+@media print {
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
+
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+      ;
+    font-weight: bold;
+  }
+}';
+
+        $compiler = new Compiler();
+
+        $compiler->setContent($css);
+
+        $element = $compiler->getData();
+
+        // select @font-face that contains a src declaration
+        $context = '// @font-face / src / .. | @media[@value^=print][1],p';
+
+        $data[] = [
+            [
+                0 => '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+}',
+                1 => '@media print, screen and(max-width:12450px) {
+ p {
+   color: #f0f0f0;
+   background-color: #030303
+ }
+}',
+                2 => '@media print {
+ @font-face {
+   font-family: MaHelvetica;
+   font-weight: bold;
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+ }
+}',
+                3 => '@media print {
+ p {
+   font-size: 12px;
+   color: #000;
+   text-align: left
+ }
+}',
+                4 => '@media print {
+ @font-face {
+   font-family: Arial, MaHelvetica;
+   font-weight: bold;
+   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+ }
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        return $data;
+    }
+
     public function queryFunctionsProvider () {
 
         $data = [];
@@ -635,6 +750,86 @@ h1,h2, a {
 
         //
         $context = '[equals(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}',
+                1 => 'span {
+ color: #343434
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[beginswith(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}',
+                1 => 'span {
+ color: #343434
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[endswith(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}',
+                1 => 'body {
+ background-color: green
+}',
+                2 => 'span {
+ color: #343434
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '// @font-face / src / .. | body | p:before';
+
+        $data[] = [
+            [
+                0 => '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+}',
+                1 => 'p:before {
+ content: print;
+ color: red
+}',
+                2 => 'body {
+ background-color: green;
+ color: #fff;
+ font-family: Arial, Helvetica, sans-serif
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[equals(@name, "color")][not(color(@value, "white"))]';
+
+        $data[] = [
+            [
+                0 => 'p:before {
+ color: red
+}',
+                1 => 'span {
+ color: #343434
+}'
+            ],
+            array_map('trim', $element->query($context))];
+
+        //
+        $context = '[beginswith(@name, "color")][not(color(@value, "white"))]';
 
         $data[] = [
             [

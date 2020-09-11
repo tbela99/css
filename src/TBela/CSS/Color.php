@@ -751,6 +751,18 @@ class Color
 
         return $rgba;
     }
+
+    protected static function pivotRgb($n)
+    {
+
+        return ($n > 0.04045 ? (($n + 0.055) / 1.055) ** 2.4 : $n / 12.92) * 100;
+    }
+
+    protected static function pivotXyz($n)
+    {
+
+        return $n > 0.008856 ? $n ** (1 / 3) : 7.787 * $n + 16 / 116;
+    }
     */
 
     protected static function rgb2hue($r, $g, $b, $fallback = 0)
@@ -865,17 +877,4 @@ class Color
         }
 
         return strlen($str) <= strlen($color) ? $str : $color;
-    }
-
-    protected static function pivotRgb($n)
-    {
-
-        return ($n > 0.04045 ? (($n + 0.055) / 1.055) ** 2.4 : $n / 12.92) * 100;
-    }
-
-    protected static function pivotXyz($n)
-    {
-
-        return $n > 0.008856 ? $n ** (1 / 3) : 7.787 * $n + 16 / 116;
-    }
-}
+    }}

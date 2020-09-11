@@ -260,6 +260,16 @@ abstract class RuleList extends Element implements RuleListInterface
     /**
      * @inheritDoc
      */
+    public function appendCss($css) {
+
+        $this->append((new Parser($css))->parse());
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function insert(Element $element, $position)
     {
         if (!$this->support($element) || $position < 0) {

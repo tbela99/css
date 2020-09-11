@@ -26,7 +26,7 @@ class Parser
 
     /**
      * @param $string
-     * @return TokenInterface[]
+     * @return TokenList
      * @throws SyntaxError
      */
     public function parse($string)
@@ -36,8 +36,34 @@ class Parser
 
         if ($string === '') {
 
-            return [];
+            return new TokenList([]);
         }
+
+        $tokens = [];
+
+        if (strpos($string, '|') !== false) {
+
+            $tokens = [];
+
+            foreach ($this->split($string) as $token) {
+
+                $this->doParse($token);
+                $tokens[] = array_map([Token::class, 'getInstance'], $this->tokens);
+            }
+        }
+
+        else {
+
+            $this->doParse($string);
+            $tokens[] = array_map([Token::class, 'getInstance'], $this->tokens);
+        }
+
+        return new TokenList($tokens);
+    }
+
+    protected function doParse ($string) {
+
+        $string = ltrim($string);
 
         $i = -1;
         $j = strlen($string) - 1;
@@ -250,8 +276,18 @@ class Parser
                             throw new SyntaxError(sprintf('missing %s at position %d', $selector[$i], $j));
                         }
 
-                        $buffer .= ParserTrait::stripQuotes($match, true);
+
+                        if ($buffer !== '') {
+
+                            $result[] = $this->getTokenType($buffer, $context);
+                        }
+
+                        $buffer = ParserTrait::stripQuotes($match, true);
+
+                        $result[] = (object)['type' => 'string', 'value' => $buffer, 'q' => preg_match('#^[a-zA-Z_@-][a-zA-Z0-9_@-]+$#', $buffer) ? '' : $selector[$i]];
+
                         $i += strlen($match) - 1;
+                    $buffer = '';
                         break;
 
                     case ',':
@@ -342,6 +378,12 @@ class Parser
 
                     case '[':
 
+                        if ($buffer !== '') {
+
+                            $result[] = $this->getTokenType($buffer, $context);
+                            $buffer = '';
+                        }
+
                         if ($context == 'attribute') {
 
                             throw new SyntaxError(sprintf('Unexpected character %s at position %d in "%s"', $selector[$i], $i, $selector));
@@ -394,8 +436,9 @@ class Parser
                         }
 
                         $in_attribute = false;
-                        $buffer = '';
                         $i += strlen($match) - 1;
+
+                        $buffer = '';
                         break;
 
                     case '(':
@@ -486,12 +529,19 @@ class Parser
     protected function getTokenType($token, $context)
     {
 
-        $result = (object)['type' => 'string', 'value' => $token];
+        $value = trim($token);
+
+        if ($value === '' && $token !== '') {
+
+            $value = ' ';
+        }
+
+        $result = (object)['type' => 'string', 'value' => $value];
 
         if (substr($token, 0, 1) == '@' && $context != 'selector') {
 
             $result->type = 'attribute_name';
-            $result->value = substr($token, 1);
+            $result->value = substr($result->value, 1);
         }
 
         return $result;
@@ -601,5 +651,75 @@ class Parser
         }
 
         return $buffer;
+    }
+
+    protected function split($string)
+    {
+
+        $result = [];
+
+        $i = -1;
+        $j = strlen($string);
+
+        $buffer = '';
+
+        while (++$i < $j) {
+
+            switch ($string[$i]) {
+
+                case '|':
+
+                    $result[] = $buffer;
+                    $buffer = '';
+                    break;
+
+                case '"':
+                case "'":
+
+                    $buffer .= $string[$i];
+
+                    $token = $string[$i];
+
+                    while (++$i < $i) {
+
+                        $buffer .= $string[$i];
+
+                        if ($string[$i] == $token && $string[$i - 1] != '\\') {
+
+                            break;
+                        }
+                    }
+
+                    break;
+
+                case '[':
+
+                    $buffer .= $string[$i];
+
+                    while (++$i < $j) {
+
+                        $buffer .= $string[$i];
+
+                        if ($string[$i] == ']' && $string[$i - 1] != '\\') {
+
+                            break;
+                        }
+                    }
+
+                    break;
+
+                default:
+
+                    $buffer .= $string[$i];
+                    break;
+            }
+        }
+
+        if ($buffer !== '') {
+
+            $result[] = $buffer;
+        }
+
+        return $result;
     }
 }

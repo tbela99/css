@@ -61,4 +61,25 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
         return $this->unique($result);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options = []) {
+
+        $result = [];
+
+        foreach ($this->value as $values) {
+
+            $partial = '';
+
+            foreach ($values as $value) {
+
+                $partial .= $value->render($options);
+            }
+
+            $result[] = $partial;
+        }
+        return implode(",", $result);
+    }
 }

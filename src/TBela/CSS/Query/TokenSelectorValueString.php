@@ -55,4 +55,12 @@ class TokenSelectorValueString extends TokenSelectorValue
 
         return $result;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options = []) {
+
+        return $this->value;
+    }
 }
