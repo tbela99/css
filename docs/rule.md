@@ -16,6 +16,30 @@ none
 
 \TBela\CSS\Element\Rule
 
+### Append
+
+append css elements to this node
+
+#### Arguments
+
+- css: \TBela\CSS\Element|\TBela\CSS\Element[]
+
+#### Return Type
+
+\TBela\CSS\Element|\TBela\CSS\Interfaces\RuleListInterface
+
+### AppendCss
+
+append css content to this at-rule.
+
+#### Arguments
+
+- css: _string_
+
+#### Return Type
+
+\TBela\CSS\Element|\TBela\CSS\Interfaces\RuleListInterface
+
 ### getSelector
 
 Return the rule selector

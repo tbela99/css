@@ -11,10 +11,10 @@ the node selectors are
 - '..': match the parent node
 - '/': match the root nodes
 - '//' : match all descendant nodes
+- '|': match nodes that match selector a or selector /b in 'a|/b'
 - 'a': match all nodes with a selector or name 'a'
 - 'a[2]': match the second node with name or selector equals to 'a'
 - 'a,b': match nodes with name or selector that is either 'a' or 'b'
-- 'a|b': match nodes that match selector a or selector b
 - '@media[@value=print]': match all media with value equals to 'print'. Example: @media print {}
 - '@media[@value^=print]': match all media with value that begins with 'print'. Example: @media print and (max-width: 320px)
 - '@media[@value*=print]': match all media with value that contains 'print'

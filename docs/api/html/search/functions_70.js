@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['parse',['parse',['../da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a9d95c4f2566b573cd3219ced7946b102',1,'TBela\CSS\Query\Parser\parse()'],['../dd/dca/classTBela_1_1CSS_1_1Value.html#afc4112b8b7dcf1a141d70064455b3676',1,'TBela\CSS\Value\parse()']]],
+  ['parse',['parse',['../da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a9d95c4f2566b573cd3219ced7946b102',1,'TBela\CSS\Query\Parser\parse()'],['../dd/dca/classTBela_1_1CSS_1_1Value.html#aa5078729e8c9532c050a99807ca6d331',1,'TBela\CSS\Value\parse()']]],
   ['parse_5fpath',['parse_path',['../da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#aad7f74174ecca04191dbc7429dd5c23b',1,'TBela::CSS::Query::Parser']]],
   ['parse_5fselector',['parse_selector',['../da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#acff1c24e4b29b4d2cd706eec33b543da',1,'TBela::CSS::Query::Parser']]],
   ['parse_5fselectors',['parse_selectors',['../da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a98c509844317ba78eeff17ef545052d8',1,'TBela::CSS::Query::Parser']]],
