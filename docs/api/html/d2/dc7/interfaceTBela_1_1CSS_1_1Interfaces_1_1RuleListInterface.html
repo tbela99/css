@@ -139,6 +139,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7b65acda562bfc18d60156f13b36d1d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaba431944ae645f298ee740cce11e6b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#aaba431944ae645f298ee740cce11e6b5">append</a> (Element...$elements)</td></tr>
 <tr class="separator:aaba431944ae645f298ee740cce11e6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1b769d0d9c6a2ee279ed5ad6252d217"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#ae1b769d0d9c6a2ee279ed5ad6252d217">appendCss</a> ($css)</td></tr>
+<tr class="separator:ae1b769d0d9c6a2ee279ed5ad6252d217"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab72fb6b2be6cbb3b9cdba64a9370a2ec"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#ab72fb6b2be6cbb3b9cdba64a9370a2ec">insert</a> (<a class="el" href="../../d8/d23/classTBela_1_1CSS_1_1Element.html">Element</a> $element, $position)</td></tr>
 <tr class="separator:ab72fb6b2be6cbb3b9cdba64a9370a2ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e6e2d75aa324c5ec8ec460a63b02b86"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html#a0e6e2d75aa324c5ec8ec460a63b02b86">remove</a> (<a class="el" href="../../d8/d23/classTBela_1_1CSS_1_1Element.html">Element</a> $element)</td></tr>
@@ -194,10 +196,10 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>append child node </p>
+<p>append child nodes </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Element[]</td><td>$elements </td></tr>
+    <tr><td class="paramname">Element|Element[]</td><td>$elements </td></tr>
   </table>
   </dd>
 </dl>
@@ -210,6 +212,38 @@ Public Member Functions</h2></td></tr>
 </dl>
 
 <p>Implemented in <a class="el" href="../../db/dd6/classTBela_1_1CSS_1_1RuleList.html#ac4c89d390b424fcb47f72f92402ef20f">TBela\CSS\RuleList</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae1b769d0d9c6a2ee279ed5ad6252d217"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TBela\CSS\Interfaces\RuleListInterface::appendCss </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$css</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>append css text to this node </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$css</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../d8/d23/classTBela_1_1CSS_1_1Element.html">Element</a> </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="../../db/dd6/classTBela_1_1CSS_1_1RuleList.html#a36342fb6795c56fe7408a859eefaf618">TBela\CSS\RuleList</a>.</p>
 
 </div>
 </div>

@@ -4,6 +4,7 @@ var hierarchy =
     [ "TBela\\CSS\\Compiler", "d1/d8f/classTBela_1_1CSS_1_1Compiler.html", null ],
     [ "TBela\\CSS\\Property\\Config", "dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html", null ],
     [ "CssFunction", null, [
+      [ "TBela\\CSS\\Value\\CssSrcFormat", "d9/d40/classTBela_1_1CSS_1_1Value_1_1CssSrcFormat.html", null ],
       [ "TBela\\CSS\\Value\\CssUrl", "da/dca/classTBela_1_1CSS_1_1Value_1_1CssUrl.html", null ]
     ] ],
     [ "TBela\\CSS\\Query\\Evaluator", "d8/d89/classTBela_1_1CSS_1_1Query_1_1Evaluator.html", null ],
@@ -44,6 +45,7 @@ var hierarchy =
         [ "TBela\\CSS\\Query\\TokenSelect", "d9/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelect.html", null ],
         [ "TBela\\CSS\\Query\\TokenSelector", "dd/d6e/classTBela_1_1CSS_1_1Query_1_1TokenSelector.html", null ]
       ] ],
+      [ "TBela\\CSS\\Query\\TokenList", "da/d01/classTBela_1_1CSS_1_1Query_1_1TokenList.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectInterface", "d7/d86/interfaceTBela_1_1CSS_1_1Query_1_1TokenSelectInterface.html", [
         [ "TBela\\CSS\\Query\\TokenSelect", "d9/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelect.html", null ]
       ] ],
@@ -64,9 +66,13 @@ var hierarchy =
       ] ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeExpression", "d6/d73/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeExpression.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunction", "d2/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunction.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionBeginswith", "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionColor", "dc/dd7/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionColor.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionComment", "da/db5/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionComment.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionContains", "d5/dcb/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionContains.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEmpty", "d1/dab/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEmpty.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEndswith", "d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEquals", "da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionNot", "dd/dae/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionNot.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeIndex", "d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex.html", null ]
     ] ],
@@ -92,6 +98,7 @@ var hierarchy =
           [ "TBela\\CSS\\Value\\OutlineWidth", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html", null ]
         ] ]
       ] ],
+      [ "TBela\\CSS\\Value\\Operator", "db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator.html", null ],
       [ "TBela\\CSS\\Value\\OutlineStyle", "df/d55/classTBela_1_1CSS_1_1Value_1_1OutlineStyle.html", null ],
       [ "TBela\\CSS\\Value\\Separator", "d1/d60/classTBela_1_1CSS_1_1Value_1_1Separator.html", null ],
       [ "TBela\\CSS\\Value\\ShortHand", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html", [

@@ -7,6 +7,7 @@ It is the root element of the css stylesheet.
 there are several ways to create a stylesheet.
 
 ### Using AST
+
 ```php
 
 use \TBela\CSS\Element;
@@ -118,6 +119,30 @@ none
 #### Return Type
 
 \TBela\CSS\Stylesheet
+
+### Append
+
+append css elements to this node
+
+#### Arguments
+
+- css: \TBela\CSS\Element|\TBela\CSS\Element[]
+
+#### Return Type
+
+\TBela\CSS\Element|\TBela\CSS\Interfaces\RuleListInterface
+
+### AppendCss
+
+append css content to this at-rule.
+
+#### Arguments
+
+- css: _string_
+
+#### Return Type
+
+\TBela\CSS\Element|\TBela\CSS\Interfaces\RuleListInterface
 
 ### AddRule
 

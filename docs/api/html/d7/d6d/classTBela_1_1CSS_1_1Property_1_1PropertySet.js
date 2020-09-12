@@ -3,6 +3,7 @@ var classTBela_1_1CSS_1_1Property_1_1PropertySet =
     [ "__construct", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#afd7b34d535d9da3b2ef62ee2eeb45c4a", null ],
     [ "__toString", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a68b0278d50d518f765e419d21aeb23a4", null ],
     [ "expand", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#af35098e0ca1502a43b532bf434776c66", null ],
+    [ "expandProperties", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a4265856b56754d9ae75973f37a31e533", null ],
     [ "getProperties", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a881df7cdba626c77a542b2c6fc5056e7", null ],
     [ "reduce", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a223117af3db3d9fa3a612eea9a25de90", null ],
     [ "render", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a8317a13a28227d69b79be689894a7fb2", null ],
