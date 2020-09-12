@@ -11,6 +11,7 @@ the node selectors are
 - '..': match the parent node
 - '/': match the root nodes
 - '//' : match all descendant nodes
+- '|': match nodes that match selector a or selector /b in 'a|/b'
 - 'a': match all nodes with a selector or name 'a'
 - 'a[2]': match the second node with name or selector equals to 'a'
 - 'a,b': match nodes with name or selector that is either 'a' or 'b'
@@ -50,8 +51,13 @@ $nodes = $element->query('[@value="print"]');
 ```
 ### Operators
 
-Operators are used inside attributes. They can only be used inside '\[' and '\]'
+#### or (|)
 
+select nodes that match any of the selectors
+
+```php
+$nodes = $element->query('[@value="url(./images/flower.jpg)"]|@media|@font-face');
+```
 #### equals (=)
 
 ```php

@@ -215,7 +215,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>```php use <a class="el" href="d0/dce/namespaceTBela.html">TBela</a>; use ; use ; use ; use ; use ; use <a class="el" href="d0/dce/namespaceTBela.html">TBela</a>; use <a class="el" href="d0/dce/namespaceTBela.html">TBela</a>;</p>
 <p>$element = (new Compiler())-&gt;setContent($css)-&gt;getData();</p>
 <p>$renderer = new Renderer();</p>
-<p>$renderer-&gt;on('emit', function (Renderable $node) { </p>
+<p>$renderer-&gt;on('enter', function (Renderable $node) { </p>
 <pre class="fragment">// remove @font-face
 if ($node instanceof AtRule &amp;&amp; $node['name'] == 'font-face') {
 

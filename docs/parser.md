@@ -172,6 +172,7 @@ Configure the parser options.
 #### Parameters
 
 - \$css: _string_. Css string
+- \$media: _string_. optional, the css media
 
 #### Return type
 
@@ -210,7 +211,8 @@ Parse css content and append the result to the existing ast
 
 #### Parameters
 
-- $css: _string_. the css to parse
+- \$css: _string_. the css to parse
+- \$media: _string_. optional, the css media
 
 #### Return type
 
