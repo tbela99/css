@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"d8/d8b/classTBela_1_1CSS_1_1Parser.html#a65f8f4c7d256bcb5da62c9d1b49c5cd9":[1,0,1,0,10,8],
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a696308a77ac4dcaba558816fea8897bc":[1,0,1,0,10,21],
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a6a0b862ef987c01a8f5f9559323dfbbe":[1,0,1,0,10,30],
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a6dc05a9ab310b6881a78866dc1db3510":[1,0,1,0,10,0],
@@ -221,8 +222,8 @@ var NAVTREEINDEX1 =
 "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html#a5fc056473c17f2c454ac9d576fe20131":[1,0,1,0,5,14,0],
 "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html#ab59ebf75af022f020aae8d006cd3cce8":[1,0,1,0,5,14,1],
 "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html#ad75c80085c97b10b36bed5a296c59af3":[1,0,1,0,5,14,2],
-"functions.html":[1,3,0],
 "functions.html":[1,3,0,0],
+"functions.html":[1,3,0],
 "functions_0x5f.html":[1,3,0,1],
 "functions_0x61.html":[1,3,0,2],
 "functions_0x63.html":[1,3,0,3],
@@ -244,10 +245,9 @@ var NAVTREEINDEX1 =
 "functions_0x74.html":[1,3,0,19],
 "functions_0x75.html":[1,3,0,20],
 "functions_0x76.html":[1,3,0,21],
-"functions_func.html":[1,3,1,0],
 "functions_func.html":[1,3,1],
+"functions_func.html":[1,3,1,0],
 "functions_func_0x61.html":[1,3,1,1],
 "functions_func_0x63.html":[1,3,1,2],
-"functions_func_0x64.html":[1,3,1,3],
-"functions_func_0x65.html":[1,3,1,4]
+"functions_func_0x64.html":[1,3,1,3]
 };

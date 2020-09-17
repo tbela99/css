@@ -118,6 +118,16 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
+     * @param callable $fn
+     * @param string $event
+     * @return Element
+     */
+    public function traverse(callable $fn, $event) {
+
+        return (new Traverser())->on($event, $fn)->traverse($this);
+    }
+
+    /**
      * @param string $query
      * @return array
      * @throws Parser\SyntaxError
