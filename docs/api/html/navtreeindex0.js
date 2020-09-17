@@ -193,15 +193,16 @@ var NAVTREEINDEX0 =
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a0d891db217135c946e19b80c7a7a85bb":[1,0,1,0,9,20],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a1699e013a7f15070d721e5befefee4a5":[1,0,1,0,9,8],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a172ea34154ff74c5217a0399c57bb4ed":[1,0,1,0,9,12],
+"d8/d23/classTBela_1_1CSS_1_1Element.html#a190be9599d7e2c5f2f8d2b46dd7adc1c":[1,0,1,0,9,23],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a325174ab281fb4a749345e453166c5fa":[1,0,1,0,9,14],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a48ce89bb95d730fb4ca870a8cf3422ac":[1,0,1,0,9,19],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a525f2f5e9b3f6f486458194d34148b8b":[1,0,1,0,9,1],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a54921bc409af615357d422370037b568":[1,0,1,0,9,10],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a58da3032ba5a845ffbde1d12b2bebe54":[1,0,1,0,9,7],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a76a17ab30145f5df1fddd11b57444405":[1,0,1,0,9,3],
-"d8/d23/classTBela_1_1CSS_1_1Element.html#a8830510a70a67443dd449f7a793c4572":[1,0,1,0,9,23],
+"d8/d23/classTBela_1_1CSS_1_1Element.html#a8830510a70a67443dd449f7a793c4572":[1,0,1,0,9,24],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a97da545e200c37d033ebbe4c777bfce7":[1,0,1,0,9,13],
-"d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc":[1,0,1,0,9,24],
+"d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc":[1,0,1,0,9,25],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#aa47c87c7479d427c45ed45738fb48766":[1,0,1,0,9,11],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#aadd7bd8f2d93615ef8fd3748ef9cca77":[1,0,1,0,9,21],
 "d8/d23/classTBela_1_1CSS_1_1Element.html#ac5e20129020ae7c41ebf252ff9ac77ba":[1,0,1,0,9,15],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a4d575db6b36b4bcecf9419fa8f165dd8":[1,0,1,0,10,29],
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a53e17cf2b3c1626affa5bb4c8885a71a":[1,0,1,0,10,20],
 "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5a261eaed23d8fddeff22347f8a10f8e":[1,0,1,0,10,4],
-"d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5b64d38d85347b0293d4fc592f3ad3bb":[1,0,1,0,10,6],
-"d8/d8b/classTBela_1_1CSS_1_1Parser.html#a65f8f4c7d256bcb5da62c9d1b49c5cd9":[1,0,1,0,10,8]
+"d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5b64d38d85347b0293d4fc592f3ad3bb":[1,0,1,0,10,6]
 };

@@ -38,16 +38,8 @@ class Parser
      */
     protected $end = 0;
 
-    /**
-     * @var array
-     * @ignore
-     */
+
     protected $errors = [];
-    /**
-     * @var array
-     * @ignore
-     */
-    protected $warnings = [];
 
     /**
      * @var stdClass|null
@@ -458,7 +450,6 @@ class Parser
     {
 
         $this->errors = [];
-        $this->warnings = [];
 
         if (!empty($this->options['flatten_import'])) {
 
@@ -515,7 +506,7 @@ class Parser
 
                 if ($node === false) {
 
-                    $this->warnings[] = new Exception(sprintf('cannot parse token at %s:%s : "%s"', $this->previousPosition->line, $this->previousPosition->column,
+                    $this->errors[] = new Exception(sprintf('cannot parse token at %s:%s : "%s"', $this->previousPosition->line, $this->previousPosition->column,
                         preg_replace('#^(.{40}).*$#sm', '$1... ', $substr)));
                     //     continue;
                 } else {
@@ -547,7 +538,7 @@ class Parser
 
                     $rule = $substr . $block;
 
-                    $this->warnings[] = new Exception(sprintf('cannot parse token at %s:%s. Ignoring rules : "%s"', $this->previousPosition->line, $this->previousPosition->column, preg_replace('#(.{40}).*$#sm', '$1... ', $rule)));
+                    $this->errors[] = new Exception(sprintf('cannot parse token at %s:%s. Ignoring rules : "%s"', $this->previousPosition->line, $this->previousPosition->column, preg_replace('#(.{40}).*$#sm', '$1... ', $rule)));
                     $this->update($this->currentPosition, $rule);
                     $this->currentPosition->index += strlen($rule);
 
@@ -570,9 +561,9 @@ class Parser
 
                         $parser->doParse();
 
-                        if (!empty($parser->warnings)) {
+                        if (!empty($parser->errors)) {
 
-                            array_splice($this->warnings, count($this->warnings), 0, $parser->warnings);
+                            array_splice($this->errors, count($this->errors), 0, $parser->errors);
                         }
 
                     } else {
@@ -851,7 +842,7 @@ class Parser
     protected function parseSelector($rule, $position)
     {
 
-        $selector = rtrim($rule, "{\n\t\r");
+        $selector = rtrim($rule, "{\n\t\r ");
 
         if (trim($selector) === '') {
 
@@ -871,7 +862,7 @@ class Parser
                 'start' => $currentPosition,
                 'end' => $position
             ],
-            'selector' => rtrim($rule, "{\n\t\r")
+            'selector' => $selector
         ]);
     }
 
@@ -884,6 +875,7 @@ class Parser
      */
     protected function parseDeclarations($rule, $block, $position)
     {
+
 
         $j = strlen($block) - 1;
         $i = -1;
@@ -962,11 +954,17 @@ class Parser
 
 
             $i += strlen($statement) - 1;
+
+            if (trim($statement) == '') {
+
+                continue;
+            }
+
             $declaration = explode(':', $statement, 2);
 
             if (count($declaration) != 2) {
 
-                $this->warnings[] = new Exception(sprintf('cannot parse declaration at %s:%s', $currentPosition->line, $currentPosition->column));
+                $this->errors[] = new Exception(sprintf('cannot parse declaration at %s:%s ', $currentPosition->line, $currentPosition->column));
             } else {
 
                 $value = rtrim($statement, "\n\r\t ;}");
@@ -1038,6 +1036,6 @@ class Parser
     public function getErrors()
     {
 
-        return $this->warnings;
+        return $this->errors;
     }
 }

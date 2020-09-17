@@ -23,6 +23,7 @@ var classTBela_1_1CSS_1_1Element =
     [ "setLocation", "d8/d23/classTBela_1_1CSS_1_1Element.html#a0d891db217135c946e19b80c7a7a85bb", null ],
     [ "setTrailingComments", "d8/d23/classTBela_1_1CSS_1_1Element.html#aadd7bd8f2d93615ef8fd3748ef9cca77", null ],
     [ "setValue", "d8/d23/classTBela_1_1CSS_1_1Element.html#ae84388e1d380a2dc637a1283fa147c32", null ],
+    [ "traverse", "d8/d23/classTBela_1_1CSS_1_1Element.html#a190be9599d7e2c5f2f8d2b46dd7adc1c", null ],
     [ "$ast", "d8/d23/classTBela_1_1CSS_1_1Element.html#a8830510a70a67443dd449f7a793c4572", null ],
     [ "$parent", "d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc", null ]
 ];
