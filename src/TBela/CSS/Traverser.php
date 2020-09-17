@@ -11,6 +11,10 @@ class Traverser extends Event
     public const IGNORE_NODE = 1;
     public const IGNORE_CHILDREN = 2;
 
+    /**
+     * @param Element $element
+     * @return Element|null
+     */
     public function traverse(Element $element) {
 
         $result = $this->doTraverse($element);

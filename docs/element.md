@@ -243,6 +243,34 @@ none
 
 _string_
 
+### Traverse
+
+Traverse a node and its children
+
+#### Arguments
+
+- $fn: _callable_. a callable that will filter the nodes
+- $event: _string_. An event among 'enter' and 'exit' which are fired respectively when we enter and exit the node
+
+Return values of the callable _$fn_:
+
+#### Return Type
+
+Element
+
+#### Callable Arguments Parameter Type
+
+- Element
+
+#### Callable Argument Return Type
+
+The node processing is based on the value or the type of the value returned:
+
+- null: keep the node passed as parameter
+- Traverser::IGNORE_NODE: ignore this node and its children
+- Traverser::IGNORE_CHILDREN: clone the node and remove its children
+- instanceof Element: replace the node with the new node
+
 ### Query
 
 query nodes using an xpath like syntax. see [query](./query.md)
