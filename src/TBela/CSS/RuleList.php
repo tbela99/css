@@ -304,7 +304,7 @@ abstract class RuleList extends Element implements RuleListInterface
 
         if ($element->getParent() === $this) {
 
-            $index = array_search($element, $this->ast->children);
+            $index = array_search($element, $this->ast->children, true);
 
             if ($index !== false) {
 
