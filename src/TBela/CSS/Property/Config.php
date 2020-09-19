@@ -176,7 +176,7 @@ final class Config {
 
                 $config[$shorthand]['value_map'][$property] = array_map(function ($value) use ($map_keys) {
 
-                    return array_search($value, $map_keys);
+                    return array_search($value, $map_keys, true);
 
                 }, $data['value_map']);
 
@@ -193,7 +193,6 @@ final class Config {
         }
 
         static::$config['properties'] = isset(static::$config['properties']) ? array_merge(static::$config['properties'], $config) : $config;
-
         return $config;
     }
 }

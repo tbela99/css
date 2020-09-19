@@ -272,7 +272,7 @@ class PropertySet
                         continue;
                     }
 
-                    $index = array_search($property, $this->property_type[$unit]);
+                    $index = array_search($property, $this->property_type[$unit], true);
                     $key = null;
 
                     $list = $types[$unit];

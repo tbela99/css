@@ -204,7 +204,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     public function copy() {
 
         $parent = $this;
-        $node = clone $this;
+        $copy = $node = clone $this;
 
         while ($parent = $parent->parent) {
 
@@ -220,7 +220,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
             $node = $parentNode;
         }
 
-        return $node;
+        return $copy;
     }
 
     /**
