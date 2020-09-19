@@ -118,6 +118,16 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
+     * @param callable $fn
+     * @param string $event
+     * @return Element
+     */
+    public function traverse(callable $fn, $event) {
+
+        return (new Traverser())->on($event, $fn)->traverse($this);
+    }
+
+    /**
      * @param string $query
      * @return array
      * @throws Parser\SyntaxError
@@ -192,7 +202,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     public function copy() {
 
         $parent = $this;
-        $node = clone $this;
+        $copy = $node = clone $this;
 
         while ($parent = $parent->parent) {
 
@@ -208,7 +218,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
             $node = $parentNode;
         }
 
-        return $node;
+        return $copy;
     }
 
     /**
