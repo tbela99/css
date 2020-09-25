@@ -86,6 +86,12 @@ use \TBela\CSS\Renderer;
 $parser = new Parser($css);
 $element = $parser->parse();
 
+// append an existing css file
+$parser->append('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+
+// append css string
+$parser->appendContent($css_string);
+
 // pretty print css
 $css = (string) $element;
 
@@ -213,7 +219,7 @@ render optimized css
 
 ```php
 
-$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy()->getRoot(); }, $nodes));
 
 $stylesheet->deduplicate();
 
@@ -339,6 +345,12 @@ div {
     color: #000;
   }
 }
+```
+Adding existing css
+```php
+
+$stylesheet->appendCss($css_string);
+
 ```
 
 ## Transform Rendered CSS

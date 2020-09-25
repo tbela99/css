@@ -54,11 +54,14 @@ var namespaceTBela =
         [ "TokenSelectorValueAttributeFunctionEmpty", "d1/dab/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEmpty.html", "d1/dab/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEmpty" ],
         [ "TokenSelectorValueAttributeFunctionEndswith", "d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith.html", "d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith" ],
         [ "TokenSelectorValueAttributeFunctionEquals", "da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals.html", "da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals" ],
+        [ "TokenSelectorValueAttributeFunctionGeneric", "d0/df9/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionGeneric.html", "d0/df9/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionGeneric" ],
         [ "TokenSelectorValueAttributeFunctionNot", "dd/dae/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionNot.html", "dd/dae/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionNot" ],
         [ "TokenSelectorValueAttributeIndex", "d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex.html", "d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex" ],
         [ "TokenSelectorValueAttributeTest", "d1/dcc/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeTest.html", "d1/dcc/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeTest" ],
         [ "TokenSelectorValueInterface", "d4/dff/interfaceTBela_1_1CSS_1_1Query_1_1TokenSelectorValueInterface.html", "d4/dff/interfaceTBela_1_1CSS_1_1Query_1_1TokenSelectorValueInterface" ],
-        [ "TokenSelectorValueString", "d3/d53/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueString.html", "d3/d53/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueString" ]
+        [ "TokenSelectorValueString", "d3/d53/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueString.html", "d3/d53/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueString" ],
+        [ "TokenSelectorValueWhitespace", "d1/d75/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueWhitespace.html", "d1/d75/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueWhitespace" ],
+        [ "TokenWhitespace", "de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace.html", "de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace" ]
       ] ],
       [ "Value", null, [
         [ "Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color" ],

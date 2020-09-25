@@ -15,8 +15,8 @@ var hierarchy =
       [ "TBela\\CSS\\Renderer", "df/d08/classTBela_1_1CSS_1_1Renderer.html", null ]
     ] ],
     [ "TBela\\CSS\\Parser\\Helper", "d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html", null ],
-    [ "TBela\\CSS\\Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", null ],
     [ "TBela\\CSS\\Query\\Parser", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html", null ],
+    [ "TBela\\CSS\\Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", null ],
     [ "TBela\\CSS\\Property\\PropertyMap", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html", null ],
     [ "TBela\\CSS\\Property\\PropertySet", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html", null ],
     [ "TBela\\CSS\\Query\\QueryInterface", "df/d9f/interfaceTBela_1_1CSS_1_1Query_1_1QueryInterface.html", [
@@ -66,15 +66,19 @@ var hierarchy =
       ] ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeExpression", "d6/d73/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeExpression.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunction", "d2/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunction.html", null ],
-      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionBeginswith", "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionColor", "dc/dd7/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionColor.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionComment", "da/db5/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionComment.html", null ],
-      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionContains", "d5/dcb/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionContains.html", null ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEmpty", "d1/dab/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEmpty.html", null ],
-      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEndswith", "d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith.html", null ],
-      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEquals", "da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionGeneric", "d0/df9/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionGeneric.html", [
+        [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionBeginswith", "df/dec/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionBeginswith.html", null ],
+        [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionContains", "d5/dcb/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionContains.html", null ],
+        [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEndswith", "d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith.html", null ],
+        [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionEquals", "da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals.html", null ]
+      ] ],
       [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeFunctionNot", "dd/dae/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionNot.html", null ],
-      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeIndex", "d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex.html", null ]
+      [ "TBela\\CSS\\Query\\TokenSelectorValueAttributeIndex", "d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex.html", null ],
+      [ "TBela\\CSS\\Query\\TokenSelectorValueWhitespace", "d1/d75/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueWhitespace.html", null ],
+      [ "TBela\\CSS\\Query\\TokenWhitespace", "de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace.html", null ]
     ] ],
     [ "TBela\\CSS\\Value", "dd/dca/classTBela_1_1CSS_1_1Value.html", [
       [ "TBela\\CSS\\Value\\Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", [

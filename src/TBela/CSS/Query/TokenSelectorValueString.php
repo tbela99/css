@@ -26,6 +26,11 @@ class TokenSelectorValueString extends TokenSelectorValue
      */
     public function evaluate(array $context): array
     {
+        if ($this->value == '*') {
+
+            return $context;
+        }
+
         $result = [];
 
         foreach ($context as $element) {

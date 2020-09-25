@@ -3,6 +3,7 @@
 namespace TBela\CSS\Query;
 
 use TBela\CSS\Parser\SyntaxError;
+use function usort;
 
 class Evaluator
 {
@@ -49,7 +50,7 @@ class Evaluator
             }
         }
 
-        \usort($info, function ($a, $b) {
+        usort($info, function ($a, $b) {
 
             if ($a['depth'] < $b['depth']) {
 

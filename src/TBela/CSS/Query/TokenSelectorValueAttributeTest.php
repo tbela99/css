@@ -21,12 +21,22 @@ class TokenSelectorValueAttributeTest extends TokenSelectorValueAttribute
 
         foreach ($context as $element) {
 
-            if (!is_null($element[$this->name])) {
+            if ((is_callable([$element, 'offsetExists']) && call_user_func([$element, 'offsetExists'], $this->name)) ||
+                !is_null($element[$this->name])) {
 
                 $result[] = $element;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $options
+     * @return string
+     */
+    public function render(array $options = []) {
+
+        return '@'.$this->name;
     }
 }

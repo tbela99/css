@@ -20,11 +20,14 @@ var searchData=
   ['tokenselectorvalueattributefunctionempty',['TokenSelectorValueAttributeFunctionEmpty',['../d1/dab/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEmpty.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueattributefunctionendswith',['TokenSelectorValueAttributeFunctionEndswith',['../d8/d61/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEndswith.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueattributefunctionequals',['TokenSelectorValueAttributeFunctionEquals',['../da/dff/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionEquals.html',1,'TBela::CSS::Query']]],
+  ['tokenselectorvalueattributefunctiongeneric',['TokenSelectorValueAttributeFunctionGeneric',['../d0/df9/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionGeneric.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueattributefunctionnot',['TokenSelectorValueAttributeFunctionNot',['../dd/dae/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeFunctionNot.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueattributeindex',['TokenSelectorValueAttributeIndex',['../d1/d6f/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeIndex.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueattributetest',['TokenSelectorValueAttributeTest',['../d1/dcc/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueAttributeTest.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvalueinterface',['TokenSelectorValueInterface',['../d4/dff/interfaceTBela_1_1CSS_1_1Query_1_1TokenSelectorValueInterface.html',1,'TBela::CSS::Query']]],
   ['tokenselectorvaluestring',['TokenSelectorValueString',['../d3/d53/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueString.html',1,'TBela::CSS::Query']]],
+  ['tokenselectorvaluewhitespace',['TokenSelectorValueWhitespace',['../d1/d75/classTBela_1_1CSS_1_1Query_1_1TokenSelectorValueWhitespace.html',1,'TBela::CSS::Query']]],
+  ['tokenwhitespace',['TokenWhitespace',['../de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace.html',1,'TBela::CSS::Query']]],
   ['traverse',['traverse',['../d8/d23/classTBela_1_1CSS_1_1Element.html#a190be9599d7e2c5f2f8d2b46dd7adc1c',1,'TBela\CSS\Element\traverse()'],['../d8/d60/classTBela_1_1CSS_1_1Traverser.html#ad5d1c4a5f03937d63a5046ed31d53230',1,'TBela\CSS\Traverser\traverse()']]],
   ['traverser',['Traverser',['../d8/d60/classTBela_1_1CSS_1_1Traverser.html',1,'TBela::CSS']]]
 ];
