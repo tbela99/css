@@ -38,7 +38,7 @@ class TokenList implements TokenInterface
 
                 if (empty($data)) {
 
-                    break;
+                    continue 2;
                 }
             }
 
@@ -58,13 +58,20 @@ class TokenList implements TokenInterface
     public function render(array $options = [])
     {
 
-        return implode(' | ', array_map(function ($nodes) use ($options) {
+        return implode('|', array_map(function ($nodes) use ($options) {
 
             $result = '';
 
-            foreach ($nodes as $node) {
+            foreach ($nodes as $index => $node) {
 
-                $result .= $node->render($options);
+                $partial = $node->render($options);
+
+                if (in_array($partial, ['.', '..']) && $index > 0) {
+
+                    $partial = '/'.$partial;
+                }
+
+                $result .= $partial;
             }
 
             return $result;

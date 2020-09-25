@@ -4,8 +4,14 @@ namespace TBela\CSS\Query;
 
 class TokenSelectorValueAttribute extends TokenSelectorValue
 {
+    use FilterTrait;
+
     protected $value = [];
-    protected $expression;
+
+    /**
+     * @var TokenSelectorValueInterface
+     */
+    protected  $expression;
 
     /**
      * TokenSelectorValueAttribute constructor.
@@ -15,6 +21,11 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
     public function __construct($data)
     {
         parent::__construct($data);
+
+        if (count($data->value) > 3) {
+
+            $data->value = $this->trim($data->value);
+        }
 
         if (count($data->value) == 3) {
 

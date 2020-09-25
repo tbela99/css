@@ -25,6 +25,9 @@ class TokenSelect extends Token implements TokenSelectInterface
 
         switch ($this->node) {
 
+            case '.':
+                return $context;
+
             case '>':
 
                 foreach ($context as $element) {
@@ -116,7 +119,7 @@ class TokenSelect extends Token implements TokenSelectInterface
 
             if ($this->context == 'root') {
 
-                return '//'.(isset($this->node) ? $this->node : '');
+                return '//';
             }
         }
 
@@ -130,6 +133,6 @@ class TokenSelect extends Token implements TokenSelectInterface
             return '/';
         }
 
-        return '/'.$this->node;
+        return $this->node;
     }
 }

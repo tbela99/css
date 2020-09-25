@@ -60,4 +60,12 @@ class TokenSelectorValueAttributeFunction extends TokenSelectorValue implements 
     {
        return $this->expression->evaluate($context);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options)
+    {
+        return $this->expression->render($options);
+    }
 }

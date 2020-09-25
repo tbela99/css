@@ -12,6 +12,7 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
     public function __construct($data)
     {
+
         parent::__construct($data);
 
         $index = 0;
@@ -78,7 +79,7 @@ class TokenSelector extends Token implements TokenSelectorInterface
                 $partial .= $value->render($options);
             }
 
-            $result[] = $partial;
+            $result[] = trim($partial) === '' ? $partial : trim($partial);
         }
         return implode(",", $result);
     }

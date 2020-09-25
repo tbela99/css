@@ -71,6 +71,19 @@ final class Query extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider renderQuery
+     */
+    public function testRenderQuery($expected, $actual)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
 /*
 */
     public function queryProvider () {
@@ -900,6 +913,87 @@ a {
 }'
             ],
             array_map('trim', $element->query($context))];
+
+        return $data;
+    }
+    /*
+    */
+    public function renderQuery ()
+    {
+
+        $data = [];
+
+        $parser = new \TBela\CSS\Query\Parser();
+
+        $query = '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type="radio"]:not(:checked) + .octicon-check, .select-menu-item input[type="radio"]:not(:checked) + .octicon-circle-slash';
+
+        $data[] = [
+            '.select-menu-item .octicon-check,.select-menu-item .octicon-circle-slash,.select-menu-item input[type=radio]:not(:checked) + .octicon-check,.select-menu-item input[type=radio]:not(:checked) + .octicon-circle-slash',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' . / [ @value = "print" ] ';
+        $data[] = [
+            './[@value=print]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' [ contains( @name , "background" ) ]';
+        $data[] = [
+            '[@name*=background]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' [ not( color( @value , "white") ) ] ';
+        $data[] = [
+            '[not(color(value,#fff))]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' [ equals( @name , "color" ) ] ';
+        $data[] = [
+            '[@name=color]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' [ beginswith( @name , "color" ) ] ';
+        $data[] = [
+            '[@name^=color]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = '.select-menu-item
+        .octicon-check';
+        $data[] = [
+            '.select-menu-item .octicon-check',
+            (string) $parser->parse($query)
+        ];
+
+        $query = '.select-menu-item
+        .octicon-check | [ beginswith( @name , "color" ) ] ';
+        $data[] = [
+            '.select-menu-item .octicon-check|[@name^=color]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = '// @font-face / src / ..';
+        $data[] = [
+            '//@font-face/src/..',
+            (string) $parser->parse($query)
+        ];
+
+        $query = '//* / color/ ..';
+        $data[] = [
+            '//*/color/..',
+            (string) $parser->parse($query)
+        ];
+
+        $query = '[@name]';
+        $data[] = [
+            '[@name]',
+            (string) $parser->parse($query)
+        ];
+
 
         return $data;
     }

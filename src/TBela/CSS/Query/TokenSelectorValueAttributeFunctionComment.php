@@ -18,4 +18,12 @@ class TokenSelectorValueAttributeFunctionComment extends TokenSelectorValue impl
            return $element['type'] == 'Comment';
        });
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options)
+    {
+        return 'comment()';
+    }
 }

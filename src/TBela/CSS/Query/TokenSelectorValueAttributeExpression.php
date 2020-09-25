@@ -6,6 +6,8 @@ use InvalidArgumentException;
 
 class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterface
 {
+    use FilterTrait;
+
     protected $value = [];
 
     /**
@@ -14,6 +16,12 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
      */
     public function __construct(array $value)
     {
+
+        if (count($value) != 3) {
+
+            $value = $this->trim($value);
+        }
+
         if (count($value) != 3) {
 
             throw new InvalidArgumentException('expecting an array with 2 items', 400);

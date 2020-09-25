@@ -18,4 +18,12 @@ class TokenSelectorValueAttributeFunctionEmpty extends TokenSelectorValue implem
            return is_callable([$element, 'getChildren']) && is_null($element['firstChild']);
        });
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options)
+    {
+        return 'empty()';
+    }
 }

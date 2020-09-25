@@ -91,49 +91,17 @@ class Parser
             $this->parse_path();
         }
 
-        $i = $j = count($this->tokens);
+        $j = count($this->tokens);
 
-        while ($i--) {
+        while ($j--) {
 
-            if (isset($this->tokens[$i + 1]->type) && $this->tokens[$i + 1]->type == 'select' && in_array($this->tokens[$i + 1]->node, ['.', '..'])) {
+            if (isset($this->tokens[$j + 1]) &&
+                $this->tokens[$j + 1]->type == 'select' &&
+                in_array($this->tokens[$j + 1]->node, ['.', '..']) &&
+                $this->tokens[$j]->type == 'select' &&
+                $this->tokens[$j]->node == '>') {
 
-                $token = $this->tokens[$i + 1];
-
-                if (in_array($token->node, ['.', '..'])) {
-
-                    array_splice($this->tokens, $i, $token->node == '.' ? 2 : 1);
-                    $i--;
-                    continue;
-                }
-            }
-
-            if ($this->tokens[$i]->type == 'select' && isset($this->tokens[$i]->node) && $this->tokens[$i]->node == '.') {
-
-                array_splice($this->tokens, $i, 1);
-                continue;
-            }
-
-            if ($this->tokens[$i]->type == 'selector') {
-
-                $k = count($this->tokens[$i]->value);
-
-                while ($k--) {
-
-                    if ($this->tokens[$i]->value[$k]->type == 'operator' && !in_array($this->tokens[$i]->value[$k]->value, [','])) {
-
-                        throw new SyntaxError(sprintf('%s is allowed only inside attribute. ex [@name %s "text"]. input: %s', $this->tokens[$i]->value[$k]->value, $this->tokens[$i]->value[$k]->value, $string), 400);
-                    }
-
-                    if ($this->tokens[$i]->value[$k]->type == 'string' && in_array($this->tokens[$i]->value[$k]->value, ['', '*'])) {
-
-                        array_splice($this->tokens[$i]->value, $k, 1);
-                    }
-                }
-
-                if (empty($this->tokens[$i]->value)) {
-
-                    array_splice($this->tokens, $i, 1);
-                }
+                array_splice($this->tokens, $j, 1);
             }
         }
 
@@ -339,7 +307,7 @@ class Parser
                             break;
                         }
 
-                        else if(in_array($selector[$i], ['*', '^', '$', '!'])) {
+                        else {
 
                             $buffer .= $selector[$i];
                             break;
@@ -365,15 +333,15 @@ class Parser
                             $buffer = '';
                         }
 
-                        while ($i < $j && $this->is_whitespace($selector[++$i])) ;
+                        while ($i < $j && $this->is_whitespace($selector[++$i]));
 
                         if ($selector[$i] == '/') {
 
                             break 2;
                         }
 
+                        $result[] = $this->getTokenType(' ', $context);
                         $i--;
-                        //    $result[] = (object)['type' => 'whitespace', 'value' => ' '];
                         break;
 
                     case '[':
@@ -421,8 +389,8 @@ class Parser
                                 else if (count($data->value) == 3) {
 
                                     if ($data->value[1]->type == 'operator' &&
-                                        $data->value[0]->type == $data->value[2]->type &&
-                                        $data->value[2]->value === $data->value[2]->value) {
+                                    $data->value[0]->type == $data->value[2]->type &&
+                                    $data->value[0]->value === $data->value[2]->value) {
 
                                         $data = [];
                                     }
@@ -443,11 +411,6 @@ class Parser
 
                     case '(':
 
-//                        if ($context == 'function') {
-//
-//                            throw new SyntaxError(sprintf('Unexpected character %s at position %d in "%s:%s"', $selector[$i], $i, $context, $selector));
-//                        }
-
                         $in_attribute = true;
                         $match = $this->match_token($selector, ')', $i, '(');
 
@@ -460,6 +423,7 @@ class Parser
 
                             $buffer .= $match;
                             $i += strlen($match) - 1;
+                            $in_attribute = false;
                             break;
                         }
 
@@ -505,12 +469,12 @@ class Parser
 
         if ($in_attribute) {
 
-            throw new SyntaxError('Expected character %s at position %d', ']', $i - 1);
+            throw new SyntaxError(sprintf('Expected character %s at position %d', ']', $i - 1));
         }
 
         if ($in_str) {
 
-            throw new SyntaxError('Expected character %s at position %d', $q, $i - 1);
+            throw new SyntaxError(sprintf('Expected character %s at position %d', $q, $i - 1));
         }
 
         if ($buffer !== '') {
@@ -536,7 +500,7 @@ class Parser
             $value = ' ';
         }
 
-        $result = (object)['type' => 'string', 'value' => $value];
+        $result = (object)['type' => $value === ' ' ? 'whitespace' : 'string', 'value' => $value];
 
         if (substr($token, 0, 1) == '@' && $context != 'selector') {
 

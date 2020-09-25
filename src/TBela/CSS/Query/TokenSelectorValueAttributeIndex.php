@@ -22,4 +22,12 @@ class TokenSelectorValueAttributeIndex implements TokenSelectorValueInterface
     {
         return isset($context[$this->value - 1]) ? [$context[$this->value - 1]] : [];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options)
+    {
+        return $this->value;
+    }
 }
