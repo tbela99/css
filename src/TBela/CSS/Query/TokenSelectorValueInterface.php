@@ -10,4 +10,10 @@ interface TokenSelectorValueInterface
      * @return bool
      */
     public function evaluate(array $context): array;
+
+    /**
+     * @param array $options
+     * @return string
+     */
+    public function render(array $options);
 }

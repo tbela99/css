@@ -138,6 +138,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>```php</p>
 <p>use ; use ;</p>
 <p>$parser = new Parser($css); $element = $parser-&gt;parse();</p>
+<p>// append an existing css file $parser-&gt;append('<a href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'</a>);</p>
+<p>// append css string $parser-&gt;appendContent($css_string);</p>
 <p>// pretty print css $css = (string) $element;</p>
 <p>// minified output $renderer = new Renderer([ 'compress' =&gt; true, 'convert_color' =&gt; 'hex', 'css_level' =&gt; 4, 'allow_duplicate_declarations' =&gt; false ]);</p>
 <p>$css = $renderer-&gt;render($element);</p>
@@ -168,7 +170,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>```css -face { src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff"); }  print { -face { src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf); } }  print { -face { src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), url(MgOpenModernaBold.ttf); } } ```</p>
 <p>render optimized css</p>
 <p>```php</p>
-<p>$stylesheet-&gt;setChildren(array_map(function ($node) { return $node-&gt;copy(); }, $nodes));</p>
+<p>$stylesheet-&gt;setChildren(array_map(function ($node) { return $node-&gt;copy()-&gt;getRoot(); }, $nodes));</p>
 <p>$stylesheet-&gt;deduplicate();</p>
 <p>echo $stylesheet; ```</p>
 <p>result</p>
@@ -201,7 +203,9 @@ $(document).ready(function(){initNavTree('index.html','');});
 <p>```php</p>
 <p>$stylesheet-&gt;insert($div, 0); ```</p>
 <p>output</p>
-<p>```css div { max-width: 100%; border-width: 0; }  print { div { background-color: #fff; color: #000; } } ```</p>
+<p>```css div { max-width: 100%; border-width: 0; }  print { div { background-color: #fff; color: #000; } } ``` Adding existing css ```php</p>
+<p>$stylesheet-&gt;appendCss($css_string);</p>
+<p>```</p>
 <h2>Transform Rendered <a class="el" href="d6/ded/namespaceCSS.html">CSS</a></h2>
 <p>Use the Renderer class to transform the output. the callback returns three types of values</p>
 <ul>

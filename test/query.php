@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Compiler;
 use TBela\CSS\Parser as CssParser;
 use TBela\CSS\Query\Parser as QueryParser;
 
@@ -63,10 +64,32 @@ p {
   }
 }';
 
-$query = '@font-face/src/..|html, body[@name="foo bar"] | span[@name="foo"] [@name="bar"] |.nav, @media, p:before/content/.. | body
-,header';
-$query = '// @font-face / src / .. | @media[@value^=print][1],p';
+$query = '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type="radio"]:not(:checked) + .octicon-check, .select-menu-item input[type="radio"]:not(:checked) + .octicon-circle-slash';
+//$query = ' . / [ @value = "print" ] ';
+//$query = ' [ contains( @name , "background" ) ]';
+//$query = ' [ not( color( @value , "white") ) ] ';
+//$query = ' [ equals( @name , "color" ) ] ';
+//$query = ' [ beginswith( @name , "color" ) ] ';
+//$query = '.select-menu-item
+//.octicon-check';
+//$query = '.select-menu-item
+//.octicon-check | [ beginswith( @name , "color" ) ] ';
+//$query = '// @font-face / src / ..';
+//$query = '//* / color/ ..';
+$query = '[@name]';
 
-//echo (new QueryParser())->parse($query);
+$list = (new QueryParser())->parse($query);
+var_dump($list);
+echo $list;
+die;
 
-echo implode("\n", (new CssParser($css))->parse()->query($query));
+$compiler = new Compiler();
+
+$compiler->setContent($css);
+$element = $compiler->getData();
+
+var_dump(array_map('trim', $element->query($query)));
+//var_dump($element->query($query));
+
+
+//echo implode("\n", (new CssParser($css))->parse()->query($query));

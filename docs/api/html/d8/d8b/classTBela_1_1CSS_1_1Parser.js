@@ -33,6 +33,5 @@ var classTBela_1_1CSS_1_1Parser =
     [ "$errors", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a6a0b862ef987c01a8f5f9559323dfbbe", null ],
     [ "$options", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a2b333ff50f141d6db45fa483e8b2d3f7", null ],
     [ "$path", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a8441e733d08b0ac3df3fa9ac454a2eb0", null ],
-    [ "$previousPosition", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a8e44477ad38c5cfa32ba3d0d0124c1b7", null ],
-    [ "$warnings", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a6f0d12146b04c32edcad71379de9dc78", null ]
+    [ "$previousPosition", "d8/d8b/classTBela_1_1CSS_1_1Parser.html#a8e44477ad38c5cfa32ba3d0d0124c1b7", null ]
 ];

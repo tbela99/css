@@ -33,4 +33,16 @@ class TokenSelectorValueAttributeFunctionNot extends TokenSelectorValue implemen
 
         return array_diff($context, $result);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function render(array $options)
+    {
+        return 'not('.implode('', array_map(function ($expression) use($options) {
+
+            return $expression->render($options);
+
+            }, $this->expressions)).')';
+    }
 }
