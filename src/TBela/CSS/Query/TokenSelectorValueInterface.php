@@ -7,7 +7,7 @@ interface TokenSelectorValueInterface
 
     /**
      * @param QueryInterface[] $context
-     * @return bool
+     * @return array
      */
     public function evaluate(array $context): array;
 
