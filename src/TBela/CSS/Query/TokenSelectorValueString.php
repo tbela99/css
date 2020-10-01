@@ -11,6 +11,9 @@ use TBela\CSS\Element\Rule;
  */
 class TokenSelectorValueString extends TokenSelectorValue
 {
+    use TokenStringifiableTrait;
+
+    protected $q = '';
     protected $value = '';
     protected $isAtRule = false;
 
@@ -66,6 +69,6 @@ class TokenSelectorValueString extends TokenSelectorValue
      */
     public function render(array $options = []) {
 
-        return $this->value;
+        return $this->q.$this->value.$this->q;
     }
 }

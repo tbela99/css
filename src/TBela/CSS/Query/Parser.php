@@ -27,7 +27,6 @@ class Parser
     /**
      * @param $string
      * @return TokenList
-     * @throws SyntaxError
      */
     public function parse($string)
     {
@@ -111,7 +110,7 @@ class Parser
             array_unshift($this->tokens, (object) ['type' => 'select', 'node' => 'self_or_descendants']);
         }
 
-        return array_map([Token::class, 'getInstance'], $this->tokens);
+        return $this->tokens;
     }
 
     /**
@@ -260,16 +259,67 @@ class Parser
 
                     case ',':
 
-                        if ($buffer !== '') {
+                        if (trim($buffer) !== '') {
 
                             $result[] = $this->getTokenType($buffer, $context);
                         }
 
+                        $token = end($result);
+
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                            array_pop($result);
+                        }
+//
                         $result[] = (object)['type' => 'separator', 'value' => ','];
+//
+                        while($i++ < $j) {
+
+                            if (!preg_match('#\s#', $selector[$i])) {
+
+                                $i--;
+                                break;
+                            }
+                        }
+
                         $buffer = '';
                         break;
 
                     case '+':
+
+                        if ($context === 'selector') {
+
+                            if ($buffer !== '') {
+
+                                $result[] = static::getType($buffer);
+                                $buffer = '';
+                            }
+
+                            $token = end($result);
+
+                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                                array_pop($result);
+                            }
+
+                            $result[] = (object)['type' => 'separator', 'value' => $selector[$i]];
+
+                            while($i++ < $j) {
+
+                                if (!preg_match('#\s#', $selector[$i])) {
+
+                                    $i--;
+                                    $buffer = '';
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+
+                        $buffer .= $selector[$i];
+                        break;
+
                     case '~':
                     case '>':
                     case '=':
@@ -280,7 +330,7 @@ class Parser
 
                         if ($context == 'attribute') {
 
-                            if ($selector[$i] == '=' || (in_array($selector[$i], ['*', '^', '$', '!']) && $i < $j && $selector[$i + 1] == '=')) {
+                            if ($selector[$i] == '=' || (in_array($selector[$i], ['*', '^', '$', '!', '~']) && $i < $j && $selector[$i + 1] == '=')) {
 
                                 if ($buffer !== '') {
 
@@ -306,20 +356,85 @@ class Parser
 
                             break;
                         }
+                        else if ($context === 'selector' && in_array($selector[$i], ['>', '~'])) {
 
-                        else {
+                            if ($buffer !== '') {
 
+                                $result[] = static::getType($buffer);
+                                $buffer = '';
+                            }
+
+                            $token = end($result);
+
+                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                                array_pop($result);
+                            }
+
+                            $result[] = (object)['type' => 'separator', 'value' => $selector[$i]];
+
+                            while($i++ < $j) {
+
+                                if (!preg_match('#\s#', $selector[$i])) {
+
+                                    $i--;
+                                    $buffer = '';
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+//
+//                        else {
+//
                             $buffer .= $selector[$i];
+                            break;
+//                        }
+//
+//                        if ($buffer !== '') {
+//
+//                            $result[] = $this->getTokenType($buffer, $context);
+//                        }
+//
+//                        $result[] = (object)['type' => 'operator', 'value' => $selector[$i]];
+//                        $buffer = '';
+//                        break;
+
+                    case '|':
+
+                        if (isset($selector[$i + 1]) && $selector[$i + 1] == '|') {
+
+                            if ($buffer !== '') {
+
+                                $result[] = $this->getTokenType($buffer, $context);
+                                $buffer = '';
+                            }
+
+                            $token = end($result);
+
+                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                                array_pop($result);
+                            }
+
+                            $result[] = (object)['type' => 'separator', 'value' => '||'];
+                            $i++;
+
+                            while($i++ < $j) {
+
+                                if (!preg_match('#\s#', $selector[$i])) {
+
+                                    $i--;
+                                    $buffer = '';
+                                    break;
+                                }
+                            }
+
                             break;
                         }
 
-                        if ($buffer !== '') {
-
-                            $result[] = $this->getTokenType($buffer, $context);
-                        }
-
-                        $result[] = (object)['type' => 'operator', 'value' => $selector[$i]];
-                        $buffer = '';
+                        $buffer .= $selector[$i];
                         break;
 
                     case ' ':
@@ -634,6 +749,13 @@ class Parser
             switch ($string[$i]) {
 
                 case '|':
+
+                    if (isset($string[$i + 1]) && $string[$i + 1] == '|') {
+
+                        $buffer .= '||';
+                        $i++;
+                        break;
+                    }
 
                     $result[] = $buffer;
                     $buffer = '';

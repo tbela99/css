@@ -24,11 +24,13 @@ class TokenSelectorValueAttributeFunctionGeneric implements TokenSelectorValueIn
      */
     public function __construct($value)
     {
+
         if (count($value->arguments) != 3) {
 
             $value->arguments = $this->trim($value->arguments);
         }
 
+        // function
         if (isset($value->arguments[1]) && $value->arguments[1]->type == 'separator' && $value->arguments[1]->value == ',') {
 
             $value->arguments[1]->type = 'operator';

@@ -25,60 +25,9 @@ final class Parse extends TestCase
 
         $data = [];
 
-        $data[] = [(string) (new Parser('.el {
-  margin: 10px calc(2vw + 5px);
-  border-radius: 15px calc(15px / 3) 4px 2px;
-  transition: transform calc(1s - 120ms);
-}
-
-.el {
-  /* Nope! */
-  counter-reset: calc("My " + "counter");
-}
-.el::before {
-  /* Nope! */
-  content: calc("Candyman " * 3);
-}
-.el {
-  width: calc(
-    100%     /   3
-  );
-}
-
-.el {
-  width: calc(
-    calc(100% / 3)
-    -
-    calc(1rem * 2)
-  );
-}
-.el {
-  width: calc(
-   (100% / 3)
-    -
-   (1rem * 2)
-  );
-}
-.el {
-  width: calc(100% / 3 - 1rem * 2);
-}
-.el {
-  /* This */
-  width: calc(100% + 2rem / 2);
-
-  /* Is very different from this */
-  width: calc((100% + 2rem) / 2);
-}
-@media (min-width: calc(40rem + 1px)) {
-  /* Wider than 40rem */
-  transform: rotate(calc(1turn + 45deg));
-
-animation-delay: calc(1s + 15ms);
-}
-
-'))->parse(), '.el {
+        $data[] = ['.el {
  margin: 10px calc(2vw + 5px);
- border-radius: 15px calc(15px / 3) 4px 2px;
+ border-radius: 15px calc(15px/3) 4px 2px;
  transition: transform calc(1s - 120ms);
  /* Nope! */
  counter-reset: calc("My " + counter)
@@ -88,7 +37,7 @@ animation-delay: calc(1s + 15ms);
  content: calc("Candyman " * 3)
 }
 .el {
- width: calc((100% + 2rem) / 2);
+ width: calc((100% + 2rem)/2);
  /* This */
  /* Is very different from this */
 }
@@ -96,14 +45,66 @@ animation-delay: calc(1s + 15ms);
   /* Wider than 40rem */
   transform: rotate(calc(1turn + 45deg));
   animation-delay: calc(1s + 15ms)
-}'];
+}',
+            (string) (new Parser('.el {
+  margin: 10px calc(2vw + 5px);
+  border-radius: 15px calc(15px/3) 4px 2px;
+  transition: transform calc(1s - 120ms);
+}
 
-        $data[] = [(string) (new Parser('#test .test2{}#test3 .test4{}'))->parse(), '#test .test2 {
+.el {
+  /* Nope! */
+  counter-reset: calc("My " + "counter");
+}
+.el::before {
+  /* Nope! */
+  content: calc("Candyman " * 3);
+}
+.el {
+  width: calc(
+    100%     /   3
+  );
+}
+
+.el {
+  width: calc(
+    calc(100% / 3)
+    -
+    calc(1rem * 2)
+  );
+}
+.el {
+  width: calc(
+   (100% / 3)
+    -
+   (1rem * 2)
+  );
+}
+.el {
+  width: calc(100% / 3 - 1rem * 2);
+}
+.el {
+  /* This */
+  width: calc(100% + 2rem / 2);
+
+  /* Is very different from this */
+  width: calc((100% + 2rem) / 2);
+}
+@media (min-width: calc(40rem + 1px)) {
+  /* Wider than 40rem */
+  transform: rotate(calc(1turn + 45deg));
+
+animation-delay: calc(1s + 15ms);
+}
+
+'))->parse()];
+
+        $data[] = ['#test .test2 {
 
 }
 #test3 .test4 {
 
-}'];
+}', (string) (new Parser('#test .test2{}#test3 .test4{}'))->parse()];
 
         $data[] = [(string) (new Parser('#test .test2{}#test3 .test4{color:scroll;}'))->parse(), '#test .test2 {
 
@@ -112,23 +113,14 @@ animation-delay: calc(1s + 15ms);
  color: scroll
 }'];
 
-        $data[] = [(string) (new Parser('div[data-elem-id="1587819338886"] {
-	color: #000000;
-	z-index: 5;
-	top: calc(50vh - 375px + 325px);
-	left: calc(50% - 600px + 26px);
-	width: 610px;
-	background: red;
-}
-'))->parse(), 'div[data-elem-id="1587819338886"] {
+        $data[] = ['div[data-elem-id="1587819338886"] {
  color: #000;
  z-index: 5;
  top: calc(50vh - 375px + 325px);
  left: calc(50% - 600px + 26px);
  width: 610px;
  background: red
-}'];
-        $data[] = [(new Renderer(['compress' => true]))->render((new Parser('div[data-elem-id="1587819338886"] {
+}', (string) (new Parser('div[data-elem-id="1587819338886"] {
 	color: #000000;
 	z-index: 5;
 	top: calc(50vh - 375px + 325px);
@@ -136,25 +128,27 @@ animation-delay: calc(1s + 15ms);
 	width: 610px;
 	background: red;
 }
-'))->parse()), 'div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}'];
+'))->parse()];
+        $data[] = ['div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}',
+            (new Renderer(['compress' => true]))->render((new Parser('div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse())];
 
-        $data[] = [(string) (new Parser('div + div[data-elem-id="1587819338886"] {
-	color: #000000;
-	z-index: 5;
-	top: calc(50vh - 375px + 325px);
-	left: calc(50% - 600px + 26px);
-	width: 610px;
-	background: red;
-}
-'))->parse(), 'div+div[data-elem-id="1587819338886"] {
+        $data[] = ['div+div[data-elem-id="1587819338886"] {
  color: #000;
  z-index: 5;
  top: calc(50vh - 375px + 325px);
  left: calc(50% - 600px + 26px);
  width: 610px;
  background: red
-}'];
-        $data[] = [(new Renderer(['compress' => true]))->render((new Parser('div + div[data-elem-id="1587819338886"] {
+}',
+            (string) (new Parser('div + div[data-elem-id="1587819338886"] {
 	color: #000000;
 	z-index: 5;
 	top: calc(50vh - 375px + 325px);
@@ -162,9 +156,19 @@ animation-delay: calc(1s + 15ms);
 	width: 610px;
 	background: red;
 }
-'))->parse()), 'div+div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}'];
+'))->parse()];
+        $data[] = ['div+div[data-elem-id="1587819338886"]{color:#000;z-index:5;top:calc(50vh - 375px + 325px);left:calc(50% - 600px + 26px);width:610px;background:red}', (new Renderer(['compress' => true]))->render((new Parser('div + div[data-elem-id="1587819338886"] {
+	color: #000000;
+	z-index: 5;
+	top: calc(50vh - 375px + 325px);
+	left: calc(50% - 600px + 26px);
+	width: 610px;
+	background: red;
+}
+'))->parse())];
 
-        $data[] = [(new Renderer(['compress' => true]))->render((new Parser('.el {
+        $data[] = ['.el{margin:10px calc(2vw + 5px);border-radius:15px calc(15px/3) 4px 2px;transition:transform calc(1s - .12s);counter-reset:calc("My " + counter)}.el::before{content:calc("Candyman " * 3)}.el{width:calc((100% + 2rem)/2)}@media(min-width:calc(40rem + 1px)){transform:rotate(calc(1turn + 45deg));animation-delay:calc(1s + 15ms)}',
+            (new Renderer(['compress' => true]))->render((new Parser('.el {
   margin: 10px calc(2vw + 5px);
   border-radius: 15px calc(15px / 3) 4px 2px;
   transition: transform calc(1s - 120ms);
@@ -215,7 +219,7 @@ animation-delay: calc(1s + 15ms);
 animation-delay: calc(1s + 15ms);
 }
 
-'))->parse()), '.el{margin:10px calc(2vw + 5px);border-radius:15px calc(15px / 3) 4px 2px;transition:transform calc(1s - .12s);counter-reset:calc("My " + counter)}.el::before{content:calc("Candyman " * 3)}.el{width:calc((100% + 2rem) / 2)}@media(min-width:calc(40rem + 1px)){transform:rotate(calc(1turn + 45deg));animation-delay:calc(1s + 15ms)}'];
+'))->parse())];
 
         return $data;
     }

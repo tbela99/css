@@ -25,17 +25,17 @@ final class CssIdentifier extends TestCase
 
         $data = [];
 
-        $data[] = [(string) (new Parser('div[data-elem-id="1587819236980"]{
-background:red;
-}'))->parse(), 'div[data-elem-id="1587819236980"] {
+        $data[] = ['div[data-elem-id="1587819236980"] {
  background: red
-}'];
+}', (string) (new Parser('div[data-elem-id="1587819236980"]{
+background:red;
+}'))->parse()];
 
-        $data[] = [(string) (new Parser('div[data-elem-id="a1587819236980"]{
-background:red;
-}'))->parse(), 'div[data-elem-id=a1587819236980] {
+        $data[] = [ 'div[data-elem-id=a1587819236980] {
  background: red
-}'];
+}', (string) (new Parser('div[data-elem-id="a1587819236980"]{
+background:red;
+}'))->parse()];
 
         return $data;
     }

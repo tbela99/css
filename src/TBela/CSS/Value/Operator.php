@@ -34,6 +34,6 @@ class Operator extends Value
     public function render(array $options = [])
     {
 
-        return ' '.$this->data->value.' ';
+        return $this->data->value;
     }
 }

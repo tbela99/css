@@ -285,7 +285,10 @@ abstract class Value
 
                 $token = $tokens[$j];
 
-                if ($token->type == 'whitespace' && (in_array($tokens[$j + 1]->type, ['separator', 'whitespace', 'css-parenthesis-expression']) || ($tokens[$j + 1]->type == 'css-string' && $tokens[$j + 1]->value == '!important'))) {
+                if ($token->type == 'whitespace' &&
+                    (in_array($tokens[$j + 1]->type, ['separator', 'whitespace', 'css-parenthesis-expression']) ||
+                    $tokens[$j + 1]->type == 'css-string' && $tokens[$j + 1]->value == '!important')
+                ) {
 
                     array_splice($tokens, $j, 1);
                 } else if ($token->type == 'css-parenthesis-expression' && $tokens[$j + 1]->type == 'whitespace') {
@@ -389,18 +392,17 @@ abstract class Value
                                 continue;
                             }
 
-                            $buffer = '';
-
-                            if (!static::is_separator($string[$k]) || ($j >= $k + 1 && !static::is_whitespace($string[$k + 1]))) {
-
-                                $token = new stdClass;
-                                $token->type = 'whitespace';
-                                $tokens[] = $token;
-                            }
-
-                            $i = $k - 1;
-                            break 2;
+                            break;
                         }
+
+                        if ($k <= $j) {
+
+                            $token = new stdClass;
+                            $token->type = 'whitespace';
+                            $tokens[] = $token;
+                        }
+
+                        $i = $k - 1;
                     }
 
                     break;
@@ -478,7 +480,7 @@ abstract class Value
                         $token = new stdClass;
 
                         $token->type = 'css-attribute';
-                        $token->arguments = Value::parse(substr($params, 1, -1), $capture_whitespace);
+                        $token->arguments = Value::parse(substr($params, 1, -1), null, $capture_whitespace, 'attribute');
 
                         $tokens[] = $token;
 
@@ -495,6 +497,7 @@ abstract class Value
                 case '(':
 
                     $params = static::_close($string, ')', '(', $i, $j);
+
 
                     if ($params !== false) {
 
@@ -558,9 +561,68 @@ abstract class Value
 
                     break;
 
-                case '/':
+                case '|':
+
+                    if (isset($string[$i + 1]) && $string[$i + 1] == '|') {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                            $buffer = '';
+                        }
+
+                        $token = end($tokens);
+
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                            array_pop($tokens);
+                        }
+
+                        $tokens[] = (object)['type' => 'operator', 'value' => '||'];
+                        $i++;
+                        break;
+                    }
+
+                    $buffer .= $string[$i];
+                    break;
+
+                case '>':
                 case '+':
-                case '-':
+
+                if ($context === '') {
+
+                        if ($buffer !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                            $buffer = '';
+                        }
+
+                        $token = end($tokens);
+
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                            array_pop($tokens);
+                        }
+
+                        $tokens[] = (object)['type' => 'operator', 'value' => $string[$i]];
+
+                        while($i++ < $j) {
+
+                            if (!preg_match('#\s#', $string[$i])) {
+
+                                $i--;
+                                $buffer = '';
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+
+                    $buffer .= $string[$i];
+                    break;
+
+                case '/':
 
                     if ($i < $j && $string[$i + 1] == '*' && $string[$i] == '/') {
 
@@ -590,35 +652,87 @@ abstract class Value
                     $prev = trim(substr($string, $i - 1, 1));
                     $next = trim(substr($string, $i + 1, 1));
 
-                    if ($prev !== '' && $next !== '') {
+                    if ($prev !== '' || $next !== '') {
 
                         $buffer .= $string[$i];
                         break;
                     }
 
-                    if (in_array($string[$i], ['+', '-']) &&
-                        (is_numeric(substr($string, $i + 1, 1)) ||
-                            (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
-                    ) {
+//                    if (in_array($string[$i], ['+', '-']) &&
+//                        (is_numeric(substr($string, $i + 1, 1)) ||
+//                            (substr($string, $i + 1, 1) == '.' && is_numeric(substr($string, $i + 1, 2))))
+//                    ) {
+//
+//                        $buffer .= $string[$i];
+//                        break;
+//                    }
 
-                        $buffer .= $string[$i];
-                        break;
-                    }
-
-                    if ($context !== '' && $prev === '' && $next === '' && preg_match('#^[a-zA-Z0-9_-]*$#', $contextName)) {
+//                    if ($context !== '' && $prev === '' && $next === '' && preg_match('#^[a-zA-Z0-9_~-]*$#', $contextName)) {
 
                         if ($buffer !== '') {
 
                             $tokens[] = static::getType($buffer);
                         }
 
+                        $token = end($tokens);
+
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                            array_pop($tokens);
+                        }
+
                         $tokens[] = (object)['type' => 'operator', 'value' => $string[$i]];
                         $buffer = '';
+//                        break;
+//                    }
+
+                    break;
+
+                case '~':
+                case '^':
+                case '$':
+                case '=':
+
+                    if (($string[$i] == '~' && $context === '') ||
+                        $context == 'attribute' && ($string[$i] == '=' || (isset($string[$i + 1]) && $string[$i + 1] == '='))) {
+
+                        if (trim($buffer) !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                        }
+
+                        $token = end($tokens);
+
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+
+                            array_pop($tokens);
+                        }
+
+                        $buffer = '';
+
+                        if ($string[$i] == '=') {
+
+                            $tokens[] = (object)['type' => $context === 'attribute' ? 'operator' : 'css-string', 'value' => '='];
+                        }
+
+                        else if ($context === 'attribute') {
+
+                            $tokens[] = (object)['type' => 'operator', 'value' => $string[$i++].'='];
+                        }
+
+                        else {
+
+                            $tokens[] = (object)['type' => 'css-string', 'value' => $string[$i++]];
+                        }
+
                         break;
                     }
 
+                    $buffer .= $string[$i];
+                    break;
+
                 case ',':
-                case '=':
+//                case '=':
                 case ':':
 
                     if ($string[$i] == ':' && $context != 'css-parenthesis-expression') {
@@ -632,24 +746,12 @@ abstract class Value
                         $tokens[] = static::getType($buffer);
                     }
 
-                    if (!empty($tokens) && in_array($string[$i], ['-', '+'])) {
-
-                        $token = end($tokens);
-
-                        if (in_array($token->type, ['separator', 'whitespace'])) {
-
-                            $buffer .= $string[$i];
-                            break;
-                        }
-                    }
-
                     $token = new stdClass;
                     $token->type = 'separator';
                     $token->value = $string[$i];
                     $tokens[] = $token;
 
                     $buffer = '';
-
                     break;
 
                 default:
