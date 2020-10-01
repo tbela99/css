@@ -22,10 +22,18 @@ class Rule extends RuleList {
 
         if (is_array($selectors)) {
 
+            if (empty(array_filter($selectors, function ($value) {
+
+                return !($value instanceof Value);
+            }))) {
+
+                return $selectors;
+            }
+
             $selectors = implode(',', $selectors);
         }
 
-        if (strpos($selectors, '/*') !== false || strpos($selectors, '[') !== false) {
+//        if (strpos($selectors, '/*') !== false || strpos($selectors, '[') !== false) {
 
             $selectors = Value::parse($selectors);
 
@@ -48,12 +56,12 @@ class Rule extends RuleList {
             }
 
             $selectors = Value::reduce($selectors->split(','));
-        }
+//        }
 
-        else {
-
-            $selectors = array_map('trim', explode(',', $selectors));
-        }
+//        else {
+//
+//            $selectors = array_map('trim', explode(',', $selectors));
+//        }
 
         $result = [];
 

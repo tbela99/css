@@ -13,7 +13,7 @@ trait FilterTrait
 
         while ($j--) {
 
-            if ($value[$j]->type == 'whitespace') {
+            if (in_array($value[$j]->type, ['whitespace', 'separator'])) {
 
                 array_splice($value, $j, 1);
             }

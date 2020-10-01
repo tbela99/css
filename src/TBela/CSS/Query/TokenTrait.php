@@ -16,7 +16,7 @@ trait TokenTrait
 
             if (!property_exists($this, $key)) {
 
-                throw new InvalidArgumentException(sprintf('unknown property %s', $key), 400);
+                throw new InvalidArgumentException(sprintf('unknown property %s of %s', $key, var_export($data, true)), 400);
             }
 
             $this->{$key} = $value;
@@ -30,6 +30,10 @@ trait TokenTrait
             case 'type':
 
                 return $this->{$name};
+
+            case 'value':
+
+                return isset($this->value) && is_string($this->value) ? $this->value : null;
         }
 
         return null;

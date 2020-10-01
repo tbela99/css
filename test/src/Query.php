@@ -46,6 +46,20 @@ final class Query extends TestCase
     /**
      * @param array $expected
      * @param array $actual
+     * @dataProvider combinatorProvider
+     */
+    public function testCombinator(array $expected, array $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
      * @dataProvider queryFunctionsProvider
      */
     public function testQueryFunctions(array $expected, array $actual): void
@@ -928,7 +942,7 @@ a {
         $query = '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type="radio"]:not(:checked) + .octicon-check, .select-menu-item input[type="radio"]:not(:checked) + .octicon-circle-slash';
 
         $data[] = [
-            '.select-menu-item .octicon-check,.select-menu-item .octicon-circle-slash,.select-menu-item input[type=radio]:not(:checked) + .octicon-check,.select-menu-item input[type=radio]:not(:checked) + .octicon-circle-slash',
+            '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type=radio]:not(:checked) + .octicon-check, .select-menu-item input[type=radio]:not(:checked) + .octicon-circle-slash',
             (string) $parser->parse($query)
         ];
 
@@ -992,6 +1006,35 @@ a {
         $data[] = [
             '[@name]',
             (string) $parser->parse($query)
+        ];
+
+        return $data;
+    }
+    /*
+    */
+    public function combinatorProvider ()
+    {
+
+        $data = [];
+
+
+        $css = 'input[ name $= "foo_bar" ], strong {
+
+    background: blue;
+}';
+
+        $query = '[name $= foo_bar]';
+
+        $compiler = new Compiler();
+        $compiler->setContent($css);
+
+        $data[] = [
+            [
+                0 => 'input[name$=foo_bar],
+strong {
+ background: blue
+}'],
+            array_map('trim', $compiler->getData()->query($query))
         ];
 
 
