@@ -21,12 +21,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
         foreach ($data->value as $value) {
 
-            if ($value->type == 'separator') {
-
-                ++$index;
-                continue;
-            }
-
             $this->value[$index][] = call_user_func([TokenSelectorValue::class, 'getInstance'], $value);
         }
     }
@@ -48,6 +42,14 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
             // must pass at least all filter for one group
             foreach ($group as $filter) {
+
+                if ($filter->type == 'separator' && $filter->value == ',') {
+
+                    array_splice($result, count($result), 0, $tmp);
+                    $tmp = $context;
+
+                    continue;
+                }
 
                 $tmp = $filter->evaluate($tmp);
 
@@ -81,6 +83,6 @@ class TokenSelector extends Token implements TokenSelectorInterface
 
             $result[] = trim($partial) === '' ? $partial : trim($partial);
         }
-        return implode(",", $result);
+        return implode("", $result);
     }
 }

@@ -4,7 +4,7 @@ namespace TBela\CSS\Query;
 
 class TokenSelectorValueAttribute extends TokenSelectorValue
 {
-    use FilterTrait;
+    use FilterTrait, TokenStringifiableTrait;
 
     protected array $value = [];
     protected TokenSelectorValueInterface $expression;
@@ -25,7 +25,19 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         if (count($data->value) == 3) {
 
-            $this->expression = new TokenSelectorValueAttributeExpression($data->value);
+
+            if ($data->value[0]->type == 'string' &&
+                $data->value[1]->type == 'operator' &&
+                $data->value[2]->type == 'string') {
+
+
+                $this->expression = new TokenSelectorValueAttributeSelector($data->value);
+            }
+
+            else {
+
+                $this->expression = new TokenSelectorValueAttributeExpression($data->value);
+            }
         }
 
         else if (count($data->value) == 1) {

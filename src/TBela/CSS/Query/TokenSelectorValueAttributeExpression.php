@@ -24,7 +24,7 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
 
         if (count($value) != 3) {
 
-            throw new InvalidArgumentException('expecting an array with 2 items', 400);
+            throw new InvalidArgumentException('expecting an array with 2 items ', 400);
         }
 
         if (!in_array($value[0]->type, ['attribute_name', 'string']) ||
@@ -34,7 +34,7 @@ class TokenSelectorValueAttributeExpression implements TokenSelectorValueInterfa
             throw new InvalidArgumentException('invalid input', 400);
         }
 
-        if (!in_array($value[1]->value, ['=', '^=', '*=', '$='])) {
+        if (!in_array($value[1]->value, ['=', '^=', '*=', '$=', '~='])) {
 
             throw new InvalidArgumentException(sprintf('unsupported operator "%s"', $value[1]->value), 400);
         }
