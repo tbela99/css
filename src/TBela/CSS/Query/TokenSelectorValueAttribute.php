@@ -29,11 +29,9 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         if (count($data->value) == 3) {
 
-
             if ($data->value[0]->type == 'string' &&
                 $data->value[1]->type == 'operator' &&
                 $data->value[2]->type == 'string') {
-
 
                 $this->expression = new TokenSelectorValueAttributeSelector($data->value);
             }
@@ -46,15 +44,10 @@ class TokenSelectorValueAttribute extends TokenSelectorValue
 
         else if (count($data->value) == 1) {
 
-            if (!isset($data->value[0]->name) && $data->value[0]->type != 'index') {
+            if (!isset($data->value[0]->name) && $data->value[0]->type == 'attribute_name') {
 
-                if ($data->value[0]->type != 'attribute_name') {
-
-                    throw new \Exception(sprintf('Expected attribute_name but %s found "%s"', $data->value[0]->type, $data->value[0]->value), 400);
+                    $this->expression = new TokenSelectorValueAttributeTest($data->value[0]->value);
                 }
-
-                $this->expression = new TokenSelectorValueAttributeTest($data->value[0]->value);
-            }
 
             else {
 
