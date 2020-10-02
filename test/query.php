@@ -7,6 +7,10 @@ use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Query\Parser as QueryParser;
 
 require 'autoload.php';
+//
+//echo (new QueryParser())->parse(' [ data-catalyst ] ');
+//die;
+
 
 $css = '[data-catalyst], a {
 
