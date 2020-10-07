@@ -928,6 +928,21 @@ a {
             ],
             array_map('trim', $element->query($context))];
 
+        // select @font-face that contains a src declaration
+        $context = ' [ data-catalyst ] ';
+
+        $data[] = [
+            [
+                0 => '[data-catalyst],
+a {
+ position: absolute
+}'
+            ],
+            array_map('trim', (new Parser('[data-catalyst], a {
+
+    position: absolute;
+}'))->parse()->query($context))];
+
         return $data;
     }
     /*
@@ -1005,6 +1020,12 @@ a {
         $query = '[@name]';
         $data[] = [
             '[@name]',
+            (string) $parser->parse($query)
+        ];
+
+        $query = ' [ data-catalyst ] ';
+        $data[] = [
+            '[data-catalyst]',
             (string) $parser->parse($query)
         ];
 
