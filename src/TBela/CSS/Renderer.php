@@ -5,9 +5,8 @@ namespace TBela\CSS;
 use Exception;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\AtRule;
-use TBela\CSS\Event\EventInterface;
-use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\RenderableInterface;
+use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Value\Set;
 use function is_string;
@@ -16,12 +15,12 @@ use function is_string;
  * Css node Renderer
  * @package TBela\CSS
  */
-class Renderer implements EventInterface
+class Renderer
 {
-
-    use EventTrait;
-
-    const REMOVE_NODE = 1;
+    /**
+     * @var Traverser
+     */
+    protected $traverser = null;
 
     protected array $options = [
         'compress' => false,
@@ -37,6 +36,9 @@ class Renderer implements EventInterface
         'allow_duplicate_declarations' => false
     ];
 
+    protected array $indents = [];
+    protected array $events = [];
+
     /**
      * Identity constructor.
      * @param array $options
@@ -48,7 +50,7 @@ class Renderer implements EventInterface
     }
 
     /**
-     * render an Element or a Property
+     * render an ElementInterface or a Property
      * @param RenderableInterface $element the element to render
      * @param null|int $level indention level
      * @param bool $parent render parent
@@ -58,81 +60,76 @@ class Renderer implements EventInterface
     public function render(RenderableInterface $element, ?int $level = null, $parent = false)
     {
 
-        if (!empty($this->events['traverse'])) {
-
-            foreach ($this->emit('traverse', $element, $level) as $result) {
-
-                if ($result === static::REMOVE_NODE) {
-
-                    return '';
-                }
-
-                if (is_string($result)) {
-
-                    return $result;
-                }
-
-                if ($result instanceof RenderableInterface) {
-
-                    $element = $result;
-                    break;
-                }
-            }
-        }
-
-        if ($parent && ($element instanceof Element) && !is_null($element['parent'])) {
+        if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
 
             return $this->render($element->copy()->getRoot(), $level);
         }
 
-        $indent = str_repeat($this->options['indent'], (int)$level);
+        if (isset($this->traverser)) {
 
-        switch ($element->getType()) {
+            $result = $this->traverser->traverse($element);
 
-            case 'Comment':
+            if ($result instanceof ElementInterface) {
 
-                if ($this->options['remove_comments']) {
+                $element = $result;
+            }
+        }
 
-                    return '';
-                }
+        $type = $element->getType();
 
-                return (is_null($level) ? '' : $indent.$this->options['indent']) . $element['value'];
+        switch ($type) {
 
             case 'Stylesheet':
 
                 return $this->renderCollection($element, $level);
 
+            case 'Comment':
             case 'Declaration':
             case 'Property':
-
-                return $indent . $this->options['indent'] . $this->renderProperty($element);
-
             case 'Rule':
-
-                return $this->renderRule($element, $level, $indent);
-
             case 'AtRule':
 
-                return $this->renderAtRule($element, $level, $indent);
+                return $this->{'render'.$type}($element, $level);
 
             default:
 
-                throw new Exception('Type not supported ' . $element->getType());
+                throw new Exception('Type not supported ' . $type);
         }
 
         return '';
     }
 
     /**
+     * @param RenderableInterface $element
+     * @param int|null $level
+     * @return string
+     */
+    protected function renderComment(RenderableInterface $element, ?int $level) {
+
+        if ($this->options['remove_comments']) {
+
+            return '';
+        }
+
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        return $this->indents[$level] . $element['value'];
+    }
+
+    /**
      * render a rule
      * @param Rule $element
-     * @param int $level
-     * @param string $indent
+     * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
-    protected function renderRule(Rule $element, $level, $indent)
+    protected function renderRule(Rule $element, $level)
     {
 
         $selector = $element->getSelector();
@@ -142,14 +139,32 @@ class Renderer implements EventInterface
             throw new Exception('The selector cannot be empty');
         }
 
-        $output = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
+        $output = $this->renderCollection($element, $level + 1);
 
         if ($output === '' && $this->options['remove_empty_nodes']) {
 
             return '';
         }
 
-        $result = $indent . implode(',' . $this->options['glue'] . $indent, $selector);
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        $indent = $this->indents[$level];
+
+        $result = $indent;
+
+        $join = ',' . $this->options['glue'] . $indent;
+
+        foreach ($selector as $sel) {
+
+            $result .= $sel.$join;
+        }
+
+        $result = rtrim($result, $join);
 
         if (!$this->options['remove_comments']) {
 
@@ -157,7 +172,12 @@ class Renderer implements EventInterface
 
             if (!empty($comments)) {
 
-                $result .= ($this->options['compress'] ? '' : ' ').implode(' ', $comments);
+                $join = $this->options['compress'] ? '' : ' ';
+
+                foreach ($comments as $comment) {
+
+                    $result .= $join.$comment;
+                }
             }
         }
 
@@ -165,19 +185,17 @@ class Renderer implements EventInterface
             $this->options['glue'] .
             $output . $this->options['glue'] .
             $indent .
-            '}';
+        '}';
     }
 
     /**
      * render at-rule
      * @param AtRule $element
-     * @param int $level
-     * @param string $indent
+     * @param ?int $level
      * @return string
-     * @throws Exception
      * @ignore
      */
-    protected function renderAtRule(AtRule $element, $level, $indent)
+    protected function renderAtRule(AtRule $element, $level)
     {
 
         if ($element['name'] == 'charset' && !$this->options['charset']) {
@@ -201,6 +219,15 @@ class Renderer implements EventInterface
             }
         }
 
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        $indent = $this->indents[$level];
+
         if ($element->isLeaf()) {
 
             return $indent . $output . ';';
@@ -216,6 +243,10 @@ class Renderer implements EventInterface
         return $indent . $output . $this->options['indent'] . '{' . $this->options['glue'] . $elements . $this->options['glue'] . $indent . '}';
     }
 
+    protected function renderDeclaration(RenderableInterface $element, ?int $level) {
+
+        return $this->renderProperty($element, $level);
+    }
     /**
      * render a property
      * @param RenderableInterface $element
@@ -223,7 +254,7 @@ class Renderer implements EventInterface
      * @ignore
      */
 
-    protected function renderProperty(RenderableInterface $element)
+    protected function renderProperty(RenderableInterface $element, ?int $level)
     {
         $name = $this->renderName($element);
         $value = $element->getValue();
@@ -247,8 +278,6 @@ class Renderer implements EventInterface
             $value = $value->render($options);
         }
 
-        //->render();
-
         if ($value == 'none' && in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
 
             $value = 0;
@@ -260,11 +289,21 @@ class Renderer implements EventInterface
 
             if (!empty($comments)) {
 
-                $value .= ' '.implode(' ', $comments);
+                foreach ($comments as $comment) {
+
+                    $value .= ' '.$comment;
+                }
             }
         }
 
-        return trim($name).':'.$this->options['indent'].trim($value);
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        return $this->indents[$level].trim($name).':'.$this->options['indent'].trim($value);
     }
 
     /**
@@ -284,7 +323,10 @@ class Renderer implements EventInterface
 
             if (!empty($comments)) {
 
-                $result.= ' '.implode(' ', $comments);
+                foreach ($comments as $comment) {
+
+                    $result .= ' '.$comment;
+                }
             }
         }
 
@@ -293,12 +335,12 @@ class Renderer implements EventInterface
 
     /**
      * render a value
-     * @param Element $element
+     * @param ElementInterface $element
      * @return string
      * @return string
      * @ignore
      */
-    protected function renderValue(Element $element)
+    protected function renderValue(ElementInterface $element)
     {
         $result = $element->getValue();
 
@@ -314,9 +356,15 @@ class Renderer implements EventInterface
 
             $trailingComments = $element['trailingcomments'];
 
-            if (!empty($trailingComments)) {
+        }
 
-                $result .= ($this->options['compress'] ? '' : ' ').implode(' ', $trailingComments);
+        if (!empty($trailingComments)) {
+
+            $glue = $this->options['compress'] ? '' : ' ';
+
+            foreach ($trailingComments as $comment) {
+
+                $result .= $glue.$comment;
             }
         }
 
@@ -328,7 +376,6 @@ class Renderer implements EventInterface
      * @param RuleList $element
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
     protected function renderCollection(RuleList $element, ?int $level)
@@ -349,9 +396,11 @@ class Renderer implements EventInterface
 
         $result = [];
 
+        settype($level, 'int');
+
         foreach ($children as $el) {
 
-            $output = $this->render($el, $level);
+            $output = $this->{'render'.$el->getType()}($el, $level);
 
             if (trim($output) === '') {
 
@@ -383,23 +432,15 @@ class Renderer implements EventInterface
             return '';
         }
 
-//        $hash = [];
-//
-//        $i = count($result);
+        $join = $this->options['glue'];
+        $output = '';
 
-        // remove identical rules
-//        while ($i--) {
-//
-//            if (!isset($hash[$result[$i]])) {
-//
-//                $hash[$result[$i]] = 1;
-//            } else {
-//
-//                array_splice($result, $i, 1);
-//            }
-//        }
+        foreach ($result as $res) {
 
-        return rtrim(implode($this->options['glue'], $result), $glue . $this->options['glue']);
+            $output .= $res.$join;
+        }
+
+        return rtrim($output, $glue . $this->options['glue']);
     }
     /**
      * Set output formatting
@@ -424,7 +465,6 @@ class Renderer implements EventInterface
             $this->options['remove_empty_nodes'] = true;
         } else {
 
-        //    $this->options['convert_color'] = false;
             $this->options['glue'] = "\n";
             $this->options['indent'] = ' ';
         }
@@ -447,6 +487,8 @@ class Renderer implements EventInterface
             $this->options['allow_duplicate_declarations'] = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
         }
 
+        $this->indents = [];
+
         return $this;
     }
 
@@ -465,5 +507,27 @@ class Renderer implements EventInterface
         }
 
         return $this->options[$name] ?? $default;
+    }
+
+    public function on($type, $callable) {
+
+        if (is_null($this->traverser)) {
+
+            $this->traverser = new Traverser();
+        }
+
+        $this->traverser->on($type == 'traverse' ? 'enter' : $type, $callable);
+
+        return $this;
+    }
+
+    public function off($type, $callable) {
+
+        if (isset($this->traverser)) {
+
+            $this->traverser->off($type == 'traverse' ? 'enter' : 'traverse', $callable);
+        }
+
+        return $this;
     }
 }

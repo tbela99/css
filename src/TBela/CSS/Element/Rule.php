@@ -3,7 +3,7 @@
 namespace TBela\CSS\Element;
 
 use Exception;
-use TBela\CSS\Element;
+use \TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\RuleList;
 use TBela\CSS\Value;
 
@@ -161,7 +161,7 @@ class Rule extends RuleList {
     /**
      * @inheritDoc
      */
-    public function support (Element $child) {
+    public function support (ElementInterface $child) {
 
         if ($child instanceof Comment) {
 

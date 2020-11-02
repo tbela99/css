@@ -1,12 +1,11 @@
-<?php 
+<?php
 
 namespace TBela\CSS;
 
 use Exception;
 use InvalidArgumentException;
-use JsonSerializable;
-use ArrayAccess;
 use stdClass;
+use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\SourceLocation;
@@ -21,7 +20,7 @@ use function str_ireplace;
  * Css node base class
  * @package TBela\CSS
  */
-abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayAccess, Interfaces\RenderableInterface   {
+abstract class Element implements ElementInterface  {
 
     use ArrayTrait;
 
@@ -83,11 +82,9 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * create an instance from ast or another Element instance
-     * @param Element|object $ast
-     * @return mixed
+     * @inheritDoc
      */
-	public static function getInstance($ast) {
+    public static function getInstance($ast) {
 
         $type = '';
 
@@ -113,14 +110,12 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
         }
 
         $className = Element::class.'\\'.ucfirst($ast->type);
-        
-		return new $className($ast);
+
+        return new $className($ast);
     }
 
     /**
-     * @param callable $fn
-     * @param string $event
-     * @return Element
+     * @inheritDoc
      */
     public function traverse(callable $fn, $event) {
 
@@ -128,17 +123,16 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * @param string $query
-     * @return array
+     *
+     * @inheritDoc
      * @throws Parser\SyntaxError
      */
     public function query($query): array {
 
-	    return (new Evaluator())->evaluate($query, $this);
+        return (new Evaluator())->evaluate($query, $this);
     }
     /**
-     * return the root element
-     * @return Element
+     * @inheritDoc
      */
     public function getRoot () {
 
@@ -153,8 +147,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * return Value\Set|string
-     * @return string
+     * @inheritDoc
      */
     public function getValue() {
 
@@ -167,9 +160,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * assign the value
-     * @param Value\Set|string $value
-     * @return $this
+     * @inheritDoc
      */
     public function setValue ($value) {
 
@@ -178,8 +169,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * get the parent node
-     * @return RuleList|null
+     * @inheritDoc
      */
     public function getParent () {
 
@@ -187,8 +177,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * return the type
-     * @return string
+     * @inheritDoc
      */
     public function getType() {
 
@@ -196,8 +185,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * Clone parents, children and the element itself. Useful when you want to render this element only and its parents.
-     * @return Element
+     * @inheritDoc
      */
     public function copy() {
 
@@ -222,8 +210,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * @param SourceLocation|null $location
-     * @return Element
+     * @inheritDoc
      */
     public function setLocation($location) {
 
@@ -234,7 +221,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * @return SourceLocation|null
+     * @inheritDoc
      */
     public function getLocation() {
 
@@ -243,9 +230,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
 
 
     /**
-     * merge css rules and declarations
-     * @param array $options
-     * @return Element
+     * @inheritDoc
      */
     public function deduplicate(array $options = ['allow_duplicate_rules' => ['font-face']])
     {
@@ -401,6 +386,9 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
                     if ($total > 0) {
 
                         //   $index = $total;
+                        /**
+                         * @var Element $el
+                         */
                         $el = $this->ast->children[$total];
 
                         if ((string) $el->ast->type == 'Comment') {
@@ -554,9 +542,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * convert to string
-     * @return string
-     * @throws Exception
+     * @inheritDoc
      */
     public function __toString()
     {
@@ -574,8 +560,7 @@ abstract class Element implements Query\QueryInterface, JsonSerializable, ArrayA
     }
 
     /**
-     * clone object
-     * @ignore
+     * @inheritDoc
      */
     public function __clone()
     {

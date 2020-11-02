@@ -58,9 +58,9 @@ final class Font extends TestCase
         $parser = new Parser("@font-face{font-family:'CenturyGothic';src:url('/CenturyGothic.woff') format('woff');font-weight:400;}");
 
         $data[] = [(string) $parser->parse(), '@font-face {
-  font-family: CenturyGothic;
-  font-weight: 400;
-  src: url(/CenturyGothic.woff) format("woff")
+ font-family: CenturyGothic;
+ font-weight: 400;
+ src: url(/CenturyGothic.woff) format("woff")
 }'];
 
         return $data;

@@ -397,7 +397,7 @@ $renderer->on('enter', function (Renderable $node) {
     // remove @font-face
     if ($node instanceof AtRule && $node['name'] == 'font-face') {
 
-        return $this::IGNORE_NODE;
+        return \TBela\CSS\Traverser::IGNORE_NODE;
     }
 
     // rewrite image url() path for local file
