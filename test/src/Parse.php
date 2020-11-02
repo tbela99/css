@@ -42,9 +42,9 @@ final class Parse extends TestCase
  /* Is very different from this */
 }
 @media (min-width:calc(40rem + 1px)) {
-  /* Wider than 40rem */
-  transform: rotate(calc(1turn + 45deg));
-  animation-delay: calc(1s + 15ms)
+ /* Wider than 40rem */
+ transform: rotate(calc(1turn + 45deg));
+ animation-delay: calc(1s + 15ms)
 }',
             (string) (new Parser('.el {
   margin: 10px calc(2vw + 5px);

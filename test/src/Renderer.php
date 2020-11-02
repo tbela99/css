@@ -2,13 +2,12 @@
 //declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use Sabberworm\CSS\Renderable;
 use TBela\CSS\Compiler;
 use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Declaration;
-use TBela\CSS\Property\Property;
 use TBela\CSS\Renderer as RendererClass;
 use TBela\CSS\Interfaces\RenderableInterface;
+use TBela\CSS\Traverser;
 use TBela\CSS\Value;
 use TBela\CSS\Value\CSSFunction;
 
@@ -24,12 +23,12 @@ final class Renderer extends TestCase
 
         $this->assertEquals(
             $expected,
-          $actual
+            $actual
         );
     }
 
-/*
-*/
+    /*
+    */
     public function testProvider () {
 
         $element = (new Compiler())->setContent('@font-face {
@@ -51,7 +50,7 @@ background-image: url("imgs/lizard.png"),
             // remove @font-face
             if ($node instanceof AtRule && $node->getName() == 'font-face') {
 
-                return RendererClass::REMOVE_NODE;
+                return Traverser::IGNORE_NODE;
             }
 
             // rewrite image url() path for local file
@@ -80,19 +79,20 @@ background-image: url("imgs/lizard.png"),
                     });
                 }
             }
+
+            return $node;
         });
 
         $data = [];
 
         $data[] = [".pic {
- background: no-repeat url(imgs/lizard.png)
+ background: no-repeat url(/imgs/lizard.png)
 }
 .element {
- background-image: url(imgs/lizard.png), url(imgs/star.png)
+ background-image: url(/imgs/lizard.png), url(/imgs/star.png)
 }",
             $renderer->render($element)];
 
         return $data;
     }
 }
-

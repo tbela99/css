@@ -165,21 +165,21 @@ p {
         $data[] = [
                 [
                     0 => '@font-face {
-  font-family: "Bitstream Vera Serif Bold";
-  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+ font-family: "Bitstream Vera Serif Bold";
+ src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
                     1 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }',
                     2 => '@media print {
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
 ],
@@ -202,15 +202,15 @@ p {
 }',
                 2 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }',
                 3 => '@media print {
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
 }'
             ],
@@ -222,22 +222,22 @@ p {
         $data[] = [
             [0 =>   '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -249,22 +249,22 @@ p {
         $data[] = [
             [0 =>   '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -276,35 +276,35 @@ p {
         $data[] = [
             [0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
                 1 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }',
                 2 => '@media print {
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
 }'
             ],
@@ -316,28 +316,28 @@ p {
         $data[] = [
             [ 0 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }',
                 1 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -349,28 +349,28 @@ p {
         $data[] = [
             [ 0 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }',
                 1 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -382,22 +382,22 @@ p {
         $data[] = [
             [ 0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -409,22 +409,22 @@ p {
         $data[] = [
             [ 0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -436,22 +436,22 @@ p {
         $data[] = [
             [ 0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -463,8 +463,8 @@ p {
         $data[] = [
             [ 0 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }'
             ],
@@ -476,22 +476,22 @@ p {
         $data[] = [
             [ 0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -503,28 +503,28 @@ p {
         $data[] = [
             [ 0 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
  body {
-   font-family: "Bitstream Vera Serif Bold", serif
+  font-family: "Bitstream Vera Serif Bold", serif
  }
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
                 1 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }'
             ],
@@ -539,7 +539,7 @@ p {
 }',
                 1 => '@media print, screen and(max-width:12450px) {
  p {
-   background-color: #030303
+  background-color: #030303
  }
 }'
             ],
@@ -613,34 +613,34 @@ p {
         $data[] = [
             [
                 0 => '@font-face {
-  font-family: "Bitstream Vera Serif Bold";
-  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+ font-family: "Bitstream Vera Serif Bold";
+ src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
                 1 => '@media print, screen and(max-width:12450px) {
  p {
-   color: #f0f0f0;
-   background-color: #030303
+  color: #f0f0f0;
+  background-color: #030303
  }
 }',
                 2 => '@media print {
  @font-face {
-   font-family: MaHelvetica;
-   font-weight: bold;
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  font-family: MaHelvetica;
+  font-weight: bold;
+  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }',
                 3 => '@media print {
  p {
-   font-size: 12px;
-   color: #000;
-   text-align: left
+  font-size: 12px;
+  color: #000;
+  text-align: left
  }
 }',
                 4 => '@media print {
  @font-face {
-   font-family: Arial, MaHelvetica;
-   font-weight: bold;
-   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
+  font-family: Arial, MaHelvetica;
+  font-weight: bold;
+  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
             ],
@@ -716,8 +716,8 @@ h1,h2, a {
         $data[] = [
             [
                 0 => '@font-face {
-  font-family: "Bitstream Vera Serif Bold";
-  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+ font-family: "Bitstream Vera Serif Bold";
+ src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }'
             ],
             array_map('trim', $element->query($context))];
@@ -826,8 +826,8 @@ h1,h2, a {
         $data[] = [
             [
                 0 => '@font-face {
-  font-family: "Bitstream Vera Serif Bold";
-  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+ font-family: "Bitstream Vera Serif Bold";
+ src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
                 1 => 'p:before {
  content: print;

@@ -1,8 +1,8 @@
 @media print {
  * {
-   text-shadow: none!important;
-   color: #000!important;
-   background/* comment 9 */: #0000!important;
-   box-shadow: none!important
+  text-shadow: none!important;
+  color: #000!important;
+  background/* comment 9 */: #0000!important;
+  box-shadow: none!important
  }
 }
