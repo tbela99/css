@@ -520,12 +520,9 @@ abstract class Element implements ElementInterface  {
         return $this;
     }
 
-    /**
-     * @return stdClass
-     * @ignore
-     */
-    public function jsonSerialize () {
-
+    public function getAst()
+    {
+        // TODO: Implement getAst() method.
         $ast = clone $this->ast;
 
         if (isset($ast->value)) {
@@ -538,7 +535,24 @@ abstract class Element implements ElementInterface  {
             unset($ast->location);
         }
 
+        if (!empty($ast->children)) {
+
+            foreach ($ast->children as $key => $child) {
+
+                $ast->children[$key] = $child->getAst();
+            }
+        }
+
         return $ast;
+    }
+
+    /**
+     * @return stdClass
+     * @ignore
+     */
+    public function jsonSerialize () {
+
+        return $this->getAst();
     }
 
     /**
