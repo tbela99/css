@@ -30,7 +30,7 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     /**
      * @param string $query
      * @return array
-     * @throws Parser\SyntaxError
+     * @throws \TBela\CSS\Parser\SyntaxError
      */
     public function query($query);
     /**

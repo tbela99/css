@@ -3,8 +3,6 @@
 namespace TBela\CSS;
 
 use Exception;
-use TBela\CSS\Element\Rule;
-use TBela\CSS\Element\AtRule;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Property\PropertyList;
@@ -78,13 +76,17 @@ class Renderer
             }
         }
 
-        $type = $element->getType();
+        return $this->renderAst($element->getAst(), $level);
+    }
 
-        switch ($type) {
+        public function renderAst($ast, $level = null)
+    {
+
+        switch ($ast->type) {
 
             case 'Stylesheet':
 
-                return $this->renderCollection($element, $level);
+                return $this->renderCollection($ast, $level);
 
             case 'Comment':
             case 'Declaration':
@@ -92,22 +94,23 @@ class Renderer
             case 'Rule':
             case 'AtRule':
 
-                return $this->{'render'.$type}($element, $level);
+                return $this->{'render'.$ast->type}($ast, $level);
 
             default:
 
-                throw new Exception('Type not supported ' . $type);
+                throw new Exception('Type not supported ' . $ast->type);
         }
 
         return '';
     }
 
     /**
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
      */
-    protected function renderComment(RenderableInterface $element, $level) {
+
+    protected function renderComment($ast, $level) {
 
         if ($this->options['remove_comments']) {
 
@@ -121,28 +124,28 @@ class Renderer
             $this->indents[$level] = str_repeat($this->options['indent'], $level);
         }
 
-        return $this->indents[$level] . $element['value'];
+        return $this->indents[$level] . $ast->value;
     }
 
     /**
      * render a rule
-     * @param Rule $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
-    protected function renderRule(Rule $element, $level)
+    protected function renderRule($ast, $level)
     {
 
-        $selector = $element->getSelector();
+        $selector = $ast->selector;
 
-        if (empty($selector)) {
+        if (!isset($selector)) {
 
             throw new Exception('The selector cannot be empty');
         }
 
-        $output = $this->renderCollection($element, $level + 1);
+        $output = $this->renderCollection($ast, $level + 1);
 
         if ($output === '' && $this->options['remove_empty_nodes']) {
 
@@ -159,19 +162,31 @@ class Renderer
         $indent = $this->indents[$level];
 
         $result = $indent;
-
         $join = ',' . $this->options['glue'] . $indent;
 
-        foreach ($selector as $sel) {
+        if (is_string($selector) && preg_match('#[,\s]#', $selector)) {
 
-            $result .= $sel.$join;
+            $selector = Value::parse($selector);
+        }
+
+        if (is_array($selector)) {
+
+            foreach ($selector as $sel) {
+
+                $result .= $sel.$join;
+            }
+        }
+
+        else {
+
+            $result .= $selector;
         }
 
         $result = rtrim($result, $join);
 
-        if (!$this->options['remove_comments']) {
+        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
-            $comments = $element->getLeadingComments();
+            $comments = $ast->leadingcomments;
 
             if (!empty($comments)) {
 
@@ -193,21 +208,21 @@ class Renderer
 
     /**
      * render at-rule
-     * @param AtRule $element
+     * @param \stdClass $ast
      * @param ?int $level
      * @return string
      * @ignore
      */
-    protected function renderAtRule(AtRule $element, $level)
+    protected function renderAtRule($ast, $level)
     {
 
-        if ($element['name'] == 'charset' && !$this->options['charset']) {
+        if ($ast->name == 'charset' && !$this->options['charset']) {
 
             return '';
         }
 
-        $output = '@' . $this->renderName($element);
-            $value = $this->renderValue($element);
+        $output = '@'. $this->renderName($ast);
+        $value = $this->renderValue($ast);
 
         if ($value !== '') {
 
@@ -231,12 +246,12 @@ class Renderer
 
         $indent = $this->indents[$level];
 
-        if ($element->isLeaf()) {
+        if (!empty($ast->isLeaf)) {
 
             return $indent . $output . ';';
         }
 
-        $elements = $this->renderCollection($element, $level + 1);
+        $elements = $this->renderCollection($ast, $level + 1);
 
         if ($elements === '' && $this->options['remove_empty_nodes']) {
 
@@ -247,32 +262,43 @@ class Renderer
     }
 
     /**
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
      */
-    protected function renderDeclaration(RenderableInterface $element, $level) {
+    protected function renderDeclaration($ast, $level) {
 
-        return $this->renderProperty($element, $level);
+        return $this->renderProperty($ast, $level);
     }
 
     /**
      * render a property
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
      * @ignore
      */
 
-    protected function renderProperty(RenderableInterface $element, $level)
+    protected function renderProperty($ast, $level)
     {
-        $name = $this->renderName($element);
-        $value = $element->getValue();
+        if ($ast->type == 'Comment') {
+
+            return empty($this->options['compress']) ? '' : $ast->value;
+        }
+
+        $name = $this->renderName($ast);
+        $value = $ast->value;
 
         $options = [
             'compress' => $this->options['compress'],
             'css_level' => $this->options['css_level'],
             'convert_color' => $this->options['convert_color'] === true ? 'hex' : $this->options['convert_color']];
+
+        if (is_string($value)) {
+
+            return $name.':'.$this->options['indent'].$value;
+//            $value = Value::parse($value, $ast->name);
+        }
 
         if (empty($this->options['compress'])) {
 
@@ -293,9 +319,9 @@ class Renderer
             $value = 0;
         }
 
-        if(!$this->options['remove_comments']) {
+        if(!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $comments = $element->getTrailingComments();
+            $comments = $ast->trailingcomments;
 
             if (!empty($comments)) {
 
@@ -318,18 +344,18 @@ class Renderer
 
     /**
      * render a name
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
      * @return string
      * @ignore
      */
-    protected function renderName(RenderableInterface $element)
+    protected function renderName($ast)
     {
 
-        $result = $element->getName();
+        $result = $ast->name;
 
-        if (!$this->options['remove_comments']) {
+        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
-            $comments = $element->getLeadingComments();
+            $comments = $ast->leadingcomments;
 
             if (!empty($comments)) {
 
@@ -345,27 +371,25 @@ class Renderer
 
     /**
      * render a value
-     * @param ElementInterface $element
-     * @return string
+     * @param \stdClass $ast
      * @return string
      * @ignore
      */
-    protected function renderValue(ElementInterface $element)
+    protected function renderValue($ast)
     {
-        $result = $element->getValue();
+        $result = $ast->value;
 
         if (!($result instanceof Set)) {
 
-            $result = Value::parse($result, $element['name']);
-            $element->setValue($result);
+            $result = Value::parse($result, $ast->name);
+            $ast->value = $result;
         }
 
         $result = $result->render($this->options);
 
-        if (!$this->options['remove_comments']) {
+        if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $trailingComments = $element['trailingcomments'];
-
+            $trailingComments = $ast->trailingcomments;
         }
 
         if (!empty($trailingComments)) {
@@ -383,25 +407,31 @@ class Renderer
 
     /**
      * render a list
-     * @param RuleList $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
      * @ignore
      */
-    protected function renderCollection(RuleList $element, $level)
+
+    protected function renderCollection($ast, $level)
     {
 
         $glue = '';
-        $type = $element->getType();
+        $type = $ast->type;
         $count = 0;
 
-        if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && ($type == 'Rule' || ($type == 'AtRule' && $element->hasDeclarations()))) {
+        if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && ($type == 'Rule' || ($type == 'AtRule' && !empty($ast->hasDeclarations)))) {
 
             $glue = ';';
-            $children = new PropertyList($element, $this->options);
+            $children = new PropertyList(null, $this->options);
+
+            foreach ($ast->children as $child) {
+
+                $children->set(isset($child->name) ? $child->name : null, $child->value, $child->type, isset($child->leadingcomments) ? $child->leadingcomments : null, isset($child->trailingcomments) ? $child->trailingcomments : null);
+            }
         } else {
 
-            $children = $element->getChildren();
+            $children = $ast->children;
         }
 
         $result = [];
@@ -410,13 +440,18 @@ class Renderer
 
         foreach ($children as $el) {
 
-            $output = $this->{'render'.$el->getType()}($el, $level);
+            if (!($el instanceof \stdClass)) {
+
+                $el = $el->getAst();
+            }
+
+            $output = $this->{'render'.$el->type}($el, $level);
 
             if (trim($output) === '') {
 
                     continue;
 
-            } else if ($el->getType() != 'Comment') {
+            } else if ($el->type != 'Comment') {
 
                 if ($count == 0) {
 
@@ -424,7 +459,7 @@ class Renderer
                 }
             }
 
-            if ($el->getType() != 'Comment') {
+            if ($el->type != 'Comment') {
 
                 $output .= $glue;
             }

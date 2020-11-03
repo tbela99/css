@@ -39,5 +39,24 @@ background:red;
 
         return $data;
     }
+
+    public function identifierAstProvider() {
+
+        $data = [];
+
+        $data[] = ['div[data-elem-id="1587819236980"] {
+ background: red
+}', (new Renderer())->renderAst((new Parser('div[data-elem-id="1587819236980"]{
+background:red;
+}'))->getAst()) ];
+
+        $data[] = [ 'div[data-elem-id=a1587819236980] {
+ background: red
+}', (new Renderer())->renderAst((new Parser('div[data-elem-id="a1587819236980"]{
+background:red;
+}'))->getAst()) ];
+
+        return $data;
+    }
 }
 

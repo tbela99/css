@@ -210,7 +210,7 @@ class Parser
     public function setOptions(array $options)
     {
 
-        foreach (array_keys($this->options) as $key) {
+        foreach ($this->options as $key => $v) {
 
             if (isset($options[$key])) {
 
@@ -242,7 +242,7 @@ class Parser
     {
 
         if (is_null($this->ast)) {
-//
+
             $this->doParse();
         }
 
@@ -250,7 +250,7 @@ class Parser
 
             $this->element = Element::getInstance($this->ast)->deduplicate($this->options);
         }
-//
+
         /**
          * @var RuleListInterface $element
          */
@@ -268,6 +268,15 @@ class Parser
         return $element;
     }
 
+    public function getAst() {
+
+        if (is_null($this->ast)) {
+
+            $this->doParse();
+        }
+
+        return clone $this->ast;
+    }
     /**
      *
      * @param string $css
@@ -317,7 +326,7 @@ class Parser
 
             return 'url(' . preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', $file) . ')';
         },
-            //resolve import directive, note import directive in imported css will NOT be processed
+            // resolve import directive, note import directive in imported css will NOT be processed
             $this->parseImport($css, $path)
         );
 
@@ -531,7 +540,7 @@ class Parser
 
                 } else {
 
-                    $node = $this->parseSelector($substr, clone $this->currentPosition);
+                    $node = $this->parseRule($substr, clone $this->currentPosition);
                 }
 
                 if ($node === false) {
@@ -764,6 +773,16 @@ class Parser
             unset($data['vendor']);
         }
 
+        if (empty($data['isLeaf'])) {
+
+            unset($data['isLeaf']);
+        }
+
+        if (empty($data['hasDeclarations'])) {
+
+            unset($data['hasDeclarations']);
+        }
+
         return $this->doParseComments((object)$data);
     }
 
@@ -839,7 +858,7 @@ class Parser
      * @return false|stdClass
      * @ignore
      */
-    protected function parseSelector($rule, $position)
+    protected function parseRule($rule, $position)
     {
 
         $selector = rtrim($rule, "{\n\t\r ");
@@ -1037,5 +1056,15 @@ class Parser
     {
 
         return $this->errors;
+    }
+
+    public function __toString() {
+
+        if (isset($this->ast)) {
+
+            return (new Renderer())->renderAst($this->ast);
+        }
+
+        return '';
     }
 }
