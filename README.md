@@ -8,6 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- fastly parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
 - remove duplicate declarations
@@ -103,6 +104,9 @@ $renderer = new Renderer([
   'allow_duplicate_declarations' => false
   ]);
 
+// fast
+$css = $renderer->renderAst($parser->getAst());
+// slow
 $css = $renderer->render($element);
 
 // save as json
@@ -110,6 +114,16 @@ file_put_contents('style.json', json_encode($element));
 ```
 
 Load the AST and generate css code
+
+```php
+
+use \TBela\CSS\Renderer;
+// fastest way to render css
+$beautify = (new Renderer())->renderAst($parser->setContent($css)->getAst());
+
+// or
+$css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')));
+```
 
 ```php
 
@@ -397,7 +411,7 @@ $renderer->on('enter', function (Renderable $node) {
     // remove @font-face
     if ($node instanceof AtRule && $node['name'] == 'font-face') {
 
-        return $this::IGNORE_NODE;
+        return \TBela\CSS\Traverser::IGNORE_NODE;
     }
 
     // rewrite image url() path for local file

@@ -2,9 +2,6 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Element;
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Element\Stylesheet;
 use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
@@ -127,6 +124,21 @@ final class Color extends TestCase
         $this->assertEquals(
             $expected,
             $compiler->setContent($content)->compile()
+        );
+    }
+
+    /**
+     * @param Parser $parser
+     * @param $content
+     * @param string $expected
+     * @throws Exception
+     * @dataProvider yellowColorAstProvider
+     */
+    public function testYellowColorAst(Parser $parser, Renderer $renderer, $content, $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            $renderer->renderAst($parser->setContent($content)->getAst())
         );
     }
 
@@ -678,6 +690,116 @@ p {
  color: #ff0
 }'];
         $data[] = [$compiler,'p {
+	/* color #ff0 hsla(60, 100%, 50%, 1) */
+	color: hsla(60, 100%, 50%, 1);
+}', 'p {
+ /* color #ff0 hsla(60, 100%, 50%, 1) */
+ color: #ff0
+}'];
+
+        return $data;
+    }
+
+    public function yellowColorAstProvider () {
+
+        $parser = new Parser('', ['convert_color' => 'hex']);
+        $renderer = new Renderer(['convert_color' => 'hex']);
+
+        $data = [];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* These examples all specify the same color: yellow. */
+	/* color #ff0 yellow */
+	color: yellow;
+}', 'p {
+ /* These examples all specify the same color: yellow. */
+ /* color #ff0 yellow */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 #ffff00 */
+	color: #ffff00;
+}', 'p {
+ /* color #ff0 #ffff00 */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 #ff0F */
+	color: #ff0F;
+}', 'p {
+ /* color #ff0 #ff0F */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 #ff0000Ff */
+	color: #ffff00Ff;
+}', 'p {
+ /* color #ff0 #ff0000Ff */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 rgb(255,255,0) */
+	color: rgb(255,255,0);
+}', 'p {
+ /* color #ff0 rgb(255,255,0) */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 rgba(255,255,0,1); */
+	color: rgba(255,255,0,1);
+}', 'p {
+ /* color #ff0 rgba(255,255,0,1); */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 rgb(100%, 100%, 0%) */
+	color: rgb(100%, 100%, 0%);
+}', 'p {
+ /* color #ff0 rgb(100%, 100%, 0%) */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer,
+            'p {
+	/* color #ff0 rgba(100%, 100%, 0%, 1) */
+	color: rgba(100%, 100%, 0%, 1);
+}', 'p {
+ /* color #ff0 rgba(100%, 100%, 0%, 1) */
+ color: #ff0
+}'];
+
+        $data[] = [$parser,
+            $renderer, 'p {
+	/* color #ff0 hsl(60, 100%, 50%) */
+	color: hsl(60, 100%, 50%);
+}', 'p {
+ /* color #ff0 hsl(60, 100%, 50%) */
+ color: #ff0
+}'];
+        $data[] = [$parser,
+            $renderer,
+            'p {
 	/* color #ff0 hsla(60, 100%, 50%, 1) */
 	color: hsla(60, 100%, 50%, 1);
 }', 'p {

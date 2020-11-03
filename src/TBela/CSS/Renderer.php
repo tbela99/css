@@ -3,11 +3,8 @@
 namespace TBela\CSS;
 
 use Exception;
-use TBela\CSS\Element\Rule;
-use TBela\CSS\Element\AtRule;
-use TBela\CSS\Event\EventInterface;
-use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\RenderableInterface;
+use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Value\Set;
 use function is_string;
@@ -16,12 +13,12 @@ use function is_string;
  * Css node Renderer
  * @package TBela\CSS
  */
-class Renderer implements EventInterface
+class Renderer
 {
-
-    use EventTrait;
-
-    const REMOVE_NODE = 1;
+    /**
+     * @var Traverser
+     */
+    protected $traverser = null;
 
     protected array $options = [
         'compress' => false,
@@ -37,6 +34,9 @@ class Renderer implements EventInterface
         'allow_duplicate_declarations' => false
     ];
 
+    protected array $indents = [];
+    protected array $events = [];
+
     /**
      * Identity constructor.
      * @param array $options
@@ -48,7 +48,7 @@ class Renderer implements EventInterface
     }
 
     /**
-     * render an Element or a Property
+     * render an ElementInterface or a Property
      * @param RenderableInterface $element the element to render
      * @param null|int $level indention level
      * @param bool $parent render parent
@@ -58,106 +58,140 @@ class Renderer implements EventInterface
     public function render(RenderableInterface $element, ?int $level = null, $parent = false)
     {
 
-        if (!empty($this->events['traverse'])) {
-
-            foreach ($this->emit('traverse', $element, $level) as $result) {
-
-                if ($result === static::REMOVE_NODE) {
-
-                    return '';
-                }
-
-                if (is_string($result)) {
-
-                    return $result;
-                }
-
-                if ($result instanceof RenderableInterface) {
-
-                    $element = $result;
-                    break;
-                }
-            }
-        }
-
-        if ($parent && ($element instanceof Element) && !is_null($element['parent'])) {
+        if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
 
             return $this->render($element->copy()->getRoot(), $level);
         }
 
-        $indent = str_repeat($this->options['indent'], (int)$level);
+        if (isset($this->traverser)) {
 
-        switch ($element->getType()) {
+            $result = $this->traverser->traverse($element);
 
-            case 'Comment':
+            if ($result instanceof ElementInterface) {
 
-                if ($this->options['remove_comments']) {
+                $element = $result;
+            }
+        }
 
-                    return '';
-                }
+        return $this->renderAst($element->getAst(), $level);
+    }
 
-                return (is_null($level) ? '' : $indent.$this->options['indent']) . $element['value'];
+        public function renderAst($ast, ?int $level = null)
+    {
+
+        switch ($ast->type) {
 
             case 'Stylesheet':
 
-                return $this->renderCollection($element, $level);
+                return $this->renderCollection($ast, $level);
 
+            case 'Comment':
             case 'Declaration':
             case 'Property':
-
-                return $indent . $this->options['indent'] . $this->renderProperty($element);
-
             case 'Rule':
-
-                return $this->renderRule($element, $level, $indent);
-
             case 'AtRule':
 
-                return $this->renderAtRule($element, $level, $indent);
+                return $this->{'render'.$ast->type}($ast, $level);
 
             default:
 
-                throw new Exception('Type not supported ' . $element->getType());
+                throw new Exception('Type not supported ' . $ast->type);
         }
 
         return '';
     }
 
     /**
+     * @param \stdClass $ast
+     * @param int|null $level
+     * @return string
+     */
+    protected function renderComment($ast, ?int $level) {
+
+        if ($this->options['remove_comments']) {
+
+            return '';
+        }
+
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        return $this->indents[$level] . $ast->value;
+    }
+
+    /**
      * render a rule
-     * @param Rule $element
-     * @param int $level
-     * @param string $indent
+     * @param \stdClass $ast
+     * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
-    protected function renderRule(Rule $element, $level, $indent)
+    protected function renderRule($ast, $level)
     {
 
-        $selector = $element->getSelector();
+        $selector = $ast->selector;
 
-        if (empty($selector)) {
+        if (!isset($selector)) {
 
             throw new Exception('The selector cannot be empty');
         }
 
-        $output = $this->renderCollection($element, is_null($level) ? 0 : $level + 1);
+        $output = $this->renderCollection($ast, $level + 1);
 
         if ($output === '' && $this->options['remove_empty_nodes']) {
 
             return '';
         }
 
-        $result = $indent . implode(',' . $this->options['glue'] . $indent, $selector);
+        settype($level, 'int');
 
-        if (!$this->options['remove_comments']) {
+        if (!isset($this->indents[$level])) {
 
-            $comments = $element->getLeadingComments();
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        $indent = $this->indents[$level];
+
+        $result = $indent;
+        $join = ',' . $this->options['glue'] . $indent;
+
+        if (is_string($selector) && preg_match('#[,\s]#', $selector)) {
+
+            $selector = Value::parse($selector);
+        }
+
+        if (is_array($selector)) {
+
+            foreach ($selector as $sel) {
+
+                $result .= $sel.$join;
+            }
+        }
+
+        else {
+
+            $result .= $selector;
+        }
+
+        $result = rtrim($result, $join);
+
+        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
+
+            $comments = $ast->leadingcomments;
 
             if (!empty($comments)) {
 
-                $result .= ($this->options['compress'] ? '' : ' ').implode(' ', $comments);
+                $join = $this->options['compress'] ? '' : ' ';
+
+                foreach ($comments as $comment) {
+
+                    $result .= $join.$comment;
+                }
             }
         }
 
@@ -165,28 +199,26 @@ class Renderer implements EventInterface
             $this->options['glue'] .
             $output . $this->options['glue'] .
             $indent .
-            '}';
+        '}';
     }
 
     /**
      * render at-rule
-     * @param AtRule $element
-     * @param int $level
-     * @param string $indent
+     * @param \stdClass $ast
+     * @param ?int $level
      * @return string
-     * @throws Exception
      * @ignore
      */
-    protected function renderAtRule(AtRule $element, $level, $indent)
+    protected function renderAtRule($ast, $level)
     {
 
-        if ($element['name'] == 'charset' && !$this->options['charset']) {
+        if ($ast->name == 'charset' && !$this->options['charset']) {
 
             return '';
         }
 
-        $output = '@' . $this->renderName($element);
-            $value = $this->renderValue($element);
+        $output = '@'. $this->renderName($ast);
+        $value = $this->renderValue($ast);
 
         if ($value !== '') {
 
@@ -201,12 +233,21 @@ class Renderer implements EventInterface
             }
         }
 
-        if ($element->isLeaf()) {
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        $indent = $this->indents[$level];
+
+        if (!empty($ast->isLeaf)) {
 
             return $indent . $output . ';';
         }
 
-        $elements = $this->renderCollection($element, $level + 1);
+        $elements = $this->renderCollection($ast, $level + 1);
 
         if ($elements === '' && $this->options['remove_empty_nodes']) {
 
@@ -217,21 +258,43 @@ class Renderer implements EventInterface
     }
 
     /**
+     * @param \stdClass $ast
+     * @param int|null $level
+     * @return string
+     */
+    protected function renderDeclaration($ast, ?int $level) {
+
+        return $this->renderProperty($ast, $level);
+    }
+
+    /**
      * render a property
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
+     * @param int|null $level
      * @return string
      * @ignore
      */
 
-    protected function renderProperty(RenderableInterface $element)
+    protected function renderProperty($ast, ?int $level)
     {
-        $name = $this->renderName($element);
-        $value = $element->getValue();
+        if ($ast->type == 'Comment') {
+
+            return empty($this->options['compress']) ? '' : $ast->value;
+        }
+
+        $name = $this->renderName($ast);
+        $value = $ast->value;
 
         $options = [
             'compress' => $this->options['compress'],
             'css_level' => $this->options['css_level'],
             'convert_color' => $this->options['convert_color'] === true ? 'hex' : $this->options['convert_color']];
+
+        if (is_string($value)) {
+
+            return $name.':'.$this->options['indent'].$value;
+//            $value = Value::parse($value, $ast->name);
+        }
 
         if (empty($this->options['compress'])) {
 
@@ -247,44 +310,55 @@ class Renderer implements EventInterface
             $value = $value->render($options);
         }
 
-        //->render();
-
         if ($value == 'none' && in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
 
             $value = 0;
         }
 
-        if(!$this->options['remove_comments']) {
+        if(!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $comments = $element->getTrailingComments();
+            $comments = $ast->trailingcomments;
 
             if (!empty($comments)) {
 
-                $value .= ' '.implode(' ', $comments);
+                foreach ($comments as $comment) {
+
+                    $value .= ' '.$comment;
+                }
             }
         }
 
-        return trim($name).':'.$this->options['indent'].trim($value);
+        settype($level, 'int');
+
+        if (!isset($this->indents[$level])) {
+
+            $this->indents[$level] = str_repeat($this->options['indent'], $level);
+        }
+
+        return $this->indents[$level].trim($name).':'.$this->options['indent'].trim($value);
     }
 
     /**
      * render a name
-     * @param RenderableInterface $element
+     * @param \stdClass $ast
      * @return string
      * @ignore
      */
-    protected function renderName(RenderableInterface $element)
+    protected function renderName($ast)
     {
 
-        $result = $element->getName();
+        $result = $ast->name;
 
-        if (!$this->options['remove_comments']) {
+        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
-            $comments = $element->getLeadingComments();
+            $comments = $ast->leadingcomments;
 
             if (!empty($comments)) {
 
-                $result.= ' '.implode(' ', $comments);
+                foreach ($comments as $comment) {
+
+                    $result .= ' '.$comment;
+                }
             }
         }
 
@@ -293,30 +367,34 @@ class Renderer implements EventInterface
 
     /**
      * render a value
-     * @param Element $element
-     * @return string
+     * @param \stdClass $ast
      * @return string
      * @ignore
      */
-    protected function renderValue(Element $element)
+    protected function renderValue($ast)
     {
-        $result = $element->getValue();
+        $result = $ast->value;
 
         if (!($result instanceof Set)) {
 
-            $result = Value::parse($result, $element['name']);
-            $element->setValue($result);
+            $result = Value::parse($result, $ast->name);
+            $ast->value = $result;
         }
 
         $result = $result->render($this->options);
 
-        if (!$this->options['remove_comments']) {
+        if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $trailingComments = $element['trailingcomments'];
+            $trailingComments = $ast->trailingcomments;
+        }
 
-            if (!empty($trailingComments)) {
+        if (!empty($trailingComments)) {
 
-                $result .= ($this->options['compress'] ? '' : ' ').implode(' ', $trailingComments);
+            $glue = $this->options['compress'] ? '' : ' ';
+
+            foreach ($trailingComments as $comment) {
+
+                $result .= $glue.$comment;
             }
         }
 
@@ -325,39 +403,50 @@ class Renderer implements EventInterface
 
     /**
      * render a list
-     * @param RuleList $element
+     * @param \stdClass $ast
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
-    protected function renderCollection(RuleList $element, ?int $level)
+    protected function renderCollection($ast, ?int $level)
     {
 
         $glue = '';
-        $type = $element->getType();
+        $type = $ast->type;
         $count = 0;
 
-        if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && ($type == 'Rule' || ($type == 'AtRule' && $element->hasDeclarations()))) {
+        if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && ($type == 'Rule' || ($type == 'AtRule' && !empty($ast->hasDeclarations)))) {
 
             $glue = ';';
-            $children = new PropertyList($element, $this->options);
+            $children = new PropertyList(null, $this->options);
+
+            foreach ($ast->children as $child) {
+
+                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null);
+            }
         } else {
 
-            $children = $element->getChildren();
+            $children = $ast->children;
         }
 
         $result = [];
 
+        settype($level, 'int');
+
         foreach ($children as $el) {
 
-            $output = $this->render($el, $level);
+            if (!($el instanceof \stdClass)) {
+
+                $el = $el->getAst();
+            }
+
+            $output = $this->{'render'.$el->type}($el, $level);
 
             if (trim($output) === '') {
 
                     continue;
 
-            } else if ($el->getType() != 'Comment') {
+            } else if ($el->type != 'Comment') {
 
                 if ($count == 0) {
 
@@ -365,7 +454,7 @@ class Renderer implements EventInterface
                 }
             }
 
-            if ($el->getType() != 'Comment') {
+            if ($el->type != 'Comment') {
 
                 $output .= $glue;
             }
@@ -383,23 +472,15 @@ class Renderer implements EventInterface
             return '';
         }
 
-//        $hash = [];
-//
-//        $i = count($result);
+        $join = $this->options['glue'];
+        $output = '';
 
-        // remove identical rules
-//        while ($i--) {
-//
-//            if (!isset($hash[$result[$i]])) {
-//
-//                $hash[$result[$i]] = 1;
-//            } else {
-//
-//                array_splice($result, $i, 1);
-//            }
-//        }
+        foreach ($result as $res) {
 
-        return rtrim(implode($this->options['glue'], $result), $glue . $this->options['glue']);
+            $output .= $res.$join;
+        }
+
+        return rtrim($output, $glue . $this->options['glue']);
     }
     /**
      * Set output formatting
@@ -424,7 +505,6 @@ class Renderer implements EventInterface
             $this->options['remove_empty_nodes'] = true;
         } else {
 
-        //    $this->options['convert_color'] = false;
             $this->options['glue'] = "\n";
             $this->options['indent'] = ' ';
         }
@@ -447,6 +527,8 @@ class Renderer implements EventInterface
             $this->options['allow_duplicate_declarations'] = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
         }
 
+        $this->indents = [];
+
         return $this;
     }
 
@@ -465,5 +547,27 @@ class Renderer implements EventInterface
         }
 
         return $this->options[$name] ?? $default;
+    }
+
+    public function on($type, $callable) {
+
+        if (is_null($this->traverser)) {
+
+            $this->traverser = new Traverser();
+        }
+
+        $this->traverser->on($type == 'traverse' ? 'enter' : $type, $callable);
+
+        return $this;
+    }
+
+    public function off($type, $callable) {
+
+        if (isset($this->traverser)) {
+
+            $this->traverser->off($type == 'traverse' ? 'enter' : 'traverse', $callable);
+        }
+
+        return $this;
     }
 }
