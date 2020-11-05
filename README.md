@@ -369,7 +369,7 @@ $stylesheet->appendCss($css_string);
 
 ## Performance
 
-parsing and rendering ast is 3x faster than 
+parsing and rendering ast is 3x faster than parsing an element
 
 ```php
 
@@ -382,7 +382,7 @@ $parser = new Parser($css);
 echo (string) $parser;
 
 // or render minified css
-$renderer = new Renderer(['compress' => true);
+$renderer = new Renderer(['compress' => true]);
 echo $renderer->renderAst($parser->getAst());
 
 ```
