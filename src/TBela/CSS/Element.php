@@ -94,6 +94,11 @@ abstract class Element implements ElementInterface  {
             return clone $ast;
         }
 
+        else {
+
+            $ast = clone $ast;
+        }
+
         if (isset($ast->type)) {
 
             $type = $ast->type;
@@ -111,7 +116,6 @@ abstract class Element implements ElementInterface  {
         }
 
         $className = Element::class.'\\'.ucfirst($ast->type);
-
         return new $className($ast);
     }
 
@@ -230,7 +234,6 @@ abstract class Element implements ElementInterface  {
 
         return isset($this->ast->location) ? $this->ast->location : null;
     }
-
 
     /**
      * @inheritDoc
@@ -523,10 +526,17 @@ abstract class Element implements ElementInterface  {
         return $this;
     }
 
+    public function setAst(ElementInterface $element) {
+
+        $this->ast = $element->getAst();
+    }
+
     public function getAst()
     {
         // TODO: Implement getAst() method.
         $ast = clone $this->ast;
+
+        unset($ast->parent);
 
         if (isset($ast->value)) {
 
@@ -565,7 +575,7 @@ abstract class Element implements ElementInterface  {
     {
         try {
 
-            return (new Renderer(['remove_empty_nodes' => false]))->render($this, null, true);
+            return (new Renderer())->render($this, null, true);
         }
 
         catch (Exception $ex) {

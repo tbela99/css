@@ -164,9 +164,12 @@ class Renderer
         $result = $indent;
         $join = ',' . $this->options['glue'] . $indent;
 
-        if (is_string($selector) && preg_match('#[,\s]#', $selector)) {
+        if (is_string($selector) && preg_match('#[,\s"\']|(\b0)#', $selector)) {
 
-            $selector = Value::parse($selector);
+            $selector = array_map(function (Set $set) {
+
+                return $set->render($this->options);
+            }, Value::parse($selector)->split(','));
         }
 
         if (is_array($selector)) {
@@ -425,13 +428,16 @@ class Renderer
             $glue = ';';
             $children = new PropertyList(null, $this->options);
 
-            foreach ($ast->children as $child) {
+            if (isset($ast->children)) {
 
-                $children->set(isset($child->name) ? $child->name : null, $child->value, $child->type, isset($child->leadingcomments) ? $child->leadingcomments : null, isset($child->trailingcomments) ? $child->trailingcomments : null);
+                foreach ($ast->children as $child) {
+
+                    $children->set(isset($child->name) ? $child->name : null, $child->value, $child->type, isset($child->leadingcomments) ? $child->leadingcomments : null, isset($child->trailingcomments) ? $child->trailingcomments : null);
+                }
             }
         } else {
 
-            $children = $ast->children;
+            $children = isset($ast->children) ? $ast->children : [];
         }
 
         $result = [];
