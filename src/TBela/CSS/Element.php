@@ -93,6 +93,11 @@ abstract class Element implements ElementInterface  {
             return clone $ast;
         }
 
+        else {
+
+            $ast = clone $ast;
+        }
+
         if (isset($ast->type)) {
 
             $type = $ast->type;
@@ -110,7 +115,6 @@ abstract class Element implements ElementInterface  {
         }
 
         $className = Element::class.'\\'.ucfirst($ast->type);
-
         return new $className($ast);
     }
 
@@ -228,6 +232,68 @@ abstract class Element implements ElementInterface  {
         return $this->ast->location ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function setTrailingComments(?array $comments): RenderableInterface {
+
+        return $this->setComments($comments, 'trailing');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTrailingComments(): ?array {
+
+        return $this->ast->trailingcomments ?? null;
+    }
+
+    /**
+     * @param string[]|Value\Comment[]|null $comments
+     * @return Element
+     */
+    protected function setComments(?array $comments, $type): RenderableInterface {
+
+        if (empty($comments)) {
+
+            unset($this->ast->{$type.'comments'});
+            return $this;
+        }
+
+        $this->ast->{$type.'comments'} = array_map(function ($comment) {
+
+            if (is_string($comment)) {
+
+                return $comment;
+            }
+
+            if (($comment->type ?? null) != 'Comment') {
+
+                throw new InvalidArgumentException('Comment expected');
+            }
+
+            return $comment->value;
+
+        }, $comments);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLeadingComments(?array $comments): Element {
+
+        return $this->setComments($comments, 'leading');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLeadingComments(): ?array {
+
+        return $this->ast->leadingcomments ?? null;
+    }
 
     /**
      * @inheritDoc
@@ -297,69 +363,6 @@ abstract class Element implements ElementInterface  {
         }
 
         return implode(':', $signature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTrailingComments(?array $comments): RenderableInterface {
-
-        return $this->setComments($comments, 'trailing');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTrailingComments(): ?array {
-
-        return $this->ast->trailingcomments ?? null;
-    }
-
-    /**
-     * @param string[]|Value\Comment[]|null $comments
-     * @return Element
-     */
-    protected function setComments(?array $comments, $type): RenderableInterface {
-
-        if (empty($comments)) {
-
-            unset($this->ast->{$type.'comments'});
-            return $this;
-        }
-
-        $this->ast->{$type.'comments'} = array_map(function ($comment) {
-
-            if (is_string($comment)) {
-
-                return $comment;
-            }
-
-            if (($comment->type ?? null) != 'Comment') {
-
-                throw new InvalidArgumentException('Comment expected');
-            }
-
-            return $comment->value;
-
-        }, $comments);
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setLeadingComments(?array $comments): Element {
-
-        return $this->setComments($comments, 'leading');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLeadingComments(): ?array {
-
-        return $this->ast->leadingcomments ?? null;
     }
 
     /**
@@ -520,10 +523,17 @@ abstract class Element implements ElementInterface  {
         return $this;
     }
 
+    public function setAst(ElementInterface $element) {
+
+        $this->ast = $element->getAst();
+    }
+
     public function getAst()
     {
         // TODO: Implement getAst() method.
         $ast = clone $this->ast;
+
+        unset($ast->parent);
 
         if (isset($ast->value)) {
 
@@ -562,7 +572,7 @@ abstract class Element implements ElementInterface  {
     {
         try {
 
-            return (new Renderer(['remove_empty_nodes' => false]))->render($this, null, true);
+            return (new Renderer())->render($this, null, true);
         }
 
         catch (Exception $ex) {

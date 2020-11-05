@@ -367,6 +367,26 @@ $stylesheet->appendCss($css_string);
 
 ```
 
+## Performance
+
+parsing and rendering ast is 3x faster than parsing an element
+
+```php
+
+use \TBela\CSS\Element\Parser;
+use \TBela\CSS\Element\Renderer;
+
+$parser = new Parser($css);
+
+// parse and render
+echo (string) $parser;
+
+// or render minified css
+$renderer = new Renderer(['compress' => true]);
+echo $renderer->renderAst($parser->getAst());
+
+```
+
 ## Transform Rendered CSS
 
 Use the Renderer class to transform the output. the callback returns three types of values
