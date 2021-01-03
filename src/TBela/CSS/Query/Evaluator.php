@@ -23,7 +23,7 @@ class Evaluator
         $info = [];
 
         /**
-         * @var \TBela\CSS\Element $element
+         * @var \TBela\CSS\Interfaces\ElementInterface $element
          */
         foreach ($results as $key => $element) {
 

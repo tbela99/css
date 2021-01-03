@@ -98,11 +98,46 @@ final class Query extends TestCase
             $actual
         );
     }
+
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider dedupProvider
+     */
+    public function testDedup(string $expected, string $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
 /*
 */
-    public function queryProvider () {
+    public function dedupProvider ()
+    {
 
         $data = [];
+
+        $data[] = [
+            '*',
+            (string) (new \TBela\CSS\Query\Parser())->parse('span|div,span|div, .div| span *, nav|*')
+        ];
+
+        $data[] = [
+            'span|div|.div|span *, nav',
+            (string) (new \TBela\CSS\Query\Parser())->parse('span|div,span|div, .div| span *, nav')
+    ];
+
+        return $data;
+    }
+
+        /*
+        */
+        public function queryProvider () {
+
+            $data = [];
 
         $css = '@font-face {
   font-family: "Bitstream Vera Serif Bold";

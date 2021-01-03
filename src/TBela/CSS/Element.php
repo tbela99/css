@@ -73,15 +73,6 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-     * @param $location
-     * @return SourceLocation
-     */
-    protected function createLocation ($location) {
-
-        return SourceLocation::getInstance($location);
-    }
-
-    /**
      * @inheritDoc
      */
     public static function getInstance($ast) {
@@ -124,6 +115,31 @@ abstract class Element implements ElementInterface  {
     public function traverse(callable $fn, $event) {
 
         return (new Traverser())->on($event, $fn)->traverse($this);
+    }
+
+    public function __get($name) {
+
+        if (is_callable([$this, "get$name"])) {
+
+            return $this->{"get$name"}();
+        }
+    }
+
+    public function __set($name, $value) {
+
+        if (is_callable([$this, "set$name"])) {
+
+            return $this->{"set$name"}($value);
+        }
+    }
+
+    /**
+     * @param $location
+     * @return SourceLocation
+     */
+    protected function createLocation ($location) {
+
+        return SourceLocation::getInstance($location);
     }
 
     /**

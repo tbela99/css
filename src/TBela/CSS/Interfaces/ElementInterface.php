@@ -11,7 +11,7 @@ use TBela\CSS\Value;
 /**
  * Interface implemented by Elements
  */
-interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess, RenderableInterface {
+interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess {
 
     /**
      * create an instance from ast or another Element instance
