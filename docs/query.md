@@ -7,8 +7,7 @@ It allows you to query the CSS node in using and xpath like syntax or class name
 Search nodes by class names.
 
 ```php
-
-$result = $element->queryByClassNames('@font-face, .class, .another-class');
+$result = $element->queryByClassNames('@font-face, .foo .bar, .class, .another-class');
 ```
 
 ### query
