@@ -657,29 +657,30 @@ p {
   background-color: #030303
  }
 }',
-                2 => '@media print {
- @font-face {
-  font-family: MaHelvetica;
-  font-weight: bold;
-  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+                2 => 'p {
+ color: #f0f0f0;
+ background-color: #030303
 }',
-                3 => '@media print {
- p {
-  font-size: 12px;
-  color: #000;
-  text-align: left
- }
+                3 => '@font-face {
+ font-family: MaHelvetica;
+ font-weight: bold;
+ src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
 }',
-                4 => '@media print {
- @font-face {
-  font-family: Arial, MaHelvetica;
-  font-weight: bold;
-  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
+                4 => 'p {
+ font-size: 12px;
+ color: #000;
+ text-align: left
+}',
+                5 => '@font-face {
+ font-family: Arial, MaHelvetica;
+ font-weight: bold;
+ src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
 }'
             ],
-            array_map('trim', $element->query($context))];
+            array_map(function ($node) {
+
+                return (new \TBela\CSS\Renderer())->render($node, null, false);
+            }, $element->query($context))];
 
         return $data;
     }

@@ -753,7 +753,7 @@ class Parser
         return $buffer;
     }
 
-    protected function split(string $string, $char = '|')
+    public function split(string $string, $char = '|')
     {
 
         $result = [];

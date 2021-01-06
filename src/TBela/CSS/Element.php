@@ -151,6 +151,17 @@ abstract class Element implements ElementInterface  {
 
         return (new Evaluator())->evaluate($query, $this);
     }
+
+    /**
+     *
+     * @inheritDoc
+     * @throws Parser\SyntaxError
+     */
+    public function queryByClassNames($query): array {
+
+        return (new Evaluator())->evaluateByClassName($query, $this);
+    }
+
     /**
      * @inheritDoc
      */

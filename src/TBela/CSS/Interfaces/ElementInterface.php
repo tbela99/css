@@ -28,11 +28,21 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function traverse(callable $fn, $event);
 
     /**
+     * search nodes using query selector syntax
      * @param string $query
      * @return array
      * @throws \TBela\CSS\Parser\SyntaxError
      */
     public function query($query): array;
+
+    /**
+     * query selectors by class names
+     * @param string $query
+     * @return array
+     * @throws \TBela\CSS\Parser\SyntaxError
+     */
+    public function queryByClassNames($query): array;
+
     /**
      * return the root element
      * @return ElementInterface
