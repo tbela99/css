@@ -204,7 +204,7 @@ $compiler->setContent($css);
 $stylesheet = $compiler->getData();
 
 // get @font-face nodes by class names
-$nodes = $stylesheet->queryByClassNames('@font-face');
+$nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
 
 // or
 
