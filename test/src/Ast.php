@@ -45,6 +45,16 @@ final class Ast extends TestCase
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('
+	
+	a:visited {
+		text-decoration: underline;
+	}
+	');
+
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
+        $data[] = [(string) $parser, (string) $parser->parse()];
+
+        $parser->setContent('
 	a,
 	a:visited {
 		text-decoration: underline;
@@ -58,6 +68,7 @@ final class Ast extends TestCase
 		content: " ("attr(title) ")";
 	}');
 
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('
@@ -84,6 +95,7 @@ final class Ast extends TestCase
 ');
 
 
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('

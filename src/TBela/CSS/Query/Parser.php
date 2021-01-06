@@ -39,21 +39,47 @@ class Parser
         }
 
         $tokens = [];
+        $list = [];
+        $hash = [];
 
-        if (strpos($string, '|') !== false) {
+        foreach ($this->split($string) as $token) {
 
-            $tokens = [];
+            $items = [];
 
-            foreach ($this->split($string) as $token) {
+            foreach ($this->split($token, ',') as $item) {
 
-                $this->doParse($token);
-                $tokens[] = array_map([Token::class, 'getInstance'], $this->tokens);
+                $item = trim($item);
+
+                if ($item == '*') {
+
+                    $items = ['*'];
+                    break;
+                }
+
+                if (!isset($hash[$item])) {
+
+                    $hash[$item] = 1;
+                    $items[] = $item;
+                }
+            }
+
+            $item = implode(',', $items);
+
+            if ($item == '*') {
+
+                $list = ['*'];
+                break;
+            }
+
+            if ($item !== '') {
+
+                $list[] = $item;
             }
         }
 
-        else {
+        foreach ($list as $token) {
 
-            $this->doParse($string);
+            $this->doParse($token);
             $tokens[] = array_map([Token::class, 'getInstance'], $this->tokens);
         }
 
@@ -107,7 +133,7 @@ class Parser
         // set default context
         if (empty($this->tokens) || (isset($this->tokens[0]) && $this->tokens[0]->type != 'select')) {
 
-            array_unshift($this->tokens, (object) ['type' => 'select', 'node' => 'self_or_descendants']);
+            array_unshift($this->tokens, (object)['type' => 'select', 'node' => 'self_or_descendants']);
         }
 
         return $this->tokens;
@@ -273,7 +299,7 @@ class Parser
 //
                         $result[] = (object)['type' => 'separator', 'value' => ','];
 //
-                        while($i++ < $j) {
+                        while ($i++ < $j) {
 
                             if (!preg_match('#\s#', $selector[$i])) {
 
@@ -304,7 +330,7 @@ class Parser
 
                             $result[] = (object)['type' => 'separator', 'value' => $selector[$i]];
 
-                            while($i++ < $j) {
+                            while ($i++ < $j) {
 
                                 if (!preg_match('#\s#', $selector[$i])) {
 
@@ -342,21 +368,18 @@ class Parser
 
                                     $result[] = (object)['type' => 'operator', 'value' => $selector[$i] . $selector[++$i]];
                                     $buffer = '';
-                                }
-                                else {
+                                } else {
 
                                     $result[] = (object)['type' => 'operator', 'value' => $selector[$i]];
                                 }
-                            }
 
-                            else {
+                            } else {
 
                                 $buffer .= $selector[$i];
                             }
 
                             break;
-                        }
-                        else if ($context === 'selector' && in_array($selector[$i], ['>', '~'])) {
+                        } else if ($context === 'selector' && in_array($selector[$i], ['>', '~'])) {
 
                             if ($buffer !== '') {
 
@@ -373,7 +396,7 @@ class Parser
 
                             $result[] = (object)['type' => 'separator', 'value' => $selector[$i]];
 
-                            while($i++ < $j) {
+                            while ($i++ < $j) {
 
                                 if (!preg_match('#\s#', $selector[$i])) {
 
@@ -388,8 +411,8 @@ class Parser
 //
 //                        else {
 //
-                            $buffer .= $selector[$i];
-                            break;
+                        $buffer .= $selector[$i];
+                        break;
 //                        }
 //
 //                        if ($buffer !== '') {
@@ -421,7 +444,7 @@ class Parser
                             $result[] = (object)['type' => 'separator', 'value' => '||'];
                             $i++;
 
-                            while($i++ < $j) {
+                            while ($i++ < $j) {
 
                                 if (!preg_match('#\s#', $selector[$i])) {
 
@@ -448,7 +471,7 @@ class Parser
                             $buffer = '';
                         }
 
-                        while ($i < $j && $this->is_whitespace($selector[++$i]));
+                        while ($i < $j && $this->is_whitespace($selector[++$i])) ;
 
                         if ($selector[$i] == '/') {
 
@@ -493,19 +516,17 @@ class Parser
 
                             if (isset($data->value)) {
 
-                                if(count($data->value) == 1 &&
+                                if (count($data->value) == 1 &&
                                     isset($data->value[0]->value) &&
                                     is_numeric($data->value[0]->value)) {
 
                                     $data->value[0]->type = 'index';
                                     $data->value[0]->value = +$data->value[0]->value;
-                                }
-
-                                else if (count($data->value) == 3) {
+                                } else if (count($data->value) == 3) {
 
                                     if ($data->value[1]->type == 'operator' &&
-                                    $data->value[0]->type == $data->value[2]->type &&
-                                    $data->value[0]->value === $data->value[2]->value) {
+                                        $data->value[0]->type == $data->value[2]->type &&
+                                        $data->value[0]->value === $data->value[2]->value) {
 
                                         $data = [];
                                     }
@@ -734,7 +755,7 @@ class Parser
         return $buffer;
     }
 
-    protected function split($string)
+    public function split($string, $char = '|')
     {
 
         $result = [];
@@ -748,9 +769,9 @@ class Parser
 
             switch ($string[$i]) {
 
-                case '|':
+                case $char:
 
-                    if (isset($string[$i + 1]) && $string[$i + 1] == '|') {
+                    if ($string[$i] == '|' && isset($string[$i + 1]) && $string[$i + 1] == '|') {
 
                         $buffer .= '||';
                         $i++;
@@ -768,7 +789,7 @@ class Parser
 
                     $token = $string[$i];
 
-                    while (++$i < $i) {
+                    while (++$i < $j) {
 
                         $buffer .= $string[$i];
 
