@@ -36,8 +36,8 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function query($query): array;
 
     /**
-     * query selectors by class names
-     * @param string $query
+     * search nodes by class names
+     * @param string $query comma separated list of class names
      * @return array
      * @throws \TBela\CSS\Parser\SyntaxError
      */

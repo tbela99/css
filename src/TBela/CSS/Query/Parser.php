@@ -787,7 +787,7 @@ class Parser
 
                     $token = $string[$i];
 
-                    while (++$i < $i) {
+                    while (++$i < $j) {
 
                         $buffer .= $string[$i];
 

@@ -34,7 +34,7 @@ class Evaluator
 
                 $selector = trim($selector);
 
-                $selectors[$selector] = $selector;
+                $selectors[$selector] = (string) $parser->parse($selector);
             }
         }
 
@@ -99,7 +99,7 @@ class Evaluator
 
                     if ($i == $j) {
 
-                        return false;
+                        break;
                     }
 
                     $i = $j;
@@ -108,7 +108,12 @@ class Evaluator
 
                     if ($k == $j) {
 
-                        return $selectors[$i] === $search[$l];
+                        if ($selectors[$i] === $search[$l]) {
+
+                            return true;
+                        }
+
+                        break;
                     }
 
                     $k = $j;

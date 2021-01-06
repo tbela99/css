@@ -89,12 +89,4 @@ class TokenList implements TokenInterface
 
         }, $this->tokens));
     }
-
-    /**
-     * @return TokenInterface[][]
-     */
-    public function getTokens() {
-
-        return $this->tokens;
-    }
 }
