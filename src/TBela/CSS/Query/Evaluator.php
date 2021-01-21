@@ -21,6 +21,13 @@ class Evaluator
 
     }
 
+    /**
+     * search nodes by class ame
+     * @param string $classNames a comma separated list of class names
+     * @param QueryInterface $context
+     * @return array
+     * @throws SyntaxError
+     */
     public function evaluateByClassName($classNames, QueryInterface $context)
     {
 
@@ -144,9 +151,7 @@ class Evaluator
 
                 $info[$index] = [
                     'key' => $key,
-                    'depth' => [],
-                    'name' => is_null($element['name']) ? implode(',', (array)$element['selector']) : $element['name'],
-                    'val' => (string)$element
+                    'depth' => []
                 ];
 
                 $el = $element;

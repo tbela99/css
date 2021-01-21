@@ -25,8 +25,9 @@ class Parser
     protected $tokens;
 
     /**
-     * @param $string
+     * @param string $string
      * @return TokenList
+     * @throws SyntaxError
      */
     public function parse($string)
     {
@@ -86,7 +87,13 @@ class Parser
         return new TokenList($tokens);
     }
 
-    protected function doParse ($string) {
+    /**
+     * @param string $string
+     * @return array
+     * @throws SyntaxError
+     */
+    protected function doParse($string)
+    {
 
         $string = ltrim($string);
 
