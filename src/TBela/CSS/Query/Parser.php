@@ -25,8 +25,9 @@ class Parser
     protected array $tokens;
 
     /**
-     * @param $string
+     * @param string $string
      * @return TokenList
+     * @throws SyntaxError
      */
     public function parse(string $string): TokenList
     {
@@ -86,6 +87,11 @@ class Parser
         return new TokenList($tokens);
     }
 
+    /**
+     * @param string $string
+     * @return array
+     * @throws SyntaxError
+     */
     protected function doParse(string $string)
     {
 

@@ -106,6 +106,16 @@ class Renderer
      * @param int|null $level
      * @return string
      */
+    protected function renderStylesheet($ast, $level) {
+
+        return $this->renderCollection($ast, $level);
+    }
+
+    /**
+     * @param \stdClass $ast
+     * @param int|null $level
+     * @return string
+     */
     protected function renderComment($ast, ?int $level) {
 
         if ($this->options['remove_comments']) {
