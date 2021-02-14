@@ -1,0 +1,37 @@
+body {
+ display: grid;
+ grid-template: main auto aside auto/100%
+}
+@media (width > 40em) {
+ body {
+  grid-template: "aside main" auto/1fr 3fr
+ }
+}
+main,
+aside {
+ contain: layout inline-size
+}
+h2 {
+ font-size: 120%
+}
+@container (width > 40em) {
+ h2 {
+  font-size: calc(130% + 0.5vw)
+ }
+}
+.media-object {
+ grid-template: img auto content auto/100%
+}
+@container (width > 45em) {
+ .media-object {
+  grid-template: "img content" auto/auto 1fr
+ }
+}
+.card-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(20em, 1fr))
+}
+.card {
+ display: grid;
+ grid-template: image auto content 1fr footer auto/100%
+}

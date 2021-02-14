@@ -103,6 +103,10 @@ _boolean_. If true then compress the css. If false then pretty print the css. Th
 
 _int_. Support features specific to the specified CSS level. Setting the value 3 will output colors using CSS3 format. The default value _4_ will use CSS4 color format
 
+### preserve_license
+
+_boolean_. Preserve comments that start with '/*!'
+
 ### remove_comments
 
 _boolean_. If true then remove comments. When compress is set to true then comments are always removed. The default value is _false_
