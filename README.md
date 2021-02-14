@@ -494,6 +494,7 @@ Result
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
+- preserve_license: preserve comments that start with '/*!'
 - remove_comments: remove comments. If _compress_ is true, comments are always removed
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: will use CSS4 or CSS3 color format. default to _4_

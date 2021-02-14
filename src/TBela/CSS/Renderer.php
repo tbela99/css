@@ -29,6 +29,7 @@ class Renderer
         'charset' => false,
         'convert_color' => false,
         'remove_comments' => false,
+        'preserve_license' => false,
         'compute_shorthand' => true,
         'remove_empty_nodes' => false,
         'allow_duplicate_declarations' => false
@@ -120,7 +121,10 @@ class Renderer
 
         if ($this->options['remove_comments']) {
 
-            return '';
+            if (!$this->options['preserve_license'] || substr($ast->value, 0, 3) != '/*!') {
+
+                return '';
+            }
         }
 
         settype($level, 'int');
