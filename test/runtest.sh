@@ -24,9 +24,10 @@ fail() {
   exit 1
 }
 
-if [ "$1" = "" ] || [ "${1:0:1}" = "-" ]; then
+flag=$(echo "$1" | cut -c1-1)
+if [ "$1" = "" ] || [ "$flag" = "-" ]; then
   skip=""
-  [ -n "$1" ] && [ "${1:0:1}" = "-" ] && skip="${1:1:10}"
+  [ -n "$1" ] && [ "$flag" = "-" ] && skip=$(echo "$1" | cut -c2-11)
   for file in src/*.php
     do
       [ "$file" = "src/$skip.php" ] && continue;

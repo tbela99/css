@@ -25,6 +25,7 @@ class Compiler {
         'compress',
         'css_level',
         'remove_comments',
+        'preserve_license',
         'compute_shorthand',
         'remove_empty_nodes',
         'allow_duplicate_declarations'
