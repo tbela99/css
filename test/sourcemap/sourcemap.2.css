@@ -1,0 +1,9 @@
+
+.fa-bahai {
+
+    display: inline-block;
+}
+.fa-bahai:before {
+    content: "s-2 ";
+    font-size: 80%;
+}

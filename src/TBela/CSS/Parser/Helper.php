@@ -2,6 +2,10 @@
 
 namespace TBela\CSS\Parser;
 
+/**
+ * Class Helper
+ * @package TBela\CSS\Parser
+ */
 class Helper
 {
 
@@ -23,7 +27,7 @@ class Helper
     }
 
     /**
-     * @param $file
+     * @param string $file
      * @param string $path
      * @return string
      * @ignore
@@ -35,7 +39,7 @@ class Helper
 
             if (!preg_match('#^(https?:/)?/#', $file)) {
 
-                if ($file[0] != '/' && $path !== '') {
+                if ($file[0] != '/') {
 
                     if ($path[strlen($path) - 1] != '/') {
 
@@ -59,7 +63,7 @@ class Helper
                 if ($p == '..') {
 
                     array_pop($return);
-                    continue;
+//                    continue;
 
                 } else if ($p == '.') {
 
@@ -81,7 +85,83 @@ class Helper
     }
 
     /**
-     * @param $url
+     * compute relative path
+     * @param string $file
+     * @param string $ref
+     * @return string
+     */
+    public static function relativePath(string $file, string $ref) {
+
+        // handle urls???
+
+        if ($file !== '' && $file[0] != '/') {
+
+            $file = static::getCurrentDirectory().'/'.$file;
+        }
+
+        if ($ref !== '' && $ref[0] != '/') {
+
+            $ref = static::getCurrentDirectory().'/'.$ref;
+        }
+
+        $basename = basename($file);
+
+        $ref = explode('/', dirname($ref));
+        $file = explode('/', dirname($file));
+
+        $j = count($ref);
+
+        while ($j--) {
+
+            if ($ref[$j] == '.') {
+
+                array_splice($ref, $j, 1);
+                continue;
+            }
+
+            if ($ref[$j] == '..' && isset($ref[$j - 1]) && $ref[$j - 1] != '..') {
+
+                array_splice($ref, $j - 1, 2);
+                $j--;
+            }
+        }
+
+        $j = count($file);
+
+        while ($j--) {
+
+            if ($file[$j] == '.') {
+
+                array_splice($file, $j, 1);
+                continue;
+            }
+
+            if ($file[$j] == '..' && isset($file[$j - 1]) && $file[$j - 1] != '..') {
+
+                array_splice($file, $j - 1, 2);
+            }
+        }
+
+        while ($ref) {
+
+            $r = $ref[0];
+
+            if (!isset($file[0]) || $file[0] != $r) {
+
+                break;
+            }
+
+            array_shift($file);
+            array_shift($ref);
+        }
+
+        $result = implode('/', array_merge(array_fill(0, count($ref), '..'), $file));
+
+        return ($result === '' ? '' : $result.'/').$basename;
+    }
+
+    /**
+     * @param string $url
      * @param array $options
      * @param array $curlOptions
      * @return bool|string

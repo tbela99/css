@@ -2,6 +2,7 @@
 
 - [Summary](./)
 - [Parser](./parser.md)
+- [Renderer](./renderer.md)
 - [Compiler](./compiler.md)
 - [CSS Manipulation](./manipulation.md)
 - [CSS API](./api.md)

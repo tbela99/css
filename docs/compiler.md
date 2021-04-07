@@ -1,4 +1,4 @@
-# Compiler
+# Compiler [deprecated]
 
 Compile an Element or an AST into CSS.
 
