@@ -8,6 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- generate sourcemap
 - fastly parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
@@ -16,7 +17,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-- query the css nodes using xpath like syntax
+- query the css nodes using xpath like syntax or class name
 - transform the css output using the Renderer class
 
 ## Installation
@@ -50,11 +51,11 @@ PHP Code
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Parser;
 
-$compiler = new Compiler();
+$parser = new Parser();
 
-$compiler->setContent('
+$parser->setContent('
 h1 {
   color: green;
   color: blue;
@@ -66,7 +67,7 @@ h1 {
   color: aliceblue;
 }');
 
-echo $compiler->compile();
+echo $parser->parse();
 ```
 
 Result
@@ -101,6 +102,7 @@ $renderer = new Renderer([
   'compress' => true,
   'convert_color' => 'hex',
   'css_level' => 4,
+  'sourcemap' => true,
   'allow_duplicate_declarations' => false
   ]);
 
@@ -108,6 +110,9 @@ $renderer = new Renderer([
 $css = $renderer->renderAst($parser->getAst());
 // slow
 $css = $renderer->render($element);
+
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 
 // save as json
 file_put_contents('style.json', json_encode($element));
@@ -127,19 +132,33 @@ $css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')))
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Renderer;
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new Compiler([
+$compiler = new Renderer([
     'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$compiler->setData($ast);
+$css = $compiler->renderAst($ast);
+```
 
-$css = $compiler->compile();
+## Sourcemap generation
+
+```php
+$renderer = new Renderer([
+  'compress' => true,
+  'convert_color' => 'hex',
+  'css_level' => 4,
+  'sourcemap' => true,
+  'allow_duplicate_declarations' => false
+  ]);
+
+// call save and specify the file name
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 ```
 
 ## The CSS Query API
@@ -203,8 +222,14 @@ $compiler->setContent($css);
 
 $stylesheet = $compiler->getData();
 
+// get @font-face nodes by class names
+$nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
+
+// or
+
 // get all src properties in a @font-face rule
 $nodes = $stylesheet->query('@font-face/src');
+
 
 echo implode("\n", array_map('trim', $nodes));
 ```
@@ -369,7 +394,7 @@ $stylesheet->appendCss($css_string);
 
 ## Performance
 
-parsing and rendering ast is 3x faster than 
+parsing and rendering ast is 3x faster than parsing an element
 
 ```php
 
@@ -382,7 +407,7 @@ $parser = new Parser($css);
 echo (string) $parser;
 
 // or render minified css
-$renderer = new Renderer(['compress' => true);
+$renderer = new Renderer(['compress' => true]);
 echo $renderer->renderAst($parser->getAst());
 
 ```
@@ -488,6 +513,7 @@ Result
 - charset: if false remove @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
+- preserve_license: preserve comments that start with '/*!'
 - remove_comments: remove comments. If _compress_ is true, comments are always removed
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: will use CSS4 or CSS3 color format. default to _4_

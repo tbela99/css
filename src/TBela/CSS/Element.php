@@ -48,18 +48,18 @@ abstract class Element implements ElementInterface  {
 
         if (!is_null($ast)) {
 
+            if (isset($ast->location->start)) {
+
+                $ast->position = $ast->location->start;
+            }
+
             foreach ($ast as $key => $value) {
-
-                if ($value instanceof stdClass && is_callable([$this, 'create'.$key])) {
-
-                    $value = $this->{'create'.$key}($value);
-                }
 
                 if (is_callable([$this, 'set'.$key])) {
 
                     $this->{'set'.$key}($value);
                 }
-                else if (is_callable([$this, $key])) {
+                else if (is_callable([$this, 'get'.$key]) || is_callable([$this, $key])) {
 
                     $this->ast->{$key} = $value;
                 }
@@ -73,6 +73,7 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+<<<<<<< HEAD
      * @param $location
      * @return SourceLocation
      */
@@ -83,6 +84,8 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+=======
+>>>>>>> sourcemap
      * @inheritDoc
      */
     public static function getInstance($ast) {
@@ -137,6 +140,17 @@ abstract class Element implements ElementInterface  {
 
         return (new Evaluator())->evaluate($query, $this);
     }
+
+    /**
+     *
+     * @inheritDoc
+     * @throws Parser\SyntaxError
+     */
+    public function queryByClassNames($query) {
+
+        return (new Evaluator())->evaluateByClassName($query, $this);
+    }
+
     /**
      * @inheritDoc
      */
@@ -218,17 +232,66 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function setLocation($location) {
+    public function getSrc() {
 
-        assert(is_null($location) || $location instanceof SourceLocation);
-
-        $this->ast->location = $location;
-        return $this;
+        return isset($this->ast->src) ? $this->ast->src : null;
     }
 
     /**
      * @inheritDoc
      */
+    public function getPosition() {
+
+        return isset($this->ast->position) ? $this->ast->position : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTrailingComments($comments) {
+
+        return $this->setComments($comments, 'trailing');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTrailingComments() {
+
+        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments : null;
+    }
+
+    /**
+     * @param string[]|Value\Comment[]|null $comments
+     * @return Element
+     */
+    protected function setComments($comments, $type)
+    {
+
+        if (empty($comments)) {
+
+            unset($this->ast->{$type . 'comments'});
+            return $this;
+        }
+
+        $this->ast->{$type.'comments'} = array_map(function ($comment) {
+
+            if (is_string($comment)) {
+
+                return $comment;
+            }
+
+            if ((isset($comment->type) ? $comment->type : null) != 'Comment') {
+
+                throw new InvalidArgumentException('Comment expected');
+            }
+
+            return $comment->value;
+
+        }, $comments);
+
+        return $this;
+    }
 
     public function getLocation() {
 
@@ -303,53 +366,6 @@ abstract class Element implements ElementInterface  {
         }
 
         return implode(':', $signature);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setTrailingComments ($comments) {
-
-        return $this->setComments($comments, 'trailing');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTrailingComments() {
-
-        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments : null;
-    }
-
-    /**
-     * @param string[]|Value\Comment[]|null $comments
-     * @return Element
-     */
-    protected function setComments($comments, $type) {
-
-        if (empty($comments)) {
-
-            unset($this->ast->{$type.'comments'});
-            return $this;
-        }
-
-        $this->ast->{$type.'comments'} = array_map(function ($comment) {
-
-            if (is_string($comment)) {
-
-                return $comment;
-            }
-
-            if ((isset($comment->type) ? $comment->type : null) != 'Comment') {
-
-                throw new InvalidArgumentException('Comment expected');
-            }
-
-            return $comment->value;
-
-        }, $comments);
-
-        return $this;
     }
 
     /**

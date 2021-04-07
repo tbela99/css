@@ -8,6 +8,7 @@ use TBela\CSS\Interfaces\ElementInterface;
 /**
  * Css Compiler
  * @package TBela\CSS
+ * @deprecated use Parser or Renderer
  */
 class Compiler {
 
@@ -16,31 +17,20 @@ class Compiler {
      * @var array|string[]
      * @ignore
      */
-    protected $properties = [
-        'indent',
-        'glue',
-        'separator',
-        'charset',
-        'convert_color',
-        'compress',
-        'css_level',
-        'remove_comments',
-        'compute_shorthand',
-        'remove_empty_nodes',
-        'allow_duplicate_declarations'
-    ];
-
-    /**
-     * @var array
-     * @ignore
-     */
-    protected $options = [];
+    protected $properties = [];
 
     /**
      * @var ElementInterface
      * @ignore
      */
+
     protected $data;
+
+    /**
+     * @var Renderer
+     */
+
+    protected $renderer;
 
     /**
      * Compiler constructor.
@@ -48,7 +38,7 @@ class Compiler {
      */
     public function __construct (array $options = []) {
 
-        $this->setOptions($options);
+        $this->renderer = new Renderer($options);
     }
 
     /**
@@ -58,20 +48,14 @@ class Compiler {
      */
     public function setOptions (array $options) {
 
-        foreach ($options as $key => $value) {
-
-            if (in_array($key, $this->properties)) {
-
-                $this->options[$key] = $value;
-            }
-        }
+        $this->renderer->setOptions($options);
 
         return $this;
     }
 
     public function getOptions() {
 
-        return $this->options;
+        return $this->renderer->getOptions();
     }
 
     /**
@@ -131,7 +115,7 @@ class Compiler {
 
         if (isset($this->data)) {
 
-            return (new Renderer($this->options))->render($this->data);
+            return $this->renderer->render($this->data);
         }
 
         return '';

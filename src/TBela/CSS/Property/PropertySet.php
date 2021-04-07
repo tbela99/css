@@ -12,6 +12,8 @@ use TBela\CSS\Value\Set;
  */
 class PropertySet
 {
+    use PropertyTrait;
+
     /**
      * @var array
      * @ignore

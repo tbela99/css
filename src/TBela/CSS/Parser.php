@@ -66,7 +66,7 @@ class Parser
      * @var string
      * @ignore
      */
-    protected $path = '';
+    protected $src = '';
 
     /**
      * @var array
@@ -105,7 +105,7 @@ class Parser
     public function load($file, $media = '')
     {
 
-        $this->path = $file;
+        $this->src = $file;
         $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
         $this->element = null;
@@ -123,7 +123,7 @@ class Parser
     public function append($file, $media = '')
     {
 
-        return $this->appendContent($this->getFileContent($file, $media));
+        return $this->merge((new Parser('', $this->options))->load($file, $media));
     }
 
     /**
@@ -142,7 +142,14 @@ class Parser
             $this->doParse();
         }
 
-        return $this->appendContent($parser->css);
+        if (is_null($parser->ast)) {
+
+            $parser->doParse();
+        }
+
+        array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+
+        return $this;
     }
 
     /**
@@ -187,7 +194,7 @@ class Parser
         }
 
         $this->css = $css;
-        $this->path = '';
+        $this->src = '';
         $this->ast = null;
         $this->element = null;
         return $this;
@@ -247,27 +254,7 @@ class Parser
             $this->doParse();
         }
 
-//        if (is_null($this->element)) {
-//
-//            $this->element = Element::getInstance(json_encode(json_decode($this->ast)));
-//        }
-
-
-        /**
-         * @var RuleListInterface $element
-         */
-        $element = Element::getInstance($this->ast);
-
-        if (empty($this->options['sourcemap'])) {
-
-            return (new Traverser())->on('enter', function (Element $element) {
-
-                $element->setLocation(null);
-
-            })->traverse($element);
-        }
-
-        return $element;
+        return Element::getInstance($this->ast);
     }
 
     public function getAst() {
@@ -280,9 +267,14 @@ class Parser
         return clone $this->ast;
     }
 
+    /**
+     * @param ElementInterface $element
+     * @return Parser
+     */
     public function setAst(ElementInterface $element) {
 
         $this->ast = $element->getAst();
+        return $this;
     }
 
     public function deduplicate($ast)
@@ -367,7 +359,6 @@ class Parser
 
                 $signature = '';
                 $total = count($ast->children);
-                $el = null;
 
                 $allowed = is_array($this->options['allow_duplicate_rules']) ? $this->options['allow_duplicate_rules'] : [];
 
@@ -556,7 +547,7 @@ class Parser
     /**
      * @param string $file
      * @param string $media
-     * @return string|bool
+     * @return string
      * @throws Exception
      * @ignore
      */
@@ -666,6 +657,11 @@ class Parser
                     ]
                 ]
             ];
+
+            if ($this->src !== '') {
+
+                $this->ast->src = $this->src;
+            }
         }
     }
 
@@ -682,7 +678,7 @@ class Parser
 
         if (!empty($this->options['flatten_import'])) {
 
-            $this->css = $this->parseImport($this->css, $this->path === '' ? Helper::getCurrentDirectory() : dirname($this->path));
+            $this->css = $this->parseImport($this->css, $this->src === '' ? Helper::getCurrentDirectory() : dirname($this->src));
         }
 
         $this->css = rtrim($this->css);
@@ -785,7 +781,7 @@ class Parser
                     if ($type == 'block') {
 
                         $parser = new Parser($block, array_merge($this->options, ['flatten_import' => false]));
-                        $parser->path = $this->path;
+                        $parser->src = $this->src;
                         $parser->ast = $node;
 
                         $parser->doParse();
@@ -924,7 +920,7 @@ class Parser
         $position->column--;
         $position->index += $this->ast->location->start->index + strlen($comment);
 
-        return (object)[
+        $comment = (object)[
             'type' => 'Comment',
             'location' => (object)[
                 'start' => (object)[
@@ -936,6 +932,13 @@ class Parser
             ],
             'value' => $comment
         ];
+
+        if ($this->src !== '') {
+
+            $comment->src = $this->src;
+        }
+
+        return $comment;
     }
 
     /**
@@ -1001,6 +1004,11 @@ class Parser
         if (empty($data['hasDeclarations'])) {
 
             unset($data['hasDeclarations']);
+        }
+
+        if ($this->src !== '') {
+
+            $data['src'] = $this->src;
         }
 
         return $this->doParseComments((object)$data);
@@ -1093,7 +1101,7 @@ class Parser
         $position->column--;
         $position->index += $this->ast->location->start->index + strlen($rule);
 
-        return  $this->doParseComments((object)[
+        $ast = (object)[
 
             'type' => 'Rule',
             'location' => (object)[
@@ -1102,7 +1110,14 @@ class Parser
                 'end' => $position
             ],
             'selector' => $selector
-        ]);
+        ];
+
+        if ($this->src !== '') {
+
+            $ast->src = $this->src;
+        }
+
+        return  $this->doParseComments($ast);
     }
 
     /**
@@ -1114,7 +1129,6 @@ class Parser
      */
     protected function parseDeclarations($rule, $block, $position)
     {
-
 
         $j = strlen($block) - 1;
         $i = -1;
@@ -1163,7 +1177,7 @@ class Parser
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
 
-                $rule->children[] = (object)[
+                $ast = (object)[
 
                     'type' => 'Comment',
                     'location' => (object)[
@@ -1183,6 +1197,15 @@ class Parser
                     'value' => $comment
                 ];
 
+                if ($this->src !== '') {
+
+                    $ast->src = $this->src;
+                }
+
+                $rule->children[] = $ast;
+
+                unset($ast);
+
                 $i += strlen($comment) - 1;
                 continue;
             }
@@ -1190,7 +1213,6 @@ class Parser
             $currentPosition = clone $position;
             $this->update($position, $statement);
             $position->index += strlen($statement);
-
 
             $i += strlen($statement) - 1;
 
@@ -1234,6 +1256,11 @@ class Parser
                         'value' => rtrim($declaration[1], "\n\r\t ;}")
                     ]);
 
+                if ($this->src !== '') {
+
+                    $declaration->src = $this->src;
+                }
+
                 $declaration->name = trim($declaration->name);
                 $declaration->value = trim($declaration->value);
 
@@ -1249,7 +1276,7 @@ class Parser
     }
 
     /**
-     * @param $str
+     * @param string $str
      * @return array
      * @ignore
      */

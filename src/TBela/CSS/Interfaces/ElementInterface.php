@@ -3,15 +3,14 @@
 namespace TBela\CSS\Interfaces;
 use JsonSerializable;
 use ArrayAccess;
-use TBela\CSS\Parser\SourceLocation;
+use TBela\CSS\Parser\Position;
 use TBela\CSS\Query\QueryInterface;
-use TBela\CSS\RuleList;
 use TBela\CSS\Value;
 
 /**
  * Interface implemented by Elements
  */
-interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess, RenderableInterface {
+interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess {
 
     /**
      * create an instance from ast or another Element instance
@@ -28,11 +27,21 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function traverse(callable $fn, $event);
 
     /**
+     * search nodes using query selector syntax
      * @param string $query
      * @return array
      * @throws \TBela\CSS\Parser\SyntaxError
      */
     public function query($query);
+
+    /**
+     * search nodes by class names
+     * @param string $query comma separated list of class names
+     * @return array
+     * @throws \TBela\CSS\Parser\SyntaxError
+     */
+    public function queryByClassNames($query);
+
     /**
      * return the root element
      * @return ElementInterface
@@ -54,7 +63,7 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
 
     /**
      * get the parent node
-     * @return RuleList|null
+     * @return RuleListInterface|null
      */
     public function getParent ();
 
@@ -71,15 +80,14 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function copy();
 
     /**
-     * @param SourceLocation|null $location
-     * @return ElementInterface
+     * @return string|null
      */
-    public function setLocation($location);
+    public function getSrc();
 
     /**
-     * @return SourceLocation|null
+     * @return Position|null
      */
-    public function getLocation();
+    public function getPosition();
 
     /**
      * merge css rules and declarations

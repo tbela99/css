@@ -20,28 +20,40 @@ final class Ast extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider mediaAllProvider
+     */
+    public function testMediaAll($expected, $actual)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
 
     public function identifierProvider() {
 
         $data = [];
-//        $parser = (new TBela\CSS\Parser('', [
-//            'allow_duplicate_rules' => false,
-//    'allow_duplicate_declarations' => false
-//        ]))->load(__DIR__.'/../css/color.css');
-//
-//        $data[] = [(string) $parser, (string) $parser->parse()];
-//
-//        $parser = new TBela\CSS\Parser('div[data-elem-id="1587819236980"], a {
-// background: red
-//}');
-//
-//        $data[] = [(string) $parser, (string) $parser->parse()];
+        
         $parser = new TBela\CSS\Parser('
  * {
   text-shadow: none!important /* comment 7 */;
  }
 ');
 
+        $data[] = [(string) $parser, (string) $parser->parse()];
+
+        $parser->setContent('
+	
+	a:visited {
+		text-decoration: underline;
+	}
+	');
+
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('
@@ -58,6 +70,7 @@ final class Ast extends TestCase
 		content: " ("attr(title) ")";
 	}');
 
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('
@@ -84,6 +97,7 @@ final class Ast extends TestCase
 ');
 
 
+        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->setContent('
@@ -130,21 +144,49 @@ final class Ast extends TestCase
         return $data;
     }
 
-    public function identifierAstProvider() {
+    public function mediaAllProvider() {
 
         $data = [];
 
-        $data[] = ['div[data-elem-id="1587819236980"] {
- background: red
-}', (new Renderer())->renderAst((new Parser('div[data-elem-id="1587819236980"]{
-background:red;
-}'))->getAst()) ];
+        $data[] = [
 
-        $data[] = [ 'div[data-elem-id=a1587819236980] {
- background: red
-}', (new Renderer())->renderAst((new Parser('div[data-elem-id="a1587819236980"]{
-background:red;
-}'))->getAst()) ];
+'/*!
+* Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
+* License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+.fa,
+.fab,
+.fad,
+.fal,
+.far,
+.fas {
+ /* don\'t comment */
+ osx-font-smoothing: grayscale;
+ font-smoothing: antialiased;
+ display: inline-block;
+ font-style: normal;
+ font-variant: normal;
+ line-height: 1;
+ text-rendering: auto
+}
+.bg {
+ background: no-repeat url(sourcemap/images/bg.png) 50% 50%/cover
+}
+.fa-bahai {
+ display: inline-block
+}
+.fa-bahai:before {
+ content: "s-2 ";
+ font-size: 80%
+}
+body {
+ font-size: 14px;
+ line-height: 1.3
+}',
+(string) (new Parser())->load(__DIR__ . '/../sourcemap/sourcemap.css')->
+append(__DIR__ . '/../sourcemap/sourcemap.2.css')->
+append(__DIR__ . '/../sourcemap/sourcemap.media.css')
+     ];
 
         return $data;
     }

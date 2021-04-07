@@ -98,11 +98,328 @@ final class Query extends TestCase
             $actual
         );
     }
-/*
-*/
-    public function queryProvider () {
+
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider dedupProvider
+     */
+    public function testDedupQuery($expected, $actual)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     * @dataProvider queryByClassNameProvider
+     */
+    public function testQueryByClassName(array $expected, array $actual)
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    public function queryByClassNameProvider() {
 
         $data = [];
+
+        $css = '
+*[class*=jdb-container], *[class*=jdb-container] *, *[class*=jdb-container]::before {
+    box-sizing: border-box
+}
+
+.jdb-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+@media (min-width: 576px) {
+    .jdb-container {
+        max-width: 540px
+    }
+}
+
+@media (min-width: 768px) {
+    .jdb-container {
+        max-width: 720px
+    }
+}
+
+@media (min-width: 992px) {
+    .jdb-container {
+        max-width: 960px
+    }
+}
+
+@media (min-width: 1200px) {
+    .jdb-container {
+        max-width: 1140px
+    }
+}
+
+.jdb-container-fluid, .jdb-container-sm, .jdb-container-md, .jdb-container-lg, .jdb-container-xl {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+#outdated {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 170px;
+    text-align: center;
+    text-transform: uppercase;
+    z-index: 1500;
+    background-color: #f25648;
+    color: #fff
+}
+
+* html #outdated {
+    position: absolute
+}
+
+#outdated h6 {
+    font-size: 25px;
+    line-height: 25px;
+    margin: 30px 0 10px
+}
+
+#outdated p {
+    font-size: 12px;
+    line-height: 12px;
+    margin: 0
+}
+
+#outdated #btnUpdateBrowser {
+    display: block;
+    position: relative;
+    padding: 10px 20px;
+    margin: 30px auto 0;
+    width: 230px;
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid #fff;
+    cursor: pointer
+}
+
+input[type="text"]
+{
+background:red;
+}
+
+
+@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
+
+';
+
+        $element = (new TBela\CSS\Parser($css))->parse();
+
+        $query = '#outdated #btnUpdateBrowser';
+
+        $data[] = [
+
+            [
+                "#outdated #btnUpdateBrowser {
+ display: block;
+ position: relative;
+ padding: 10px 20px;
+ margin: 30px auto 0;
+ width: 230px;
+ color: #fff;
+ text-decoration: none;
+ border: 2px solid #fff;
+ cursor: pointer
+}"
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = '#outdated #btnUpdateBrowser, .jdb-container-sm';
+
+        $data[] = [
+
+            [
+                0 => '.jdb-container-fluid,
+.jdb-container-sm,
+.jdb-container-md,
+.jdb-container-lg,
+.jdb-container-xl {
+ width: 100%;
+ padding-right: 15px;
+ padding-left: 15px;
+ margin-right: auto;
+ margin-left: auto
+}',
+                1 => '#outdated #btnUpdateBrowser {
+ display: block;
+ position: relative;
+ padding: 10px 20px;
+ margin: 30px auto 0;
+ width: 230px;
+ color: #fff;
+ text-decoration: none;
+ border: 2px solid #fff;
+ cursor: pointer
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = '*[class*=jdb-container] *';
+
+        $data[] = [
+
+            [
+                0 => '*[class*=jdb-container],
+*[class*=jdb-container] *,
+*[class*=jdb-container]::before {
+ box-sizing: border-box
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = 'input[type=text]';
+
+        $data[] = [
+
+            [
+                0 => 'input[type=text] {
+ background: red
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = "input[type='text'], * html #outdated, .jdb-container-xl ";
+
+        $data[] = [
+
+            [
+                0 => '.jdb-container-fluid,
+.jdb-container-sm,
+.jdb-container-md,
+.jdb-container-lg,
+.jdb-container-xl {
+ width: 100%;
+ padding-right: 15px;
+ padding-left: 15px;
+ margin-right: auto;
+ margin-left: auto
+}',
+                1 => '* html #outdated {
+ position: absolute
+}',
+                2 => 'input[type=text] {
+ background: red
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = 'input[type="text"], * html #outdated, .jdb-container-xl ';
+
+        $data[] = [
+
+            [
+                0 => '.jdb-container-fluid,
+.jdb-container-sm,
+.jdb-container-md,
+.jdb-container-lg,
+.jdb-container-xl {
+ width: 100%;
+ padding-right: 15px;
+ padding-left: 15px;
+ margin-right: auto;
+ margin-left: auto
+}',
+                1 => '* html #outdated {
+ position: absolute
+}',
+                2 => 'input[type=text] {
+ background: red
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        $query = '@font-face, input[type="text"], * html #outdated, .jdb-container-xl ';
+
+        $data[] = [
+
+            [
+                0 => '.jdb-container-fluid,
+.jdb-container-sm,
+.jdb-container-md,
+.jdb-container-lg,
+.jdb-container-xl {
+ width: 100%;
+ padding-right: 15px;
+ padding-left: 15px;
+ margin-right: auto;
+ margin-left: auto
+}',
+                1 => '* html #outdated {
+ position: absolute
+}',
+                2 => 'input[type=text] {
+ background: red
+}',
+                3 => '@font-face {
+ font-family: "Bitstream Vera Serif Bold";
+ src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
+}'
+            ],
+            array_map('trim', $element->queryByClassNames($query))
+        ];
+
+        return $data;
+    }
+
+/*
+*/
+    public function dedupProvider ()
+    {
+
+        $data = [];
+
+        $data[] = [
+            '*',
+            (string) (new \TBela\CSS\Query\Parser())->parse('span|div,span|div, .div| span *, nav|*')
+        ];
+
+        $data[] = [
+            'span|div|.div|span *, nav',
+            (string) (new \TBela\CSS\Query\Parser())->parse('span|div,span|div, .div| span *, nav')
+    ];
+
+        return $data;
+    }
+
+        /*
+        */
+        public function queryProvider () {
+
+            $data = [];
 
         $css = '@font-face {
   font-family: "Bitstream Vera Serif Bold";
@@ -622,29 +939,30 @@ p {
   background-color: #030303
  }
 }',
-                2 => '@media print {
- @font-face {
-  font-family: MaHelvetica;
-  font-weight: bold;
-  src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+                2 => 'p {
+ color: #f0f0f0;
+ background-color: #030303
 }',
-                3 => '@media print {
- p {
-  font-size: 12px;
-  color: #000;
-  text-align: left
- }
+                3 => '@font-face {
+ font-family: MaHelvetica;
+ font-weight: bold;
+ src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
 }',
-                4 => '@media print {
- @font-face {
-  font-family: Arial, MaHelvetica;
-  font-weight: bold;
-  src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
- }
+                4 => 'p {
+ font-size: 12px;
+ color: #000;
+ text-align: left
+}',
+                5 => '@font-face {
+ font-family: Arial, MaHelvetica;
+ font-weight: bold;
+ src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
 }'
             ],
-            array_map('trim', $element->query($context))];
+            array_map(function ($node) {
+
+                return (new \TBela\CSS\Renderer())->render($node, null, false);
+            }, $element->query($context))];
 
         return $data;
     }
