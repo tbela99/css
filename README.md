@@ -8,6 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- generate sourcemap
 - fastly parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
@@ -50,11 +51,11 @@ PHP Code
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Parser;
 
-$compiler = new Compiler();
+$parser = new Parser();
 
-$compiler->setContent('
+$parser->setContent('
 h1 {
   color: green;
   color: blue;
@@ -66,7 +67,7 @@ h1 {
   color: aliceblue;
 }');
 
-echo $compiler->compile();
+echo $parser->parse();
 ```
 
 Result
@@ -101,6 +102,7 @@ $renderer = new Renderer([
   'compress' => true,
   'convert_color' => 'hex',
   'css_level' => 4,
+  'sourcemap' => true,
   'allow_duplicate_declarations' => false
   ]);
 
@@ -108,6 +110,9 @@ $renderer = new Renderer([
 $css = $renderer->renderAst($parser->getAst());
 // slow
 $css = $renderer->render($element);
+
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 
 // save as json
 file_put_contents('style.json', json_encode($element));
@@ -127,19 +132,33 @@ $css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')))
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Renderer;
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new Compiler([
+$compiler = new Renderer([
     'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$compiler->setData($ast);
+$css = $compiler->renderAst($ast);
+```
 
-$css = $compiler->compile();
+## Sourcemap generation
+
+```php
+$renderer = new Renderer([
+  'compress' => true,
+  'convert_color' => 'hex',
+  'css_level' => 4,
+  'sourcemap' => true,
+  'allow_duplicate_declarations' => false
+  ]);
+
+// call save and specify the file name
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 ```
 
 ## The CSS Query API

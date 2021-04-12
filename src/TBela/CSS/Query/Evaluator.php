@@ -135,14 +135,15 @@ class Evaluator
         return false;
     }
 
+    /**
+     * @param \TBela\CSS\Interfaces\ElementInterface[] $nodes
+     * @return array
+     */
     protected function sortNodes($nodes)
     {
 
         $info = [];
 
-        /**
-         * @var \TBela\CSS\Interfaces\ElementInterface $element
-         */
         foreach ($nodes as $key => $element) {
 
             $index = spl_object_id($element);

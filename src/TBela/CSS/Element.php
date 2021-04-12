@@ -48,18 +48,18 @@ abstract class Element implements ElementInterface  {
 
         if (!is_null($ast)) {
 
+            if (isset($ast->location->start)) {
+
+                $ast->position = $ast->location->start;
+            }
+
             foreach ($ast as $key => $value) {
-
-                if ($value instanceof stdClass && is_callable([$this, 'create'.$key])) {
-
-                    $value = $this->{'create'.$key}($value);
-                }
 
                 if (is_callable([$this, 'set'.$key])) {
 
                     $this->{'set'.$key}($value);
                 }
-                else if (is_callable([$this, $key])) {
+                else if (is_callable([$this, 'get'.$key]) || is_callable([$this, $key])) {
 
                     $this->ast->{$key} = $value;
                 }
@@ -115,22 +115,6 @@ abstract class Element implements ElementInterface  {
     public function traverse(callable $fn, $event) {
 
         return (new Traverser())->on($event, $fn)->traverse($this);
-    }
-
-    public function __get($name) {
-
-        if (is_callable([$this, "get$name"])) {
-
-            return $this->{"get$name"}();
-        }
-    }
-
-    public function __set($name, $value) {
-
-        if (is_callable([$this, "set$name"])) {
-
-            return $this->{"set$name"}($value);
-        }
     }
 
     /**
@@ -243,20 +227,17 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function setLocation($location) {
+    public function getSrc() {
 
-        assert(is_null($location) || $location instanceof SourceLocation);
-
-        $this->ast->location = $location;
-        return $this;
+        return $this->ast->src ?? null;
     }
 
     /**
      * @inheritDoc
      */
-    public function getLocation() {
+    public function getPosition() {
 
-        return $this->ast->location ?? null;
+        return $this->ast->position ?? null;
     }
 
     /**

@@ -3,9 +3,8 @@
 namespace TBela\CSS\Interfaces;
 use JsonSerializable;
 use ArrayAccess;
-use TBela\CSS\Parser\SourceLocation;
+use TBela\CSS\Parser\Position;
 use TBela\CSS\Query\QueryInterface;
-use TBela\CSS\RuleList;
 use TBela\CSS\Value;
 
 /**
@@ -64,7 +63,7 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
 
     /**
      * get the parent node
-     * @return RuleList|null
+     * @return RuleListInterface|null
      */
     public function getParent ();
 
@@ -81,15 +80,14 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function copy();
 
     /**
-     * @param SourceLocation|null $location
-     * @return ElementInterface
+     * @return string|null
      */
-    public function setLocation($location);
+    public function getSrc();
 
     /**
-     * @return SourceLocation|null
+     * @return Position|null
      */
-    public function getLocation();
+    public function getPosition();
 
     /**
      * merge css rules and declarations
