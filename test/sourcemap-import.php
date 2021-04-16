@@ -23,21 +23,19 @@ require 'autoload.php';
 //var_dump(CssParser\Helper::relativePath('/sourcemap/images/bg.png', 'http://google.com/sourcemap/generated/../sourcemap.css'));
 //die;
 
-$parser = (new CssParser())->load(__DIR__ . '/sourcemap/sourcemap.css')->
-    append(__DIR__ . '/sourcemap/sourcemap.2.css')->
-    append(__DIR__ . '/sourcemap/sourcemap.media.css');
+$parser = (new CssParser('', [
 
-//echo $parser;die;
+    'flatten_import' => true
+]))->load(__DIR__ . '/sourcemap/sourcemap.import.css');
+
 $element = $parser->parse();
-//
-//echo $element;die;
 
 $renderer = new \TBela\CSS\Renderer([
     'sourcemap' => true
 ]);
 
-//echo $element;
-
 $renderer->
-    save($element, __DIR__.'/sourcemap/generated/sourcemap.generated.css');
-$renderer->setOptions(['compress' => true])->save($element, __DIR__.'/sourcemap/generated/sourcemap.generated.min.css');
+    save($element, __DIR__.'/sourcemap/generated/sourcemap.import.flatten.css');
+$renderer->setOptions([
+    'compress' => true
+])->save($element, __DIR__.'/sourcemap/generated/sourcemap.import.flatten.min.css');

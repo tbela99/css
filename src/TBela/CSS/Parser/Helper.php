@@ -51,19 +51,16 @@ class Helper
             }
         }
 
-        if (strpos($file, '../') !== false) {
+        if (strpos($file, '..') !== false) {
 
             $return = [];
+            $fromRoot = strpos($file, '/') === 0;
 
-            if (strpos($file, '/') === 0)
-                $return[] = '/';
-
-            foreach (explode('/', $file) as $p) {
+            foreach (preg_split('#/#', $file, -1, PREG_SPLIT_NO_EMPTY) as $p) {
 
                 if ($p == '..') {
 
                     array_pop($return);
-//                    continue;
 
                 } else if ($p == '.') {
 
@@ -75,19 +72,33 @@ class Helper
                 }
             }
 
-            $file = implode('/', $return);
+            $file = ($fromRoot ? '/' : '').implode('/', $return);
         } else {
 
             $file = preg_replace(['#/\./#', '#^\./#'], ['/', ''], $file);
         }
 
-        return preg_replace('#^' . preg_quote(static::getCurrentDirectory() . '/', '#') . '#', '', $file);
+        return $file;
+    }
+
+    /**
+     * @param $file
+     * @return string
+     */
+    public function absolutePath($file) {
+
+        if (preg_match('#^(https?:)?//#', $file)) {
+
+            return $file;
+        }
+
+        return static::resolvePath((substr($file, 0, 1) == '/' ? '' : static::getCurrentDirectory().'/').$file);
     }
 
     /**
      * compute relative path
      * @param string $file
-     * @param string $ref
+     * @param string $ref relative directory
      * @return string
      */
     public static function relativePath(string $file, string $ref) {
@@ -106,7 +117,7 @@ class Helper
 
         $basename = basename($file);
 
-        $ref = explode('/', dirname($ref));
+        $ref = explode('/', $ref);
         $file = explode('/', dirname($file));
 
         $j = count($ref);
