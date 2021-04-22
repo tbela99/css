@@ -8,21 +8,6 @@ use TBela\CSS\Query\Parser as QueryParser;
 
 require 'autoload.php';
 
-//var_dump(CssParser\Helper::relativePath('/home/tbela/css/file.map', '/home/tbela/css/file.css'));
-//var_dump(CssParser\Helper::relativePath('/home/tbela/map/file.map', '/home/tbela/css/file.css'));
-//var_dump(CssParser\Helper::relativePath('/home/tbela/source/map/file.map', '/home/tbela/css/file.css'));
-//var_dump(CssParser\Helper::relativePath('/home/tbela/sourcemap/file.map', '/home/tbela/resource/css/file.css'));
-//var_dump(CssParser\Helper::relativePath('/home/tbela/resource/css/file.css', '/home/tbela/sourcemap/file.map'));
-//var_dump(CssParser\Helper::relativePath('../resource/css/file.css', '../home/tbela/sourcemap/file.map'));
-//var_dump(CssParser\Helper::relativePath('tbela/css/file.css', 'tbela/sourcemap/file.map'));
-//var_dump(CssParser\Helper::relativePath('sourcemap/images/bg.png', 'sourcemap/generated/sourcemap.css'));
-//var_dump(CssParser\Helper::relativePath('sourcemap/images/bg.png', 'sourcemap/generated/../sourcemap.css'));
-//var_dump(CssParser\Helper::relativePath('http://google.com/sourcemap/images/bg.png', 'http://google.ca/sourcemap/generated/../sourcemap.css'));
-//var_dump(CssParser\Helper::relativePath('http://google.com/sourcemap/images/bg.png', 'http://google.com/sourcemap/generated/../sourcemap.css'));
-//var_dump(CssParser\Helper::relativePath('http://google.com/sourcemap/images/bg.png', 'generated/../sourcemap.css'));
-//var_dump(CssParser\Helper::relativePath('/sourcemap/images/bg.png', 'http://google.com/sourcemap/generated/../sourcemap.css'));
-//die;
-
 $parser = (new CssParser())->load(__DIR__ . '/sourcemap/sourcemap.css')->
     append(__DIR__ . '/sourcemap/sourcemap.2.css')->
     append(__DIR__ . '/sourcemap/sourcemap.media.css');

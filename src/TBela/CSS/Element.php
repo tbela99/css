@@ -8,7 +8,6 @@ use stdClass;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
-use TBela\CSS\Parser\SourceLocation;
 use TBela\CSS\Query\Evaluator;
 use TBela\CSS\Value\Set;
 use function get_class;
@@ -44,7 +43,7 @@ abstract class Element implements ElementInterface  {
 
         assert(is_null($parent) || $parent instanceof RuleListInterface);
 
-        $this->ast = (object) ['type' => str_ireplace(Element::class.'\\', '', get_class($this))];
+        $this->ast = (object) ['type' => str_ireplace(Element::class.'\\', '', static::class)];
 
         if (!is_null($ast)) {
 
@@ -84,11 +83,6 @@ abstract class Element implements ElementInterface  {
             return clone $ast;
         }
 
-        else {
-
-            $ast = clone $ast;
-        }
-
         if (isset($ast->type)) {
 
             $type = $ast->type;
@@ -100,11 +94,6 @@ abstract class Element implements ElementInterface  {
             throw new InvalidArgumentException('Invalid ast provided');
         }
 
-        if (!empty($ast->children) && is_array($ast->children)) {
-
-            $ast->children = array_map(__METHOD__, $ast->children);
-        }
-
         $className = Element::class.'\\'.ucfirst($ast->type);
         return new $className($ast);
     }
@@ -114,16 +103,7 @@ abstract class Element implements ElementInterface  {
      */
     public function traverse(callable $fn, $event) {
 
-        return (new Traverser())->on($event, $fn)->traverse($this);
-    }
-
-    /**
-     * @param $location
-     * @return SourceLocation
-     */
-    protected function createLocation ($location) {
-
-        return SourceLocation::getInstance($location);
+        return (new Element\Traverser())->on($event, $fn)->traverse($this);
     }
 
     /**

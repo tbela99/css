@@ -1,6 +1,6 @@
 <?php
 
-namespace TBela\CSS;
+namespace TBela\CSS\Element;
 
 use TBela\CSS\Event\Event;
 use TBela\CSS\Interfaces\ElementInterface;

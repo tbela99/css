@@ -1192,13 +1192,18 @@ class Parser
 
                 if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
 
-                    $declaration->value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+                    $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
 
                         $file = trim($matches[3]);
 
-                        if (strpos($file, 'data:') !== 0 && !preg_match('#^(/|(https?:))#', $file)) {
+                        if (strpos($file, 'data:') !== false) {
 
-                            $file = Helper::relativePath(Helper::absolutePath(dirname($this->src)).'/'.$file, Helper::getCurrentDirectory());
+                            return $matches[0];
+                        }
+
+                        if (!preg_match('#^(/|((https?:)?//))#', $file)) {
+
+                            $file = Helper::absolutePath($file, dirname($this->src));
                         }
 
                         return $matches[1].'url('.$file.')';

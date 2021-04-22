@@ -141,7 +141,7 @@ class Renderer
             ]
         ];
 
-        $this->outFile = $file;
+        $this->outFile = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
         $result = $this->walk($ast, $data);
         $map = $file.'.map';
@@ -326,16 +326,6 @@ class Renderer
                         if ($declaration === '') {
 
                             continue;
-                        }
-
-                        if (in_array($child->type, ['Declaration', 'Property']) &&
-                            in_array($child->name, ['background', 'background-image', 'src'])) {
-
-                            $declaration = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
-
-//                                var_dump($matches[3]);
-                                return $matches[1].'url('.Helper::relativePath($matches[3], dirname($this->outFile)).')';
-                            }, $declaration);
                         }
 
                         if (isset($res[$declaration])) {
@@ -726,16 +716,16 @@ class Renderer
             'css_level' => $this->options['css_level'],
             'convert_color' => $this->options['convert_color'] === true ? 'hex' : $this->options['convert_color']
         ];
-
-        if (is_string($value)) {
-
-            if (!isset($this->indents[$level])) {
-
-                $this->indents[$level] = str_repeat($this->options['indent'], (int)$level);
-            }
-
-            return $this->indents[$level] . $name . ':' . $this->options['indent'] . $value;
-        }
+//
+//        if (is_string($value)) {
+//
+//            if (!isset($this->indents[$level])) {
+//
+//                $this->indents[$level] = str_repeat($this->options['indent'], (int)$level);
+//            }
+//
+//            return $this->indents[$level] . $name . ':' . $this->options['indent'] . $value;
+//        }
 
         if (empty($this->options['compress'])) {
 
@@ -743,16 +733,32 @@ class Renderer
 
                 return $value->render($options);
 
-            }, $value->split(',')));
+            }, (is_string($value) ? Value::parse($value, $name) : $value)->split(',')));
         } else {
 
             $value = $value->render($options);
         }
 
-        if ($value == 'none' && in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
+        if ($value == 'none') {
 
-            $value = 0;
+            if (in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
+
+                $value = 0;
+            }
         }
+
+        else if (in_array($name, ['background', 'background-image', 'src'])) {
+
+                $value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+
+                    if (strpos($matches[3], 'data:') !== false) {
+
+                        return $matches[0];
+                    }
+
+                    return $matches[1].'url('.Helper::relativePath($matches[3], $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)).')';
+                }, $value);
+            }
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
@@ -985,39 +991,5 @@ class Renderer
         }
 
         return $this->options[$name] ?? $default;
-    }
-
-    /**
-     * @param string $type
-     * @param callable $callable
-     * @return Renderer
-     */
-    public function on($type, $callable)
-    {
-
-        if (is_null($this->traverser)) {
-
-            $this->traverser = new Traverser();
-        }
-
-        $this->traverser->on($type == 'traverse' ? 'enter' : $type, $callable);
-
-        return $this;
-    }
-
-    /**
-     * @param string $type
-     * @param callable $callable
-     * @return Renderer
-     */
-    public function off($type, $callable)
-    {
-
-        if (isset($this->traverser)) {
-
-            $this->traverser->off($type == 'traverse' ? 'enter' : 'traverse', $callable);
-        }
-
-        return $this;
     }
 }
