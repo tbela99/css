@@ -86,7 +86,7 @@ class Helper
      * @param string $ref
      * @return string
      */
-    public function absolutePath($file, $ref) {
+    public static function absolutePath($file, $ref) {
 
         if (static::isAbsolute($file)) {
 
@@ -211,7 +211,7 @@ class Helper
      * @param string $path
      * @return bool
      */
-    public function isAbsolute($path) {
+    public static function isAbsolute($path) {
 
         return (bool) preg_match('#^(/|(https?:)?//)#', $path);
     }
