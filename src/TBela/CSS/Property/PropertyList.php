@@ -289,7 +289,7 @@ class PropertyList implements IteratorAggregate
      */
     public function isEmpty() {
 
-        return !empty($this->properties);
+        return empty($this->properties);
     }
 
     /**

@@ -12,7 +12,6 @@ cd "$DIR"
 [ ! -f "../phpunit-5.phar" ] && \
 wget -O ../phpunit-5.phar https://phar.phpunit.de/phpunit-5.phar && \
 chmod +x ../phpunit-5.phar
-php56= which php56 2>/dev/null || which php5.6 2>/dev/null || which php
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -33,13 +32,13 @@ if [ "$1" = "" ] || [ "$flag" = "-" ]; then
     do
       [ "$file" = "src/$skip.php" ] && continue;
       echo "Run test $file"
-      php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
+      php5.6 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
     done
 else
 
     file="src/$1.php"
     if [ -f "$file" ]; then
-      php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
+      php5.6 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
     else
       echo "Invalid test: $1" && exit 1
     fi

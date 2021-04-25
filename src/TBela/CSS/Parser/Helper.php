@@ -9,6 +9,7 @@ namespace TBela\CSS\Parser;
 class Helper
 {
 
+
     /**
      * @return string
      * @ignore
@@ -51,19 +52,16 @@ class Helper
             }
         }
 
-        if (strpos($file, '../') !== false) {
+        if (strpos($file, '..') !== false) {
 
             $return = [];
+            $fromRoot = strpos($file, '/') === 0;
 
-            if (strpos($file, '/') === 0)
-                $return[] = '/';
-
-            foreach (explode('/', $file) as $p) {
+            foreach (preg_split('#/#', $file, -1, PREG_SPLIT_NO_EMPTY) as $p) {
 
                 if ($p == '..') {
 
                     array_pop($return);
-//                    continue;
 
                 } else if ($p == '.') {
 
@@ -75,39 +73,81 @@ class Helper
                 }
             }
 
-            $file = implode('/', $return);
+            $file = ($fromRoot ? '/' : '').implode('/', $return);
         } else {
 
             $file = preg_replace(['#/\./#', '#^\./#'], ['/', ''], $file);
         }
 
-        return preg_replace('#^' . preg_quote(static::getCurrentDirectory() . '/', '#') . '#', '', $file);
+        return $file;
+    }
+
+    /**
+     * @param string $file
+     * @param string $ref
+     * @return string
+     */
+    public static function absolutePath($file, $ref) {
+
+        if (static::isAbsolute($file)) {
+
+            $data = parse_url($file);
+            $data['path'] = static::resolvePath($data['path']);
+
+            return static::toUrl($data);
+        }
+
+        if ($ref === '') {
+
+            return $file;
+        }
+
+        $data = parse_url(rtrim($ref, '/').'/'.$file);
+
+        if (isset($data['path'])) {
+
+            $data['path'] = static::resolvePath($data['path']);
+        }
+
+        return static::toUrl($data);
     }
 
     /**
      * compute relative path
      * @param string $file
-     * @param string $ref
+     * @param string $ref relative directory
      * @return string
      */
     public static function relativePath($file, $ref) {
 
-        // handle urls???
+        $isAbsolute = static::isAbsolute($file);
 
-        if ($file !== '' && $file[0] != '/') {
+        if ($isAbsolute && !static::isAbsolute($ref)) {
 
-            $file = static::getCurrentDirectory().'/'.$file;
+            return $file;
         }
 
-        if ($ref !== '' && $ref[0] != '/') {
+        $original = static::resolvePath($file);
+        $fileUrl = parse_url($file);
+        $refUrl = parse_url($ref);
 
-            $ref = static::getCurrentDirectory().'/'.$ref;
+        foreach (['scheme', 'host'] as $key) {
+
+            if (isset($fileUrl[$key])) {
+
+                if (!isset($refUrl[$key]) || $refUrl[$key] != $fileUrl[$key]) {
+
+                    return $file;
+                }
+
+                unset($fileUrl[$key]);
+            }
         }
 
         $basename = basename($file);
 
-        $ref = explode('/', dirname($ref));
-        $file = explode('/', dirname($file));
+        $ref = preg_split('#[/]+#', rtrim($refUrl['path'], '/'), -1, PREG_SPLIT_NO_EMPTY);
+        $file = preg_split('#/#', dirname($fileUrl['path']), -1, PREG_SPLIT_NO_EMPTY);
 
         $j = count($ref);
 
@@ -142,6 +182,11 @@ class Helper
             }
         }
 
+       if (count($file) < count($ref)) {
+
+           return static::toUrl($fileUrl);
+       }
+
         while ($ref) {
 
             $r = $ref[0];
@@ -156,8 +201,59 @@ class Helper
         }
 
         $result = implode('/', array_merge(array_fill(0, count($ref), '..'), $file));
+        $result = ($result === '' ? '' : $result.'/').$basename;
 
-        return ($result === '' ? '' : $result.'/').$basename;
+        return $isAbsolute && strlen($original) <= strlen($result) ? $original : $result;
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function isAbsolute($path) {
+
+        return (bool) preg_match('#^(/|(https?:)?//)#', $path);
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     */
+    protected static function toUrl(array $data) {
+
+        $url = '';
+
+        if (isset($data['scheme'])) {
+
+            $url.= $data['scheme'].':';
+        }
+
+        if (isset($data['user'])) {
+
+            $url .= $data['user'].':'.$data['pass'].'@';
+        }
+
+        if (isset($data['host'])) {
+
+            $url .= '//'.$data['host'];
+        }
+
+        if (isset($data['path'])) {
+
+            $url .= $data['path'];
+        }
+
+        if (isset($data['query'])) {
+
+            $url .= '?'.$data['query'];
+        }
+
+        if (isset($data['fragment'])) {
+
+            $url .= '#'.$data['fragment'];
+        }
+
+        return $url;
     }
 
     /**

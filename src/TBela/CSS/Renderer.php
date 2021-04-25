@@ -100,6 +100,11 @@ class Renderer
 
         $this->outFile = '';
 
+        if (is_callable([$ast, 'getAst'])) {
+
+            $ast = $ast->getAst();
+        }
+
         switch ($ast->type) {
 
             case 'Stylesheet':
@@ -144,17 +149,20 @@ class Renderer
             ]
         ];
 
-        $this->outFile = $file;
+        $this->outFile = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
         $result = $this->walk($ast, $data);
         $map = $file.'.map';
 
-        if (file_put_contents($map, json_encode($data->sourcemap->getData(), JSON_PRETTY_PRINT)) === false) {
+        $json = $data->sourcemap->getData();
+//        $json['mappings'] = preg_replace('#;+#', ';', $json['mappings']);
+
+        if (file_put_contents($map, json_encode($json)) === false) {
 
             throw new IOException("cannot write map into $map", 500);
         }
 
-        if (file_put_contents($file, $result->css."\n/*# sourceMappingURL=".Helper::relativePath($map, $file)."   */") === false) {
+        if (file_put_contents($file, $result->css."\n/*# sourceMappingURL=".Helper::relativePath($map, dirname($file))." */") === false) {
 
             throw new IOException("cannot write output into $file", 500);
         }
@@ -164,7 +172,7 @@ class Renderer
 
     /**
      * @param \stdClass $ast
-     * @param \stdClass $data
+     * @param \stdClass $data\
      * @param int|null $level
      * @return object|null
      * @throws Exception
@@ -280,8 +288,13 @@ class Renderer
                         }
                     }
 
-                    $this->update($data->position, $this->indents[$level]);
+                    if (!is_null($level)) {
+
+                        $this->update($data->position, $this->indents[$level]);
+                    }
+
                     $this->addPosition($data, $ast);
+
 
                     if ($type == 'Rule') {
 
@@ -323,15 +336,6 @@ class Renderer
                             continue;
                         }
 
-                        if (in_array($child->type, ['Declaration', 'Property']) &&
-                            in_array($child->name, ['background', 'background-image', 'src'])) {
-
-                            $declaration = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
-
-                                return $matches[1].'url('.Helper::relativePath($matches[3], $this->outFile).')';
-                            }, $declaration);
-                        }
-
                         if (isset($res[$declaration])) {
 
                             unset($res[$declaration]);
@@ -349,7 +353,19 @@ class Renderer
 
                         $this->update($d->position, $this->indents[$level + 1]);
 
-                        if (isset($r[1]->position) && in_array($r[1]->type, ['AtRule', 'Rule'])) {
+                        $position = null;
+
+                        if (isset($r[1]->position)) {
+
+                            $position = $r[1]->position;
+                        }
+
+                        else if (isset($r[1]->location->start)) {
+
+                            $position = $r[1]->location->start;
+                        }
+
+                        if (!is_null($position) && in_array($r[1]->type, ['AtRule', 'Rule'])) {
 
                             $this->addPosition($d, $r[1]);
                         }
@@ -383,7 +399,7 @@ class Renderer
                 $c = clone $data;
                 $c->position = clone $c->position;
                 $this->update($c->position, $this->indents[$level]);
-                $this->addPosition($data, substr($css, $level));
+//                $this->addPosition($data, substr($css, $level));
 
                 $result['css'] = $css;
                 break;
@@ -430,7 +446,24 @@ class Renderer
     protected function addPosition($data, $ast)
     {
 
-        if (empty($ast->src) || empty($ast->position)) {
+        if (empty($ast->src)) {
+
+            return;
+        }
+
+        $position = null;
+
+        if (isset($ast->position)) {
+
+            $position = $ast->position;
+        }
+
+        else if (isset($ast->location->start)) {
+
+            $position = $ast->location->start;
+        }
+
+        if (is_null($position)) {
 
             return;
         }
@@ -442,8 +475,8 @@ class Renderer
             ],
             'source' => [
                 'fileName' => $ast->src,
-                'line' => $ast->position->line - 1,
-                'column' => $ast->position->column - 1,
+                'line' => $position->line - 1,
+                'column' => $position->column - 1,
             ],
         ]);
     }
@@ -713,18 +746,23 @@ class Renderer
             'css_level' => $this->options['css_level'],
             'convert_color' => $this->options['convert_color'] === true ? 'hex' : $this->options['convert_color']
         ];
-
-        if (is_string($value)) {
-
-            if (!isset($this->indents[$level])) {
-
-                $this->indents[$level] = str_repeat($this->options['indent'], (int)$level);
-            }
-
-            return $this->indents[$level] . $name . ':' . $this->options['indent'] . $value;
-        }
+//
+//        if (is_string($value)) {
+//
+//            if (!isset($this->indents[$level])) {
+//
+//                $this->indents[$level] = str_repeat($this->options['indent'], (int)$level);
+//            }
+//
+//            return $this->indents[$level] . $name . ':' . $this->options['indent'] . $value;
+//        }
 
         if (empty($this->options['compress'])) {
+
+            if (is_string($value)) {
+
+                $value = Value::parse($value, $name);
+            }
 
             $value = implode(', ', array_map(function (Set $value) use ($options) {
 
@@ -736,10 +774,26 @@ class Renderer
             $value = $value->render($options);
         }
 
-        if ($value == 'none' && in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
+        if ($value == 'none') {
 
-            $value = 0;
+            if (in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
+
+                $value = 0;
+            }
         }
+
+        else if (in_array($name, ['background', 'background-image', 'src'])) {
+
+                $value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+
+                    if (strpos($matches[3], 'data:') !== false) {
+
+                        return $matches[0];
+                    }
+
+                    return $matches[1].'url('.Helper::relativePath($matches[3], $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)).')';
+                }, $value);
+            }
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
@@ -976,39 +1030,5 @@ class Renderer
         }
 
         return isset($this->options[$name]) ? $this->options[$name] : $default;
-    }
-
-    /**
-     * @param string $type
-     * @param callable $callable
-     * @return Renderer
-     */
-    public function on($type, $callable)
-    {
-
-        if (is_null($this->traverser)) {
-
-            $this->traverser = new Traverser();
-        }
-
-        $this->traverser->on($type == 'traverse' ? 'enter' : $type, $callable);
-
-        return $this;
-    }
-
-    /**
-     * @param string $type
-     * @param callable $callable
-     * @return Renderer
-     */
-    public function off($type, $callable)
-    {
-
-        if (isset($this->traverser)) {
-
-            $this->traverser->off($type == 'traverse' ? 'enter' : 'traverse', $callable);
-        }
-
-        return $this;
     }
 }

@@ -105,7 +105,7 @@ class Parser
     public function load($file, $media = '')
     {
 
-        $this->src = $file;
+        $this->src = Helper::absolutePath($file, Helper::getCurrentDirectory());
         $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
         $this->element = null;
@@ -489,62 +489,6 @@ class Parser
     }
 
     /**
-     *
-     * @param string $css
-     * @param null $path
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
-    protected function expand($css, $path = null)
-    {
-
-        if (!is_null($path) && $path !== '') {
-
-            if ($path[strlen($path) - 1] != '/') {
-
-                $path .= '/';
-            }
-        }
-
-        $isRemote = preg_match('#^(https?:)//#', $path);
-
-        $css = preg_replace_callback('#url\(([^)]+)\)#', function ($matches) use ($path, $isRemote) {
-
-            $file = trim(str_replace(array("'", '"'), "", $matches[1]));
-
-            if (strpos($file, 'data:') === 0) {
-
-                return $matches[0];
-            }
-
-            if ($isRemote) {
-
-                if (!preg_match('#^(https?:)?//#i', $file)) {
-
-                    if ($file[0] == '/') {
-
-                        $file = $path . substr($file, 1);
-                    } else {
-
-                        $file = Helper::resolvePath($path . $file);
-                    }
-                }
-            } else if (!preg_match('#^(/|((https?:)?//))#i', $file)) {
-
-                $file = Helper::resolvePath($path . trim(str_replace(array("'", '"'), "", $matches[1])));
-            }
-
-            return 'url(' . preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', $file) . ')';
-        },
-            // resolve import directive, note import directive in imported css will NOT be processed
-            $this->parseImport($css, $path)
-        );
-
-        return $css;
-    }
-
-    /**
      * @param string $file
      * @param string $media
      * @return string
@@ -554,11 +498,11 @@ class Parser
     protected function getFileContent($file, $media = '')
     {
 
-        if (!preg_match('#^(https?:)//#', $file)) {
+        if (!preg_match('#^(https?:)?//#', $file)) {
 
             if (is_file($file)) {
 
-                $content = $this->expand(file_get_contents($file), preg_replace('#^' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($file)));
+                $content = file_get_contents($file);
 
                 return $media === '' || $media == 'all' ? $content : '@media ' . $media . ' {' . $content . '}';
             }
@@ -574,63 +518,7 @@ class Parser
             throw new Exception(sprintf('File Not Found "%s"', $file), 404);
         }
 
-        return $this->expand($content, dirname($file));
-    }
-
-    /**
-     * @param $css
-     * @param string $path
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
-    protected function parseImport($css, $path = '')
-    {
-
-        $comments = [];
-        $css = preg_replace_callback('/\/\*(.*?)\*\//sm', function ($matches) use (&$comments) {
-
-            $comments[$matches[0]] = '~~~b' . md5($matches[0]) . 'b~~~';
-
-            return str_replace($matches[0], $comments[$matches[0]], $matches[0]);
-        }, $css);
-
-        $css = preg_replace_callback('#@import ([^;]+);#', function ($matches) use ($path) {
-
-            if (preg_match('#(url\(\s*((["\']?)([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $matches[1], $match)) {
-
-                $file = Helper::resolvePath(trim(empty($match[4]) ? $match[7] : $match[4]), $path);
-
-                $media = trim($match[8]);
-
-                if (strpos($media, ' ') !== false ) {
-
-                    $media = ' ' . $media;
-                }
-
-                $css = $this->getFileContent($file);
-
-                if ($css !== false) {
-
-                    if ($media !== '' && $media !== 'all') {
-
-                        $css = '@media ' . $media . " {\n" . $css . "\n}\n";
-                    }
-
-                    return '/* start: @import from ' . $file . ' */' . "\n" . $css . "\n" . '/* end: @import from ' . $file . ' */' . "\n";
-                }
-            }
-
-            return $matches[0];
-
-        }, $css);
-
-        if (!empty($comments)) {
-
-            $css = str_replace(array_values($comments), array_keys($comments), $css);
-        }
-
-        return $css;
+        return $content;
     }
 
     /**
@@ -676,10 +564,10 @@ class Parser
 
         $this->errors = [];
 
-        if (!empty($this->options['flatten_import'])) {
-
-            $this->css = $this->parseImport($this->css, $this->src === '' ? Helper::getCurrentDirectory() : dirname($this->src));
-        }
+//        if (!empty($this->options['flatten_import'])) {
+//
+//            $this->css = $this->parseImport($this->css, $this->src === '' ? Helper::getCurrentDirectory() : dirname($this->src));
+//        }
 
         $this->css = rtrim($this->css);
 
@@ -702,6 +590,11 @@ class Parser
      */
     protected function analyse()
     {
+
+        if (!isset($this->ast->children)) {
+
+            $this->ast->children = [];
+        }
 
         while ($this->next()) {
 
@@ -736,7 +629,65 @@ class Parser
                     //     continue;
                 } else {
 
-                    $this->ast->children[] = $node;
+                    if ($node->name == 'import') {
+
+                        preg_match('#(url\(\s*((["\']?)([^\\3]+)\\3)\s*\)|((["\'])([^\\6]+)\\6))(.*)$#s', $node->value, $matches);
+
+                        $file = trim(empty($matches[4]) ? $matches[7] : $matches[4]);
+
+                        if ($this->src !== '' && !preg_match('#^(/|(https?:))#i', $file)) {
+
+                            $file = preg_replace('#'.preg_quote(Helper::getCurrentDirectory().'/', '#').'#', '', dirname($this->src).'/'.$file);
+                        }
+
+                        $media = trim($matches[8]);
+
+                        if ($media == 'all') {
+
+                            $media = '';
+                        }
+
+                        if ($this->options['flatten_import']) {
+
+                            try {
+
+                                $parser = (new self('', $this->options))->load($file);
+                                $parser->doParse();
+
+                                if ($media === '') {
+
+                                    array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+                                }
+
+                                else {
+
+                                    $node->name = 'media';
+                                    $node->value = $media;
+                                    $node->children = $parser->ast->children;
+                                    $this->ast->children[] = $node;
+
+                                    unset($node->isLeaf);
+                                }
+                            }
+
+                            catch (Exception $e) {
+
+                                $node->value = "'$file'".($media !== '' ? " $media" : '');
+                                $this->ast->children[] = $node;
+                            }
+                        }
+
+                        else {
+
+                            $node->value = "'$file'".($media !== '' ? " $media" : '');
+                            $this->ast->children[] = $node;
+                        }
+                    }
+
+                    else {
+
+                        $this->ast->children[] = $node;
+                    }
                 }
 
                 $this->update($this->currentPosition, $substr);
@@ -1172,7 +1123,7 @@ class Parser
                     $comment = substr($block, $i);
                 }
 
-                $currentPosition = clone $position;
+//                $currentPosition = clone $position;
 
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
@@ -1180,27 +1131,27 @@ class Parser
                 $ast = (object)[
 
                     'type' => 'Comment',
-                    'location' => (object)[
-                        'start' => (object)[
-
-                            'line' => $currentPosition->line,
-                            'column' => $currentPosition->column,
-                            'index' => $this->ast->location->start->index + $currentPosition->index
-                        ],
-                        'end' => (object)[
-
-                            'line' => $position->line,
-                            'column' => $position->column - 1,
-                            'index' => $this->ast->location->start->index + $position->index
-                        ]
-                    ],
+//                    'location' => (object)[
+//                        'start' => (object)[
+//
+//                            'line' => $currentPosition->line,
+//                            'column' => $currentPosition->column,
+//                            'index' => $this->ast->location->start->index + $currentPosition->index
+//                        ],
+//                        'end' => (object)[
+//
+//                            'line' => $position->line,
+//                            'column' => $position->column - 1,
+//                            'index' => $this->ast->location->start->index + $position->index
+//                        ]
+//                    ],
                     'value' => $comment
                 ];
 
-                if ($this->src !== '') {
-
-                    $ast->src = $this->src;
-                }
+//                if ($this->src !== '') {
+//
+//                    $ast->src = $this->src;
+//                }
 
                 $rule->children[] = $ast;
 
@@ -1236,36 +1187,59 @@ class Parser
                 $declaration = (object)array_merge(
                     [
                         'type' => 'Declaration',
-                        'location' => (object)[
-                            'start' => (object)[
-
-                                'line' => $currentPosition->line,
-                                'column' => $currentPosition->column,
-                                'index' => $currentPosition->index
-                            ],
-                            'end' => (object)[
-
-                                'line' => $endPosition->line,
-                                'column' => $endPosition->column - 1,
-                                'index' => $currentPosition->index + strlen($value)
-                            ]
-                        ]
+//                        'location' => (object)[
+//                            'start' => (object)[
+//
+//                                'line' => $currentPosition->line,
+//                                'column' => $currentPosition->column,
+//                                'index' => $currentPosition->index
+//                            ],
+//                            'end' => (object)[
+//
+//                                'line' => $endPosition->line,
+//                                'column' => $endPosition->column - 1,
+//                                'index' => $currentPosition->index + strlen($value)
+//                            ]
+//                        ]
                     ],
                     $this->parseVendor(trim($declaration[0])),
                     [
                         'value' => rtrim($declaration[1], "\n\r\t ;}")
                     ]);
 
-                if ($this->src !== '') {
-
-                    $declaration->src = $this->src;
-                }
+//                if ($this->src !== '') {
+//
+//                    $declaration->src = $this->src;
+//                }
 
                 $declaration->name = trim($declaration->name);
                 $declaration->value = trim($declaration->value);
 
                 $declaration = $this->doParseComments($declaration);
                 $declaration->name = trim($declaration->name);
+
+                if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
+
+                    $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+
+                        $file = trim($matches[3]);
+
+                        if (strpos($file, 'data:') !== false) {
+
+                            return $matches[0];
+                        }
+
+
+                        var_dump("f1 => $file");
+                        if (!preg_match('#^(/|((https?:)?//))#', $file)) {
+
+                            $file = Helper::absolutePath($file, dirname($this->src));
+                        }
+
+                        return $matches[1].'url('.$file.')';
+
+                    }, $declaration->value);
+                }
 
                 $rule->children[] = $declaration;
             }

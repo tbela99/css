@@ -150,7 +150,12 @@ final class Ast extends TestCase
 
         $data[] = [
 
-'/*!
+'body {
+ font-size: 108px;
+ color: #fff;
+ text-shadow: 1px 5px 3px #000
+}
+/*!
 * Font Awesome Free 5.12.1 by @fontawesome - https://fontawesome.com
 * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
 */
@@ -180,7 +185,7 @@ final class Ast extends TestCase
  font-size: 80%
 }
 body {
- font-size: 14px;
+ /*font-size: 14px*/
  line-height: 1.3
 }',
 (string) (new Parser())->load(__DIR__ . '/../sourcemap/sourcemap.css')->
