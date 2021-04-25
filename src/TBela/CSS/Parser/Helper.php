@@ -131,8 +131,6 @@ class Helper
 
         $data = static:: doParseUrl(rtrim($ref, '/') . '/' . $file);
 
-//        var_dump($data);
-
         if (isset($data['path'])) {
 
             $data['path'] = static::resolvePath($data['path']);
