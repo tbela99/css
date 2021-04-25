@@ -34,6 +34,11 @@ trait ArrayTrait
         return $this->offsetExists($name);
     }
 
+    public function __unset($name) {
+
+        return $this->offsetUnset($name);
+    }
+
     /**
      * @param string $offset
      * @param Value\Set|string $value

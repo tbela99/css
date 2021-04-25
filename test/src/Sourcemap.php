@@ -106,7 +106,7 @@ body {
             preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI"}', file_get_contents($outFile.'.map')];
+        $data[] = ['AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.test.min.css';
 
@@ -114,7 +114,7 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI"}', file_get_contents($outFile.'.map')];
+        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
@@ -179,7 +179,7 @@ body {
             preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":";AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI"}', file_get_contents($outFile.'.map')];
+        $data[] = [';AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.min.css';
 
@@ -187,7 +187,7 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI"}', file_get_contents($outFile.'.map')];
+        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
@@ -227,15 +227,14 @@ $parser = (new Parser('', [
             preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/font-awesome\/5.15.3\/css\/brands.min.css"],"names":[],"mappings":";;;;AAIA;;;;;;;AAAgb"}', file_get_contents($outFile.'.map')];
-
+        $data[] = [';;;;AAIA;;;;;;;AAAgb', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.url.test.min.css';
 
         $renderer->setOptions([
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/font-awesome\/5.15.3\/css\/brands.min.css"],"names":[],"mappings":"AAIA,iqBAAgb"}', file_get_contents($outFile.'.map')];
+        $data[] = ['AAIA,iqBAAgb', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
