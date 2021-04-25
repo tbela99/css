@@ -144,7 +144,7 @@ final class Path extends TestCase
         $data[] = [
 
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.eot?#iefix',
-            Parser\Helper::absolutePath('../webfonts/fa-brands-400.eot?#iefix',  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css')
+            Parser\Helper::absolutePath('../webfonts/fa-brands-400.eot?#iefix',  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/')
         ];
 
         return $data;

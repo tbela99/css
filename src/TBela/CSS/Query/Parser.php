@@ -680,8 +680,6 @@ class Parser
                 $this->tokens[] = (object)['type' => 'select', 'node' => '>'];
             } else if ($token !== '') {
 
-                var_dump($token, $substr);
-
                 throw new SyntaxError(sprintf('expected "%s" at position %d', $token, $this->position));
             }
         }

@@ -1229,8 +1229,6 @@ class Parser
                             return $matches[0];
                         }
 
-
-                        var_dump("f1 => $file");
                         if (!preg_match('#^(/|((https?:)?//))#', $file)) {
 
                             $file = Helper::absolutePath($file, dirname($this->src));
