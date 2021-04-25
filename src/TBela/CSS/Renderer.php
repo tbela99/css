@@ -97,6 +97,11 @@ class Renderer
 
         $this->outFile = '';
 
+        if (is_callable([$ast, 'getAst'])) {
+
+            $ast = $ast->getAst();
+        }
+
         switch ($ast->type) {
 
             case 'Stylesheet':

@@ -20,12 +20,27 @@ final class Sourcemap extends TestCase
             $actual
         );
     }
+
     /**
      * @param string $expected
      * @param string $actual
      * @dataProvider testSourcemapImportProvider
      */
     public function testSourcemapImport($expected, $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider testSourcemapUrlProvider
+     */
+    public function testSourcemapUrl($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -173,6 +188,54 @@ body {
         ])->save($element, $outFile);
 
         $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/test\/PhpstormProjects\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI"}', file_get_contents($outFile.'.map')];
+
+        return $data;
+    }
+
+    public function testSourcemapUrlProvider() {
+
+        $data = [];
+
+        $element = 
+$parser = (new Parser('', [
+        'flatten_import' => true
+]))->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css')->parse();
+
+        $renderer = new Renderer([
+            'sourcemap' => true
+        ]);
+
+        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.url.test.css';
+        $renderer->save($element, $outFile);
+
+        $data[] = ['/*!
+ * Font Awesome Free 5.15.3 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+@font-face {
+ font-family: "Font Awesome 5 Brands";
+ font-style: normal;
+ font-weight: 400;
+ font-display: block;
+ src: url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.eot?#iefix) format("embedded-opentype"), url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.woff2) format("woff2"), url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.woff) format("woff"), url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.ttf) format("truetype"), url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.svg#fontawesome) format("svg")
+}
+.fab {
+ font-family: "Font Awesome 5 Brands";
+ font-weight: 400
+}
+',
+            preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
+        ];
+
+        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/font-awesome\/5.15.3\/css\/brands.min.css"],"names":[],"mappings":";;;;AAIA;;;;;;;AAAgb"}', file_get_contents($outFile.'.map')];
+
+        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.url.test.min.css';
+
+        $renderer->setOptions([
+            'compress' => true
+        ])->save($element, $outFile);
+
+        $data[] = ['{"version":3,"file":"","sourceRoot":"","sources":["https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/font-awesome\/5.15.3\/css\/brands.min.css"],"names":[],"mappings":"AAIA,iqBAAgb"}', file_get_contents($outFile.'.map')];
 
         return $data;
     }

@@ -157,6 +157,14 @@ abstract class RuleList extends Element implements RuleListInterface
 
     public function setChildren(array $elements) {
 
+        if (!empty($this->ast->children)) {
+
+            foreach ($this->ast->children as $ast) {
+
+                $ast->parent = null;
+            }
+        }
+
         $this->ast->children = [];
 
         foreach ($elements as $child) {
@@ -286,6 +294,7 @@ abstract class RuleList extends Element implements RuleListInterface
             if ($index !== false) {
 
                 array_splice($this->ast->children, $index, 1);
+                $element->ast->parent = null;
             }
         }
 

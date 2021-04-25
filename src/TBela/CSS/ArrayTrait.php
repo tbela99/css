@@ -29,6 +29,11 @@ trait ArrayTrait
         }
     }
 
+    public function __isset($name) {
+
+        return $this->offsetExists($name);
+    }
+
     /**
      * @param string $offset
      * @param Value\Set|string $value
