@@ -9,6 +9,33 @@ namespace TBela\CSS\Parser;
 class Helper
 {
 
+    protected static $fixParseUrl;
+    /**
+     * fix parsing bug in parse_url for php < 8 : parse_url('/fa-brands-400.eot?#iefix') will not return the query string
+     * @param string $url
+     * @return array|false|int|string|null
+     */
+    protected static function doParseUrl($url)
+    {
+
+        $data = parse_url($url);
+
+        if (!isset(static::$fixParseUrl)) {
+
+            static::$fixParseUrl = !array_key_exists('query', parse_url('/?#iefix'));
+        }
+
+        if (static::$fixParseUrl && !isset($data['query'])) {
+
+            if ((preg_split('~([#?])~', $url, 2, PREG_SPLIT_DELIM_CAPTURE)[1] ?? '') == '?') {
+
+                $data['query'] = '';
+            }
+        }
+
+        return $data;
+    }
+
     /**
      * @return string
      * @ignore
@@ -72,7 +99,7 @@ class Helper
                 }
             }
 
-            $file = ($fromRoot ? '/' : '').implode('/', $return);
+            $file = ($fromRoot ? '/' : '') . implode('/', $return);
         } else {
 
             $file = preg_replace(['#/\./#', '#^\./#'], ['/', ''], $file);
@@ -86,11 +113,12 @@ class Helper
      * @param string $ref
      * @return string
      */
-    public static function absolutePath($file, $ref) {
+    public static function absolutePath($file, $ref)
+    {
 
         if (static::isAbsolute($file)) {
 
-            $data = parse_url($file);
+            $data = static:: doParseUrl($file);
             $data['path'] = static::resolvePath($data['path']);
 
             return static::toUrl($data);
@@ -101,7 +129,7 @@ class Helper
             return $file;
         }
 
-        $data = parse_url(rtrim($ref, '/').'/'.$file);
+        $data = static:: doParseUrl(rtrim($ref, '/') . '/' . $file);
 
 //        var_dump($data);
 
@@ -119,7 +147,8 @@ class Helper
      * @param string $ref relative directory
      * @return string
      */
-    public static function relativePath(string $file, string $ref) {
+    public static function relativePath(string $file, string $ref)
+    {
 
         $isAbsolute = static::isAbsolute($file);
 
@@ -129,8 +158,8 @@ class Helper
         }
 
         $original = static::resolvePath($file);
-        $fileUrl = parse_url($file);
-        $refUrl = parse_url($ref);
+        $fileUrl = static:: doParseUrl($file);
+        $refUrl = static:: doParseUrl($ref);
 
         foreach (['scheme', 'host'] as $key) {
 
@@ -183,10 +212,10 @@ class Helper
             }
         }
 
-       if (count($file) < count($ref)) {
+        if (count($file) < count($ref)) {
 
-           return static::toUrl($fileUrl);
-       }
+            return static::toUrl($fileUrl);
+        }
 
         while ($ref) {
 
@@ -202,7 +231,7 @@ class Helper
         }
 
         $result = implode('/', array_merge(array_fill(0, count($ref), '..'), $file));
-        $result = ($result === '' ? '' : $result.'/').$basename;
+        $result = ($result === '' ? '' : $result . '/') . $basename;
 
         return $isAbsolute && strlen($original) <= strlen($result) ? $original : $result;
     }
@@ -211,32 +240,34 @@ class Helper
      * @param string $path
      * @return bool
      */
-    public static function isAbsolute($path) {
+    public static function isAbsolute($path)
+    {
 
-        return (bool) preg_match('#^(/|(https?:)?//)#', $path);
+        return (bool)preg_match('#^(/|(https?:)?//)#', $path);
     }
 
     /**
      * @param array $data
      * @return string
      */
-    protected static function toUrl(array $data) {
+    protected static function toUrl(array $data)
+    {
 
         $url = '';
 
         if (isset($data['scheme'])) {
 
-            $url.= $data['scheme'].':';
+            $url .= $data['scheme'] . ':';
         }
 
         if (isset($data['user'])) {
 
-            $url .= $data['user'].':'.$data['pass'].'@';
+            $url .= $data['user'] . ':' . $data['pass'] . '@';
         }
 
         if (isset($data['host'])) {
 
-            $url .= '//'.$data['host'];
+            $url .= '//' . $data['host'];
         }
 
         if (isset($data['path'])) {
@@ -246,12 +277,12 @@ class Helper
 
         if (isset($data['query'])) {
 
-            $url .= '?'.$data['query'];
+            $url .= '?' . $data['query'];
         }
 
         if (isset($data['fragment'])) {
 
-            $url .= '#'.$data['fragment'];
+            $url .= '#' . $data['fragment'];
         }
 
         return $url;
