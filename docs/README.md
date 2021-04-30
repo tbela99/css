@@ -8,6 +8,8 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- generate sourcemap
+- parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
 - remove duplicate declarations
@@ -15,8 +17,8 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - process @import directive
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
-- query the css nodes using xpath like syntax
-- transform the css output using the Renderer class
+- query the css nodes using xpath like syntax or class name
+- transform the css and ast using the traverser api
 
 ## Installation
 
@@ -28,7 +30,11 @@ $ composer require 'tbela99/css:dev-php56-backport'
 
 ## Requirements
 
+<<<<<<< HEAD
 PHP version 5.6 or later
+=======
+This library requires PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+>>>>>>> v.next
 
 ## Usage:
 
@@ -49,11 +55,11 @@ PHP Code
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Parser;
 
-$compiler = new Compiler();
+$parser = new Parser();
 
-$compiler->setContent('
+$parser->setContent('
 h1 {
   color: green;
   color: blue;
@@ -65,7 +71,7 @@ h1 {
   color: aliceblue;
 }');
 
-echo $compiler->compile();
+echo $parser->parse();
 ```
 
 Result
@@ -86,6 +92,12 @@ use \TBela\CSS\Renderer;
 $parser = new Parser($css);
 $element = $parser->parse();
 
+// append an existing css file
+$parser->append('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+
+// append css string
+$parser->appendContent($css_string);
+
 // pretty print css
 $css = (string) $element;
 
@@ -94,10 +106,17 @@ $renderer = new Renderer([
   'compress' => true,
   'convert_color' => 'hex',
   'css_level' => 4,
+  'sourcemap' => true,
   'allow_duplicate_declarations' => false
   ]);
 
+// fast
+$css = $renderer->renderAst($parser->getAst());
+// slow
 $css = $renderer->render($element);
+
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 
 // save as json
 file_put_contents('style.json', json_encode($element));
@@ -107,19 +126,39 @@ Load the AST and generate css code
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Renderer;
+// fastest way to render css
+$beautify = (new Renderer())->renderAst($parser->setContent($css)->getAst());
+
+// or
+$css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')));
+```
+
+```php
+
+use \TBela\CSS\Renderer;
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new Compiler([
+$renderer = new Renderer([
     'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$compiler->setData($ast);
+$css = $renderer->renderAst($ast);
+```
 
-$css = $compiler->compile();
+## Sourcemap generation
+
+```php
+$renderer = new Renderer([
+  'sourcemap' => true
+  ]);
+
+// call save and specify the file name
+// generate sourcemap -> css/all.css.map
+$renderer->save($element, 'css/all.css');
 ```
 
 ## The CSS Query API
@@ -175,16 +214,22 @@ PHP source
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Parser;
 
-$compiler = new Compiler();
+$parser = new Parser();
 
-$compiler->setContent($css);
+$parser->setContent($css);
 
-$stylesheet = $compiler->getData();
+$stylesheet = $parser->parse();
+
+// get @font-face nodes by class names
+$nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
+
+// or
 
 // get all src properties in a @font-face rule
 $nodes = $stylesheet->query('@font-face/src');
+
 
 echo implode("\n", array_map('trim', $nodes));
 ```
@@ -213,7 +258,7 @@ render optimized css
 
 ```php
 
-$stylesheet->setChildren(array_map(function ($node) { return $node->copy(); }, $nodes));
+$stylesheet->setChildren(array_map(function ($node) { return $node->copy()->getRoot(); }, $nodes));
 
 $stylesheet->deduplicate();
 
@@ -231,6 +276,64 @@ result
    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }
+```
+
+## The Traverser Api
+
+The traverser will iterate over all the nodes and process them with the callbacks provided.
+It will return a new tree
+Example using ast
+
+```php
+
+use TBela\CSS\Ast\Traverser;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+
+$parser = (new Parser())->load('ast/media.css');
+$traverser = new Traverser();
+$renderer = new Renderer(['remove_empty_nodes' => true]);
+
+$ast = $parser->getAst();
+
+// remove @media print
+$traverser->on('enter', function ($node) {
+
+    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+
+        return Traverser::IGNORE_NODE;
+    }
+});
+
+$newAst = $traverser->traverse($ast);
+echo $renderer->renderAst($newAst);
+```
+
+Example using an Element instance
+
+```php
+
+use TBela\CSS\Ast\Traverser;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+
+$parser = (new Parser())->load('ast/media.css');
+$traverser = new Traverser();
+$renderer = new Renderer(['remove_empty_nodes' => true]);
+
+$element = $parser->parse();
+
+// remove @media print
+$traverser->on('enter', function ($node) {
+
+    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+
+        return Traverser::IGNORE_NODE;
+    }
+});
+
+$newElement = $traverser->traverse($element);
+echo $renderer->renderAst($newElement);
 ```
 
 ## Build a CSS Document
@@ -340,96 +443,34 @@ div {
   }
 }
 ```
+Adding existing css
+```php
 
-## Transform Rendered CSS
+$stylesheet->appendCss($css_string);
 
-Use the Renderer class to transform the output. the callback returns three types of values
-
-- a Css node that will be rendered in place of the original node
-- a string that will be rendered in place of the original node
-- the constant Renderer::IGNORE_NODE, the node will not be rendered
-
-input Css
-
-```css
-@font-face {
-  font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";
-  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
-}
-.pic {
-  background: no-repeat url("imgs/lizard.png");
-}
-.element {
-  background-image: url("imgs/lizard.png"), url("imgs/star.png");
-}
 ```
 
-PHP code
+## Performance
+
+parsing and rendering ast is 3x faster than parsing an element.
 
 ```php
-use TBela\CSS\Element\AtRule;
-use \TBela\CSS\Renderable;
-use \TBela\CSS\Element\Declaration;
-use \TBela\CSS\Property\Property;
-use \TBela\CSS\Renderer;
-use \TBela\CSS\Compiler;
-use TBela\CSS\Value;
-use TBela\CSS\Value\CssUrl;
 
-$element = (new Compiler())->setContent($css)->getData();
+use \TBela\CSS\Element\Parser;
+use \TBela\CSS\Element\Renderer;
 
-$renderer = new Renderer();
+$parser = new Parser($css);
 
-$renderer->on('enter', function (Renderable $node) {
+// parse and render
+echo (string) $parser;
 
-    // remove @font-face
-    if ($node instanceof AtRule && $node['name'] == 'font-face') {
+// or render minified css
+$renderer = new Renderer(['compress' => true]);
+echo $renderer->renderAst($parser->getAst());
 
-        return $this::IGNORE_NODE;
-    }
-
-    // rewrite image url() path for local file
-    if ($node instanceof Declaration || $node instanceof Property) {
-
-        if (strpos($node->getValue(), 'url(') !== false) {
-
-            $node = clone $node;
-
-            $node->getValue()->map(function (Value $value): Value {
-
-                if ($value instanceof CssURL) {
-
-                    $value->arguments->map(function (Value $value): Value {
-
-                        if (is_file($value->value)) {
-
-                            return Value::getInstance((object) ['type' => $value->type, 'value' => '/'.$value->value]);
-                        }
-
-                        return $value;
-                    });
-                }
-
-                return $value;
-            });
-        }
-    }
-});
-
-echo $renderer->render($element);
+// slower
+echo $renderer->render($parser->parse());
 ```
-
-Result
-
-```css
-.pic {
-  background: no-repeat url(/imgs/lizard.png);
-}
-.element {
-  background-image: url(/imgs/lizard.png), url(/imgs/star.png);
-}
-```
-
 ## Parser Options
 
 - flatten_import: process @import directive and import the content into the css. default to false.
@@ -437,13 +478,25 @@ Result
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - sourcemap: include source location data
 
-## Compiler Options
+## Renderer Options
 
-- charset: if false remove @charset
+- sourcemap: generate sourcemap, default false
+- remove_comments: remove comments.
+- preserve_license: preserve comments starting with '/*!'
+- compress: minify output, will also remove comments
+- remove_empty_nodes: do not render empty css nodes
+- compute_shorthand: compute shorthand declaration
+- charset: preserve @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
-- css_level: will use CSS4 or CSS3 color format. default to _4_
-- compress: produce minified output
-- remove_empty_nodes: remove empty css rules when the node is rendered
+- css_level: produce CSS color level 3 or 4. default to _4_
+- allow_duplicate_declarations: allow duplicate declarations.
+
+The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
+
+---
+
+Thanks to [Jetbrains](https://jetbrains.com) for providing a free PhpStorm license
+
+This was originally a PHP port of https://github.com/reworkcss/css

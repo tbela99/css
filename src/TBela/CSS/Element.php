@@ -10,7 +10,6 @@ use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Query\Evaluator;
 use TBela\CSS\Value\Set;
-use function get_class;
 use function is_callable;
 use function is_null;
 use function str_ireplace;
@@ -106,6 +105,24 @@ abstract class Element implements ElementInterface  {
 
         $className = Element::class.'\\'.ucfirst($ast->type);
         return new $className($ast);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function from($css, array $options = [])
+    {
+
+        return (new Parser($css, $options))->parse();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function fromUrl($url, array $options = [])
+    {
+
+        return (new Parser('', $options))->load($url)->parse();
     }
 
     /**

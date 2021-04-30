@@ -3,8 +3,6 @@
 namespace TBela\CSS\Ast;
 
 use TBela\CSS\Event\Event;
-use TBela\CSS\Interfaces\ElementInterface;
-
 /**
  * Ast|Element traverser
  * @package TBela\CSS\Ast
@@ -12,8 +10,14 @@ use TBela\CSS\Interfaces\ElementInterface;
 class Traverser extends Event
 {
 
+    /**
+     * @var int do not preserve this node
+     */
     const IGNORE_NODE = 1;
-    const IGNORE_CHILDREN = 2;
+    /**
+     * @var int do not preserve children of this node
+     */
+   const IGNORE_CHILDREN = 2;
 
     /**
      * @param \stdClass|ElementInterface $object
@@ -132,7 +136,6 @@ class Traverser extends Event
 
             if ($ignore_children) {
 
-                $node = clone $node;
                 $node->children = [];
 
                 return $node;
@@ -151,7 +154,6 @@ class Traverser extends Event
 
                     if ($temp_c === static::IGNORE_CHILDREN && is_object($child)) {
 
-                        $child = clone $child;
                         $child->children = [];
                     }
 
@@ -181,7 +183,6 @@ class Traverser extends Event
 
         if ($ignore_children && is_object($node)) {
 
-            $node = clone $node;
             $node->children = [];
         }
 

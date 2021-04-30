@@ -4,7 +4,7 @@ var classTBela_1_1CSS_1_1Query_1_1Parser =
     [ "getTokenType", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a4535d427dc82be40a11dc220dd93ee3a", null ],
     [ "is_whitespace", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a64c2002a9ac9ddcde0f3f7b5cc86e95e", null ],
     [ "match_token", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a8870a6b3520d9dc495dc6a7ed6ba4071", null ],
-    [ "parse", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a9d95c4f2566b573cd3219ced7946b102", null ],
+    [ "parse", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#ab1d19264a3797064962ccb19bf399f0c", null ],
     [ "parse_path", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#aad7f74174ecca04191dbc7429dd5c23b", null ],
     [ "parse_selector", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#aa54d1459b8fe63787b871035d64cf5c1", null ],
     [ "parse_selectors", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html#a98c509844317ba78eeff17ef545052d8", null ],

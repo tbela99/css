@@ -88,6 +88,12 @@ class Evaluator
         return $result;
     }
 
+    /**
+     * @param array $selectors
+     * @param array $search
+     * @return bool
+     * @ignore
+     */
     protected function search(array $selectors, array $search)
     {
 
@@ -138,6 +144,7 @@ class Evaluator
     /**
      * @param \TBela\CSS\Interfaces\ElementInterface[] $nodes
      * @return array
+     * @ignore
      */
     protected function sortNodes($nodes)
     {

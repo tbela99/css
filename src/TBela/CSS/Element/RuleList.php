@@ -72,45 +72,6 @@ abstract class RuleList extends Element implements RuleListInterface
     }
 
     /**
-     * @param int $offset
-     * @param int|null $length
-     * @param ...Element|null $replacement
-     * @return ElementInterface[]
-     */
-    public function splice($offset, $length = null, $replacement = null) {
-
-        if(!empty($this->ast->isLeaf)) {
-
-            throw new \Exception();
-        }
-
-        $args = [&$this->ast->children, $offset];
-
-        if (!is_null($length)) {
-
-            $args[] = $length;
-
-            if (!is_null($replacement)) {
-
-                $args[] = $replacement;
-            }
-        }
-
-        foreach ($this->ast->children as $child) {
-
-            $child->parent = $this;
-        }
-
-        return array_map(function ($element) {
-
-            $element->parent = null;
-
-            return $element;
-
-        }, call_user_func_array('array_splice', $args));
-    }
-
-    /**
      * @inheritDoc
      */
     public function hasChildren()
@@ -132,11 +93,16 @@ abstract class RuleList extends Element implements RuleListInterface
 
         if (isset($this->ast->children)) {
 
-            foreach ($this->ast->children as $element) {
+            $children = $this->ast->children;
 
-                if (!is_null($element->parent)) {
+            foreach ($children as $element) {
 
-                    $element->parent->remove($element);
+                $index = array_search($element, $this->ast->children, true);
+
+                if ($index !== false) {
+
+                    array_splice($this->ast->children, $index, 1);
+                    $element->ast->parent = null;
                 }
             }
 
