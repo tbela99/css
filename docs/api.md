@@ -1,4 +1,4 @@
-## CSS Api
+# CSS Api
 
 The documentation generated from the source code using phpdocs is available [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/tbela99/css/master/docs/api/html/index.html)
 
@@ -6,7 +6,7 @@ The documentation generated from the source code using phpdocs is available [her
 
 Every Element instance implement a \_\_toString() method which means they are automatically converted to string where a string is expected.
 However you can control how the element is rendered by using a _Renderer_.
-The renderer has a _setOptions_ method that accepts the same arguments as [\TBela\CSS\Compiler::setOptions](./compiler.md#compiler-options)
+The renderer has a _setOptions_ method that accepts the same arguments as [\TBela\CSS\Renderer:setOptions](./renderermd#setptions)
 
 ### Pretty printing CSS
 
@@ -103,12 +103,10 @@ Example
 
 ```php
 
-use \TBela\CSS\Compiler;
 use \TBela\CSS\Renderer;
 
 $parser = new Parser();
 $renderer = new Renderer();
-
 // convert rgba to hex, not required here
 $renderer->setOptions(['convert_color' => 'hex', 'compress' => true]);
 
@@ -121,7 +119,7 @@ $media = $stylesheet['firstChild'];
 $fontFace = $media['firstChild'];
 ```
 
-Render the element alone
+ender the element alone
 
 ```php
 echo $renderer->render($fontFace);

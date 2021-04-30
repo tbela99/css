@@ -6,9 +6,9 @@ use Exception;
 use TBela\CSS\Interfaces\ElementInterface;
 
 /**
- * Css Compiler
+ * Css Compiler. Use Parser or Renderer
  * @package TBela\CSS
- * @deprecated use Parser or Renderer
+ * @deprecated deprecated since 0.2.0
  */
 class Compiler {
 

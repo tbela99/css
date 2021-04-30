@@ -42,7 +42,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
 
     /**
      * Property constructor.
-     * @param Value\Set|string$name
+     * @param Value\Set|string $name
      */
     public function __construct($name)
     {

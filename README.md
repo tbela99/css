@@ -9,7 +9,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 ## Features
 
 - generate sourcemap
-- fastly parse and render CSS
+- parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
 - remove duplicate declarations
@@ -18,7 +18,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - remove @charset directive
 - compute css shorthand (margin, padding, outline, border-radius, font)
 - query the css nodes using xpath like syntax or class name
-- transform the css output using the Renderer class
+- transform the css and ast using the traverser api
 
 ## Installation
 
@@ -136,24 +136,20 @@ use \TBela\CSS\Renderer;
 
 $ast = json_decode(file_get_contents('style.json'));
 
-$compiler = new Renderer([
+$renderer = new Renderer([
     'convert_color' => true,
     'compress' => true, // minify the output
     'remove_empty_nodes' => true // remove empty css classes
 ]);
 
-$css = $compiler->renderAst($ast);
+$css = $renderer->renderAst($ast);
 ```
 
 ## Sourcemap generation
 
 ```php
 $renderer = new Renderer([
-  'compress' => true,
-  'convert_color' => 'hex',
-  'css_level' => 4,
-  'sourcemap' => true,
-  'allow_duplicate_declarations' => false
+  'sourcemap' => true
   ]);
 
 // call save and specify the file name
@@ -214,13 +210,13 @@ PHP source
 
 ```php
 
-use \TBela\CSS\Compiler;
+use \TBela\CSS\Parser;
 
-$compiler = new Compiler();
+$parser = new Parser();
 
-$compiler->setContent($css);
+$parser->setContent($css);
 
-$stylesheet = $compiler->getData();
+$stylesheet = $parser->parse();
 
 // get @font-face nodes by class names
 $nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
@@ -276,6 +272,64 @@ result
    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }
+```
+
+## The Traverser Api
+
+The traverser will iterate over all the nodes and process them with the callbacks provided.
+It will return a new tree
+Example using ast
+
+```php
+
+use TBela\CSS\Ast\Traverser;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+
+$parser = (new Parser())->load('ast/media.css');
+$traverser = new Traverser();
+$renderer = new Renderer(['remove_empty_nodes' => true]);
+
+$ast = $parser->getAst();
+
+// remove @media print
+$traverser->on('enter', function ($node) {
+
+    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+
+        return Traverser::IGNORE_NODE;
+    }
+});
+
+$newAst = $traverser->traverse($ast);
+echo $renderer->renderAst($newAst);
+```
+
+Example using an Element instance
+
+```php
+
+use TBela\CSS\Ast\Traverser;
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+
+$parser = (new Parser())->load('ast/media.css');
+$traverser = new Traverser();
+$renderer = new Renderer(['remove_empty_nodes' => true]);
+
+$element = $parser->parse();
+
+// remove @media print
+$traverser->on('enter', function ($node) {
+
+    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+
+        return Traverser::IGNORE_NODE;
+    }
+});
+
+$newElement = $traverser->traverse($element);
+echo $renderer->renderAst($newElement);
 ```
 
 ## Build a CSS Document
@@ -388,13 +442,19 @@ div {
 Adding existing css
 ```php
 
+// append css string
 $stylesheet->appendCss($css_string);
+// append css file
+$stylesheet->append('style/main.css');
+// append url
+$stylesheet->append('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
+
 
 ```
 
 ## Performance
 
-parsing and rendering ast is 3x faster than parsing an element
+parsing and rendering ast is 3x faster than parsing an element.
 
 ```php
 
@@ -409,6 +469,9 @@ echo (string) $parser;
 // or render minified css
 $renderer = new Renderer(['compress' => true]);
 echo $renderer->renderAst($parser->getAst());
+
+// slower
+echo $renderer->render($parser->parse());
 ```
 ## Parser Options
 
@@ -417,17 +480,20 @@ echo $renderer->renderAst($parser->getAst());
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - sourcemap: include source location data
 
-## Compiler Options
+## Renderer Options
 
-- charset: if false remove @charset
+- sourcemap: generate sourcemap, default false
+- remove_comments: remove comments.
+- preserve_license: preserve comments starting with '/*!'
+- compress: minify output, will also remove comments
+- remove_empty_nodes: do not render empty css nodes
+- compute_shorthand: compute shorthand declaration
+- charset: preserve @charset
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
-- preserve_license: preserve comments that start with '/*!'
-- remove_comments: remove comments. If _compress_ is true, comments are always removed
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
-- css_level: will use CSS4 or CSS3 color format. default to _4_
-- compress: produce minified output
-- remove_empty_nodes: remove empty css rules when the node is rendered
+- css_level: produce CSS color level 3 or 4. default to _4_
+- allow_duplicate_declarations: allow duplicate declarations.
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 

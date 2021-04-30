@@ -9,11 +9,17 @@ namespace TBela\CSS\Parser;
 class Helper
 {
 
-    protected static $fixParseUrl;
     /**
-     * fix parsing bug in parse_url for php < 8 : parse_url('/fa-brands-400.eot?#iefix') will not return the query string
+     * @var bool
+     * @ignore
+     */
+    protected static $fixParseUrl;
+
+    /**
+     * fix parsing bug in parse_url for php < 8 : parse_url('/?#iefix') will not return the query string
      * @param string $url
-     * @return array|false|int|string|null
+     * @return array
+     * @ignore
      */
     protected static function doParseUrl($url)
     {

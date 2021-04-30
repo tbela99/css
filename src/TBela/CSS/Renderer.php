@@ -5,6 +5,7 @@ namespace TBela\CSS;
 use axy\sourcemap\SourceMap;
 use Exception;
 use TBela\CSS\Exceptions\IOException;
+use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
@@ -18,10 +19,6 @@ use function is_string;
  */
 class Renderer
 {
-    /**
-     * @var Traverser
-     */
-    protected $traverser = null;
 
     protected array $options = [
         'glue' => "\n",
@@ -73,21 +70,11 @@ class Renderer
             return $this->render($element->copy()->getRoot(), $level);
         }
 
-        if (isset($this->traverser)) {
-
-            $result = $this->traverser->traverse($element);
-
-            if ($result instanceof ElementInterface) {
-
-                $element = $result;
-            }
-        }
-
         return $this->renderAst($element->getAst(), $level);
     }
 
     /**
-     * @param \stdClass $ast
+     * @param \stdClass|ElementInterface $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -97,7 +84,7 @@ class Renderer
 
         $this->outFile = '';
 
-        if (is_callable([$ast, 'getAst'])) {
+        if ($ast instanceof ParsableInterface) {
 
             $ast = $ast->getAst();
         }
@@ -732,13 +719,18 @@ class Renderer
 //            return $this->indents[$level] . $name . ':' . $this->options['indent'] . $value;
 //        }
 
+        if (is_string($value)) {
+
+            $value = Value::parse($value, $name);
+        }
+
         if (empty($this->options['compress'])) {
 
             $value = implode(', ', array_map(function (Set $value) use ($options) {
 
                 return $value->render($options);
 
-            }, (is_string($value) ? Value::parse($value, $name) : $value)->split(',')));
+            }, $value->split(',')));
         } else {
 
             $value = $value->render($options);

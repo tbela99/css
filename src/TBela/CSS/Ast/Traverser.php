@@ -12,7 +12,13 @@ use TBela\CSS\Interfaces\ElementInterface;
 class Traverser extends Event
 {
 
+    /**
+     * @var int do not preserve this node
+     */
     public const IGNORE_NODE = 1;
+    /**
+     * @var int do not preserve children of this node
+     */
     public const IGNORE_CHILDREN = 2;
 
     /**
@@ -132,7 +138,6 @@ class Traverser extends Event
 
             if ($ignore_children) {
 
-                $node = clone $node;
                 $node->children = [];
 
                 return $node;
@@ -151,7 +156,6 @@ class Traverser extends Event
 
                     if ($temp_c === static::IGNORE_CHILDREN && is_object($child)) {
 
-                        $child = clone $child;
                         $child->children = [];
                     }
 
@@ -181,7 +185,6 @@ class Traverser extends Event
 
         if ($ignore_children && is_object($node)) {
 
-            $node = clone $node;
             $node->children = [];
         }
 

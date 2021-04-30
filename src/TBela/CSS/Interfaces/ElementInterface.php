@@ -15,9 +15,23 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     /**
      * create an instance from ast or another Element instance
      * @param ElementInterface|object $ast
-     * @return mixed
+     * @return ElementInterface
      */
     public static function getInstance($ast);
+
+    /**
+     * create an element from the specified css
+     * @param string $css
+     * @return ElementInterface
+     */
+    public static function from($css, array $options = []);
+
+    /**
+     * create an instance from the specified file or url
+     * @param string $url
+     * @return ElementInterface
+     */
+    public static function fromUrl($url, array $options = []);
 
     /**
      * @param callable $fn

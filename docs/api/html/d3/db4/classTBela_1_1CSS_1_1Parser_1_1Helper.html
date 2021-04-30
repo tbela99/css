@@ -83,6 +83,8 @@ $(document).ready(function(){initNavTree('d3/db4/classTBela_1_1CSS_1_1Parser_1_1
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="../../d7/d48/classTBela_1_1CSS_1_1Parser_1_1Helper-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">TBela\CSS\Parser\Helper Class Reference</div>  </div>
@@ -95,10 +97,108 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a50821b60520dbf5ce0c2e434efe83b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab616630e63219083e678994b1b037b50"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#ab616630e63219083e678994b1b037b50">resolvePath</a> (string $file, string $path='')</td></tr>
 <tr class="separator:ab616630e63219083e678994b1b037b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94f8aa5ff9da87f0090cee8f2cf4862f"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#a94f8aa5ff9da87f0090cee8f2cf4862f">absolutePath</a> ($file, $ref)</td></tr>
+<tr class="separator:a94f8aa5ff9da87f0090cee8f2cf4862f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd91479a28b03eb558384f6639c571c4"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#afd91479a28b03eb558384f6639c571c4">relativePath</a> (string $file, string $ref)</td></tr>
+<tr class="separator:afd91479a28b03eb558384f6639c571c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa39803bc32cbc5a259e884b980585b4a"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#aa39803bc32cbc5a259e884b980585b4a">isAbsolute</a> ($path)</td></tr>
+<tr class="separator:aa39803bc32cbc5a259e884b980585b4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbb4f5c8af2fb4f5593925627e6445bb"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#adbb4f5c8af2fb4f5593925627e6445bb">fetchContent</a> (string $url, array $options=[], array $curlOptions=[])</td></tr>
 <tr class="separator:adbb4f5c8af2fb4f5593925627e6445bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:a68de544946d2f511970c397d279b3481"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#a68de544946d2f511970c397d279b3481">doParseUrl</a> ($url)</td></tr>
+<tr class="separator:a68de544946d2f511970c397d279b3481"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97d5505011820bddceb80ae735d45654"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html#a97d5505011820bddceb80ae735d45654">toUrl</a> (array $data)</td></tr>
+<tr class="separator:a97d5505011820bddceb80ae735d45654"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:af9de31d221fd108bfac9fece1a366771"><td class="memItemLeft" align="right" valign="top"><a id="af9de31d221fd108bfac9fece1a366771"></a>
+static&#160;</td><td class="memItemRight" valign="bottom"><b>$fixParseUrl</b></td></tr>
+<tr class="separator:af9de31d221fd108bfac9fece1a366771"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a94f8aa5ff9da87f0090cee8f2cf4862f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94f8aa5ff9da87f0090cee8f2cf4862f">&#9670;&nbsp;</a></span>absolutePath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static TBela\CSS\Parser\Helper::absolutePath </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$ref</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$file</td><td></td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$ref</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#ad1335ca97b7df6d1e76050a72c2c3636">TBela\CSS\Parser\load()</a>, and <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#ab082abd4c424fd41dd0886d31fbcbff1">TBela\CSS\Renderer\save()</a>.</p>
+
+</div>
+</div>
+<a id="a68de544946d2f511970c397d279b3481"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68de544946d2f511970c397d279b3481">&#9670;&nbsp;</a></span>doParseUrl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static TBela\CSS\Parser\Helper::doParseUrl </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$url</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>fix parsing bug in parse_url for php &lt; 8 : parse_url('/?#iefix') will not return the query string </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$url</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>array @ignore </dd></dl>
+
+</div>
+</div>
 <a id="adbb4f5c8af2fb4f5593925627e6445bb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adbb4f5c8af2fb4f5593925627e6445bb">&#9670;&nbsp;</a></span>fetchContent()</h2>
 
@@ -140,7 +240,7 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype"></td><td class="paramname">$url</td><td></td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$url</td><td></td></tr>
     <tr><td class="paramtype">array</td><td class="paramname">$options</td><td></td></tr>
     <tr><td class="paramtype">array</td><td class="paramname">$curlOptions</td><td></td></tr>
   </table>
@@ -148,7 +248,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool|string @ignore </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a7a2d14b08d12eabbc1b6436eb604bb19">TBela\CSS\Parser\getFileContent()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a586e5bfa866239cac94b39f266ce9aa1">TBela\CSS\Parser\getFileContent()</a>.</p>
 
 </div>
 </div>
@@ -176,7 +276,86 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>string @ignore @ignore </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5a261eaed23d8fddeff22347f8a10f8e">TBela\CSS\Parser\doParse()</a>, <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5b64d38d85347b0293d4fc592f3ad3bb">TBela\CSS\Parser\expand()</a>, and <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a7a2d14b08d12eabbc1b6436eb604bb19">TBela\CSS\Parser\getFileContent()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a91a54d88bb56a4a971eee063cc33d2e3">TBela\CSS\Parser\analyse()</a>, <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#ad1335ca97b7df6d1e76050a72c2c3636">TBela\CSS\Parser\load()</a>, <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#af8dd95167cffbca511894f9a508c16ae">TBela\CSS\Renderer\renderProperty()</a>, and <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#ab082abd4c424fd41dd0886d31fbcbff1">TBela\CSS\Renderer\save()</a>.</p>
+
+</div>
+</div>
+<a id="aa39803bc32cbc5a259e884b980585b4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa39803bc32cbc5a259e884b980585b4a">&#9670;&nbsp;</a></span>isAbsolute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static TBela\CSS\Parser\Helper::isAbsolute </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
+
+</div>
+</div>
+<a id="afd91479a28b03eb558384f6639c571c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd91479a28b03eb558384f6639c571c4">&#9670;&nbsp;</a></span>relativePath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static TBela\CSS\Parser\Helper::relativePath </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>$file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>$ref</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>compute relative path </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$file</td><td></td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$ref</td><td>relative directory </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
+
+<p class="reference">Referenced by <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#af8dd95167cffbca511894f9a508c16ae">TBela\CSS\Renderer\renderProperty()</a>, and <a class="el" href="../../df/d08/classTBela_1_1CSS_1_1Renderer.html#ab082abd4c424fd41dd0886d31fbcbff1">TBela\CSS\Renderer\save()</a>.</p>
 
 </div>
 </div>
@@ -215,14 +394,45 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype"></td><td class="paramname">$file</td><td></td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$file</td><td></td></tr>
     <tr><td class="paramtype">string</td><td class="paramname">$path</td><td></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string @ignore </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a5b64d38d85347b0293d4fc592f3ad3bb">TBela\CSS\Parser\expand()</a>, and <a class="el" href="../../d8/d8b/classTBela_1_1CSS_1_1Parser.html#a070cc295a4cc067d58004262af7a3ead">TBela\CSS\Parser\parseImport()</a>.</p>
+</div>
+</div>
+<a id="a97d5505011820bddceb80ae735d45654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97d5505011820bddceb80ae735d45654">&#9670;&nbsp;</a></span>toUrl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static TBela\CSS\Parser\Helper::toUrl </td>
+          <td>(</td>
+          <td class="paramtype">array&#160;</td>
+          <td class="paramname"><em>$data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
 
 </div>
 </div>
