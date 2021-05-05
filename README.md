@@ -478,7 +478,6 @@ echo $renderer->render($parser->parse());
 - flatten_import: process @import directive and import the content into the css. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
-- sourcemap: include source location data
 
 ## Renderer Options
 
