@@ -25,12 +25,21 @@ abstract class Value implements JsonSerializable
      */
     protected $data = null;
 
+    /**
+     * @var array
+     * @ignore
+     */
     protected static $defaults = [];
 
+    /**
+     * @var array
+     * @ignore
+     */
     protected static $keywords = [];
 
     /**
      * @var string|null
+     * @ignore
      */
     protected $hash = null;
 
@@ -81,7 +90,7 @@ abstract class Value implements JsonSerializable
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      * @ignore
      */
@@ -91,6 +100,10 @@ abstract class Value implements JsonSerializable
         return isset($this->data->{$name});
     }
 
+    /**
+     * compute the hash value
+     * @return string|null
+     */
     public function getHash()
     {
 
@@ -107,7 +120,11 @@ abstract class Value implements JsonSerializable
 
         return strtolower($this->data->type) == $type;
     }
-
+    /**
+     * get the class name of the specified type
+     * @param string $type
+     * @return string
+     */
     public static function getClassName($type)
     {
 
@@ -124,6 +141,11 @@ abstract class Value implements JsonSerializable
         return $classNames[$type];
     }
 
+    /**
+     * value type
+     * @return string
+     * @ignore
+     */
     protected static function type()
     {
 
@@ -145,6 +167,7 @@ abstract class Value implements JsonSerializable
     /**
      * @param object $token
      * @return bool
+     * @ignore
      */
 
     protected static function matchDefaults($token)
@@ -177,7 +200,6 @@ abstract class Value implements JsonSerializable
 
         return isset($data->value);
     }
-
     /**
      * create an instance
      * @param stdClass $data

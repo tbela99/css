@@ -14,6 +14,8 @@ use TBela\CSS\Value\Set;
 class PropertyMap
 {
 
+    use PropertyTrait;
+
     /**
      * @var array
      * @ignore
@@ -350,6 +352,14 @@ class PropertyMap
         }
 
         return rtrim($value, $glue . $join);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty() {
+
+        return !empty($this->properties);
     }
 
     /**

@@ -14,6 +14,26 @@ $ast = json_decode(file_get_contents('ast.json'));
 $stylesheet = Element::getInstance($ast);
 ```
 
+From a string
+
+```php
+
+use \TBela\CSS\Element;
+
+$stylesheet = Element::from($css);
+```
+
+From a file
+
+```php
+
+use \TBela\CSS\Element;
+
+$stylesheet = Element::fromUrl('./css/main.css');
+
+// or
+$stylesheet = Element::fromUrl('https://example.com/css/main.css');
+```
 Using the parser
 
 ```php
@@ -32,24 +52,6 @@ $parser->setContent($css);
 $stylesheet = $parser->parse();
 ```
 
-Using the compiler
-
-```php
-
-use \TBela\CSS\Compiler;
-
-$compiler = new Compiler();
-
-//
-$compiler->load('template.css');
-
-// or
-$compiler->setContent($css);
-
-// and then
-$stylesheet = $compiler->getData();
-```
-
 ## Manipulating the AST
 
 The AST is a json representation of the CSS file.
@@ -60,11 +62,9 @@ Getting the AST
 $json = json_encode($stylesheet);
 $ast = json_decode($json);
 
-$compiler->setData($ast);
 
-
-// print css ...
-echo $compiler->compile();
+// print ss ...
+echo (new Renderer())->renderAst($ast);
 ```
 
 ## Properties

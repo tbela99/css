@@ -60,8 +60,8 @@ class PropertyList implements IteratorAggregate
      * @param array|null $trailingcomments
      * @return $this
      */
+    public function set($name, $value, $propertyType = null, $leadingcomments = null, $trailingcomments = null, $src = null) {
 
-    public function set($name, $value, $propertyType = null, $leadingcomments = null, $trailingcomments = null) {
 
         if ($propertyType == 'Comment') {
 
@@ -77,6 +77,11 @@ class PropertyList implements IteratorAggregate
                 (is_array($this->options['allow_duplicate_declarations']) && in_array($name, $this->options['allow_duplicate_declarations']))) {
 
                 $property = (new Property($name))->setValue($value);
+
+                if (!is_null($src)) {
+
+                    $property->setSrc($src);
+                }
 
                 if (!empty($leadingcomments)) {
 
@@ -96,6 +101,11 @@ class PropertyList implements IteratorAggregate
         if (empty($this->options['compute_shorthand'])) {
 
             $property = (new Property($name))->setValue($value);
+
+            if (!is_null($src)) {
+
+                $property->setSrc($src);
+            }
 
             if (!empty($leadingcomments)) {
 
@@ -121,6 +131,12 @@ class PropertyList implements IteratorAggregate
             if (!isset($this->properties[$shorthand])) {
 
                 $this->properties[$shorthand] = new PropertySet($shorthand, $config);
+
+                if (!is_null($src)) {
+
+                    $this->properties[$shorthand]->setSrc($src);
+                }
+
             }
 
             $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
@@ -138,6 +154,12 @@ class PropertyList implements IteratorAggregate
                 if (!isset($this->properties[$shorthand])) {
 
                     $this->properties[$shorthand] = new PropertyMap($shorthand, $config);
+
+                    if (!is_null($src)) {
+
+                        $this->properties[$shorthand]->setSrc($src);
+                    }
+
                 }
 
                 $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
@@ -260,6 +282,14 @@ class PropertyList implements IteratorAggregate
         }
 
         return new ArrayIterator($result);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty() {
+
+        return empty($this->properties);
     }
 
     /**

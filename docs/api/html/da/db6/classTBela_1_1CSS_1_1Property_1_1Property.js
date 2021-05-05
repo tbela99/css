@@ -17,5 +17,5 @@ var classTBela_1_1CSS_1_1Property_1_1Property =
     [ "$name", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#afc2fc523bc9ce5217dddceee43e19713", null ],
     [ "$trailingcomments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a54a66ffea143f926efe71e465a0bcfd0", null ],
     [ "$type", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a95a77ce7585938d50c3ca8dd49b57325", null ],
-    [ "$value", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#acfd8987a6acd60572cc1359a04ff0b92", null ]
+    [ "$value", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a30ff98f55943a221b10fd80781b9cbb3", null ]
 ];

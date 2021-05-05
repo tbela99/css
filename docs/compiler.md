@@ -1,4 +1,6 @@
-# Compiler
+# Compiler [deprecated]
+
+This class has been deprecated and will be removed in the future.
 
 Compile an Element or an AST into CSS.
 

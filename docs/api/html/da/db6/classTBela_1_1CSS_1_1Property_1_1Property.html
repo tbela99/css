@@ -97,8 +97,10 @@ $(document).ready(function(){initNavTree('da/db6/classTBela_1_1CSS_1_1Property_1
  <div class="center">
   <img src="../../da/db6/classTBela_1_1CSS_1_1Property_1_1Property.png" usemap="#TBela_5CCSS_5CProperty_5CProperty_map" alt=""/>
   <map id="TBela_5CCSS_5CProperty_5CProperty_map" name="TBela_5CCSS_5CProperty_5CProperty_map">
-<area href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html" alt="TBela\CSS\Interfaces\RenderableInterface" shape="rect" coords="311,0,612,24"/>
-<area href="../../d1/d3e/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderablePropertyInterface.html" alt="TBela\CSS\Interfaces\RenderablePropertyInterface" shape="rect" coords="622,0,923,24"/>
+<area href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html" alt="TBela\CSS\Interfaces\RenderableInterface" shape="rect" coords="311,56,612,80"/>
+<area href="../../d1/d3e/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderablePropertyInterface.html" alt="TBela\CSS\Interfaces\RenderablePropertyInterface" shape="rect" coords="622,56,923,80"/>
+<area href="../../d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html" alt="TBela\CSS\Interfaces\ParsableInterface" shape="rect" coords="311,0,612,24"/>
+<area href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html" alt="TBela\CSS\Property\Comment" shape="rect" coords="311,168,612,192"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -145,9 +147,9 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$trailingcomments</b
 <tr class="memitem:a95a77ce7585938d50c3ca8dd49b57325"><td class="memItemLeft" align="right" valign="top"><a id="a95a77ce7585938d50c3ca8dd49b57325"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a class="el" href="../../da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html">Property</a>'</td></tr>
 <tr class="separator:a95a77ce7585938d50c3ca8dd49b57325"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acfd8987a6acd60572cc1359a04ff0b92"><td class="memItemLeft" align="right" valign="top"><a id="acfd8987a6acd60572cc1359a04ff0b92"></a>
-<a class="el" href="../../dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html">Set</a>&#160;</td><td class="memItemRight" valign="bottom"><b>$value</b></td></tr>
-<tr class="separator:acfd8987a6acd60572cc1359a04ff0b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30ff98f55943a221b10fd80781b9cbb3"><td class="memItemLeft" align="right" valign="top"><a id="a30ff98f55943a221b10fd80781b9cbb3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>$value</b></td></tr>
+<tr class="separator:a30ff98f55943a221b10fd80781b9cbb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a69b712f23e57c41144edfac21229ba04"></a>
@@ -167,10 +169,12 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 </div><div class="memdoc">
 <p><a class="el" href="../../da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html">Property</a> constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="../../dd/dca/classTBela_1_1CSS_1_1Value.html">Value</a></td><td></td></tr>
+    <tr><td class="paramtype">Value\Set&#160;|&#160;string</td><td class="paramname">$name</td><td></td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adb2fe1b9e16a2bf23eb4dcdeea99c7f3">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -209,7 +213,7 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 </div><div class="memdoc">
 <p>@inheritDoc </p>
 
-<p>Implements <a class="el" href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html#a6b02918286aeb91b4341672167a55d71">TBela\CSS\Interfaces\RenderableInterface</a>.</p>
+<p>Implements <a class="el" href="../../d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html#a0218a6a64602b4719d6f7e781d865a8b">TBela\CSS\Interfaces\ParsableInterface</a>.</p>
 
 </div>
 </div>
@@ -228,6 +232,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
       </table>
 </div><div class="memdoc">
 <p>get property hash. </p><dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
+
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#aae64815155b9fc730a40196a85db2c65">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -249,6 +255,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 
 <p>Implements <a class="el" href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html#a0b988a2dc5ff7a739edbd8e022965e87">TBela\CSS\Interfaces\RenderableInterface</a>.</p>
 
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#aa28f2473108078963f00e14c17ea328a">TBela\CSS\Property\Comment</a>.</p>
+
 </div>
 </div>
 <a id="a416a60aa76b6036c9a732c2913e0bce5"></a>
@@ -265,7 +273,9 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
         </tr>
       </table>
 </div><div class="memdoc">
-<p>get the property name </p><dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
+<p>get the property name </p><dl class="section return"><dt>Returns</dt><dd>string|null </dd></dl>
+
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#ab96c223cc8ac10f463846dc5f4e2b10b">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -286,6 +296,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 <p>@inheritDoc </p>
 
 <p>Implements <a class="el" href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html#a36c68863a24a625c7ceed6ed4e9faba0">TBela\CSS\Interfaces\RenderableInterface</a>.</p>
+
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a680059b4e96b87d2c42568fcbf652f91">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -323,7 +335,7 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 </div><div class="memdoc">
 <p>get the property value </p><dl class="section return"><dt>Returns</dt><dd>Set|null </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a288982f3f35a983ced965b267b2bfc73">TBela\CSS\Property\PropertyMap\computeProperties()</a>, and <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a49ffdd35a6b7aa575576608132344adc">TBela\CSS\Property\PropertyMap\set()</a>.</p>
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adae7628585309924722549165b2797f8">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -350,6 +362,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>string </dd></dl>
 
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adf81e62b6301bd22a2d30ddf74535251">TBela\CSS\Property\Comment</a>.</p>
+
 <p class="reference">Referenced by <a class="el" href="../../da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a5dbaa67198e75e054531d1339c3eafe7">TBela\CSS\Property\Property\__toString()</a>.</p>
 
 </div>
@@ -373,6 +387,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 
 <p>Implements <a class="el" href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html#ac9612aeb890ead53cee41a0d94922904">TBela\CSS\Interfaces\RenderableInterface</a>.</p>
 
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a81385bc2346f6db62ac42d6da2469f99">TBela\CSS\Property\Comment</a>.</p>
+
 </div>
 </div>
 <a id="aa30844f65a8fc5c309c378672ba535f0"></a>
@@ -393,6 +409,8 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 <p>@inheritDoc </p>
 
 <p>Implements <a class="el" href="../../d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html#a69505d75a14aaea610bca820950027cc">TBela\CSS\Interfaces\RenderableInterface</a>.</p>
+
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a28916b4caabfa56693ea9c5592f057df">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
@@ -419,7 +437,7 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>$type</b> = '<a cla
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>$this </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a881df7cdba626c77a542b2c6fc5056e7">TBela\CSS\Property\PropertySet\getProperties()</a>, <a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#aac5d09ffb5212cae527f66cfd43ef289">TBela\CSS\Property\PropertyList\set()</a>, <a class="el" href="../../d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html#a091f15978043fac141aac93f01fd61c3">TBela\CSS\Property\PropertySet\set()</a>, and <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a49ffdd35a6b7aa575576608132344adc">TBela\CSS\Property\PropertyMap\set()</a>.</p>
+<p>Reimplemented in <a class="el" href="../../d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a502fef99cecd4bdd490e6c0e1494b057">TBela\CSS\Property\Comment</a>.</p>
 
 </div>
 </div>
