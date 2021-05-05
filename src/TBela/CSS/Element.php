@@ -71,7 +71,6 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-<<<<<<< HEAD
      * @param $location
      * @return SourceLocation
      */
@@ -126,6 +125,7 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+<<<<<<< HEAD
      * @inheritDoc
      */
     public function traverse(callable $fn, $event) {
@@ -134,6 +134,8 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+=======
+>>>>>>> ae7546465ede1f52ef71c7afb34da035dda76552
      *
      * @inheritDoc
      * @throws Parser\SyntaxError

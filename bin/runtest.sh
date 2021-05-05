@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##!/bin/sh -x
 # # to run run a particular test, give the file name without extension as a parameter
 ##  ./runtest.sh Render
