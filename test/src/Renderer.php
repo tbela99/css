@@ -2,12 +2,13 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Compiler;
 use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Declaration;
+use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Renderer as RendererClass;
 use TBela\CSS\Interfaces\RenderableInterface;
-use TBela\CSS\Traverser;
 use TBela\CSS\Value;
 use TBela\CSS\Value\CSSFunction;
 
@@ -44,8 +45,9 @@ background-image: url("imgs/lizard.png"),
 }')->getData();
 
         $renderer = new RendererClass();
+        $traverser = new Traverser();
 
-        $renderer->on('traverse', function (RenderableInterface $node) {
+        $traverser->on('enter', function (RenderableInterface $node) {
 
             // remove @font-face
             if ($node instanceof AtRule && $node->getName() == 'font-face') {
@@ -54,7 +56,7 @@ background-image: url("imgs/lizard.png"),
             }
 
             // rewrite image url() path for local file
-            if ($node instanceof Declaration || $node instanceof PropertyInterface) {
+            if ($node instanceof Declaration || $node instanceof PropertyList) {
 
                 if (strpos((string) $node->getValue(), 'url(') !== false) {
 
@@ -91,7 +93,7 @@ background-image: url("imgs/lizard.png"),
 .element {
  background-image: url(/imgs/lizard.png), url(/imgs/star.png)
 }",
-            $renderer->render($element)];
+            $renderer->render($traverser->traverse($element))];
 
         return $data;
     }

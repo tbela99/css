@@ -7,15 +7,60 @@ use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Query\Parser as QueryParser;
 
 require 'autoload.php';
-//
-//echo (new QueryParser())->parse(' [ data-catalyst ] ');
-//die;
 
-//$query = 'span|div,span|div, .div| span *, nav| *, .jdb-button-link,#jde-q2150115467813748jk .jdb-button-link, *[class*=jdb-container]';
+$css = '@font-face {
+  font-family: "Bitstream Vera Serif Bold";
+  src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
+}
 
-//$query = file_get_contents(__DIR__.'/query.txt');
-$element = (new CssParser())->load(__DIR__.'/perf_files/main.css')->parse();
+body {
+  background-color: green;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+  color: #fff;
+  font-size: 50px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+@media print, screen and (max-width: 12450px) {
+
+p {
+      color: #f0f0f0;
+      background-color: #030303;
+  }
+}
+
+@media print {
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
+
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+      ;
+    font-weight: bold;
+  }
+}';
+
+$element = (new CssParser($css))->parse();
 
 
-//echo var_export(array_map('trim', $element->queryByClassNames($query)), true);
-//echo $element;
+//$context = '// @font-face / src / ..';
+$context = '// @font-face';
+var_dump(
+    array_map('trim', $element->query($context)));

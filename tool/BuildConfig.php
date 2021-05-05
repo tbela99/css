@@ -2,17 +2,18 @@
 <?php
 
 /**
- * Utility tool to generate the relationship used to compute css properties shorthand. generated is stored in src/config.json
+ * Utility tool to generate the relationship used to compute css properties shorthand.
+ * generated is stored in src/TBela/CSS/config.json
  * @todo add support for background shorthand
  */
 
-require '../test/autoload.php';
+require __DIR__ . '/../test/autoload.php';
 
 // properties order is important!
 use TBela\CSS\Property\Config;
 
 $config = [
-        // shorthand that can be computed only when the shorthand property is defined because it will override properties that are not directly handled.
+    // shorthand that can be computed only when the shorthand property is defined because it will override properties that are not directly handled.
     // the shorthand should not override longhand properties
     // example: font
     'map' => [],
@@ -176,7 +177,7 @@ foreach ($config['alias'] as $alias => $data) {
     if (isset($properties['value_map'])) {
 
         $map = [];
-        $j = count ($properties['properties']);
+        $j = count($properties['properties']);
 
         while (--$j > 0) {
 
@@ -248,9 +249,7 @@ function makePropertySet(string $shorthand, array $pattern, array $props, ?strin
         if (is_string($prop[1])) {
 
             $properties[$prop[0]] = ['type' => $prop[1]];
-        }
-
-        else {
+        } else {
 
             $properties[$prop[0]] = $prop[1];
         }
@@ -278,7 +277,7 @@ function makePropertySet(string $shorthand, array $pattern, array $props, ?strin
 
     if (!is_null($settings)) {
 
-        $properties[$shorthand.'.settings'] = $settings;
+        $properties[$shorthand . '.settings'] = $settings;
     }
 
     return Config::addSet($shorthand, $pattern, $properties, $separator);

@@ -1,4 +1,6 @@
-# Compiler
+# Compiler [deprecated]
+
+This class has been deprecated and will be removed in the future.
 
 Compile an Element or an AST into CSS.
 
@@ -102,6 +104,10 @@ _boolean_. If true then compress the css. If false then pretty print the css. Th
 ### css_level
 
 _int_. Support features specific to the specified CSS level. Setting the value 3 will output colors using CSS3 format. The default value _4_ will use CSS4 color format
+
+### preserve_license
+
+_boolean_. Preserve comments that start with '/*!'
 
 ### remove_comments
 

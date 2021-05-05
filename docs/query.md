@@ -1,4 +1,4 @@
-## Query Api
+# Query Api
 
 It allows you to query the CSS node in using and xpath like syntax or class names. 
 

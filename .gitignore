@@ -7,7 +7,9 @@ benchmark/
 vendor/
 test/debug.txt
 .idea/
+.git/
 .phpunit.result.cache
 xpath.txt
+parsing.txt
 test/color.php
 test/*.json

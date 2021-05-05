@@ -8,10 +8,8 @@ use stdClass;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
-use TBela\CSS\Parser\SourceLocation;
 use TBela\CSS\Query\Evaluator;
 use TBela\CSS\Value\Set;
-use function get_class;
 use function is_callable;
 use function is_null;
 use function str_ireplace;
@@ -44,22 +42,22 @@ abstract class Element implements ElementInterface  {
 
         assert(is_null($parent) || $parent instanceof RuleListInterface);
 
-        $this->ast = (object) ['type' => str_ireplace(Element::class.'\\', '', get_class($this))];
+        $this->ast = (object) ['type' => str_ireplace(Element::class.'\\', '', static::class)];
 
         if (!is_null($ast)) {
 
+            if (isset($ast->location->start)) {
+
+                $ast->position = $ast->location->start;
+            }
+
             foreach ($ast as $key => $value) {
-
-                if ($value instanceof stdClass && is_callable([$this, 'create'.$key])) {
-
-                    $value = $this->{'create'.$key}($value);
-                }
 
                 if (is_callable([$this, 'set'.$key])) {
 
                     $this->{'set'.$key}($value);
                 }
-                else if (is_callable([$this, $key])) {
+                else if (is_callable([$this, 'get'.$key]) || is_callable([$this, $key])) {
 
                     $this->ast->{$key} = $value;
                 }
@@ -84,11 +82,6 @@ abstract class Element implements ElementInterface  {
             return clone $ast;
         }
 
-        else {
-
-            $ast = clone $ast;
-        }
-
         if (isset($ast->type)) {
 
             $type = $ast->type;
@@ -100,11 +93,6 @@ abstract class Element implements ElementInterface  {
             throw new InvalidArgumentException('Invalid ast provided');
         }
 
-        if (!empty($ast->children) && is_array($ast->children)) {
-
-            $ast->children = array_map(__METHOD__, $ast->children);
-        }
-
         $className = Element::class.'\\'.ucfirst($ast->type);
         return new $className($ast);
     }
@@ -112,34 +100,27 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function traverse(callable $fn, $event) {
+    public static function from($css, array $options = [])
+    {
 
-        return (new Traverser())->on($event, $fn)->traverse($this);
-    }
-
-    public function __get($name) {
-
-        if (is_callable([$this, "get$name"])) {
-
-            return $this->{"get$name"}();
-        }
-    }
-
-    public function __set($name, $value) {
-
-        if (is_callable([$this, "set$name"])) {
-
-            return $this->{"set$name"}($value);
-        }
+        return (new Parser($css, $options))->parse();
     }
 
     /**
-     * @param $location
-     * @return SourceLocation
+     * @inheritDoc
      */
-    protected function createLocation ($location) {
+    public static function fromUrl($url, array $options = [])
+    {
 
-        return SourceLocation::getInstance($location);
+        return (new Parser('', $options))->load($url)->parse();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function traverse(callable $fn, $event) {
+
+        return (new Element\Traverser())->on($event, $fn)->traverse($this);
     }
 
     /**
@@ -243,20 +224,17 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function setLocation($location) {
+    public function getSrc() {
 
-        assert(is_null($location) || $location instanceof SourceLocation);
-
-        $this->ast->location = $location;
-        return $this;
+        return $this->ast->src ?? null;
     }
 
     /**
      * @inheritDoc
      */
-    public function getLocation() {
+    public function getPosition() {
 
-        return $this->ast->location ?? null;
+        return $this->ast->position ?? null;
     }
 
     /**

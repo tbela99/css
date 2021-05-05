@@ -8,7 +8,7 @@ use JsonSerializable;
 use TBela\CSS\Value;
 
 /**
- * Css values set
+ * string tokens set
  * @package CSS
  */
 class Set implements IteratorAggregate, JsonSerializable, Countable
@@ -21,7 +21,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
 
     /**
      * Set constructor.
-     * @param array[Value] $data
+     * @param Value[] $data
      */
     public function __construct(array $data = [])
     {
