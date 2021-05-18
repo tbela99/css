@@ -4,7 +4,6 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Font;
 use TBela\CSS\Value\Set;
 
 /**
@@ -51,17 +50,20 @@ class PropertyMap
 
         $config['required'] = [];
 
-        foreach ($config['properties'] as $property) {
+        if (isset($config['properties'])) {
 
-            $config[$property] = Config::getPath('map.' . $property);
+            foreach ($config['properties'] as $property) {
 
-            unset($config[$property]['shorthand']);
+                $config[$property] = Config::getPath('map.' . $property);
 
-            $this->property_type[$property] = $config[$property];
+                unset($config[$property]['shorthand']);
 
-            if (empty($config[$property]['optional'])) {
+                $this->property_type[$property] = $config[$property];
 
-                $config['required'][] = $property;
+                if (empty($config[$property]['optional'])) {
+
+                    $config['required'][] = $property;
+                }
             }
         }
 
@@ -95,8 +97,10 @@ class PropertyMap
 
                 try {
 
+                    $className = Value::getClassName($this->shorthand);
+
                     // can we parse this shorthand?
-                    Font::matchPattern($this->properties[$this->shorthand]->getValue()->toArray());
+                    $className::matchPattern($this->properties[$this->shorthand]->getValue()->toArray());
                 }
 
                 catch (\Exception $e) {

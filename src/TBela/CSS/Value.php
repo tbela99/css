@@ -178,11 +178,13 @@ abstract class Value implements JsonSerializable
 
     /**
      * @param object $token
-     * @param object $previousToken
-     * @param object $previousValue
+     * @param object|null $previousToken
+     * @param object|null $previousValue
+     * @param object|null $nextToken
+     * @param object|null $nextValue
      * @return bool
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null): bool
     {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
@@ -279,6 +281,7 @@ abstract class Value implements JsonSerializable
                     return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
                 } catch (\Exception $e) {
 
+//                    throw $e;
                     // failed to parse css property
                 }
             }
@@ -343,6 +346,14 @@ abstract class Value implements JsonSerializable
 
                 array_shift($tokens);
             } else {
+
+                $count = count($tokens) - 1;
+
+                if (isset($tokens[$count]) && $tokens[$count]->type == 'whitespace') {
+
+                    array_pop($tokens);
+                    continue;
+                }
 
                 break;
             }
@@ -826,6 +837,38 @@ abstract class Value implements JsonSerializable
         return $type;
     }
 
+    /**
+     * convert to an object
+     * @return stdClass
+     */
+    public function getData() {
+
+        $result = new stdClass;
+
+        foreach ($this->data as $key => $value) {
+
+            $val = null;
+            if ($value instanceof Set) {
+
+                $val = array_map(function ($value) {
+
+                    return $value->getData();
+                }, $value->toArray());
+            }
+
+            else {
+
+               $val = $value;
+            }
+
+            if (!is_null($key) && $key !== false && $key !== "") {
+
+                $result->{$key} = $val;
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * return the list of keywords

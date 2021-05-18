@@ -2,7 +2,12 @@
 
 namespace TBela\CSS\Property;
 
-Config::load(dirname(__DIR__).'/config.json');
+$file = dirname(__DIR__).'/config.json';
+
+if (is_file($file)) {
+
+    Config::load($file);
+}
 
 /**
  * Property configuration manager class
@@ -15,7 +20,7 @@ final class Config {
      * @var array
      * @ignore
      */
-    protected static $config = [
+    protected static array $config = [
         'properties' => [],
         'alias' => []
     ];
@@ -125,13 +130,13 @@ final class Config {
      * Add a configuration entry
      * @param $shorthand
      * @param $pattern
-     * @param $properties
-     * @param bool $separator allow multiple values
+     * @param array $properties
+     * @param string|null $separator allow multiple values
+     * @return array
      * @ignore
      *
-     * @return array
      */
-    public static function addSet ($shorthand, $pattern, $properties, $separator = null) {
+    public static function addSet ($shorthand, $pattern, array $properties, $separator = null) {
 
         $config = [];
 
@@ -141,11 +146,6 @@ final class Config {
             'pattern' => $pattern,
             'value_map' => []
         ];
-
-        if (!is_null($separator)) {
-
-            $config[$shorthand]['separator'] = $separator;
-        }
 
         $value_map_keys = [];
 
@@ -190,6 +190,11 @@ final class Config {
         if (isset($config[$shorthand]['value_map'])) {
 
             $config[$shorthand]['value_map'] = array_reverse($config[$shorthand]['value_map']);
+        }
+
+        if (!is_null($separator)) {
+
+            $config[$shorthand]['separator'] = $separator;
         }
 
         static::$config['properties'] = isset(static::$config['properties']) ? array_merge(static::$config['properties'], $config) : $config;

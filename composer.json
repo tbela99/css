@@ -38,6 +38,7 @@
   "require": {
     "php": ">=7.4",
     "axy/sourcemap": "^0.1.5",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-json": "*"
   }
 }

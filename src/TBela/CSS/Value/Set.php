@@ -14,10 +14,10 @@ use TBela\CSS\Value;
 class Set implements IteratorAggregate, JsonSerializable, Countable
 {
     /**
-     * @var array
+     * @var Value[]
      * @ignore
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Set constructor.
@@ -116,13 +116,19 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
     /**
      * split a set according to $separator
      * @param string $separator
-     * @return array
+     * @return Set[]
      */
     public function split (string $separator): array {
 
         return $this->doSplit($this->data, $separator);
     }
 
+    /**
+     * @param array $data
+     * @param string $separator
+     * @return Set[]
+     * @ignore
+     */
     protected function doSplit (array $data, string $separator): array {
 
         if (empty($data)) {
@@ -157,20 +163,6 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
     }
 
     /**
-     * append the second set data to the first set data
-     * @param int $index
-     * @param int|null $length
-     * @param Set[] $replacement
-     * @return Set
-     */
-    /*
-    public function splice (int $index, int $length = null, Set ...$replacement): Set {
-
-        $value = array_splice($this->data, $index, $length, $replacement);
-        return new Set([$value]);
-    }*/
-
-    /**
      * add an item to the set
      * @param Value $value
      * @return $this
@@ -192,7 +184,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
 
     /**
      * return an array of internal data
-     * @return array
+     * @return Value[]
      */
     public function toArray(): array {
 

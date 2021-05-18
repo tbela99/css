@@ -28,7 +28,7 @@ class FontVariant extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null): bool
     {
 
         if ($token->type == 'css-string' && in_array(strtolower($token->value), static::$keywords)) {

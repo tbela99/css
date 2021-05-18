@@ -13,7 +13,7 @@ require __DIR__ . '/../test/autoload.php';
 use TBela\CSS\Property\Config;
 
 $config = [
-    // shorthand that can be computed only when the shorthand property is defined because it will override properties that are not directly handled.
+    // shorthand that can be computed only when every shorthand property is defined because it will override properties that are not directly handled.
     // the shorthand should not override longhand properties
     // example: font
     'map' => [],
@@ -24,6 +24,45 @@ $config = [
     // properties aliases
     'alias' => []
 ];
+
+$config['map'] = array_merge($config['properties'], makePropertySet('background-repeat', ['background-repeat-x background-repeat-y'], [
+    ['background-repeat-x',
+        ['type' => 'background-repeat-value']
+    ],
+    ['background-repeat-y',
+        ['type' => 'background-repeat-value']
+    ]
+], ','));
+
+$config['map'] = array_merge($config['map'], makePropertySet('background-attachment', ['background-attachment'], [
+        ['background-attachment',
+            ['type' => 'background-attachment']
+    ]
+], ',', false));
+
+$config['map'] = array_merge($config['map'], makePropertySet('background-image', ['background-image'], [
+    ['background-image',
+        ['type' => 'background-image']
+    ]
+], ',', false));
+
+$config['map'] = array_merge($config['map'], makePropertySet('background-size', ['background-size', 'background-size-width background-size-height'], [
+    ['background-size-width',
+        ['type' => 'background-size-width']
+    ],
+    ['background-size-height',
+        ['type' => 'background-size-height']
+    ]
+], ',', false));
+
+$config['map'] = array_merge($config['map'], makePropertySet('background-size', ['background-size', 'background-size-width background-size-height'], [
+    ['background-size-width',
+        ['type' => 'background-size-width']
+    ],
+    ['background-size-height',
+        ['type' => 'background-size-height']
+    ]
+], ',', false));
 
 $config['map'] = array_merge($config['map'], makePropertySet('font', ['font', 'font-weight font-style font-variant font-stretch font-size line-height font-family'], [
     ['font-weight',
@@ -71,7 +110,6 @@ $config['properties'] = array_merge($config['properties'], makePropertySet('marg
     ['margin-bottom', 'unit'],
     ['margin-left', 'unit']
 ]));
-
 $config['properties'] = array_merge($config['properties'], makePropertySet('padding', ['unit unit unit unit'], [
     ['padding-top', 'unit'],
     ['padding-right', 'unit'],
@@ -202,7 +240,7 @@ foreach ($config['alias'] as $alias => $data) {
 
 unset($config['alias']);
 
-file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config));
+file_put_contents(dirname(__DIR__) . '/src/TBela/CSS/config.json', json_encode($config));
 
 
 function addAlias($property)

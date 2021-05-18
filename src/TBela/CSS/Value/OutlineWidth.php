@@ -19,7 +19,7 @@ class OutlineWidth extends Unit
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null): bool
     {
 
         return $token->type == 'unit' || ($token->type == 'number' && $token->value == 0);

@@ -20,7 +20,7 @@ trait ValueTrait
         $type = static::type();
         $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
 
-        foreach ($tokens as $key => $token) {
+        foreach ($tokens as $token) {
 
             if (static::matchToken($token)) {
 
