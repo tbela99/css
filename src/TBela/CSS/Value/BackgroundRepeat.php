@@ -2,14 +2,16 @@
 
 namespace TBela\CSS\Value;
 
-//use TBela\CSS\Value;
+use TBela\CSS\Value;
 
 /**
  * Css string value
  * @package TBela\CSS\Value
  */
-class BackgroundRepeat extends ShortHand
+class BackgroundRepeat extends Value
 {
+
+    use ValueTrait;
 
     /**
      * @var string[]
@@ -38,8 +40,8 @@ class BackgroundRepeat extends ShortHand
     protected static array $patterns = [
         'keyword',
         [
-            ['type' => 'background-repeat-value'],
-            ['type' => 'background-repeat-value']
+            ['type' => 'background-repeat'],
+            ['type' => 'background-repeat', 'optional' => true]
         ]
     ];
 

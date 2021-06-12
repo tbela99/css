@@ -52,7 +52,7 @@ class Helper
 
         if (isset($_SERVER['PWD'])) {
 
-            // when executing viw the cli
+            // when executing via the cli
             return $_SERVER['PWD'];
         }
 

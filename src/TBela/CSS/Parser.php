@@ -5,6 +5,7 @@ namespace TBela\CSS;
 use Exception;
 use stdClass;
 use TBela\CSS\Interfaces\ElementInterface;
+use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\ParserTrait;
@@ -18,7 +19,7 @@ use function substr;
  * Css Parser
  * @package TBela\CSS
  */
-class Parser
+class Parser implements ParsableInterface
 {
 
     use ParserTrait;
@@ -231,6 +232,10 @@ class Parser
         return Element::getInstance($this->ast);
     }
 
+    /**
+     * @inheritDoc
+     * @throws SyntaxError
+     */
     public function getAst() {
 
         if (is_null($this->ast)) {
@@ -537,11 +542,6 @@ class Parser
 
         $this->errors = [];
 
-//        if (!empty($this->options['flatten_import'])) {
-//
-//            $this->css = $this->parseImport($this->css, $this->src === '' ? Helper::getCurrentDirectory() : dirname($this->src));
-//        }
-
         $this->css = rtrim($this->css);
 
         // initialize ast
@@ -599,7 +599,7 @@ class Parser
 
                     $this->errors[] = new Exception(sprintf('cannot parse token at %s:%s : "%s"', $this->previousPosition->line, $this->previousPosition->column,
                         preg_replace('#^(.{40}).*$#sm', '$1... ', $substr)));
-                    //     continue;
+
                 } else {
 
                     if ($node->name == 'import') {
@@ -1095,38 +1095,16 @@ class Parser
                     $comment = substr($block, $i);
                 }
 
-//                $currentPosition = clone $position;
-
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
 
                 $ast = (object)[
 
                     'type' => 'Comment',
-//                    'location' => (object)[
-//                        'start' => (object)[
-//
-//                            'line' => $currentPosition->line,
-//                            'column' => $currentPosition->column,
-//                            'index' => $this->ast->location->start->index + $currentPosition->index
-//                        ],
-//                        'end' => (object)[
-//
-//                            'line' => $position->line,
-//                            'column' => $position->column - 1,
-//                            'index' => $this->ast->location->start->index + $position->index
-//                        ]
-//                    ],
                     'value' => $comment
                 ];
 
-//                if ($this->src !== '') {
-//
-//                    $ast->src = $this->src;
-//                }
-
                 $rule->children[] = $ast;
-
                 unset($ast);
 
                 $i += strlen($comment) - 1;
@@ -1159,30 +1137,11 @@ class Parser
                 $declaration = (object)array_merge(
                     [
                         'type' => 'Declaration',
-//                        'location' => (object)[
-//                            'start' => (object)[
-//
-//                                'line' => $currentPosition->line,
-//                                'column' => $currentPosition->column,
-//                                'index' => $currentPosition->index
-//                            ],
-//                            'end' => (object)[
-//
-//                                'line' => $endPosition->line,
-//                                'column' => $endPosition->column - 1,
-//                                'index' => $currentPosition->index + strlen($value)
-//                            ]
-//                        ]
                     ],
                     $this->parseVendor(trim($declaration[0])),
                     [
                         'value' => rtrim($declaration[1], "\n\r\t ;}")
                     ]);
-
-//                if ($this->src !== '') {
-//
-//                    $declaration->src = $this->src;
-//                }
 
                 $declaration->name = trim($declaration->name);
                 $declaration->value = trim($declaration->value);

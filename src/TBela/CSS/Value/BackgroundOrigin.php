@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Value;
 
+use TBela\CSS\ArrayTrait;
 use TBela\CSS\Value;
 
 /**
@@ -11,7 +12,7 @@ use TBela\CSS\Value;
 class BackgroundOrigin extends Value
 {
 
-    use ValueTrait;
+    use UnitTrait, ValueTrait;
 
     /**
      * @var string[]

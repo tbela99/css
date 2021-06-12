@@ -5,13 +5,14 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
+use TBela\CSS\Interfaces\ObjectInterface;
 use TBela\CSS\Value;
 
 /**
  * string tokens set
  * @package CSS
  */
-class Set implements IteratorAggregate, JsonSerializable, Countable
+class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInterface
 {
     /**
      * @var Value[]
@@ -74,6 +75,28 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
         }
 
         return rtrim($result, $join);
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function match(string $type): bool
+    {
+        foreach ($this->data as $value) {
+
+            if (in_array($value->type, ['separator', 'whitespace'])) {
+
+                continue;
+            }
+
+            if (!$value->match($type)) {
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -189,6 +212,21 @@ class Set implements IteratorAggregate, JsonSerializable, Countable
     public function toArray(): array {
 
         return $this->data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toObject()
+    {
+        $result = [];
+
+        foreach ($this->data as $datum) {
+
+            $result[] = $datum->toObject();
+        }
+
+        return $result;
     }
 
     /**

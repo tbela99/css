@@ -8,7 +8,7 @@ use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Declaration;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Renderer as RendererClass;
-use TBela\CSS\Interfaces\RenderableInterface;
+use TBela\CSS\Interfaces\ObjectInterface;
 use TBela\CSS\Value;
 use TBela\CSS\Value\CSSFunction;
 
@@ -47,7 +47,7 @@ background-image: url("imgs/lizard.png"),
         $renderer = new RendererClass();
         $traverser = new Traverser();
 
-        $traverser->on('enter', function (RenderableInterface $node) {
+        $traverser->on('enter', function (ObjectInterface $node) {
 
             // remove @font-face
             if ($node instanceof AtRule && $node->getName() == 'font-face') {

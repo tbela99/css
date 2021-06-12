@@ -6,7 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use stdClass;
 use TBela\CSS\Interfaces\ElementInterface;
-use TBela\CSS\Interfaces\RenderableInterface;
+use TBela\CSS\Interfaces\ObjectInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Query\Evaluator;
 use TBela\CSS\Value\Set;
@@ -176,7 +176,7 @@ abstract class Element implements ElementInterface  {
      */
     public function setValue ($value) {
 
-        $this->ast->value = $value; // instanceof Set ? $value : Value::parse($value, $this->ast->name ?? '');
+        $this->ast->value = $value;
         return $this;
     }
 
@@ -240,7 +240,7 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function setTrailingComments(?array $comments): RenderableInterface {
+    public function setTrailingComments(?array $comments): ObjectInterface {
 
         return $this->setComments($comments, 'trailing');
     }
@@ -257,7 +257,7 @@ abstract class Element implements ElementInterface  {
      * @param string[]|Value\Comment[]|null $comments
      * @return Element
      */
-    protected function setComments(?array $comments, $type): RenderableInterface {
+    protected function setComments(?array $comments, $type): ObjectInterface {
 
         if (empty($comments)) {
 
@@ -393,7 +393,6 @@ abstract class Element implements ElementInterface  {
 
                     if ($total > 0) {
 
-                        //   $index = $total;
                         /**
                          * @var Element $el
                          */
@@ -535,7 +534,7 @@ abstract class Element implements ElementInterface  {
 
     public function getAst()
     {
-        // TODO: Implement getAst() method.
+
         $ast = clone $this->ast;
 
         unset($ast->parent);
@@ -604,5 +603,13 @@ abstract class Element implements ElementInterface  {
                 $this->ast->children[$key]->parent = $this;
             }
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toObject()
+    {
+       return $this->ast;
     }
 }

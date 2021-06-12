@@ -74,7 +74,7 @@ class Renderer
     }
 
     /**
-     * @param \stdClass|ElementInterface $ast
+     * @param \stdClass|ParsableInterface $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -112,7 +112,7 @@ class Renderer
     }
 
     /**
-     * @param RenderableInterface|\stdClass $ast
+     * @param ParsableInterface|\stdClass $ast
      * @param string $file
      * @return Renderer
      * @throws IOException
@@ -120,7 +120,7 @@ class Renderer
     public function save($ast, $file)
     {
 
-        if ($ast instanceof RenderableInterface) {
+        if ($ast instanceof ParsableInterface) {
 
             $ast = $ast->getAst();
         }

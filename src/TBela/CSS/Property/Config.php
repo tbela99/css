@@ -31,7 +31,7 @@ final class Config {
      */
     public static function load($file) {
 
-        static::$config = json_decode(file_get_contents($file), true);
+        static::$config = json_decode(file_get_contents($file), true) ?? [];
     }
 
     /**
@@ -132,20 +132,25 @@ final class Config {
      * @param $pattern
      * @param array $properties
      * @param string|null $separator allow multiple values
+     * @param string|null $shorthandOverride
      * @return array
      * @ignore
-     *
      */
-    public static function addSet ($shorthand, $pattern, array $properties, $separator = null) {
+    public static function addSet ($shorthand, $pattern, array $properties, $separator = null, $shorthandOverride = null) {
 
         $config = [];
 
         $config[$shorthand] = [
 
-            'shorthand' => $shorthand,
+            'shorthand' => $shorthandOverride ?? $shorthand,
             'pattern' => $pattern,
             'value_map' => []
         ];
+
+        if ($shorthandOverride === false) {
+
+            unset($config[$shorthand]['shorthand']);
+        }
 
         $value_map_keys = [];
 

@@ -11,7 +11,7 @@ use TBela\CSS\Value;
 class BackgroundClip extends Value
 {
 
-    use ValueTrait;
+    use UnitTrait, ValueTrait;
 
     /**
      * @var string[]

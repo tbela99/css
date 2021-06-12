@@ -109,55 +109,13 @@ class ShortHand extends Value
         }
 
         return new Set(static::reduce($result));
-
-
-
-
-
-//        $sets = [];
-//        $set = new Set();
-//
-//        while ($token = array_shift($tokens)) {
-//
-//            if ($token->type == 'separator' && $token->value == $separator) {
-//
-//                $filtered = array_values(array_filter($sets, function ($token) {
-//
-//                    return $token->type != 'whitespace';
-//                }));
-//
-//                if (count($filtered) == 1 && isset($filtered[0]->value)) {
-//
-//                    $keyword = static::matchKeyword($filtered[0]->value);
-//
-//                    if (!is_null($keyword)) {
-//
-//                        $set->add(Value::getInstance((object)['value' => $keyword, 'type' => static::type()]));
-//                    }
-//                }
-//
-//                else {
-//
-//                    $set->merge(new Set(static::reduce(static::matchPattern($sets))));
-//                }
-//
-//                $set->add(Value::getInstance($token));
-//                $sets = [];
-//            }
-//            else {
-//
-//                $sets[] = $token;
-//            }
-//        }
-//
-//        if (!empty($sets)) {
-//
-//            $set->merge(new Set(static::reduce(static::matchPattern($sets))));
-//        }
-//
-//        return $set;
     }
 
+    /**
+     * @param array $tokens
+     * @return array
+     * @throws Exception
+     */
     public static function matchPattern(array $tokens)
     {
 
@@ -176,7 +134,7 @@ class ShortHand extends Value
 
                 if (!isset($tokens[$i]->type)) {
 
-                    echo new Exception();
+                    echo new Exception('empty type not allowed');
                 }
 
                 if (in_array($tokens[$i]->type, ['separator', 'whitespace'])) {
@@ -202,32 +160,67 @@ class ShortHand extends Value
                         $next = $tokens[++$k] ?? null;
                     }
 
-                    if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous, $tokens[$i + 1] ?? null, $next)) {
+                    if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous, $tokens[$i + 1] ?? null, $next, $i, $tokens)) {
 
                         $tokens[$i]->type = $pattern['type'];
                         $previous = $tokens[$i];
 
+                        $k = $i;
+
                         if (!empty($pattern['multiple'])) {
 
-                            while (++$i < $j) {
+                            while (++$k < $j) {
 
-                                if (in_array($tokens[$i]->type, ['separator', 'white-space'])) {
+                                if (in_array($tokens[$k]->type, ['separator', 'whitespace'])) {
 
                                     continue;
                                 }
 
-                                if (call_user_func($className, $tokens[$i], $tokens[$i - 1], $previous)) {
+                                $w = $k;
 
-                                    $tokens[$i]->type = $pattern['type'];
+                                while (!is_null($next)) {
+
+                                    if (!in_array($next->type, ['separator', 'whitespace'])) {
+
+                                        break;
+                                    }
+
+                                    $next = $tokens[++$w] ?? null;
+                                }
+
+                                if (call_user_func($className, $tokens[$k], $tokens[$k - 1], $previous, $tokens[$k + 1] ?? null, $next, $k, $tokens)) {
+
+                                    $tokens[$k]->type = $pattern['type'];
+                                    $i = $k;
+                                    $previous = $tokens[$k];
+
+                                    $w = $k;
+                                    $next = $tokens[$k + 1] ?? null;
+
+                                    while (!is_null($next)) {
+
+                                        if (!in_array($next->type, ['separator', 'whitespace'])) {
+
+                                            break;
+                                        }
+
+                                        $next = $tokens[++$w] ?? null;
+                                    }
+                                }
+
+                                else {
+
+                                    break;
                                 }
                             }
 
-                            $previous = $tokens[$i - 1];
+                            $previous = $tokens[$i - 1] ?? null;
                         }
 
                         unset($patterns[$key]);
                         break;
-                    } // failure to match a mandatory property
+                    }
+                    // failure to match a mandatory property
                     else if (empty($pattern['optional'])) {
 
                         break;
@@ -239,7 +232,7 @@ class ShortHand extends Value
 
                 return empty($pattern['optional']);
             }));
-//
+
             if (!empty($mandatory)) {
 
                 throw new Exception(' Invalid "' . static::type() . '" definition, missing \'' . $mandatory[0]['type'] . '\' in "'.implode(' ', array_map(Value::class.'::getInstance', $tokens)).'"', 400);
@@ -249,11 +242,13 @@ class ShortHand extends Value
 
             while ($i--) {
 
-                if (call_user_func(static::getClassName($tokens[$i]->type) . '::matchDefaults', $tokens[$i])) {
+                if (count($tokens) > 1 && call_user_func(static::getClassName($tokens[$i]->type) . '::matchDefaults', $tokens[$i])) {
 
                     array_splice($tokens, $i, 1);
                 }
             }
+
+            break;
         }
 
         return $tokens;

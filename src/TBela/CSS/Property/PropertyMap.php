@@ -75,6 +75,7 @@ class PropertyMap
      * @param string $name
      * @param Set $value
      * @return PropertyMap
+     * @throws \Exception
      */
     public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null)
     {
@@ -85,154 +86,151 @@ class PropertyMap
             throw new InvalidArgumentException('Invalid property ' . $name, 400);
         }
 
-        if (is_string($value)) {
+        if (!($value instanceof Set)) {
 
             $value = Value::parse($value, $name);
         }
 
-        if (isset($this->properties[$this->shorthand]) || $name == $this->shorthand) {
-
-            // the type matches the shorthand - example system font
-            if ($name != $this->shorthand) {
-
-                try {
-
-                    $className = Value::getClassName($this->shorthand);
-
-                    // can we parse this shorthand?
-                    $className::matchPattern($this->properties[$this->shorthand]->getValue()->toArray());
-                }
-
-                catch (\Exception $e) {
-
-                    // no? append the new property
-                    $this->properties[$name] = (new Property($name))->setValue($value);
-                    return $this;
-                }
-
-                foreach ($this->properties[$this->shorthand]->getValue() as $val) {
-
-                    if ($val->type == $this->shorthand) {
-
-                        if (!isset($this->properties[$name])) {
-
-                            $this->properties[$name] = new Property($name);
-                        }
-
-                        $this->properties[$name]->setValue($value);
-
-                        if (!is_null($leadingcomments)) {
-
-                            $this->properties[$name]->setLeadingComments($leadingcomments);
-                        }
-
-                        if (!is_null($trailingcomments)) {
-
-                            $this->properties[$name]->setTrailingComments($trailingcomments);
-                        }
-
-                        return $this;
-                    }
-                }
-            }
-
-            $this->properties = isset($this->properties[$this->shorthand]) ? [$this->shorthand => $this->properties[$this->shorthand]] : [];
-
-            if (!isset($this->properties[$this->shorthand])) {
-
-                $this->properties[$this->shorthand] = new Property($this->shorthand);
-            }
+        // the type matches the shorthand - example system font
+        if ($name == $this->shorthand || !isset($this->properties[$this->shorthand])) {
 
             if ($name == $this->shorthand) {
 
-                $this->properties[$this->shorthand]->setValue($value);
-
-                if (!is_null($leadingcomments)) {
-
-                    $this->properties[$this->shorthand]->setLeadingComments($leadingcomments);
-                }
-
-                if (!is_null($trailingcomments)) {
-
-                    $this->properties[$this->shorthand]->setTrailingComments($trailingcomments);
-                }
-
-                return $this;
+                $this->properties = [];
             }
-        } else {
 
             if (!isset($this->properties[$name])) {
 
                 $this->properties[$name] = new Property($name);
             }
 
-            $this->properties[$name]->setValue($value);
-
-            if (!is_null($leadingcomments)) {
-
-                $this->properties[$name]->setLeadingComments($leadingcomments);
-            }
-
-            if (!is_null($trailingcomments)) {
-
-                $this->properties[$name]->setTrailingComments($trailingcomments);
-            }
-
-            if (!empty($this->config['settings']['compute'])) {
-
-                return $this->computeProperties();
-            }
+            $this->properties[$name]->setValue($value)->
+                                        setLeadingComments($leadingcomments)->
+                                        setTrailingComments($trailingcomments);
 
             return $this;
         }
 
+        $this->properties[$name] = (new Property($name))->setValue($value)->
+                                                setLeadingComments($leadingcomments)->
+                                                setTrailingComments($trailingcomments);
+
+//        $values = [];
+
+//        if (isset($this->properties[$this->shorthand])) {
+
+            $values = $this->properties[$this->shorthand]->getValue()->toArray();
+//        }
+//        else {
+//
+//            foreach ($this->properties as $property) {
+//
+//                array_splice($values, count($values), 0, $property->getValue()->toArray());
+//            }
+//        }
+
+        $data = [];
+
+        foreach ($values as $val) {
+
+            if (in_array($val->type, ['separator', 'whitespace'])) {
+
+                continue;
+            }
+
+            if (!isset($data[$val->type])) {
+
+                $data[$val->type] = $val;
+            } else {
+
+                if (!is_array($data[$val->type])) {
+
+                    $data[$val->type] = [$data[$val->type]];
+                }
+
+                $data[$val->type][] = $val;
+            }
+        }
+
+        $props = $this->properties;
+
+        unset($props[$this->shorthand]);
+
+        foreach ($props as $k => $prop) {
+
+            $v = $prop->getValue()->toArray();
+            $data[$k] = count($v) == 1 ? $v[0] : $v;
+        }
+
+        // match
+        $patterns = $this->config['pattern'];
+
+        foreach ($patterns as $key => $pattern) {
+
+            foreach (preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_NO_EMPTY) as $token) {
+
+                if (empty($this->property_type[$token]['optional']) && !isset($data[$token])) {
+
+                    unset($patterns[$key]);
+                }
+            }
+        }
+
+        if (empty($patterns)) {
+
+//            $this->properties[$name] = (new Property($name))->setValue($value)->
+//            setLeadingComments($leadingcomments)->
+//            setTrailingComments($trailingcomments);
+            return $this;
+        }
+
         $properties = $this->property_type;
-        $values = array_merge([], $properties);
 
         // create a map of existing values
-        foreach ($this->properties[$this->shorthand]->getValue() as $val) {
+        foreach ($data as $datum) {
 
-            if (isset($properties[$val->type])) {
+            foreach ((is_array($datum) ? $datum : [$datum]) as $val) {
 
-                // allow multiple values - example font family
-                if (!empty($properties[$val->type]['multiple'])) {
+                if ($val->type == $this->shorthand) {
 
-                    $properties[$val->type]['value'][] = new Set([$val]);
-                } else {
+                    continue;
+                }
 
-                    $properties[$val->type]['value'] = new Set([$val]);
+                if (in_array($val->type, ['separator', 'whitespace'])) {
+
+                    continue;
+                }
+
+                if (isset($data[$val->type])) {
+
+                    if (isset($properties[$val->type]['prefix']) && is_array($properties[$val->type]['prefix'])) {
+
+                        // prefix must be set - example
+                        // background: background-position/background-size
+                        if (!isset($data[$properties[$val->type]['prefix'][0]['type']])) {
+
+                            return $this;
+                        }
+                    }
+
+                    // allow multiple values - example font-family
+                    if (!empty($properties[$val->type]['multiple'])) {
+
+                        $properties[$val->type]['value'][] = new Set([$val]);
+                    } else {
+
+                        $properties[$val->type]['value'][] = is_array($val) ? array_map(function ($v) {
+                            return new Set($v);
+                        }, $val) : new Set([$val]);
+                    }
+                }
+                // mandatory field
+                else if (empty($properties[$val->type]['optional'])) {
+
+                    return $this;
                 }
             }
         }
-
-        if (!is_object($value)) {
-
-            $value = Value::parse($value, $name);
-        }
-
-        foreach ($value as $val) {
-
-            if (isset($properties[$val->type])) {
-
-                if (!empty($properties[$val->type]['multiple'])) {
-
-                    $values[$val->type]['value'][] = new Set([$val]);
-                } else {
-
-                    $values[$val->type]['value'] = new Set([$val]);
-                }
-            }
-        }
-
-        foreach ($values as $key => $val) {
-
-            if (!isset($values[$key]['value'])) {
-
-                unset($values[$key]);
-            }
-        }
-
-        $properties = array_merge($properties, $values);
 
         foreach ($properties as $key => $property) {
 
@@ -270,7 +268,7 @@ class PropertyMap
         $set = new Set;
 
         // compute the shorthand and render?
-        foreach ($properties as $key => $prop) {
+        foreach ($properties as $prop) {
 
             if (!isset($prop['value'])) {
 
@@ -279,31 +277,18 @@ class PropertyMap
 
             if (isset($prop['prefix'])) {
 
-                $set->add(Value::getInstance((object)['type' => 'separator', 'value' => $prop['prefix']]));
+                $set->add(Value::getInstance((object)['type' => 'separator', 'value' => is_array($prop['prefix']) ? $prop['prefix'][1] : $prop['prefix']]));
             }
 
             $set->merge($prop['value']);
             $set->add(Value::getInstance((object)['type' => 'whitespace']));
         }
 
-        $data = $set->toArray();
+        $data = Value::reduce($set->toArray(), ['remove_defaults' => true]);
 
-        if (count($properties) > 1) {
-
-            array_pop($data);
-        }
-
-        $this->properties[$this->shorthand]->setValue(new Set(Value::reduce($data, ['remove_defaults' => true])));
-
-        if (!is_null($leadingcomments)) {
-
-            $this->properties[$this->shorthand]->setLeadingComments($leadingcomments);
-        }
-
-        if (!is_null($trailingcomments)) {
-
-            $this->properties[$this->shorthand]->setTrailingComments($trailingcomments);
-        }
+        $this->properties = [$this->shorthand => (new Property($this->shorthand))->setValue(new Set($data))->
+        setLeadingComments($leadingcomments)->
+        setTrailingComments($trailingcomments)];
 
         return $this;
     }
@@ -359,47 +344,10 @@ class PropertyMap
     /**
      * @return bool
      */
-    public function isEmpty() {
-
-        return !empty($this->properties);
-    }
-
-    /**
-     * compute shorthand property
-     * @return $this
-     */
-    protected function computeProperties(): PropertyMap
+    public function isEmpty()
     {
 
-        foreach ($this->config['pattern'] as $pattern) {
-
-            $values = [];
-            foreach (preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE) as $token) {
-
-                if (trim($token) === '') {
-
-                    $values[] = Value::getInstance((object) ['type' => 'whitespace']);
-                }
-
-                else {
-
-                    if (!isset($this->properties[$token])) {
-
-                        continue 2;
-                    }
-
-                    array_splice($values, count($values), 0, $this->properties[$token]->getValue()->toArray());
-                }
-            }
-
-            $property = new Property($this->shorthand);
-            $property->setValue(new Set($values));
-
-            $this->properties = [$this->shorthand => $property];
-            break;
-        }
-
-        return $this;
+        return !empty($this->properties);
     }
 
     /**
