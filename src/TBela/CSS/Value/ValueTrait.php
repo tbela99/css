@@ -44,6 +44,18 @@ trait ValueTrait
 
             foreach ($tokens as $token) {
 
+                if ($token->type == 'css-string') {
+
+                    $keyword = static::matchKeyword($token->value);
+
+                    if (!is_null($keyword)) {
+
+                        $token->type = static::type();
+                        unset($token->q);
+                        continue;
+                    }
+                }
+
                 if (static::matchToken($token)) {
 
                     $token->type = $type;
@@ -58,17 +70,16 @@ trait ValueTrait
             return $result[0];
         }
 
-        $i = -1;
+        $i = 0;
         $j = count($result) - 1;
 
         $set = new Set();
+        $set->merge($result[0]);
 
-        while (++$i < $j) {
+        while (++$i <= $j) {
 
-            $set->merge($result[$i])->add(Value::getInstance((object) ['type' => 'separator', 'value' => $separator]));
+            $set->add(Value::getInstance((object) ['type' => 'separator', 'value' => $separator]))->merge($result[$i]);
         }
-
-        $set->merge($result[$j]);
 
         return $set;
     }

@@ -10,8 +10,9 @@ class BackgroundImage extends CssFunction
 {
 
     use ValueTrait;
-    
+
     public static array $keywords = ['none'];
+    public static array $defaults = ['none'];
 
     /**
      * @inheritDoc

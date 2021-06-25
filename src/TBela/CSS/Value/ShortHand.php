@@ -39,76 +39,36 @@ class ShortHand extends Value
     protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
-        $keyword = static::matchKeyword($string);
-
-        if (!is_null($keyword)) {
-
-            return new Set([(object)['value' => $keyword, 'type' => static::type()]]);
-        }
-
         $separator = Config::getPath('map.'.static::type().'.separator');
-        $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
+        $results = [];
 
-        if (is_null($separator)) {
+        foreach ((is_null($separator) ? [$string] : static::split($string, $separator)) as $string) {
 
-           return new Set(static::reduce(static::matchPattern($tokens)));
-        }
-
-        $sets = [];
-        $values = [];
-
-        foreach ($tokens as $token) {
-
-            if (isset($token->value) && $token->value == $separator) {
-
-                if (!empty($values)) {
-
-                    $sets[] = $values;
-                }
-
-                $values = [];
-            }
-
-            else {
-
-                $values[] = $token;
-            }
-        }
-
-        if (!empty($values)) {
-
-            $sets[] = $values;
-            unset($values);
-        }
-
-        $result = [];
-
-        foreach ($sets as $values) {
-
-            $keyword = static::matchKeyword(implode(' ', array_map(Value::class.'::getInstance', $values)));
+            $keyword = static::matchKeyword($string);
 
             if (!is_null($keyword)) {
 
-                $result[] = Value::getInstance((object)['value' => $keyword, 'type' => static::type()]);
+                $results[] = new Set([(object)['value' => $keyword, 'type' => static::type()]]);
+                break;
             }
 
-            else {
-
-                array_splice($result, count($result), 0,
-                    static::matchPattern($values));
-            }
-
-            $result[] = Value::getInstance((object) ['value' => $separator, 'type' => 'separator']);
+            $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
+            $results[] = new Set(static::reduce(static::matchPattern($tokens)));
         }
 
-        $end = end($result);
+        $j = count($results) - 1;
+        $i = -1;
 
-        if (!is_null($end) && $end->type == 'separator' && $end->value == $separator) {
+        $set = new Set();
 
-            array_pop($result);
+        while (++$i < $j) {
+
+            $set->merge($results[$i]);
+            $set->add(Value::getInstance((object) ['type' => 'separator', 'value' => $separator]));
         }
 
-        return new Set(static::reduce($result));
+        $set->merge($results[$j]);
+        return $set;
     }
 
     /**

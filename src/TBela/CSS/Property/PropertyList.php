@@ -123,7 +123,7 @@ class PropertyList implements IteratorAggregate
         $shorthand = Config::getProperty($name.'.shorthand');
 
         // is is an shorthand property?
-        if (!is_null($shorthand)) {
+        if (!is_null($shorthand) && !is_null(Config::getProperty($shorthand))) {
 
            $config = Config::getProperty($shorthand);
 

@@ -305,13 +305,16 @@ abstract class Value implements JsonSerializable, ObjectInterface
      */
     public static function reduce(array $tokens, array $options = []): array
     {
-        $count = count($tokens) - 1;
+        $j = count($tokens);
 
-        if ($count > 1) {
+        if ($j > 1) {
 
-            $j = $count;
+            while ($j--) {
 
-            while ($j-- >= 1) {
+                if (count($tokens) == 1) {
+
+                    break;
+                }
 
                 $token = $tokens[$j];
 
@@ -327,9 +330,22 @@ abstract class Value implements JsonSerializable, ObjectInterface
                     array_splice($tokens, $j + 1, 1);
                 } else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
 
+                    // check if the previous token has the same type and matches the defaults
+                    // same type? no -> remove
+                    // same type? yes -> matches defaults? yes -> remove
+
                     $className = static::getClassName($token->type);
 
                     if (is_callable($className . '::matchDefaults') && call_user_func($className . '::matchDefaults', $token)) {
+
+                        if ($token->type == 'background-size') {
+
+                            if ((isset($tokens[$j - 2]) && $token->type == $tokens[$j - 2]->type) ||
+                                (isset($tokens[$j + 2]) && $token->type == $tokens[$j + 2]->type)) {
+
+                                continue;
+                            }
+                        }
 
                         $prefix = Config::getPath('map.'.$token->type.'.prefix');
 

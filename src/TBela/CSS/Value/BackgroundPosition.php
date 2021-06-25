@@ -84,7 +84,7 @@ class BackgroundPosition extends Value
             $test = in_array($token->value, static::$keywords);
         } else {
 
-            $test = $token->type == 'unit' && (is_null($previousValue) || in_array($previousValue->type, ['css-url', 'color', 'background-image', 'background-position']));
+            $test = $token->type == 'unit' && (is_null($previousValue) || in_array($previousValue->type, ['css-url', 'color', 'background-color', 'background-image', 'background-position']));
         }
 
         if (!$test) {

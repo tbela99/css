@@ -73,7 +73,7 @@ class PropertyMap
     /**
      * set property value
      * @param string $name
-     * @param Set $value
+     * @param Set|string $value
      * @return PropertyMap
      * @throws \Exception
      */
@@ -115,173 +115,190 @@ class PropertyMap
                                                 setLeadingComments($leadingcomments)->
                                                 setTrailingComments($trailingcomments);
 
-//        $values = [];
+        $separator = Config::getPath('map.'.$this->shorthand.'.separator');
 
-//        if (isset($this->properties[$this->shorthand])) {
+        $all = is_null($separator) ? [$this->properties[$this->shorthand]->getValue()] : $this->properties[$this->shorthand]->getValue()->split($separator);
 
-            $values = $this->properties[$this->shorthand]->getValue()->toArray();
-//        }
-//        else {
-//
-//            foreach ($this->properties as $property) {
-//
-//                array_splice($values, count($values), 0, $property->getValue()->toArray());
-//            }
-//        }
+        $props = [];
 
-        $data = [];
+        foreach ($this->properties as $key => $prop) {
 
-        foreach ($values as $val) {
-
-            if (in_array($val->type, ['separator', 'whitespace'])) {
+            if ($key == $this->shorthand) {
 
                 continue;
             }
 
-            if (!isset($data[$val->type])) {
+            $sep = Config::getPath('properties.'.$key.'.separator');
 
-                $data[$val->type] = $val;
-            } else {
+            $v = is_null($sep) ? [$prop->getValue()] : $prop->getValue()->split($sep);
 
-                if (!is_array($data[$val->type])) {
+            if (count($v) != count($all)) {
 
-                    $data[$val->type] = [$data[$val->type]];
-                }
-
-                $data[$val->type][] = $val;
+                return $this;
             }
-        }
 
-        $props = $this->properties;
-
-        unset($props[$this->shorthand]);
-
-        foreach ($props as $k => $prop) {
-
-            $v = $prop->getValue()->toArray();
-            $data[$k] = count($v) == 1 ? $v[0] : $v;
-        }
-
-        // match
-        $patterns = $this->config['pattern'];
-
-        foreach ($patterns as $key => $pattern) {
-
-            foreach (preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_NO_EMPTY) as $token) {
-
-                if (empty($this->property_type[$token]['optional']) && !isset($data[$token])) {
-
-                    unset($patterns[$key]);
-                }
-            }
-        }
-
-        if (empty($patterns)) {
-
-//            $this->properties[$name] = (new Property($name))->setValue($value)->
-//            setLeadingComments($leadingcomments)->
-//            setTrailingComments($trailingcomments);
-            return $this;
+            $props[$key] = array_map(function ($v) { return $v->toArray(); }, $v);
         }
 
         $properties = $this->property_type;
+        $results = [];
 
-        // create a map of existing values
-        foreach ($data as $datum) {
+        foreach($all as $index => $values) {
 
-            foreach ((is_array($datum) ? $datum : [$datum]) as $val) {
+            $data = [];
 
-                if ($val->type == $this->shorthand) {
-
-                    continue;
-                }
+            foreach ($values as $val) {
 
                 if (in_array($val->type, ['separator', 'whitespace'])) {
 
                     continue;
                 }
 
-                if (isset($data[$val->type])) {
+                if (!isset($data[$val->type])) {
 
-                    if (isset($properties[$val->type]['prefix']) && is_array($properties[$val->type]['prefix'])) {
+                    $data[$val->type] = $val;
+                }
+                else {
 
-                        // prefix must be set - example
-                        // background: background-position/background-size
-                        if (!isset($data[$properties[$val->type]['prefix'][0]['type']])) {
+                    if (!is_array($data[$val->type])) {
+
+                        $data[$val->type] = [$data[$val->type]];
+                    }
+
+                    $data[$val->type][] = $val;
+                }
+            }
+
+            foreach ($props as $k => $prop) {
+
+                if ($name == $this->shorthand) {
+
+                    continue;
+                }
+
+                $data[$k] = $prop[$index];
+            }
+
+            // match
+            $patterns = $this->config['pattern'];
+
+            foreach ($patterns as $name => $pattern) {
+
+                foreach (preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_NO_EMPTY) as $token) {
+
+                    if (empty($this->property_type[$token]['optional']) && (!isset($data[$token]) || (is_array($data[$token]) && !isset($data[$token][$index])))) {
+
+                        unset($patterns[$name]);
+                    }
+                }
+            }
+
+            if (empty($patterns)) {
+
+                return $this;
+            }
+
+            //
+            foreach ($data as $key => $value) {
+
+                if (!is_array($value)) {
+
+                    $value = [$value];
+                }
+
+//                    $className = Value::getClassName($value[0]->type);
+
+//                    if (count($value) == 1 && call_user_func([$className, 'matchDefaults'],  $value[0])) {
+//
+//                        unset($data[$key]);
+////                        unset($this->properties[$key]);
+//                        continue;
+//                    }
+
+                $set = new Set;
+
+                if (isset($properties[$key]['prefix'])) {
+
+                    $prefix = $properties[$key]['prefix'];
+                    $set->add(Value::getInstance((object)['type' => 'separator', 'value' => is_array($prefix) ? $prefix[1] : $prefix]));
+                }
+
+                $set->add($value[0]);
+
+                //
+                if (Config::getPath('map.'.$key.'.multiple')) {
+
+                    $i = 0;
+                    $j = count($value);
+                    $sp = Config::getPath('map.'.$key.'.separator', ' ');
+
+                    $sp = $sp == ' ' ? ['type' => 'whitespace'] : ['type' => 'separator', 'value' => $sp];
+
+                    while (++$i < $j) {
+
+                        $set->add(Value::getInstance((object) $sp));
+                        $set->add($value[$i]);
+                    }
+                }
+
+                $data[$key] = $set;
+            }
+
+            $set = new Set;
+
+            foreach(preg_split('#(\s+)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE) as $token) {
+
+                if (isset($data[$token]) && isset($properties[$token]['prefix']) && is_array($properties[$token]['prefix'])) {
+
+                    $res = $set->toArray();
+
+                    $j = count($res);
+
+                    while ($j--) {
+
+                        if (in_array($res[$j]->type, ['whitespace', 'separator'])) {
+
+                            continue;
+                        }
+
+                        if ((isset($properties[$token]['multiple']) && $res[$j]->type == $token) ||
+                            $res[$j]->type == $properties[$token]['prefix'][0]['type']) {
+
+                            break;
+                        }
+
+                        if ($res[$j]->type != $properties[$token]['prefix'][0]['type']) {
 
                             return $this;
                         }
                     }
-
-                    // allow multiple values - example font-family
-                    if (!empty($properties[$val->type]['multiple'])) {
-
-                        $properties[$val->type]['value'][] = new Set([$val]);
-                    } else {
-
-                        $properties[$val->type]['value'][] = is_array($val) ? array_map(function ($v) {
-                            return new Set($v);
-                        }, $val) : new Set([$val]);
-                    }
                 }
-                // mandatory field
-                else if (empty($properties[$val->type]['optional'])) {
 
-                    return $this;
+                if (trim($token) == '') {
+
+                    $set->add(Value::getInstance((object) ['type' => 'whitespace']));
+                }
+
+                else if (isset($data[$token])) {
+
+                    $set->merge($data[$token]);
                 }
             }
-        }
 
-        foreach ($properties as $key => $property) {
-
-            if (!isset($property['value'])) {
-
-                continue;
-            }
-
-            if (is_array($property['value'])) {
-
-                $data = ['type' => 'whitespace'];
-
-                if (isset($property['separator'])) {
-
-                    $data = ['type' => 'separator', 'value' => $property['separator']];
-                }
-
-                $val = new Set;
-                $j = count($property['value']);
-
-                for ($i = 0; $i < $j; $i++) {
-
-                    $val->merge($property['value'][$i]);
-
-                    if ($i < $j - 1) {
-
-                        $val->add(Value::getInstance((object)$data));
-                    }
-                }
-
-                $properties[$key]['value'] = $val;
-            }
+            $results[] = $set;
         }
 
         $set = new Set;
 
-        // compute the shorthand and render?
-        foreach ($properties as $prop) {
+        $i = 0;
+        $j = count($results);
 
-            if (!isset($prop['value'])) {
+        $set->merge($results[0]);
 
-                continue;
-            }
+        while (++$i < $j) {
 
-            if (isset($prop['prefix'])) {
-
-                $set->add(Value::getInstance((object)['type' => 'separator', 'value' => is_array($prop['prefix']) ? $prop['prefix'][1] : $prop['prefix']]));
-            }
-
-            $set->merge($prop['value']);
-            $set->add(Value::getInstance((object)['type' => 'whitespace']));
+            $set->add(Value::getInstance((object) ['type' => 'separator', 'value' => $separator]));
+            $set->merge($results[$i]);
         }
 
         $data = Value::reduce($set->toArray(), ['remove_defaults' => true]);

@@ -301,8 +301,90 @@ final class Background extends TestCase
             json_encode(Value::parse('none ', 'background')->toObject())];
 
         $data[] = [
-            '[{"value":"no-repeat","type":"background-repeat","q":""},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"sourcemap\/images\/bg.png","q":""}]},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"separator","value":"\/"},{"type":"background-size","value":"cover"}]',
+            '[{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"sourcemap\/images\/bg.png","q":""}]},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"separator","value":"\/"},{"type":"background-size","value":"cover"}]',
             json_encode(Value::parse('no-repeat url(sourcemap/images/bg.png) 50% 50%/cover ', 'background')->toObject())];
+
+        $data[] = [
+            '[{"value":"center","type":"background-position"},{"type":"separator","value":"\/"},{"value":"contain","type":"background-size"},{"type":"whitespace"},{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"..\/..\/media\/examples\/firefox-logo.svg","q":"\""}]},{"type":"separator","value":","},{"value":"#eee","type":"background-color","colorType":"hex","rgba":[238,238,238]},{"type":"whitespace"},{"value":"35","type":"background-position","unit":"%"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"..\/..\/media\/examples\/lizard.png","q":"\""}]}]',
+            json_encode(Value::parse('center / contain no-repeat url("../../media/examples/firefox-logo.svg"),
+            #eee 35% url("../../media/examples/lizard.png")  ', 'background')->toObject())];
+
+        /*
+         * , ],
+             ['background-size', 'cover, contain'],
+             ['background-image', 'url("../../media/examples/lizard.png"), url("../../media/examples/firefox-logo.svg")'],
+             ['background-repeat', 'repeat, repeat'],
+             ['background-size', 'auto, auto'],
+             ['background-color', 'blue, red'],
+             ['background-size', 'auto 10%, 25% auto'],
+             ['background-image', 'none, none'],
+             ['background-size', 'auto, auto'],
+         */
+        $property = new PropertyList();
+
+        $property->set('background', 'center / contain no-repeat url("../../media/examples/firefox-logo.svg"),
+            #eee 17% url("../../media/examples/lizard.png") ');
+
+        $data[] = [
+            'background: center/contain no-repeat url("../../media/examples/firefox-logo.svg"), #eee 17% url("../../media/examples/lizard.png")',
+            (string) $property
+        ];
+
+        $property->set('background-size', 'cover, contain' );
+
+        $data[] = [
+            'background: url("../../media/examples/firefox-logo.svg") center/cover no-repeat, url("../../media/examples/lizard.png") #eee 17%/contain',
+            (string) $property
+        ];
+
+        $property->set('background-image', ' url("../../media/examples/lizard.png"), url("../../media/examples/firefox-logo.svg")' );
+
+        $data[] = [
+            'background: url("../../media/examples/lizard.png") center/cover no-repeat, url("../../media/examples/firefox-logo.svg") #eee 17%/contain',
+            (string) $property
+        ];
+
+        $property->set('background-repeat', ' repeat, repeat' );
+
+        $data[] = [
+            'background: url("../../media/examples/lizard.png") center/cover, url("../../media/examples/firefox-logo.svg") #eee 17%/contain',
+            (string) $property
+        ];
+
+        $property->set('background-size', 'auto, auto' );
+
+        $data[] = [
+            'background: url("../../media/examples/lizard.png") center, url("../../media/examples/firefox-logo.svg") #eee 17%',
+            (string) $property
+        ];
+
+        $property->set('background-color', 'blue, red' );
+
+        $data[] = [
+            'background: url("../../media/examples/lizard.png") blue center, url("../../media/examples/firefox-logo.svg") red 17%',
+            (string) $property
+        ];
+
+        $property->set('background-size', 'auto 10%, 25% auto' );
+
+        $data[] = [
+            'background: url("../../media/examples/lizard.png") blue center/auto 10%, url("../../media/examples/firefox-logo.svg") red 17%/25%',
+            (string) $property
+        ];
+
+        $property->set('background-image', 'none, none' );
+
+        $data[] = [
+            'background: blue center/auto 10%, red 17%/25%',
+            (string) $property
+        ];
+
+        $property->set('background-size', 'auto, auto' );
+
+        $data[] = [
+            'background: blue center, red 17%',
+            (string) $property
+        ];
 
         return $data;
     }

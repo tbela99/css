@@ -72,7 +72,10 @@ $config['map'] = array_merge($config['map'], makePropertySet('background', ['bac
 //    ]
 //], ',', false, null, 'background'));
 
-$config['properties'] = array_merge($config['properties'], makePropertySet('background-size', ['background-size', 'unit unit'], [], ',', false, null,false));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-size', ['background-size', 'unit unit'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-color', ['background-color'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-image', ['background-image'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-position', ['background-position'], [], ',', false, null,'background'));
 
 $config['map'] = array_merge($config['map'], makePropertySet('font', ['font', 'font-weight font-style font-variant font-stretch font-size line-height font-family'], [
     ['font-weight',
