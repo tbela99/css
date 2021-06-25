@@ -6,7 +6,7 @@ use Exception;
 use InvalidArgumentException;
 use stdClass;
 use TBela\CSS\Interfaces\ElementInterface;
-use TBela\CSS\Interfaces\ObjectInterface;
+use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Query\Evaluator;
 use TBela\CSS\Value\Set;
@@ -240,7 +240,7 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function setTrailingComments(?array $comments): ObjectInterface {
+    public function setTrailingComments(?array $comments): RenderableInterface {
 
         return $this->setComments($comments, 'trailing');
     }
@@ -257,7 +257,7 @@ abstract class Element implements ElementInterface  {
      * @param string[]|Value\Comment[]|null $comments
      * @return Element
      */
-    protected function setComments(?array $comments, $type): ObjectInterface {
+    protected function setComments(?array $comments, $type): RenderableInterface {
 
         if (empty($comments)) {
 

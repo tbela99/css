@@ -15,7 +15,7 @@ interface RenderableInterface extends ParsableInterface, ObjectInterface {
      * @param array|null $comments
      * @return ObjectInterface
      */
-    public function setTrailingComments(?array $comments): ObjectInterface;
+    public function setTrailingComments(?array $comments): RenderableInterface;
 
     /**
      * @return string[]|null
@@ -26,7 +26,7 @@ interface RenderableInterface extends ParsableInterface, ObjectInterface {
      * @param string[]|null $comments
      * @return ObjectInterface
      */
-    public function setLeadingComments(?array $comments): ObjectInterface;
+    public function setLeadingComments(?array $comments): RenderableInterface;
 
     /**
      * @return string[]|null
