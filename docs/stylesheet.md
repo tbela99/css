@@ -1,4 +1,4 @@
-# Stylesheet
+ Stylesheet
 
 It is the root element of the css stylesheet. 
 
@@ -31,24 +31,6 @@ $parser->setContent($css);
 
 // and then
 $stylesheet = $parser->parse();
-```
-
-### Using Compiler
-
-```php
-
-use \TBela\CSS\Compiler;
-
-$compiler = new Compiler();
-
-// load css like this
-$compiler->load('template.css');
-
-// or like that
-$compiler->setContent($css);
-
-// and then
-$stylesheet = $compiler->getData();
 ```
 ## Building Manually
 

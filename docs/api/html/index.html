@@ -92,7 +92,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <h2><a class="anchor" id="autotoc_md1"></a>
 Features</h2>
 <ul>
-<li>fastly parse and render <a class="el" href="d6/ded/namespaceCSS.html">CSS</a></li>
+<li>generate sourcemap</li>
+<li>parse and render <a class="el" href="d6/ded/namespaceCSS.html">CSS</a></li>
 <li>support CSS4 colors</li>
 <li>merge duplicate rules</li>
 <li>remove duplicate declarations</li>
@@ -101,7 +102,7 @@ Features</h2>
 <li>remove @charset directive</li>
 <li>compute css shorthand (margin, padding, outline, border-radius, font)</li>
 <li>query the css nodes using xpath like syntax or class name</li>
-<li>transform the css output using the Renderer class</li>
+<li>transform the css and ast using the traverser api</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md2"></a>
 Installation</h2>
@@ -123,11 +124,11 @@ Usage:</h2>
 <div class="line">  color: aliceblue;</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>PHP Code</p>
-<div class="fragment"><div class="line">use \TBela\CSS\Compiler;</div>
+<div class="fragment"><div class="line">use \TBela\CSS\Parser;</div>
 <div class="line"> </div>
-<div class="line">$compiler = <span class="keyword">new</span> Compiler();</div>
+<div class="line">$parser = <span class="keyword">new</span> Parser();</div>
 <div class="line"> </div>
-<div class="line">$compiler-&gt;setContent(<span class="stringliteral">&#39;</span></div>
+<div class="line">$parser-&gt;setContent(<span class="stringliteral">&#39;</span></div>
 <div class="line"><span class="stringliteral">h1 {</span></div>
 <div class="line"><span class="stringliteral">  color: green;</span></div>
 <div class="line"><span class="stringliteral">  color: blue;</span></div>
@@ -139,7 +140,7 @@ Usage:</h2>
 <div class="line"><span class="stringliteral">  color: aliceblue;</span></div>
 <div class="line"><span class="stringliteral">}&#39;</span>);</div>
 <div class="line"> </div>
-<div class="line">echo $compiler-&gt;compile();</div>
+<div class="line">echo $parser-&gt;parse();</div>
 </div><!-- fragment --><p>Result</p>
 <div class="fragment"><div class="line">h1 {</div>
 <div class="line">  color: #f0f8ff;</div>
@@ -165,6 +166,7 @@ Usage:</h2>
 <div class="line">  <span class="stringliteral">&#39;compress&#39;</span> =&gt; <span class="keyword">true</span>,</div>
 <div class="line">  <span class="stringliteral">&#39;convert_color&#39;</span> =&gt; <span class="stringliteral">&#39;hex&#39;</span>,</div>
 <div class="line">  <span class="stringliteral">&#39;css_level&#39;</span> =&gt; 4,</div>
+<div class="line">  <span class="stringliteral">&#39;sourcemap&#39;</span> =&gt; <span class="keyword">true</span>,</div>
 <div class="line">  <span class="stringliteral">&#39;allow_duplicate_declarations&#39;</span> =&gt; <span class="keyword">false</span></div>
 <div class="line">  ]);</div>
 <div class="line"> </div>
@@ -172,6 +174,9 @@ Usage:</h2>
 <div class="line">$css = $renderer-&gt;renderAst($parser-&gt;getAst());</div>
 <div class="line"><span class="comment">// slow</span></div>
 <div class="line">$css = $renderer-&gt;render($element);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// generate sourcemap -&gt; css/all.css.map</span></div>
+<div class="line">$renderer-&gt;save($element, <span class="stringliteral">&#39;css/all.css&#39;</span>);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// save as json</span></div>
 <div class="line">file_put_contents(<span class="stringliteral">&#39;style.json&#39;</span>, json_encode($element));</div>
@@ -182,20 +187,27 @@ Usage:</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// or</span></div>
 <div class="line">$css = (<span class="keyword">new</span> Renderer())-&gt;renderAst(json_decode(file_get_contents(<span class="stringliteral">&#39;style.json&#39;</span>)));</div>
-</div><!-- fragment --><div class="fragment"><div class="line">use \TBela\CSS\Compiler;</div>
+</div><!-- fragment --><div class="fragment"><div class="line">use \TBela\CSS\Renderer;</div>
 <div class="line"> </div>
 <div class="line">$ast = json_decode(file_get_contents(<span class="stringliteral">&#39;style.json&#39;</span>));</div>
 <div class="line"> </div>
-<div class="line">$compiler = <span class="keyword">new</span> Compiler([</div>
+<div class="line">$renderer = <span class="keyword">new</span> Renderer([</div>
 <div class="line">    <span class="stringliteral">&#39;convert_color&#39;</span> =&gt; <span class="keyword">true</span>,</div>
 <div class="line">    <span class="stringliteral">&#39;compress&#39;</span> =&gt; <span class="keyword">true</span>, <span class="comment">// minify the output</span></div>
 <div class="line">    <span class="stringliteral">&#39;remove_empty_nodes&#39;</span> =&gt; <span class="keyword">true</span> <span class="comment">// remove empty css classes</span></div>
 <div class="line">]);</div>
 <div class="line"> </div>
-<div class="line">$compiler-&gt;setData($ast);</div>
-<div class="line"> </div>
-<div class="line">$css = $compiler-&gt;compile();</div>
+<div class="line">$css = $renderer-&gt;renderAst($ast);</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md5"></a>
+Sourcemap generation</h2>
+<div class="fragment"><div class="line">$renderer = <span class="keyword">new</span> Renderer([</div>
+<div class="line">  <span class="stringliteral">&#39;sourcemap&#39;</span> =&gt; <span class="keyword">true</span></div>
+<div class="line">  ]);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// call save and specify the file name</span></div>
+<div class="line"><span class="comment">// generate sourcemap -&gt; css/all.css.map</span></div>
+<div class="line">$renderer-&gt;save($element, <span class="stringliteral">&#39;css/all.css&#39;</span>);</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
 The CSS Query API</h2>
 <p>Example: Extract Font-src declaration</p>
 <p><a class="el" href="d6/ded/namespaceCSS.html">CSS</a> source</p>
@@ -240,13 +252,13 @@ The CSS Query API</h2>
 <div class="line">  }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>PHP source</p>
-<div class="fragment"><div class="line">use \TBela\CSS\Compiler;</div>
+<div class="fragment"><div class="line">use \TBela\CSS\Parser;</div>
 <div class="line"> </div>
-<div class="line">$compiler = <span class="keyword">new</span> Compiler();</div>
+<div class="line">$parser = <span class="keyword">new</span> Parser();</div>
 <div class="line"> </div>
-<div class="line">$compiler-&gt;setContent($css);</div>
+<div class="line">$parser-&gt;setContent($css);</div>
 <div class="line"> </div>
-<div class="line">$stylesheet = $compiler-&gt;getData();</div>
+<div class="line">$stylesheet = $parser-&gt;parse();</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// get @font-face nodes by class names</span></div>
 <div class="line">$nodes = $stylesheet-&gt;queryByClassNames(<span class="stringliteral">&#39;@font-face, .foo .bar&#39;</span>);</div>
@@ -289,7 +301,53 @@ The CSS Query API</h2>
 <div class="line">   src: local(&quot;Helvetica Neue Bold&quot;), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)</div>
 <div class="line"> }</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
+The Traverser Api</h2>
+<p>The traverser will iterate over all the nodes and process them with the callbacks provided. It will return a new tree Example using ast</p>
+<div class="fragment"><div class="line">use <a class="code" href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a>;</div>
+<div class="line">use <a class="code" href="d8/d8b/classTBela_1_1CSS_1_1Parser.html">TBela\CSS\Parser</a>;</div>
+<div class="line">use <a class="code" href="df/d08/classTBela_1_1CSS_1_1Renderer.html">TBela\CSS\Renderer</a>;</div>
+<div class="line"> </div>
+<div class="line">$parser = (<span class="keyword">new</span> Parser())-&gt;load(<span class="stringliteral">&#39;ast/media.css&#39;</span>);</div>
+<div class="line">$traverser = <span class="keyword">new</span> Traverser();</div>
+<div class="line">$renderer = <span class="keyword">new</span> Renderer([<span class="stringliteral">&#39;remove_empty_nodes&#39;</span> =&gt; <span class="keyword">true</span>]);</div>
+<div class="line"> </div>
+<div class="line">$ast = $parser-&gt;getAst();</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// remove @media print</span></div>
+<div class="line">$traverser-&gt;on(<span class="stringliteral">&#39;enter&#39;</span>, <span class="keyword">function</span> ($node) {</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> ($node-&gt;type == <span class="stringliteral">&#39;AtRule&#39;</span> &amp;&amp; $node-&gt;name == <span class="stringliteral">&#39;media&#39;</span> &amp;&amp; (<span class="keywordtype">string</span>) $node-&gt;value == <span class="stringliteral">&#39;print&#39;</span>) {</div>
+<div class="line"> </div>
+<div class="line">        return Traverser::IGNORE_NODE;</div>
+<div class="line">    }</div>
+<div class="line">});</div>
+<div class="line"> </div>
+<div class="line">$newAst = $traverser-&gt;traverse($ast);</div>
+<div class="line">echo $renderer-&gt;renderAst($newAst);</div>
+</div><!-- fragment --><p>Example using an Element instance</p>
+<div class="fragment"><div class="line">use <a class="code" href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a>;</div>
+<div class="line">use <a class="code" href="d8/d8b/classTBela_1_1CSS_1_1Parser.html">TBela\CSS\Parser</a>;</div>
+<div class="line">use <a class="code" href="df/d08/classTBela_1_1CSS_1_1Renderer.html">TBela\CSS\Renderer</a>;</div>
+<div class="line"> </div>
+<div class="line">$parser = (<span class="keyword">new</span> Parser())-&gt;load(<span class="stringliteral">&#39;ast/media.css&#39;</span>);</div>
+<div class="line">$traverser = <span class="keyword">new</span> Traverser();</div>
+<div class="line">$renderer = <span class="keyword">new</span> Renderer([<span class="stringliteral">&#39;remove_empty_nodes&#39;</span> =&gt; <span class="keyword">true</span>]);</div>
+<div class="line"> </div>
+<div class="line">$element = $parser-&gt;parse();</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// remove @media print</span></div>
+<div class="line">$traverser-&gt;on(<span class="stringliteral">&#39;enter&#39;</span>, <span class="keyword">function</span> ($node) {</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> ($node-&gt;type == <span class="stringliteral">&#39;AtRule&#39;</span> &amp;&amp; $node-&gt;name == <span class="stringliteral">&#39;media&#39;</span> &amp;&amp; (<span class="keywordtype">string</span>) $node-&gt;value == <span class="stringliteral">&#39;print&#39;</span>) {</div>
+<div class="line"> </div>
+<div class="line">        return Traverser::IGNORE_NODE;</div>
+<div class="line">    }</div>
+<div class="line">});</div>
+<div class="line"> </div>
+<div class="line">$newElement = $traverser-&gt;traverse($element);</div>
+<div class="line">echo $renderer-&gt;renderAst($newElement);</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md8"></a>
 Build a CSS Document</h2>
 <div class="fragment"><div class="line">use \TBela\CSS\Element\Stylesheet;</div>
 <div class="line"> </div>
@@ -354,10 +412,15 @@ Build a CSS Document</h2>
 <div class="line">    color: #000;</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Adding existing css </p><div class="fragment"><div class="line">$stylesheet-&gt;appendCss($css_string);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
+</div><!-- fragment --><p>Adding existing css </p><div class="fragment"><div class="line"><span class="comment">// append css string</span></div>
+<div class="line">$stylesheet-&gt;appendCss($css_string);</div>
+<div class="line"><span class="comment">// append css file</span></div>
+<div class="line">$stylesheet-&gt;append(<span class="stringliteral">&#39;style/main.css&#39;</span>);</div>
+<div class="line"><span class="comment">// append url</span></div>
+<div class="line">$stylesheet-&gt;append(<span class="stringliteral">&#39;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css&#39;</span>);</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
 Performance</h2>
-<p>parsing and rendering ast is 3x faster than parsing an element</p>
+<p>parsing and rendering ast is 3x faster than parsing an element.</p>
 <div class="fragment"><div class="line">use \TBela\CSS\Element\Parser;</div>
 <div class="line">use \TBela\CSS\Element\Renderer;</div>
 <div class="line"> </div>
@@ -369,84 +432,10 @@ Performance</h2>
 <div class="line"><span class="comment">// or render minified css</span></div>
 <div class="line">$renderer = <span class="keyword">new</span> Renderer([<span class="stringliteral">&#39;compress&#39;</span> =&gt; <span class="keyword">true</span>]);</div>
 <div class="line">echo $renderer-&gt;renderAst($parser-&gt;getAst());</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md8"></a>
-Transform Rendered CSS</h2>
-<p>Use the Renderer class to transform the output. the callback returns three types of values</p>
-<ul>
-<li>a Css node that will be rendered in place of the original node</li>
-<li>a string that will be rendered in place of the original node</li>
-<li>the constant Renderer::IGNORE_NODE, the node will not be rendered</li>
-</ul>
-<p>input Css</p>
-<div class="fragment"><div class="line">@font-face {</div>
-<div class="line">  font-family: &quot;Bitstream Vera Serif Bold&quot;, &quot;Arial&quot;, &quot;Helvetica&quot;;</div>
-<div class="line">  src: url(&quot;/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff&quot;);</div>
-<div class="line">}</div>
-<div class="line">.pic {</div>
-<div class="line">  background: no-repeat url(&quot;imgs/lizard.png&quot;);</div>
-<div class="line">}</div>
-<div class="line">.element {</div>
-<div class="line">  background-image: url(&quot;imgs/lizard.png&quot;), url(&quot;imgs/star.png&quot;);</div>
-<div class="line">}</div>
-</div><!-- fragment --><p>PHP code</p>
-<div class="fragment"><div class="line">use <a class="code" href="d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html">TBela\CSS\Element\AtRule</a>;</div>
-<div class="line">use \TBela\CSS\Renderable;</div>
-<div class="line">use \TBela\CSS\Element\Declaration;</div>
-<div class="line">use \TBela\CSS\Property\Property;</div>
-<div class="line">use \TBela\CSS\Renderer;</div>
-<div class="line">use \TBela\CSS\Compiler;</div>
-<div class="line">use <a class="code" href="dd/dca/classTBela_1_1CSS_1_1Value.html">TBela\CSS\Value</a>;</div>
-<div class="line">use <a class="code" href="da/dca/classTBela_1_1CSS_1_1Value_1_1CssUrl.html">TBela\CSS\Value\CssUrl</a>;</div>
 <div class="line"> </div>
-<div class="line">$element = (<span class="keyword">new</span> Compiler())-&gt;setContent($css)-&gt;getData();</div>
-<div class="line"> </div>
-<div class="line">$renderer = <span class="keyword">new</span> Renderer();</div>
-<div class="line"> </div>
-<div class="line">$renderer-&gt;on(<span class="stringliteral">&#39;enter&#39;</span>, <span class="keyword">function</span> (Renderable $node) {</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// remove @font-face</span></div>
-<div class="line">    <span class="keywordflow">if</span> ($node instanceof AtRule &amp;&amp; $node[<span class="stringliteral">&#39;name&#39;</span>] == <span class="stringliteral">&#39;font-face&#39;</span>) {</div>
-<div class="line"> </div>
-<div class="line">        return \TBela\CSS\Traverser::IGNORE_NODE;</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// rewrite image url() path for local file</span></div>
-<div class="line">    <span class="keywordflow">if</span> ($node instanceof Declaration || $node instanceof Property) {</div>
-<div class="line"> </div>
-<div class="line">        <span class="keywordflow">if</span> (strpos($node-&gt;getValue(), <span class="stringliteral">&#39;url(&#39;</span>) !== <span class="keyword">false</span>) {</div>
-<div class="line"> </div>
-<div class="line">            $node = clone $node;</div>
-<div class="line"> </div>
-<div class="line">            $node-&gt;getValue()-&gt;map(function (Value $value): Value {</div>
-<div class="line"> </div>
-<div class="line">                if ($value instanceof CssURL) {</div>
-<div class="line"> </div>
-<div class="line">                    $value-&gt;arguments-&gt;map(function (Value $value): Value {</div>
-<div class="line"> </div>
-<div class="line">                        if (is_file($value-&gt;value)) {</div>
-<div class="line"> </div>
-<div class="line">                            return Value::getInstance((object) [<span class="stringliteral">&#39;type&#39;</span> =&gt; $value-&gt;type, <span class="stringliteral">&#39;value&#39;</span> =&gt; <span class="stringliteral">&#39;/&#39;</span>.$value-&gt;value]);</div>
-<div class="line">                        }</div>
-<div class="line"> </div>
-<div class="line">                        return $value;</div>
-<div class="line">                    });</div>
-<div class="line">                }</div>
-<div class="line"> </div>
-<div class="line">                return $value;</div>
-<div class="line">            });</div>
-<div class="line">        }</div>
-<div class="line">    }</div>
-<div class="line">});</div>
-<div class="line"> </div>
-<div class="line">echo $renderer-&gt;render($element);</div>
-</div><!-- fragment --><p>Result</p>
-<div class="fragment"><div class="line">.pic {</div>
-<div class="line">  background: no-repeat url(/imgs/lizard.png);</div>
-<div class="line">}</div>
-<div class="line">.element {</div>
-<div class="line">  background-image: url(/imgs/lizard.png), url(/imgs/star.png);</div>
-<div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
+<div class="line"><span class="comment">// slower</span></div>
+<div class="line">echo $renderer-&gt;render($parser-&gt;parse());</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
 Parser Options</h2>
 <ul>
 <li>flatten_import: process @import directive and import the content into the css. default to false.</li>
@@ -454,19 +443,22 @@ Parser Options</h2>
 <li>allow_duplicate_declarations: allow duplicated declarations in the same rule.</li>
 <li>sourcemap: include source location data</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md10"></a>
-Compiler Options</h2>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Renderer Options</h2>
 <ul>
-<li>charset: if false remove @charset</li>
+<li>sourcemap: generate sourcemap, default false</li>
+<li>remove_comments: remove comments.</li>
+<li>preserve_license: preserve comments starting with '/*!'</li>
+<li>compress: minify output, will also remove comments</li>
+<li>remove_empty_nodes: do not render empty css nodes</li>
+<li>compute_shorthand: compute shorthand declaration</li>
+<li>charset: preserve @charset</li>
 <li>glue: the line separator character. default to '<br  />
 '</li>
 <li>indent: character used to pad lines in css, default to a space character</li>
-<li>preserve_license: preserve comments that start with '/*!'</li>
-<li>remove_comments: remove comments. If <em>compress</em> is true, comments are always removed</li>
 <li>convert_color: convert colors to a format between <em>hex</em>, <em>hsl</em>, <em>rgb</em>, <em>hwb</em> and <em>device-cmyk</em></li>
-<li>css_level: will use CSS4 or CSS3 color format. default to <em>4</em></li>
-<li>compress: produce minified output</li>
-<li>remove_empty_nodes: remove empty css rules when the node is rendered</li>
+<li>css_level: produce <a class="el" href="d6/ded/namespaceCSS.html">CSS</a> color level 3 or 4. default to <em>4</em></li>
+<li>allow_duplicate_declarations: allow duplicate declarations.</li>
 </ul>
 <p>The full <a href="https://tbela99.github.io/css">documentation</a> can be found <a href="https://tbela99.github.io/css">here</a></p>
 <hr  />
@@ -475,9 +467,9 @@ Compiler Options</h2>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassTBela_1_1CSS_1_1Element_1_1AtRule_html"><div class="ttname"><a href="d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html">TBela\CSS\Element\AtRule</a></div><div class="ttdef"><b>Definition:</b> AtRule.php:13</div></div>
-<div class="ttc" id="aclassTBela_1_1CSS_1_1Value_html"><div class="ttname"><a href="dd/dca/classTBela_1_1CSS_1_1Value.html">TBela\CSS\Value</a></div><div class="ttdef"><b>Definition:</b> Value.php:18</div></div>
-<div class="ttc" id="aclassTBela_1_1CSS_1_1Value_1_1CssUrl_html"><div class="ttname"><a href="da/dca/classTBela_1_1CSS_1_1Value_1_1CssUrl.html">TBela\CSS\Value\CssUrl</a></div><div class="ttdef"><b>Definition:</b> CssUrl.php:9</div></div>
+<div class="ttc" id="aclassTBela_1_1CSS_1_1Parser_html"><div class="ttname"><a href="d8/d8b/classTBela_1_1CSS_1_1Parser.html">TBela\CSS\Parser</a></div><div class="ttdef"><b>Definition:</b> Parser.php:21</div></div>
+<div class="ttc" id="aclassTBela_1_1CSS_1_1Ast_1_1Traverser_html"><div class="ttname"><a href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a></div><div class="ttdef"><b>Definition:</b> Traverser.php:12</div></div>
+<div class="ttc" id="aclassTBela_1_1CSS_1_1Renderer_html"><div class="ttname"><a href="df/d08/classTBela_1_1CSS_1_1Renderer.html">TBela\CSS\Renderer</a></div><div class="ttdef"><b>Definition:</b> Renderer.php:20</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

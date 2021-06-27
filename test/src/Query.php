@@ -395,8 +395,8 @@ background:red;
         return $data;
     }
 
-/*
-*/
+    /*
+    */
     public function dedupProvider ()
     {
 
@@ -410,16 +410,16 @@ background:red;
         $data[] = [
             'span|div|.div|span *, nav',
             (string) (new \TBela\CSS\Query\Parser())->parse('span|div,span|div, .div| span *, nav')
-    ];
+        ];
 
         return $data;
     }
 
-        /*
-        */
-        public function queryProvider () {
+    /*
+    */
+    public function queryProvider () {
 
-            $data = [];
+        $data = [];
 
         $css = '@font-face {
   font-family: "Bitstream Vera Serif Bold";
@@ -480,27 +480,27 @@ p {
         $context = '// @font-face / src / ..';
 
         $data[] = [
-                [
-                    0 => '@font-face {
+            [
+                0 => '@font-face {
  font-family: "Bitstream Vera Serif Bold";
  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
-                    1 => '@media print {
+                1 => '@media print {
  @font-face {
   font-family: MaHelvetica;
   font-weight: bold;
   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
  }
 }',
-                    2 => '@media print {
+                2 => '@media print {
  @font-face {
   font-family: Arial, MaHelvetica;
   font-weight: bold;
   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }'
-],
- array_map('trim', $element->query($context))];
+            ],
+            array_map('trim', $element->query($context))];
 
         // select all nodes that contain a color declaration
         $context = '//* / color/ ..';
@@ -1048,7 +1048,7 @@ h1,h2, a {
                 0 => '@media print {
 
 }',
-  1 => 'p:before {
+                1 => 'p:before {
  content: print
 }'
             ],

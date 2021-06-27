@@ -20,7 +20,7 @@ final class ElementProperties extends TestCase
     {
         $this->assertEquals(
             $expected,
-           $content
+            $content
         );
     }
 
@@ -87,4 +87,3 @@ h1 {
         return $data;
     }
 }
-
