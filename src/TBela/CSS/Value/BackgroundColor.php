@@ -9,7 +9,7 @@ namespace TBela\CSS\Value;
 class BackgroundColor extends Color
 {
 
-    public static array $defaults = ['transparent'];
+    public static array $defaults = ['transparent', '#0000'];
 
     public static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
