@@ -313,21 +313,13 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
         if ($j > 1) {
 
-            $minSize = 1;
-
             while ($j--) {
-
-                if (count($tokens) <= $minSize) {
-
-                    break;
-                }
 
                 $token = $tokens[$j];
 
-                if ($token->type == 'css-string' && $token->value == '!important') {
+                if ($token->type == 'css-string' && $token->value == '!important' && count($tokens) <= 2) {
 
-                    $minSize++;
-                    continue;
+                    break;
                 }
 
                 if ($token->type == 'whitespace' &&
@@ -359,7 +351,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                             }
                         }
 
-                        $prefix = Config::getPath('map.'.$token->type.'.prefix');
+                        $prefix = Config::getPath('map.' . $token->type . '.prefix');
 
                         if (!is_null($prefix)) {
 
@@ -676,14 +668,14 @@ abstract class Value implements JsonSerializable, ObjectInterface
                             $tokens[] = static::getType($buffer);
                         }
 
-                        $tokens[] = (object) [ 'type' => 'separator', 'value' => $string[$i]];
+                        $tokens[] = (object)['type' => 'separator', 'value' => $string[$i]];
                         $buffer = '';
                         break;
                     }
 
-                    if ($context == 'css-function' && trim($buffer) === '' && static::is_whitespace(substr($string, $i +1, 1))) {
+                    if ($context == 'css-function' && trim($buffer) === '' && static::is_whitespace(substr($string, $i + 1, 1))) {
 
-                        $tokens[] = (object) ['type' => 'css-string', 'value' => $string[$i]];
+                        $tokens[] = (object)['type' => 'css-string', 'value' => $string[$i]];
                         $buffer = '';
                         break;
                     }
@@ -720,17 +712,17 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                     $token = static::getType($buffer);
 
-                    if(trim($buffer) === '') {
+                    if (trim($buffer) === '') {
 
-                        $tokens[] = (object) ['type' => $context == 'css-function' ? 'operator' : 'separator', 'value' => '/'];
+                        $tokens[] = (object)['type' => $context == 'css-function' ? 'operator' : 'separator', 'value' => '/'];
                         $buffer = '';
                         break;
                     }
 
-                    if(in_array($token->type, ['unit', 'number'])) {
+                    if (in_array($token->type, ['unit', 'number'])) {
 
                         $tokens[] = $token;
-                        $tokens[] = (object) ['type' => $context == 'css-function' ? 'operator' : 'separator', 'value' => '/'];
+                        $tokens[] = (object)['type' => $context == 'css-function' ? 'operator' : 'separator', 'value' => '/'];
                         $buffer = '';
                         break;
                     }
