@@ -33,7 +33,7 @@ trait ElementTrait  {
     /**
      * get node name
      * @param string $name
-     * @return Element
+     * @return \TBela\CSS\Element
      */
     public function setName ($name) {
 

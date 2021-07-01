@@ -126,8 +126,6 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-<<<<<<< HEAD
-=======
      * @inheritDoc
      */
     public function traverse(callable $fn, $event) {
@@ -136,7 +134,6 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
->>>>>>> background_shorthand
      *
      * @inheritDoc
      * @throws Parser\SyntaxError

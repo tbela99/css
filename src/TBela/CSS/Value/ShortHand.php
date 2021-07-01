@@ -202,10 +202,22 @@ class ShortHand extends Value
             }
 
             $i = count($tokens);
+            $minSize = 1;
 
             while ($i--) {
 
+                if ($tokens[$i]->type == 'css-string' && $tokens[$i]->value == '!important') {
+
+                    $minSize++;
+                    continue;
+                }
+
                 if (count($tokens) > 1 && call_user_func(static::getClassName($tokens[$i]->type) . '::matchDefaults', $tokens[$i])) {
+
+                    if (count($tokens) <= $minSize) {
+
+                        break;
+                    }
 
                     array_splice($tokens, $i, 1);
                 }

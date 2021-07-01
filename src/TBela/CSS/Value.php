@@ -313,14 +313,22 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
         if ($j > 1) {
 
+            $minSize = 1;
+
             while ($j--) {
 
-                if (count($tokens) == 1) {
+                if (count($tokens) <= $minSize) {
 
                     break;
                 }
 
                 $token = $tokens[$j];
+
+                if ($token->type == 'css-string' && $token->value == '!important') {
+
+                    $minSize++;
+                    continue;
+                }
 
                 if ($token->type == 'whitespace' &&
                     isset($tokens[$j + 1]) &&

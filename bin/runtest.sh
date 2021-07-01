@@ -60,7 +60,7 @@ else
 
   file="src/$1.php"
   if [ -f "$file" ]; then
-    php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
+    $php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
   else
     echo "Invalid test: $1" && exit 1
   fi

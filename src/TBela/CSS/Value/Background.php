@@ -46,6 +46,7 @@ class Background extends ShortHand
     {
 
         $tokens = static::reduce(parent::matchPattern($tokens));
+
         $result = [];
 
         for ($i = 0; $i < count($tokens); $i++) {
