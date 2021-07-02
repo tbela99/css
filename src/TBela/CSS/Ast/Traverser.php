@@ -3,8 +3,6 @@
 namespace TBela\CSS\Ast;
 
 use TBela\CSS\Event\Event;
-use TBela\CSS\Interfaces\ElementInterface;
-
 /**
  * Ast|Element traverser
  * @package TBela\CSS\Ast

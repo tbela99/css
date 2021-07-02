@@ -125,7 +125,6 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
         return strtolower($this->data->type) == $type;
     }
-
     /**
      * get the class name of the specified type
      * @param string $type
@@ -209,7 +208,6 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
         return isset($data->value);
     }
-
     /**
      * create an instance
      * @param stdClass $data

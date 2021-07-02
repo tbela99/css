@@ -46,7 +46,6 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
      * @return array
      * @throws \TBela\CSS\Parser\SyntaxError
      */
-
     public function query($query);
 
     /**

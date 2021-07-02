@@ -60,8 +60,7 @@ class PropertyList implements IteratorAggregate
      * @param array|null $trailingcomments
      * @return $this
      */
-
-    public function set($name, $value, $propertyType = null, array $leadingcomments = null, array $trailingcomments = null, $src = null) {
+    public function set($name, $value, $propertyType = null, $leadingcomments = null, $trailingcomments = null, $src = null) {
 
         if ($propertyType == 'Comment') {
 

@@ -10,12 +10,12 @@ var classTBela_1_1CSS_1_1Property_1_1Property =
     [ "getType", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#ad808845739651ce4af38245a6965cec3", null ],
     [ "getValue", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a22e3b4144fccefe4daa572837a313ebb", null ],
     [ "render", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a106c453c10b8d0a29069c5243aecac08", null ],
-    [ "setLeadingComments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#abc42f51fcc7998f09e97d0320d663981", null ],
-    [ "setTrailingComments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#aa30844f65a8fc5c309c378672ba535f0", null ],
+    [ "setLeadingComments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a8e27c82dc86f7e626679d018d98f2e8c", null ],
+    [ "setTrailingComments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a190c411f09798db36d3ab9a6a225c952", null ],
     [ "setValue", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a5a11e6df5dc9ce3da575becf41b8ba27", null ],
-    [ "$leadingcomments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#aefcc8750a24c66538ad53a47d7af1d17", null ],
-    [ "$name", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#afc2fc523bc9ce5217dddceee43e19713", null ],
-    [ "$trailingcomments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a54a66ffea143f926efe71e465a0bcfd0", null ],
-    [ "$type", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a95a77ce7585938d50c3ca8dd49b57325", null ],
+    [ "$leadingcomments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a20fa17eed1b8048e999506ad57c8529c", null ],
+    [ "$name", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#aa77dd86d98cb09d6a7bfb51eaf2c89a4", null ],
+    [ "$trailingcomments", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#adf5005534acbda1dca1893b4de5af8f6", null ],
+    [ "$type", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a8d90656504b7a556a6924c78484f96f1", null ],
     [ "$value", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html#a30ff98f55943a221b10fd80781b9cbb3", null ]
 ];

@@ -80,8 +80,7 @@ abstract class Element implements ElementInterface  {
         return SourceLocation::getInstance($location);
     }
 
-    /**
-     * @inheritDoc
+    /**    * @inheritDoc
      */
     public static function getInstance($ast) {
 
@@ -126,6 +125,10 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
      * @inheritDoc
      */
     public function traverse(callable $fn, $event) {
@@ -134,6 +137,11 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> ae7546465ede1f52ef71c7afb34da035dda76552
+>>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
      *
      * @inheritDoc
      * @throws Parser\SyntaxError
@@ -261,7 +269,7 @@ abstract class Element implements ElementInterface  {
      */
     public function getTrailingComments() {
 
-        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments :null;
+        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments : null;
     }
 
     public function getLocation() {
@@ -340,6 +348,7 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+<<<<<<< HEAD
      * @param string[]|Value\Comment[]|null $comments
      * @return Element
      */
@@ -371,6 +380,8 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
+=======
+>>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
      * @inheritDoc
      */
     public function setLeadingComments($comments) {

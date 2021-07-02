@@ -727,6 +727,11 @@ class Renderer
 
         if (empty($this->options['compress'])) {
 
+            if (is_string($value)) {
+
+                $value = Value::parse($value, $name);
+            }
+
             $value = implode(', ', array_map(function (Set $value) use ($options) {
 
                 return $value->render($options);

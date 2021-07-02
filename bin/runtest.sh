@@ -51,11 +51,12 @@ flag=$(echo "$1" | cut -c1-1)
 if [ "$1" = "" ] || [ "$flag" = "-" ]; then
   skip=""
   [ -n "$1" ] && [ "$flag" = "-" ] && skip=$(echo "$1" | cut -c2-11)
-  for file in src/*.php; do
-    [ "$file" = "src/$skip.php" ] && continue
-    echo "Run test $file"
-    $php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
-  done
+  for file in src/*.php
+    do
+      [ "$file" = "src/$skip.php" ] && continue;
+      echo "Run test $file"
+      php5.6 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
+    done
 else
 
   file="src/$1.php"

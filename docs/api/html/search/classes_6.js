@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['helper_287',['Helper',['../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html',1,'TBela::CSS::Parser']]]
+  ['helper_289',['Helper',['../d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html',1,'TBela::CSS::Parser']]]
 ];
