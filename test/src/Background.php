@@ -309,6 +309,14 @@ final class Background extends TestCase
             json_encode(Value::parse('center / contain no-repeat url("../../media/examples/firefox-logo.svg"),
             #eee 35% url("../../media/examples/lizard.png")  ', 'background')->toObject())];
 
+        $data[] = [
+            '[{"value":"transparent","type":"background-color","colorType":"hex","rgba":[0,0,0,"0"]},{"value":"!important","type":"css-string","q":""}]',
+            json_encode(Value::parse('transparent !important  ', 'background')->toObject())];
+
+        $data[] = [
+            '#0000!important',
+            (string) Value::parse('transparent !important  ', 'background')];
+
         /*
          * , ],
              ['background-size', 'cover, contain'],
