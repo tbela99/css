@@ -24,6 +24,7 @@ var classTBela_1_1CSS_1_1Element =
     [ "setLeadingComments", "d8/d23/classTBela_1_1CSS_1_1Element.html#a48ce89bb95d730fb4ca870a8cf3422ac", null ],
     [ "setTrailingComments", "d8/d23/classTBela_1_1CSS_1_1Element.html#aadd7bd8f2d93615ef8fd3748ef9cca77", null ],
     [ "setValue", "d8/d23/classTBela_1_1CSS_1_1Element.html#ae84388e1d380a2dc637a1283fa147c32", null ],
+    [ "toObject", "d8/d23/classTBela_1_1CSS_1_1Element.html#abc639149fa95c4910baae07265bef72e", null ],
     [ "traverse", "d8/d23/classTBela_1_1CSS_1_1Element.html#a190be9599d7e2c5f2f8d2b46dd7adc1c", null ],
     [ "$ast", "d8/d23/classTBela_1_1CSS_1_1Element.html#a8830510a70a67443dd449f7a793c4572", null ],
     [ "$parent", "d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc", null ]

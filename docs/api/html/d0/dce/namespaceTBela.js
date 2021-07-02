@@ -22,6 +22,7 @@ var namespaceTBela =
       ] ],
       [ "Interfaces", null, [
         [ "ElementInterface", "d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html", "d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface" ],
+        [ "ObjectInterface", "d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface.html", "d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface" ],
         [ "ParsableInterface", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface" ],
         [ "RenderableInterface", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface" ],
         [ "RenderablePropertyInterface", "d1/d3e/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderablePropertyInterface.html", null ],
@@ -76,6 +77,15 @@ var namespaceTBela =
         [ "TokenWhitespace", "de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace.html", "de/dc6/classTBela_1_1CSS_1_1Query_1_1TokenWhitespace" ]
       ] ],
       [ "Value", null, [
+        [ "Background", "df/d90/classTBela_1_1CSS_1_1Value_1_1Background.html", null ],
+        [ "BackgroundAttachment", "d8/d0d/classTBela_1_1CSS_1_1Value_1_1BackgroundAttachment.html", null ],
+        [ "BackgroundClip", "d1/d24/classTBela_1_1CSS_1_1Value_1_1BackgroundClip.html", null ],
+        [ "BackgroundColor", "dd/dbc/classTBela_1_1CSS_1_1Value_1_1BackgroundColor.html", null ],
+        [ "BackgroundImage", "dc/d9b/classTBela_1_1CSS_1_1Value_1_1BackgroundImage.html", "dc/d9b/classTBela_1_1CSS_1_1Value_1_1BackgroundImage" ],
+        [ "BackgroundOrigin", "d1/d70/classTBela_1_1CSS_1_1Value_1_1BackgroundOrigin.html", null ],
+        [ "BackgroundPosition", "d2/dbb/classTBela_1_1CSS_1_1Value_1_1BackgroundPosition.html", "d2/dbb/classTBela_1_1CSS_1_1Value_1_1BackgroundPosition" ],
+        [ "BackgroundRepeat", "d6/dde/classTBela_1_1CSS_1_1Value_1_1BackgroundRepeat.html", null ],
+        [ "BackgroundSize", "d0/d91/classTBela_1_1CSS_1_1Value_1_1BackgroundSize.html", null ],
         [ "Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color" ],
         [ "Comment", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment.html", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment" ],
         [ "CssAttribute", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute.html", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute" ],

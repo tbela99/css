@@ -100,17 +100,17 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a3a33c89ebe4adc907913cf37032c488b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161c9b097f08f9ef31ab05dbfb8967f0"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html#a161c9b097f08f9ef31ab05dbfb8967f0">getProperty</a> ($name=null, $default=null)</td></tr>
 <tr class="separator:a161c9b097f08f9ef31ab05dbfb8967f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1216b3afb4ae59249b1c8c7e7a610a9"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html#ae1216b3afb4ae59249b1c8c7e7a610a9">addSet</a> ($shorthand, $pattern, $properties, $separator=null)</td></tr>
-<tr class="separator:ae1216b3afb4ae59249b1c8c7e7a610a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3af69eb3ae5d8f3bdad7975f7e577d01"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html#a3af69eb3ae5d8f3bdad7975f7e577d01">addSet</a> ($shorthand, $pattern, array $properties, $separator=null, $shorthandOverride=null)</td></tr>
+<tr class="separator:a3af69eb3ae5d8f3bdad7975f7e577d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
-<tr class="memitem:a744af784ffc0495371a581c2a3f473c1"><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><b>$config</b></td></tr>
-<tr class="separator:a744af784ffc0495371a581c2a3f473c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10ba846999ec07ad2929ab0c403d97b5"><td class="memItemLeft" align="right" valign="top">static array&#160;</td><td class="memItemRight" valign="bottom"><b>$config</b></td></tr>
+<tr class="separator:a10ba846999ec07ad2929ab0c403d97b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae1216b3afb4ae59249b1c8c7e7a610a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1216b3afb4ae59249b1c8c7e7a610a9">&#9670;&nbsp;</a></span>addSet()</h2>
+<a id="a3af69eb3ae5d8f3bdad7975f7e577d01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3af69eb3ae5d8f3bdad7975f7e577d01">&#9670;&nbsp;</a></span>addSet()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -133,14 +133,20 @@ Static Protected Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&#160;</td>
+          <td class="paramtype">array&#160;</td>
           <td class="paramname"><em>$properties</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$separator</em> = <code>null</code>&#160;</td>
+          <td class="paramname"><em>$separator</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$shorthandOverride</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -158,12 +164,13 @@ Static Protected Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype"></td><td class="paramname">$shorthand</td><td></td></tr>
     <tr><td class="paramtype"></td><td class="paramname">$pattern</td><td></td></tr>
-    <tr><td class="paramtype"></td><td class="paramname">$properties</td><td></td></tr>
-    <tr><td class="paramtype">bool</td><td class="paramname">$separator</td><td>allow multiple values @ignore</td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$properties</td><td></td></tr>
+    <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$separator</td><td>allow multiple values </td></tr>
+    <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$shorthandOverride</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>array @ignore </dd></dl>
 
 </div>
 </div>
@@ -242,7 +249,7 @@ Static Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>mixed|null @ignore </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#ac7d4004e64f980185d6854927f316fc8">TBela\CSS\Property\PropertyMap\__construct()</a>, and <a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a61211ab53a1a6da628c240ccaeaed301">TBela\CSS\Property\PropertyList\set()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#ac7d4004e64f980185d6854927f316fc8">TBela\CSS\Property\PropertyMap\__construct()</a>, <a class="el" href="../../d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html#a9f7c59d71d1a81c3d45d48087973a7f0">TBela\CSS\Value\ShortHand\doParse()</a>, <a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a61211ab53a1a6da628c240ccaeaed301">TBela\CSS\Property\PropertyList\set()</a>, and <a class="el" href="../../d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a49ffdd35a6b7aa575576608132344adc">TBela\CSS\Property\PropertyMap\set()</a>.</p>
 
 </div>
 </div>
@@ -325,8 +332,8 @@ Static Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a744af784ffc0495371a581c2a3f473c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a744af784ffc0495371a581c2a3f473c1">&#9670;&nbsp;</a></span>$config</h2>
+<a id="a10ba846999ec07ad2929ab0c403d97b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10ba846999ec07ad2929ab0c403d97b5">&#9670;&nbsp;</a></span>$config</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -335,7 +342,7 @@ Static Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TBela\CSS\Property\Config::$config</td>
+          <td class="memname">array TBela\CSS\Property\Config::$config</td>
         </tr>
       </table>
   </td>
