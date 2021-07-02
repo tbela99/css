@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['operator_124',['Operator',['../db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator.html',1,'TBela::CSS::Value']]],
-  ['outline_125',['Outline',['../da/db6/classTBela_1_1CSS_1_1Value_1_1Outline.html',1,'TBela::CSS::Value']]],
-  ['outlinecolor_126',['OutlineColor',['../d6/ddc/classTBela_1_1CSS_1_1Value_1_1OutlineColor.html',1,'TBela::CSS::Value']]],
-  ['outlinestyle_127',['OutlineStyle',['../df/d55/classTBela_1_1CSS_1_1Value_1_1OutlineStyle.html',1,'TBela::CSS::Value']]],
-  ['outlinewidth_128',['OutlineWidth',['../d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html',1,'TBela::CSS::Value']]]
+  ['next_133',['next',['../d8/d8b/classTBela_1_1CSS_1_1Parser.html#aa1d14b517feeb1d3680fe05aa52a3c34',1,'TBela::CSS::Parser']]],
+  ['number_134',['Number',['../da/d44/classTBela_1_1CSS_1_1Value_1_1Number.html',1,'TBela::CSS::Value']]]
 ];
