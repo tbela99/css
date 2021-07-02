@@ -4,6 +4,7 @@ var hierarchy =
     [ "TBela\\CSS\\Compiler", "d1/d8f/classTBela_1_1CSS_1_1Compiler.html", null ],
     [ "TBela\\CSS\\Property\\Config", "dd/dc1/classTBela_1_1CSS_1_1Property_1_1Config.html", null ],
     [ "CssFunction", null, [
+      [ "TBela\\CSS\\Value\\BackgroundImage", "dc/d9b/classTBela_1_1CSS_1_1Value_1_1BackgroundImage.html", null ],
       [ "TBela\\CSS\\Value\\CssSrcFormat", "d9/d40/classTBela_1_1CSS_1_1Value_1_1CssSrcFormat.html", null ],
       [ "TBela\\CSS\\Value\\CssUrl", "da/dca/classTBela_1_1CSS_1_1Value_1_1CssUrl.html", null ]
     ] ],
@@ -14,7 +15,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "TBela\\CSS\\Parser\\Helper", "d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html", null ],
-    [ "TBela\\CSS\\Interfaces\\ParsableInterface", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html", [
+    [ "TBela\\CSS\\Interfaces\\ObjectInterface", "d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface.html", [
       [ "TBela\\CSS\\Interfaces\\RenderableInterface", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html", [
         [ "TBela\\CSS\\Property\\Property", "da/db6/classTBela_1_1CSS_1_1Property_1_1Property.html", [
           [ "TBela\\CSS\\Property\\Comment", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html", null ]
@@ -37,10 +38,52 @@ var hierarchy =
             ] ]
           ] ]
         ] ]
-      ] ]
+      ] ],
+      [ "TBela\\CSS\\Value", "dd/dca/classTBela_1_1CSS_1_1Value.html", [
+        [ "TBela\\CSS\\Value\\BackgroundClip", "d1/d24/classTBela_1_1CSS_1_1Value_1_1BackgroundClip.html", null ],
+        [ "TBela\\CSS\\Value\\BackgroundOrigin", "d1/d70/classTBela_1_1CSS_1_1Value_1_1BackgroundOrigin.html", null ],
+        [ "TBela\\CSS\\Value\\BackgroundPosition", "d2/dbb/classTBela_1_1CSS_1_1Value_1_1BackgroundPosition.html", null ],
+        [ "TBela\\CSS\\Value\\BackgroundRepeat", "d6/dde/classTBela_1_1CSS_1_1Value_1_1BackgroundRepeat.html", null ],
+        [ "TBela\\CSS\\Value\\BackgroundSize", "d0/d91/classTBela_1_1CSS_1_1Value_1_1BackgroundSize.html", null ],
+        [ "TBela\\CSS\\Value\\Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", [
+          [ "TBela\\CSS\\Value\\BackgroundColor", "dd/dbc/classTBela_1_1CSS_1_1Value_1_1BackgroundColor.html", null ],
+          [ "TBela\\CSS\\Value\\OutlineColor", "d6/ddc/classTBela_1_1CSS_1_1Value_1_1OutlineColor.html", null ]
+        ] ],
+        [ "TBela\\CSS\\Value\\Comment", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment.html", null ],
+        [ "TBela\\CSS\\Value\\CssAttribute", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute.html", null ],
+        [ "TBela\\CSS\\Value\\CSSFunction", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CSSFunction.html", null ],
+        [ "TBela\\CSS\\Value\\CssParenthesisExpression", "db/de0/classTBela_1_1CSS_1_1Value_1_1CssParenthesisExpression.html", null ],
+        [ "TBela\\CSS\\Value\\CssString", "d3/d54/classTBela_1_1CSS_1_1Value_1_1CssString.html", null ],
+        [ "TBela\\CSS\\Value\\FontStretch", "d1/de4/classTBela_1_1CSS_1_1Value_1_1FontStretch.html", null ],
+        [ "TBela\\CSS\\Value\\FontStyle", "d8/db9/classTBela_1_1CSS_1_1Value_1_1FontStyle.html", null ],
+        [ "TBela\\CSS\\Value\\FontVariant", "df/d1e/classTBela_1_1CSS_1_1Value_1_1FontVariant.html", null ],
+        [ "TBela\\CSS\\Value\\FontWeight", "d8/d56/classTBela_1_1CSS_1_1Value_1_1FontWeight.html", null ],
+        [ "TBela\\CSS\\Value\\LineHeight", "dd/dfa/classTBela_1_1CSS_1_1Value_1_1LineHeight.html", null ],
+        [ "TBela\\CSS\\Value\\Number", "da/d44/classTBela_1_1CSS_1_1Value_1_1Number.html", [
+          [ "TBela\\CSS\\Value\\Unit", "dd/dcf/classTBela_1_1CSS_1_1Value_1_1Unit.html", [
+            [ "TBela\\CSS\\Value\\FontSize", "d5/d56/classTBela_1_1CSS_1_1Value_1_1FontSize.html", null ],
+            [ "TBela\\CSS\\Value\\OutlineWidth", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html", null ]
+          ] ]
+        ] ],
+        [ "TBela\\CSS\\Value\\Operator", "db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator.html", null ],
+        [ "TBela\\CSS\\Value\\OutlineStyle", "df/d55/classTBela_1_1CSS_1_1Value_1_1OutlineStyle.html", null ],
+        [ "TBela\\CSS\\Value\\Separator", "d1/d60/classTBela_1_1CSS_1_1Value_1_1Separator.html", null ],
+        [ "TBela\\CSS\\Value\\ShortHand", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html", [
+          [ "TBela\\CSS\\Value\\Background", "df/d90/classTBela_1_1CSS_1_1Value_1_1Background.html", null ],
+          [ "TBela\\CSS\\Value\\BackgroundAttachment", "d8/d0d/classTBela_1_1CSS_1_1Value_1_1BackgroundAttachment.html", null ],
+          [ "TBela\\CSS\\Value\\Font", "dc/d0a/classTBela_1_1CSS_1_1Value_1_1Font.html", null ],
+          [ "TBela\\CSS\\Value\\FontFamily", "d2/da5/classTBela_1_1CSS_1_1Value_1_1FontFamily.html", null ],
+          [ "TBela\\CSS\\Value\\Outline", "da/db6/classTBela_1_1CSS_1_1Value_1_1Outline.html", null ]
+        ] ],
+        [ "TBela\\CSS\\Value\\Whitespace", "d6/d86/classTBela_1_1CSS_1_1Value_1_1Whitespace.html", null ]
+      ] ],
+      [ "TBela\\CSS\\Value\\Set", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html", null ]
+    ] ],
+    [ "TBela\\CSS\\Interfaces\\ParsableInterface", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html", [
+      [ "TBela\\CSS\\Interfaces\\RenderableInterface", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html", null ],
+      [ "TBela\\CSS\\Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", null ]
     ] ],
     [ "TBela\\CSS\\Query\\Parser", "da/df5/classTBela_1_1CSS_1_1Query_1_1Parser.html", null ],
-    [ "TBela\\CSS\\Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", null ],
     [ "TBela\\CSS\\Property\\PropertyMap", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html", null ],
     [ "TBela\\CSS\\Property\\PropertySet", "d7/d6d/classTBela_1_1CSS_1_1Property_1_1PropertySet.html", null ],
     [ "TBela\\CSS\\Interfaces\\RenderablePropertyInterface", "d1/d3e/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderablePropertyInterface.html", [
@@ -111,37 +154,7 @@ var hierarchy =
       [ "TBela\\CSS\\Interfaces\\ElementInterface", "d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html", null ],
       [ "TBela\\CSS\\Parser\\Position", "d1/dd8/classTBela_1_1CSS_1_1Parser_1_1Position.html", null ],
       [ "TBela\\CSS\\Parser\\SourceLocation", "d2/d99/classTBela_1_1CSS_1_1Parser_1_1SourceLocation.html", null ],
-      [ "TBela\\CSS\\Value", "dd/dca/classTBela_1_1CSS_1_1Value.html", [
-        [ "TBela\\CSS\\Value\\Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", [
-          [ "TBela\\CSS\\Value\\OutlineColor", "d6/ddc/classTBela_1_1CSS_1_1Value_1_1OutlineColor.html", null ]
-        ] ],
-        [ "TBela\\CSS\\Value\\Comment", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment.html", null ],
-        [ "TBela\\CSS\\Value\\CssAttribute", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute.html", null ],
-        [ "TBela\\CSS\\Value\\CSSFunction", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CSSFunction.html", null ],
-        [ "TBela\\CSS\\Value\\CssParenthesisExpression", "db/de0/classTBela_1_1CSS_1_1Value_1_1CssParenthesisExpression.html", null ],
-        [ "TBela\\CSS\\Value\\CssString", "d3/d54/classTBela_1_1CSS_1_1Value_1_1CssString.html", [
-          [ "TBela\\CSS\\Value\\FontFamily", "d2/da5/classTBela_1_1CSS_1_1Value_1_1FontFamily.html", null ]
-        ] ],
-        [ "TBela\\CSS\\Value\\FontSize", "d5/d56/classTBela_1_1CSS_1_1Value_1_1FontSize.html", null ],
-        [ "TBela\\CSS\\Value\\FontStretch", "d1/de4/classTBela_1_1CSS_1_1Value_1_1FontStretch.html", null ],
-        [ "TBela\\CSS\\Value\\FontStyle", "d8/db9/classTBela_1_1CSS_1_1Value_1_1FontStyle.html", null ],
-        [ "TBela\\CSS\\Value\\FontVariant", "df/d1e/classTBela_1_1CSS_1_1Value_1_1FontVariant.html", null ],
-        [ "TBela\\CSS\\Value\\FontWeight", "d8/d56/classTBela_1_1CSS_1_1Value_1_1FontWeight.html", null ],
-        [ "TBela\\CSS\\Value\\LineHeight", "dd/dfa/classTBela_1_1CSS_1_1Value_1_1LineHeight.html", null ],
-        [ "TBela\\CSS\\Value\\Number", "da/d44/classTBela_1_1CSS_1_1Value_1_1Number.html", [
-          [ "TBela\\CSS\\Value\\Unit", "dd/dcf/classTBela_1_1CSS_1_1Value_1_1Unit.html", [
-            [ "TBela\\CSS\\Value\\OutlineWidth", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html", null ]
-          ] ]
-        ] ],
-        [ "TBela\\CSS\\Value\\Operator", "db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator.html", null ],
-        [ "TBela\\CSS\\Value\\OutlineStyle", "df/d55/classTBela_1_1CSS_1_1Value_1_1OutlineStyle.html", null ],
-        [ "TBela\\CSS\\Value\\Separator", "d1/d60/classTBela_1_1CSS_1_1Value_1_1Separator.html", null ],
-        [ "TBela\\CSS\\Value\\ShortHand", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html", [
-          [ "TBela\\CSS\\Value\\Font", "dc/d0a/classTBela_1_1CSS_1_1Value_1_1Font.html", null ],
-          [ "TBela\\CSS\\Value\\Outline", "da/db6/classTBela_1_1CSS_1_1Value_1_1Outline.html", null ]
-        ] ],
-        [ "TBela\\CSS\\Value\\Whitespace", "d6/d86/classTBela_1_1CSS_1_1Value_1_1Whitespace.html", null ]
-      ] ],
+      [ "TBela\\CSS\\Value", "dd/dca/classTBela_1_1CSS_1_1Value.html", null ],
       [ "TBela\\CSS\\Value\\Set", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html", null ]
     ] ]
 ];

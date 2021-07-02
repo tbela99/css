@@ -38,7 +38,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * @var Set|string
      * @ignore
      */
-    protected /* Set */ $value;
+    protected $value;
 
     /**
      * Property constructor.
@@ -138,7 +138,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function setTrailingComments(?array $comments): RenderableInterface
+    public function setTrailingComments(?array $comments):RenderableInterface
     {
         $this->trailingcomments = $comments;
         return $this;
@@ -155,7 +155,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function setLeadingComments(?array $comments): RenderableInterface
+    public function setLeadingComments(?array $comments):RenderableInterface
     {
         $this->leadingcomments = $comments;
         return $this;

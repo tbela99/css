@@ -11,7 +11,8 @@ use \TBela\CSS\Value;
 class FontVariant extends Value
 {
 
-    use ValueTrait;
+    use UnitTrait, ValueTrait;
+
     protected static array $keywords = [
         'normal',
         'none',
@@ -28,7 +29,7 @@ class FontVariant extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
         if ($token->type == 'css-string' && in_array(strtolower($token->value), static::$keywords)) {

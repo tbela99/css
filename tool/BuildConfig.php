@@ -13,7 +13,7 @@ require __DIR__ . '/../test/autoload.php';
 use TBela\CSS\Property\Config;
 
 $config = [
-    // shorthand that can be computed only when the shorthand property is defined because it will override properties that are not directly handled.
+    // shorthand that can be computed only when every shorthand property is defined because it will override properties that are not directly handled.
     // the shorthand should not override longhand properties
     // example: font
     'map' => [],
@@ -24,6 +24,58 @@ $config = [
     // properties aliases
     'alias' => []
 ];
+
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-repeat', ['background-repeat', 'background-repeat background-repeat'], [], ',', false, null, false));
+
+$config['map'] = array_merge($config['map'], makePropertySet('background', ['background', 'background-image background-color background-position background-size background-repeat background-attachment background-clip background-origin'], [
+    ['background-image',
+        ['type' => 'background-image', 'optional' => true]
+    ],
+    ['background-color',
+        ['type' => 'background-color', 'optional' => true]
+    ],
+    ['background-position',
+        ['type' => 'background-position', 'multiple' => true, 'optional' => true]
+    ],
+    ['background-size',
+        [
+            'type' => 'background-size', 'multiple' => true, 'optional' => true,
+            'prefix' => [
+                ['type' => 'background-position'],
+                '/'
+            ]
+        ]
+    ],
+    ['background-repeat',
+        ['type' => 'background-repeat', 'multiple' => true, 'optional' => true]
+    ],
+    ['background-attachment',
+        ['type' => 'background-attachment', 'optional' => true]
+    ],
+    ['background-clip',
+        ['type' => 'background-clip', 'optional' => true]
+    ],
+    ['background-origin',
+        ['type' => 'background-origin', 'multiple' => true, 'optional' => true]
+    ]
+], ','));
+
+//$config['map'] = array_merge($config['map'], makePropertySet('background-attachment', ['background-attachment'], [
+//        ['background-attachment',
+//            ['type' => 'background-attachment', 'optional' => true]
+//    ]
+//], ',', false));
+
+//$config['properties'] = array_merge($config['properties'], makePropertySet('background-image', ['background-image'], [
+//    ['background-image',
+//        ['type' => 'background-image', 'optional' => true]
+//    ]
+//], ',', false, null, 'background'));
+
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-size', ['background-size', 'unit unit'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-color', ['background-color'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-image', ['background-image'], [], ',', false, null,'background'));
+$config['properties'] = array_merge($config['properties'], makePropertySet('background-position', ['background-position'], [], ',', false, null,'background'));
 
 $config['map'] = array_merge($config['map'], makePropertySet('font', ['font', 'font-weight font-style font-variant font-stretch font-size line-height font-family'], [
     ['font-weight',
@@ -64,6 +116,19 @@ $config['map'] = array_merge($config['map'], makePropertySet('outline', ['outlin
      *compute shorthand property
      */
     ['compute' => true]));
+//
+//$config['properties'] = array_merge($config['properties'], makePropertySet('background-position',
+//    [
+//        'background-position-x background-position-y',
+//        'background-position-y background-position-x'
+//    ], [
+//        ['background-position-x',
+//            ['type' => 'background-position-x', 'multiple' => true, 'separator' => ',', 'optional' => true]
+//        ],
+//        ['background-position-y',
+//            ['type' => 'background-position-y', 'multiple' => true, 'separator' => ',', 'optional' => true]
+//        ]
+//    ], ',', false));
 
 $config['properties'] = array_merge($config['properties'], makePropertySet('margin', ['unit unit unit unit'], [
     ['margin-top', 'unit'],
@@ -202,7 +267,10 @@ foreach ($config['alias'] as $alias => $data) {
 
 unset($config['alias']);
 
-file_put_contents(dirname(__DIR__) . '/src/config.json', json_encode($config));
+$file = dirname(__DIR__) . '/src/TBela/CSS/config.json';
+file_put_contents($file, json_encode($config));
+
+echo "the configuration has been stored in '$file' ...\n";
 
 
 function addAlias($property)
@@ -237,15 +305,16 @@ function addAlias($property)
  * @param null|string $separator
  * @param bool $map_properties
  * @param array|null $settings
+ * @param string|null
  * @return array
  */
-function makePropertySet(string $shorthand, array $pattern, array $props, ?string $separator = null, bool $map_properties = true, ?array $settings = null)
+function makePropertySet(string $shorthand, array $pattern, array $props, ?string $separator = null, bool $map_properties = true, ?array $settings = null, $shorthandOverride = null): array
 {
 
     $properties = [];
-
     foreach ($props as $key => $prop) {
 
+        // properties definition
         if (is_string($prop[1])) {
 
             $properties[$prop[0]] = ['type' => $prop[1]];
@@ -280,5 +349,5 @@ function makePropertySet(string $shorthand, array $pattern, array $props, ?strin
         $properties[$shorthand . '.settings'] = $settings;
     }
 
-    return Config::addSet($shorthand, $pattern, $properties, $separator);
+    return Config::addSet($shorthand, $pattern, $properties, $separator, $shorthandOverride);
 }

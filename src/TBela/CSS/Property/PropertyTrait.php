@@ -29,4 +29,12 @@ trait PropertyTrait
 
         return $this->src;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function toObject()
+    {
+        return (object) ['type' => $this->type, 'name' => $this->name, 'value' => $this->value->toObject()];
+    }
 }

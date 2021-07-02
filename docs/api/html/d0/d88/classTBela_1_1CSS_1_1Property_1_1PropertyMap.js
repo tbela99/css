@@ -2,7 +2,6 @@ var classTBela_1_1CSS_1_1Property_1_1PropertyMap =
 [
     [ "__construct", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#ac7d4004e64f980185d6854927f316fc8", null ],
     [ "__toString", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a3fc10b747cbbe51222acd2a43168bb4a", null ],
-    [ "computeProperties", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a288982f3f35a983ced965b267b2bfc73", null ],
     [ "getProperties", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a1a8bcef6baa94a46be562c357c15ba75", null ],
     [ "isEmpty", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#ad297db49eb70d5ec5803b6b704fe6a7b", null ],
     [ "render", "d0/d88/classTBela_1_1CSS_1_1Property_1_1PropertyMap.html#a73ffef93009080c4587000f575b98157", null ],

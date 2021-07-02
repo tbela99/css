@@ -11,9 +11,11 @@ var classTBela_1_1CSS_1_1Value_1_1Set =
     [ "getIterator", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#aa3a549d15656407c7130399e2f607309", null ],
     [ "jsonSerialize", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a152c10bd42079e66b39503de909c82f7", null ],
     [ "map", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a605bdb42963723a12179fa5a965560f5", null ],
+    [ "match", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#abfa747cfb4ceb1db7d61745ebab78759", null ],
     [ "merge", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#abdbb7202faaf7cc3ff13079af60ff34c", null ],
     [ "render", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a0126ae96b7af9eb2e55abf60e773e8c2", null ],
     [ "split", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a614556806590f8e717ad78fc26bb385e", null ],
     [ "toArray", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#acab5b1cf475233a52e6c06c6049d6129", null ],
-    [ "$data", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#a073917c4f76ac64260f06d5c2d33a962", null ]
+    [ "toObject", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ae36bf7bb73978c73d101b09c7de831c0", null ],
+    [ "$data", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html#ac63bdde84b06c257aee21d242b8000ab", null ]
 ];

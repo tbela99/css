@@ -5,8 +5,8 @@ namespace TBela\CSS\Property;
 use ArrayIterator;
 use IteratorAggregate;
 use TBela\CSS\Value;
-use TBela\CSS\RuleList;
 use TBela\CSS\Element\Rule;
+use TBela\CSS\Element\RuleList;
 
 /**
  * Property list
@@ -123,7 +123,7 @@ class PropertyList implements IteratorAggregate
         $shorthand = Config::getProperty($name.'.shorthand');
 
         // is is an shorthand property?
-        if (!is_null($shorthand)) {
+        if (!is_null($shorthand) && !is_null(Config::getProperty($shorthand))) {
 
            $config = Config::getProperty($shorthand);
 
@@ -135,7 +135,6 @@ class PropertyList implements IteratorAggregate
 
                     $this->properties[$shorthand]->setSrc($src);
                 }
-
             }
 
             $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
@@ -145,7 +144,7 @@ class PropertyList implements IteratorAggregate
 
             $shorthand = Config::getPath('map.'.$name.'.shorthand');
 
-            // is is an shorthand property?
+            // is is a shorthand property?
             if (!is_null($shorthand)) {
 
                 $config = Config::getPath('map.'.$shorthand);
@@ -297,5 +296,21 @@ class PropertyList implements IteratorAggregate
     public function getIterator()
     {
         return $this->getProperties();
+    }
+
+    /**
+     * @return array
+     * @ignore
+     */
+    public function toObject() {
+
+        $data = [];
+
+        foreach ($this->getProperties() as $property) {
+
+            $data[] = $property->toObject();
+        }
+
+        return $data;
     }
 }

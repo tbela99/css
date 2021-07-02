@@ -115,10 +115,6 @@ _boolean_. Default _false_. allow duplicate rules or merge them into one rule
 
 _boolean_|_string_|_array_. Default _['font-face']_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
 
-### sourcemap
-
-_boolean_. Include source location. Useful if you intend to build sourcemap (which is not implemented).
-
 ## Parser Methods
 
 ### Constructor

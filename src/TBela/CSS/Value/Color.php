@@ -132,7 +132,7 @@ class Color extends Value
      */
     public function render(array $options = []): string
     {
-        $index = spl_object_hash($this);
+
         $key = md5(json_encode($options).json_encode($this->data));
 
         if (isset(static::$cache[$key])) {

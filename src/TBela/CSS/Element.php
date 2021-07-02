@@ -176,7 +176,7 @@ abstract class Element implements ElementInterface  {
      */
     public function setValue ($value) {
 
-        $this->ast->value = $value; // instanceof Set ? $value : Value::parse($value, $this->ast->name ?? '');
+        $this->ast->value = $value;
         return $this;
     }
 
@@ -393,7 +393,6 @@ abstract class Element implements ElementInterface  {
 
                     if ($total > 0) {
 
-                        //   $index = $total;
                         /**
                          * @var Element $el
                          */
@@ -535,7 +534,7 @@ abstract class Element implements ElementInterface  {
 
     public function getAst()
     {
-        // TODO: Implement getAst() method.
+
         $ast = clone $this->ast;
 
         unset($ast->parent);
@@ -604,5 +603,13 @@ abstract class Element implements ElementInterface  {
                 $this->ast->children[$key]->parent = $this;
             }
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toObject()
+    {
+       return $this->ast;
     }
 }

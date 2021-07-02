@@ -414,21 +414,9 @@ class Parser
 
                             break;
                         }
-//
-//                        else {
-//
+
                         $buffer .= $selector[$i];
                         break;
-//                        }
-//
-//                        if ($buffer !== '') {
-//
-//                            $result[] = $this->getTokenType($buffer, $context);
-//                        }
-//
-//                        $result[] = (object)['type' => 'operator', 'value' => $selector[$i]];
-//                        $buffer = '';
-//                        break;
 
                     case '|':
 
@@ -677,7 +665,6 @@ class Parser
 
             if ($token == '/') {
 
-                //    $this->position++;
                 $this->tokens[] = (object)['type' => 'select', 'node' => '>'];
             } else if ($token !== '') {
 
