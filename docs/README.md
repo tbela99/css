@@ -16,7 +16,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - remove empty rules
 - process @import directive
 - remove @charset directive
-- compute css shorthand (margin, padding, outline, border-radius, font)
+- compute css shorthand (margin, padding, outline, border-radius, font, background)
 - query the css nodes using xpath like syntax or class name
 - transform the css and ast using the traverser api
 
