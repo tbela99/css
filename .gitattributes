@@ -1,14 +1,18 @@
 /test/ export-ignore
+/bin/ export-ignore
 /docs/ export-ignore
 /benchmark/ export-ignore
 /tool/ export-ignore
 /composer.lock export-ignore
 /composer.phar export-ignore
 /.gitignore export-ignore
+/.gitattributes export-ignore
 /.phpunit.result.cache export-ignore
 /phpdocumentor.sh export-ignore
 /phpunit.phar export-ignore
 /phpDocumentor.phar export-ignore
 /README.md export-ignore
+/Doxyfile export-ignore
+/package.json export-ignore
 # exclude all files in test/ from stats
 /test/* linguist-vendored
