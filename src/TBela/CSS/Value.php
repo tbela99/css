@@ -615,6 +615,18 @@ abstract class Value implements JsonSerializable, ObjectInterface
                             $token->arguments = Value::parse($str, null, $capture_whitespace, $token->type, $token->name);
                         }
 
+                        if ($token->type == 'color') {
+
+                            foreach ($token->arguments as $arg) {
+
+                                if($arg->type == 'css-function') {
+
+                                    $token->type = 'css-function';
+                                    break;
+                                }
+                            }
+                        }
+
                         $tokens[] = $token;
 
                         $buffer = '';
