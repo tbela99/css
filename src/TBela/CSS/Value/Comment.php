@@ -13,7 +13,7 @@ class Comment extends Value {
     /**
      * @inheritDoc
      */
-    protected static function validate($data) {
+    protected static function validate($data):bool {
 
         return true;
     }
@@ -26,7 +26,7 @@ class Comment extends Value {
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []):string
     {
 
         if (!empty($options['compress']) || !empty($options['remove_comments'])) {

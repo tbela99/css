@@ -11,13 +11,13 @@ class BackgroundImage extends CssFunction
 
     use ValueTrait;
 
-    public static $keywords = ['none'];
-    public static $defaults = ['none'];
+    public static array $keywords = ['none'];
+    public static array $defaults = ['none'];
 
     /**
      * @inheritDoc
      */
-    protected static function validate($data) {
+    protected static function validate($data): bool {
 
         if (isset($data->value)) {
 
@@ -27,9 +27,9 @@ class BackgroundImage extends CssFunction
         return isset($data->name) && isset($data->arguments) && $data->arguments instanceof Set;
     }
 
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
-        return isset($this->data->value) ? $this->data->value : parent::render($options);
+        return $this->data->value ?? parent::render($options);
     }
 
     /**
@@ -37,10 +37,10 @@ class BackgroundImage extends CssFunction
      */
     public function getHash() {
 
-        return isset($this->data->value) ? $this->data->value : $this->data->name.'('. $this->data->arguments->getHash().')';
+        return $this->data->value ?? $this->data->name.'('. $this->data->arguments->getHash().')';
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
         return $token->type == static::type() || (isset($token->name) &&

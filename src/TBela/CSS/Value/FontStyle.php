@@ -13,14 +13,13 @@ class FontStyle extends Value
 
     use UnitTrait;
 
-    protected static $keywords = [
-
+    protected static array $keywords = [
         'normal',
         'italic',
         'oblique'
     ];
 
-    protected static $defaults = ['normal'];
+    protected static array $defaults = ['normal'];
 
 
     /**
@@ -28,7 +27,7 @@ class FontStyle extends Value
      * @param string $type
      * @return bool
      */
-    public function match($type)
+    public function match($type): bool
     {
 
         return strtolower($this->data->type) == $type;
@@ -37,7 +36,7 @@ class FontStyle extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = []) {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool {
 
         if ($token->type == 'css-string' && in_array(strtolower($token->value), static::$keywords)) {
 

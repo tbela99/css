@@ -18,31 +18,31 @@ class PropertySet
      * @var array
      * @ignore
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var Property[]
      * @ignore
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected $property_type = [];
+    protected array $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected $shorthand;
+    protected string $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct($shorthand, array $config)
+    public function __construct(string $shorthand, array $config)
     {
 
         $this->shorthand = $shorthand;
@@ -71,7 +71,7 @@ class PropertySet
      * @param array|null $trailingcomments
      * @return PropertySet
      */
-    public function set($name, $value, $leadingcomments = null, $trailingcomments = null)
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null): PropertySet
     {
 
         // is valid property
@@ -153,7 +153,7 @@ class PropertySet
         return $this;
     }
 
-    protected function expandProperties(array $result, $leadingcomments = null, $trailingcomments = null)
+    protected function expandProperties(array $result, ?array $leadingcomments = null, ?array $trailingcomments = null)
     {
 
         foreach ($result as $property => $values) {
@@ -312,7 +312,7 @@ class PropertySet
      * @return string
      * @ignore
      */
-    protected function reduce()
+    protected function reduce(): string
     {
         $result = [];
 
@@ -324,7 +324,7 @@ class PropertySet
 
                     $prop = $this->properties[$property];
                     $type = $this->config[$property]['type'];
-                    $separator = isset($this->config[$property]['separator']) ? $this->config[$property]['separator'] : ' ';
+                    $separator = $this->config[$property]['separator'] ?? ' ';
                     $index = 0;
 
                     foreach ($prop['value'] as $v) {
@@ -399,17 +399,15 @@ class PropertySet
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, $value)
+    protected function setProperty($name, $value): PropertySet
     {
 
-        $property = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
+        if (!isset($this->properties[$name])) {
 
-        if (!isset($this->properties[$property])) {
-
-            $this->properties[$property] = new Property($name);
+            $this->properties[$name] = new Property($name);
         }
 
-        $this->properties[$property]->setValue($value);
+        $this->properties[$name]->setValue($value);
 
         return $this;
     }
@@ -418,7 +416,7 @@ class PropertySet
      * return Property array
      * @return Property[]
      */
-    public function getProperties()
+    public function getProperties(): array
     {
 
         // match pattern
@@ -466,7 +464,7 @@ class PropertySet
      * @param string $join
      * @return string
      */
-    public function render($join = "\n")
+    public function render($join = "\n"): string
     {
         $glue = ';';
         $value = '';

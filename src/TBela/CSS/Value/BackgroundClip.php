@@ -16,12 +16,12 @@ class BackgroundClip extends Value
     /**
      * @var string[]
      */
-    protected static $keywords = [
+    protected static array $keywords = [
         'border-box',
         'padding-box',
         'content-box',
         'text'
     ];
 
-    protected static $defaults = ['border-box'];
+    protected static array $defaults = ['border-box'];
 }

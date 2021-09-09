@@ -10,7 +10,7 @@ use \TBela\CSS\Value;
  */
 class FontWeight extends Value
 {
-    protected static $keywords = [
+    protected static array $keywords = [
         'thin' => '100',
         'hairline' => '100',
         'extra light' => '200',
@@ -32,12 +32,12 @@ class FontWeight extends Value
         'bolder' => 'bolder'
     ];
 
-    protected static $defaults = ['normal', '400', 'regular'];
+    protected static array $defaults = ['normal', '400', 'regular'];
 
     /**
      * @inheritDoc
      */
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         $value = static::matchKeyword($this->data->value);
@@ -68,7 +68,7 @@ class FontWeight extends Value
      * @param string $type
      * @return bool
      */
-    public function match($type)
+    public function match($type): bool
     {
 
         return $type == 'font-weight';
@@ -77,7 +77,7 @@ class FontWeight extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
         if ($token->type == 'number' && $token->value > 0 && $token->value <= 1000) {
@@ -102,9 +102,7 @@ class FontWeight extends Value
      * @inheritDoc
      * @throws \Exception
      */
-
-    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
-
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
         $type = static::type();
@@ -138,7 +136,7 @@ class FontWeight extends Value
         return new Set(static::reduce($tokens));
     }
 
-    public static function keywords()
+    public static function keywords(): array
     {
 
         return array_keys(static::$keywords);

@@ -17,13 +17,13 @@ class Compiler {
      * @var array|string[]
      * @ignore
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var ElementInterface
      * @ignore
      */
-    protected $data;
+    protected ElementInterface $data;
 
     /**
      * @var Renderer
@@ -51,7 +51,7 @@ class Compiler {
         return $this;
     }
 
-    public function getOptions() {
+    public function getOptions(): array {
 
         return $this->renderer->getOptions();
     }
@@ -77,8 +77,7 @@ class Compiler {
      * @return $this
      * @throws Parser\SyntaxError
      */
-
-    public function load ($file, array $options = [], $media = '') {
+    public function load (string $file, array $options = [], string $media = '') {
 
         $this->data = (new Parser('', $options))->load($file, $media)->parse();
         return $this;

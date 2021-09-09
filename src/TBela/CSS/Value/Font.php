@@ -14,13 +14,13 @@ class Font extends ShortHand
      * @var array
      * @ignore
      */
-    protected static $keywords = ['unset', 'inherit', 'caption', 'icon', 'menu', 'message-box', 'small-caption', 'status-bar'];
+    protected static array $keywords = ['unset', 'inherit', 'caption', 'icon', 'menu', 'message-box', 'small-caption', 'status-bar'];
 
     /**
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         'keyword',
         [

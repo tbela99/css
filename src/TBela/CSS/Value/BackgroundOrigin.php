@@ -17,11 +17,11 @@ class BackgroundOrigin extends Value
     /**
      * @var string[]
      */
-    protected static $keywords = [
+    protected static array $keywords = [
         'border-box',
         'padding-box',
         'content-box'
     ];
 
-    protected static $defaults = ['padding-box'];
+    protected static array $defaults = ['padding-box'];
 }

@@ -1,5 +1,5 @@
 <?php
-// declare(strict_types=1);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -13,7 +13,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundSizeProvider
      */
-    public function testBackgroundSize($expected, $actual)
+    public function testBackgroundSize($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -27,7 +27,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundAttachmentProvider
      */
-    public function testBackgroundAttachment($expected, $actual)
+    public function testBackgroundAttachment($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -41,7 +41,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundRepeatProvider
      */
-    public function testBackgroundRepeat($expected, $actual)
+    public function testBackgroundRepeat($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -55,7 +55,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundPositionProvider
      */
-    public function testBackgroundPosition($expected, $actual)
+    public function testBackgroundPosition($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -69,7 +69,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundImageProvider
      */
-    public function testBackgroundImage($expected, $actual)
+    public function testBackgroundImage($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -83,7 +83,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundProvider
      */
-    public function testBackground($expected, $actual)
+    public function testBackground($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -97,7 +97,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundOriginProvider
      */
-    public function testBackgroundOrigin($expected, $actual)
+    public function testBackgroundOrigin($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -111,7 +111,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundClipProvider
      */
-    public function testBackgroundClip($expected, $actual)
+    public function testBackgroundClip($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -125,7 +125,7 @@ final class Background extends TestCase
      * @param string $actual
      * @dataProvider backgroundComputeProvider
      */
-    public function testBackgroundCompute($expected, $actual)
+    public function testBackgroundCompute($expected, $actual): void
     {
 
         $this->assertEquals(

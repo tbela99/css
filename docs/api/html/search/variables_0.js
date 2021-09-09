@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['_24data_508',['$data',['../dd/dca/classTBela_1_1CSS_1_1Value.html#aaf4fbcea00c36975c4cd223e13240153',1,'TBela::CSS::Value']]],
-  ['_24parent_509',['$parent',['../d8/d23/classTBela_1_1CSS_1_1Element.html#af042acf03c6f494fd01ee732f044c8ad',1,'TBela::CSS::Element']]]
+  ['_24data_504',['$data',['../dd/dca/classTBela_1_1CSS_1_1Value.html#a9993f8c895176ab2e933d4a3cb2e6643',1,'TBela::CSS::Value']]],
+  ['_24parent_505',['$parent',['../d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc',1,'TBela::CSS::Element']]]
 ];

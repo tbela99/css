@@ -11,7 +11,7 @@ class FontFamily extends ShortHand
     /**
      * @inheritDoc
      */
-    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = []) {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool {
 
         return $token->type == 'css-string' || $token->type == static::type();
     }
@@ -20,9 +20,7 @@ class FontFamily extends ShortHand
      * @inheritDoc
      * @throws \Exception
      */
-
-    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
-
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
         $type = static::type();

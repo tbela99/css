@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -15,7 +16,7 @@ final class DataUri extends TestCase
      * @param string $expected
      * @dataProvider DataUriProvider
      */
-    public function testDataUri($parsed, $expected)
+    public function testDataUri($parsed, $expected): void
     {
         $this->assertEquals(
             $expected,
@@ -28,7 +29,7 @@ final class DataUri extends TestCase
      * @param string $expected
      * @dataProvider DataUriAstProvider
      */
-    public function testDataUriAst($parsed, $expected)
+    public function testDataUriAst($parsed, $expected): void
     {
         $this->assertEquals(
             $expected,

@@ -1,5 +1,5 @@
 <?php
-// declare(strict_types=1);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Event\Event as EventTest;
@@ -11,7 +11,7 @@ final class Event extends TestCase
      * @param array $actual
      * @dataProvider testEventProvider
      */
-    public function testEvent(array $expected, array $actual)
+    public function testEvent(array $expected, array $actual): void
     {
 
         $this->assertEquals(

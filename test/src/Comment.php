@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Compiler;
@@ -14,7 +15,7 @@ final class Comment extends TestCase
      * @throws Exception
      * @dataProvider testLicenseCommentsProvider
      */
-    public function testLicenseComments($content, $expected)
+    public function testLicenseComments($content, $expected): void
     {
         $this->assertEquals(
             $expected,

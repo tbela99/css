@@ -20,7 +20,7 @@ use function is_string;
 class Renderer
 {
 
-    protected $options = [
+    protected array $options = [
         'glue' => "\n",
         'indent' => ' ',
         'css_level' => 4,
@@ -42,7 +42,7 @@ class Renderer
      */
     protected $outFile = '';
 
-    protected $indents = [];
+    protected array $indents = [];
 
     /**
      * Identity constructor.
@@ -62,7 +62,7 @@ class Renderer
      * @return string
      * @throws Exception
      */
-    public function render(RenderableInterface $element, $level = null, $parent = false)
+    public function render(RenderableInterface $element, ?int $level = null, $parent = false)
     {
 
         if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
@@ -79,7 +79,7 @@ class Renderer
      * @return string
      * @throws Exception
      */
-    public function renderAst($ast, $level = null)
+    public function renderAst($ast, ?int $level = null)
     {
 
         $this->outFile = '';
@@ -162,7 +162,7 @@ class Renderer
      * @throws Exception
      * @ignore
      */
-    protected function walk($ast, $data, $level = null)
+    protected function walk($ast, $data, ?int $level = null)
     {
 
         $result = [
@@ -239,7 +239,7 @@ class Renderer
                             $this->indents[$level] = str_repeat($this->options['indent'], $level);
                         }
 
-                        $children = isset($ast->children) ? $ast->children : [];
+                        $children = $ast->children ?? [];
 
                         if (empty($children) && $this->options['remove_empty_nodes']) {
 
@@ -250,7 +250,7 @@ class Renderer
 
                             $children = new PropertyList(null, $this->options);
 
-                            foreach ((isset($ast->children) ? $ast->children : []) as $child) {
+                            foreach (($ast->children ?? []) as $child) {
 
                                 if(isset($child->name)) {
 
@@ -262,7 +262,7 @@ class Renderer
                                     $map[] = $child;
                                 }
 
-                                $children->set(isset($child->name) ? $child->name : null, $child->value, $child->type, isset($child->leadingcomments) ? $child->leadingcomments : null, isset($child->trailingcomments) ? $child->trailingcomments : null, isset($child->src) ? $child->src : null);
+                                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, $child->src ?? null);
                             }
 
                             if ($children->isEmpty() && $this->options['remove_empty_nodes']) {
@@ -325,8 +325,7 @@ class Renderer
                             unset($res[$declaration]);
                         }
 
-                        $v = isset($child->name) ? $child->name : null;
-                        $res[$declaration] = [$declaration, isset($map[$v]) ? $map[$v] : $child];
+                        $res[$declaration] = [$declaration, $map[$child->name ?? null] ?? $child];
                     }
 
                     $css = '';
@@ -338,7 +337,7 @@ class Renderer
 
                         $this->update($d->position, $this->indents[$level + 1]);
 
-                        if (!is_null(isset($r[1]->position) ? $r[1]->position : (isset($r[1]->location->start) ? $r[1]->location->start : null)) && in_array($r[1]->type, ['AtRule', 'Rule'])) {
+                        if (!is_null($r[1]->position ?? ($r[1]->location->start ?? null)) && in_array($r[1]->type, ['AtRule', 'Rule'])) {
 
                             $this->addPosition($d, $r[1]);
                         }
@@ -391,7 +390,7 @@ class Renderer
      * @return \stdClass
      * @ignore
      */
-    protected function update($position, $string)
+    protected function update($position, string $string)
     {
 
         $j = strlen($string);
@@ -424,7 +423,7 @@ class Renderer
             return;
         }
 
-        $position = isset($ast->location->start) ? $ast->location->start : (isset($ast->position) ? $ast->position : null);
+        $position = $ast->location->start ?? ($ast->position ?? null);
 
         if (is_null($position)) {
 
@@ -462,7 +461,7 @@ class Renderer
      * @return string
      * @ignore
      */
-    protected function renderComment($ast, $level)
+    protected function renderComment($ast, ?int $level)
     {
 
         if ($this->options['remove_comments']) {
@@ -680,7 +679,7 @@ class Renderer
      * @return string
      * @ignore
      */
-    protected function renderDeclaration($ast, $level)
+    protected function renderDeclaration($ast, ?int $level)
     {
 
         return $this->renderProperty($ast, $level);
@@ -694,7 +693,7 @@ class Renderer
      * @ignore
      */
 
-    protected function renderProperty($ast, $level)
+    protected function renderProperty($ast, ?int $level)
     {
         if ($ast->type == 'Comment') {
 
@@ -726,11 +725,6 @@ class Renderer
         }
 
         if (empty($this->options['compress'])) {
-
-            if (is_string($value)) {
-
-                $value = Value::parse($value, $name);
-            }
 
             $value = implode(', ', array_map(function (Set $value) use ($options) {
 
@@ -856,8 +850,7 @@ class Renderer
      * @return string
      * @ignore
      */
-
-    protected function renderCollection($ast, $level)
+    protected function renderCollection($ast, ?int $level)
     {
 
         $type = $ast->type;
@@ -868,12 +861,9 @@ class Renderer
 
             $children = new PropertyList(null, $this->options);
 
-            if (isset($ast->children)) {
+            foreach ($ast->children ?? [] as $child) {
 
-                foreach ($ast->children as $child) {
-
-                    $children->set(isset($child->name) ? $child->name : null, $child->value, $child->type, isset($child->leadingcomments) ? $child->leadingcomments : null, isset($child->trailingcomments) ? $child->trailingcomments : null);
-                }
+                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null);
             }
         } else {
 
@@ -997,6 +987,6 @@ class Renderer
             return $this->options;
         }
 
-        return isset($this->options[$name]) ? $this->options[$name] : $default;
+        return $this->options[$name] ?? $default;
     }
 }

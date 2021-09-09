@@ -19,31 +19,31 @@ class PropertyMap
      * @var array
      * @ignore
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var Property[]
      * @ignore
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected $property_type = [];
+    protected array $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected $shorthand;
+    protected string $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct($shorthand, array $config)
+    public function __construct(string $shorthand, array $config)
     {
 
         $this->shorthand = $shorthand;
@@ -77,13 +77,11 @@ class PropertyMap
      * @return PropertyMap
      * @throws \Exception
      */
-    public function set($name, $value, $leadingcomments = null, $trailingcomments = null)
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null)
     {
 
-        $property = $name instanceof Set ? trim($name->render(['remove_comments' => true])) : $name;
-
         // is valid property
-        if (($this->shorthand != $property) && !in_array($property, $this->config['properties'])) {
+        if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
 
             throw new InvalidArgumentException('Invalid property ' . $name, 400);
         }

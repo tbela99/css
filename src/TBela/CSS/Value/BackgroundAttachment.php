@@ -9,7 +9,7 @@ namespace TBela\CSS\Value;
 class BackgroundAttachment extends ShortHand
 {
 
-    protected static $keywords = [
+    protected static array $keywords = [
         'fixed',
         'local',
         'scroll',
@@ -18,13 +18,13 @@ class BackgroundAttachment extends ShortHand
 //        'initial'
     ];
 
-    protected static $defaults = ['scroll'];
+    protected static array $defaults = ['scroll'];
 
     /**
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         'keyword'
     ];
