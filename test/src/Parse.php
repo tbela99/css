@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class Parse extends TestCase
      * @param string $actual
      * @dataProvider parseProvider
      */
-    public function testParse($expected, $actual): void
+    public function testParse($expected, $actual)
     {
 
         $this->assertEquals(

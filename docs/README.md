@@ -25,12 +25,20 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 install using [Composer](https://getcomposer.org/)
 
 ```bash
-$ composer require tbela99/css
+$ composer require 'tbela99/css:dev-php56-backport'
 ```
 
 ## Requirements
 
+<<<<<<< HEAD
+PHP version 5.6 or later
+=======
+<<<<<<< HEAD
+PHP version 5.6 or later
+=======
 This library requires PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+>>>>>>> v.next
+>>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
 
 ## Usage:
 

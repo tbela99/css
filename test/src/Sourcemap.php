@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+// declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +12,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapProvider
      */
-    public function testSourcemap($expected, $actual): void
+    public function testSourcemap($expected, $actual)
     {
 
         $this->assertEquals(
@@ -26,7 +26,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapImportProvider
      */
-    public function testSourcemapImport($expected, $actual): void
+    public function testSourcemapImport($expected, $actual)
     {
 
         $this->assertEquals(
@@ -40,7 +40,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapUrlProvider
      */
-    public function testSourcemapUrl($expected, $actual): void
+    public function testSourcemapUrl($expected, $actual)
     {
 
         $this->assertEquals(

@@ -13,7 +13,7 @@ class OutlineStyle extends Value
 
     use UnitTrait;
 
-    protected static array $keywords = [
+    protected static $keywords = [
         'auto',
         'none',
         'dotted',

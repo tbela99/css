@@ -13,16 +13,16 @@ class LineHeight extends Value
 {
     use ValueTrait;
 
-    protected static array $keywords = [
+    protected static $keywords = [
         'normal'
     ];
 
-    protected static array $defaults = ['normal'];
+    protected static $defaults = ['normal'];
 
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
     {
 
         if (!is_null($previousToken) && $previousToken->type != 'separator' && (!isset($previousToken->value) || $previousToken->value != '/')) {
@@ -56,7 +56,7 @@ class LineHeight extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
         $prefix = func_num_args() > 1 && func_get_arg(1) == 'font' ? '/ ' : '';
 

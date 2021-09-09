@@ -17,7 +17,8 @@ trait ElementTrait  {
      * @return Set
      * @throws Exception
      */
-    public function getName(bool $getVendor = true): string {
+
+    public function getName($getVendor = true) {
 
         $vendor = $this->getVendor();
 
@@ -34,7 +35,7 @@ trait ElementTrait  {
      * @param string $name
      * @return \TBela\CSS\Element
      */
-    public function setName (string $name) {
+    public function setName ($name) {
 
         $name = trim($name);
         if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', $name, $match)) {
@@ -75,7 +76,8 @@ trait ElementTrait  {
      * set vendor prefix
      * @return string
      */
-    public function getVendor() : string {
+
+    public function getVendor() {
 
         if (isset($this->ast->vendor)) {
 

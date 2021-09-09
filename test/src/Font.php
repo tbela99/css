@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+// declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -14,7 +14,7 @@ final class Font extends TestCase
      * @param string $expected
      * @dataProvider fontWeightProvider
      */
-    public function testFontWeight($css, $expected): void
+    public function testFontWeight($css, $expected)
     {
 
         $this->assertEquals(
@@ -28,7 +28,7 @@ final class Font extends TestCase
      * @param string $expected
      * @dataProvider fontComputeProvider
      */
-    public function testComputeFont($css, $expected): void
+    public function testComputeFont($css, $expected)
     {
 
         $this->assertEquals(
@@ -42,7 +42,7 @@ final class Font extends TestCase
      * @param string $expected
      * @dataProvider fontSrcProvider
      */
-    public function testfontSrcProvider($css, $expected): void
+    public function testfontSrcProvider($css, $expected)
     {
 
         $this->assertEquals(

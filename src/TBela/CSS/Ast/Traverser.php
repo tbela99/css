@@ -3,8 +3,6 @@
 namespace TBela\CSS\Ast;
 
 use TBela\CSS\Event\Event;
-use TBela\CSS\Interfaces\ElementInterface;
-
 /**
  * Ast|Element traverser
  * @package TBela\CSS\Ast
@@ -15,11 +13,11 @@ class Traverser extends Event
     /**
      * @var int do not preserve this node
      */
-    public const IGNORE_NODE = 1;
+    const IGNORE_NODE = 1;
     /**
      * @var int do not preserve children of this node
      */
-    public const IGNORE_CHILDREN = 2;
+    const IGNORE_CHILDREN = 2;
 
     /**
      * @param \stdClass|ElementInterface $object

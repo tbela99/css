@@ -12,7 +12,7 @@ class Evaluator
      * @return QueryInterface[]
      * @throws SyntaxError
      */
-    public function evaluate(string $expression, QueryInterface $context)
+    public function evaluate($expression, QueryInterface $context)
     {
 
         $tokenList = (new Parser())->parse($expression);
@@ -28,7 +28,7 @@ class Evaluator
      * @return array
      * @throws SyntaxError
      */
-    public function evaluateByClassName(string $classNames, QueryInterface $context)
+    public function evaluateByClassName($classNames, QueryInterface $context)
     {
 
         $parser = new Parser();
@@ -96,6 +96,10 @@ class Evaluator
      */
     protected function search(array $selectors, array $search)
     {
+        if (empty($selectors)) {
+
+            return false;
+        }
 
         $l = count($search);
 
@@ -153,7 +157,7 @@ class Evaluator
 
         foreach ($nodes as $key => $element) {
 
-            $index = spl_object_id($element);
+            $index = spl_object_hash($element);
 
             if (!isset($info[$index])) {
 

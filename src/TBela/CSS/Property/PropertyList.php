@@ -19,13 +19,14 @@ class PropertyList implements IteratorAggregate
      * @var Property[]
      * @ignore
      */
-    protected array $properties = [];
+    protected $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected array $options = [
+
+    protected $options = [
 
         'compute_shorthand' => true,
         'allow_duplicate_declarations' => false
@@ -59,8 +60,7 @@ class PropertyList implements IteratorAggregate
      * @param array|null $trailingcomments
      * @return $this
      */
-
-    public function set(?string $name, $value, $propertyType = null, ?array $leadingcomments = null, ?array $trailingcomments = null, $src = null) {
+    public function set($name, $value, $propertyType = null, $leadingcomments = null, $trailingcomments = null, $src = null) {
 
         if ($propertyType == 'Comment') {
 

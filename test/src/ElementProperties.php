@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+// declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -16,7 +16,7 @@ final class ElementProperties extends TestCase
      * @param string $expected
      * @dataProvider elementPropertiesProvider
      */
-    public function testElementProperties($content, $expected): void
+    public function testElementProperties($content, $expected)
     {
         $this->assertEquals(
             $expected,

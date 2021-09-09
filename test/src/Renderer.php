@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+//declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Ast\Traverser;
@@ -19,7 +19,7 @@ final class Renderer extends TestCase
      * @param string $actual
      * @dataProvider testProvider
      */
-    public function test($expected, $actual): void
+    public function test($expected, $actual)
     {
 
         $this->assertEquals(
@@ -62,11 +62,11 @@ background-image: url("imgs/lizard.png"),
 
                     $node = clone $node;
 
-                    $node->getValue()->map(function (Value $value): Value {
+                    $node->getValue()->map(function (Value $value) {
 
                         if ($value instanceof CSSFunction && $value->name == 'url') {
 
-                            $value->arguments->map(function (Value $value): Value {
+                            $value->arguments->map(function (Value $value) {
 
                                 if (is_file($value->value)) {
 

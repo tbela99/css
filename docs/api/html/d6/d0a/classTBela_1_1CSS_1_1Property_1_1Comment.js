@@ -7,8 +7,8 @@ var classTBela_1_1CSS_1_1Property_1_1Comment =
     [ "getTrailingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a680059b4e96b87d2c42568fcbf652f91", null ],
     [ "getValue", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adae7628585309924722549165b2797f8", null ],
     [ "render", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adf81e62b6301bd22a2d30ddf74535251", null ],
-    [ "setLeadingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a81385bc2346f6db62ac42d6da2469f99", null ],
-    [ "setTrailingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a28916b4caabfa56693ea9c5592f057df", null ],
+    [ "setLeadingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#aa405f9c1d1e9d1e8dc914058a965fbf2", null ],
+    [ "setTrailingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a23f8ddf9f5254cb41488381eab01a3b5", null ],
     [ "setValue", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a502fef99cecd4bdd490e6c0e1494b057", null ],
-    [ "$type", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#acc41dcb7c60308c0e70aadb6651f895d", null ]
+    [ "$type", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#ac81c8722a37e3a53cf8cc10b809bed4a", null ]
 ];

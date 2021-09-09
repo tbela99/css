@@ -14,7 +14,7 @@ class Separator extends Value
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool
+    protected static function validate($data)
     {
         return isset($data->value) && is_string($data->value);
     }
@@ -22,7 +22,7 @@ class Separator extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         return $this->data->value;

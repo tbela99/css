@@ -18,7 +18,7 @@ class Comment extends Property {
      * @var string
      * @ignore
      */
-    protected string $type = 'Comment';
+    protected $type = 'Comment';
 
     /**
      * PropertyComment constructor.
@@ -82,7 +82,7 @@ class Comment extends Property {
     /**
      * @inheritDoc
      */
-    public function setTrailingComments(?array $comments): RenderableInterface
+    public function setTrailingComments($comments)
     {
         return $this;
     }
@@ -90,7 +90,7 @@ class Comment extends Property {
     /**
      * @inheritDoc
      */
-    public function getTrailingComments(): ?array
+    public function getTrailingComments()
     {
         return null;
     }
@@ -98,7 +98,7 @@ class Comment extends Property {
     /**
      * @inheritDoc
      */
-    public function setLeadingComments(?array $comments): RenderableInterface
+    public function setLeadingComments($comments)
     {
         return $this;
     }
@@ -106,7 +106,7 @@ class Comment extends Property {
     /**
      * @inheritDoc
      */
-    public function getLeadingComments(): ?array
+    public function getLeadingComments()
     {
         return null;
     }

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+// declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Compiler;
@@ -9,13 +9,26 @@ use TBela\CSS\Renderer;
 final class Color extends TestCase
 {
     /**
+     * @param Parser $parser
+     * @param string $expected
+     *
+     * @dataProvider cssVariableProvider
+     */
+    public function testCssVariable (Parser $parser, $expected) {
+
+        $this->assertEquals(
+            $expected,
+            (string) $parser
+        );
+    }
+    /**
      * @param Compiler $compiler
      * @param $content
      * @param string $expected
      * @throws Exception
      * @dataProvider rgbaCss4ColorProvider
      */
-    public function testRgbaCss4Color(Compiler $compiler, $content, $expected): void
+    public function testRgbaCss4Color(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -30,7 +43,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaColorProvider
      */
-    public function testRgbaColor(Compiler $compiler, $content, $expected): void
+    public function testRgbaColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -45,7 +58,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaColorCompressProvider
      */
-    public function testRgbaColorCompress(Compiler $compiler, $content, $expected): void
+    public function testRgbaColorCompress(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -59,7 +72,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaHexColorProvider
      */
-    public function testRgbaHexColor(Compiler $compiler, $content, $expected): void
+    public function testRgbaHexColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -74,7 +87,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaHexColorCompressProvider
      */
-    public function testRgbaHexColorCompress(Compiler $compiler, $content, $expected): void
+    public function testRgbaHexColorCompress(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -89,7 +102,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider blackColorProvider
      */
-    public function testBlackColor(Compiler $compiler, $content, $expected): void
+    public function testBlackColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -104,7 +117,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider redColorProvider
      */
-    public function testRedColor(Compiler $compiler, $content, $expected): void
+    public function testRedColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -119,7 +132,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider yellowColorProvider
      */
-    public function testYellowColor(Compiler $compiler, $content, $expected): void
+    public function testYellowColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -134,7 +147,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider yellowColorAstProvider
      */
-    public function testYellowColorAst(Parser $parser, Renderer $renderer, $content, $expected): void
+    public function testYellowColorAst(Parser $parser, Renderer $renderer, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -202,6 +215,21 @@ p {
 }', 'p {
  /* red 50% translucent hsla(0, 100%, 50%, .5) */
  color: hsla(0, 100%, 50%, .5)
+}'];
+
+        return $data;
+    }
+
+    public function cssVariableProvider () {
+
+        $data = [];
+
+        $data[] = [new TBela\CSS\Parser('.a{color:rgba(var(--cassiopeia-color-primary), .25);
+background-color: rgba(255, 255, 255, 1);
+}'),
+            '.a {
+ color: rgba(var(--cassiopeia-color-primary), .25);
+ background-color: white
 }'];
 
         return $data;

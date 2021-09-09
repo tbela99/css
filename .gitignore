@@ -1,4 +1,5 @@
 composer.phar
+*.dat
 composer.lock
 phpunit.phar
 phpunit

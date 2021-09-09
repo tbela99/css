@@ -33,7 +33,8 @@ class Helper
 
         if (static::$fixParseUrl && !isset($data['query'])) {
 
-            if ((preg_split('~([#?])~', $url, 2, PREG_SPLIT_DELIM_CAPTURE)[1] ?? '') == '?') {
+            $v = preg_split('~([#?])~', $url, 2, PREG_SPLIT_DELIM_CAPTURE);
+            if ((isset($v[1]) ? $v[1] : '') == '?') {
 
                 $data['query'] = '';
             }
@@ -65,7 +66,7 @@ class Helper
      * @return string
      * @ignore
      */
-    public static function resolvePath(string $file, string $path = '')
+    public static function resolvePath($file, $path = '')
     {
 
         if ($path !== '') {
@@ -151,7 +152,7 @@ class Helper
      * @param string $ref relative directory
      * @return string
      */
-    public static function relativePath(string $file, string $ref)
+    public static function relativePath($file, $ref)
     {
 
         $isAbsolute = static::isAbsolute($file);
@@ -299,7 +300,7 @@ class Helper
      * @return bool|string
      * @ignore
      */
-    public static function fetchContent(string $url, array $options = [], array $curlOptions = [])
+    public static function fetchContent($url, array $options = [], array $curlOptions = [])
     {
 
         if (strpos($url, '//') === 0) {
