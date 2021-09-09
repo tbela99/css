@@ -14,19 +14,19 @@ class BackgroundSize extends Value
 
     use UnitTrait, ValueTrait;
 
-    protected static $keywords = [
+    protected static array $keywords = [
         'contain',
         'auto',
         'cover'
     ];
 
-    protected static $defaults = ['auto', 'auto auto'];
+    protected static array $defaults = ['auto', 'auto auto'];
 
     /**
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         'keyword',
         [
@@ -35,7 +35,7 @@ class BackgroundSize extends Value
         ]
     ];
 
-    public static function matchKeyword($string, array $keywords = null)
+    public static function matchKeyword(string $string, array $keywords = null): ?string
     {
         $string = preg_replace('#\s+#', ' ', $string);
 
@@ -47,13 +47,13 @@ class BackgroundSize extends Value
         return parent::matchKeyword($string, $keywords);
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
         return $token->type == 'unit' || ($token->type == 'css-string' && in_array($token->value, static::$keywords));
     }
 
-    public static function reduce(array $tokens, array $options = [])
+    public static function reduce(array $tokens, array $options = []): array
     {
         $tokens = parent::reduce($tokens, array_merge($options, ['remove_defaults' => false]));
 

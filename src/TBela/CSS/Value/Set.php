@@ -18,7 +18,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @var Value[]
      * @ignore
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Set constructor.
@@ -62,7 +62,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
     public function render (array $options = []) {
 
         $result = '';
-        $join = ','.(!empty($options['compress']) ? '' : ' ');
+        $join = ','.($options['compress'] ?? false ? '' : ' ');
 
         foreach ($this->doSplit($this->data, ',') as $data) {
 
@@ -81,7 +81,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param string $type
      * @return bool
      */
-    public function match(string $type)
+    public function match(string $type): bool
     {
         foreach ($this->data as $value) {
 
@@ -104,7 +104,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param callable $filter
      * @return $this
      */
-    public function filter (callable $filter) {
+    public function filter (callable $filter): Set {
 
         $this->data = array_filter($this->data, $filter);
         return $this;
@@ -115,7 +115,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param callable $map
      * @return $this
      */
-    public function map (callable $map) {
+    public function map (callable $map): Set {
 
         $this->data = array_map($map, $this->data);
         return $this;
@@ -126,7 +126,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param Set[] $sets
      * @return Set
      */
-    public function merge (Set ...$sets) {
+    public function merge (Set ...$sets): Set {
 
         foreach ($sets as $set) {
 
@@ -141,7 +141,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param string $separator
      * @return Set[]
      */
-    public function split ($separator) {
+    public function split (string $separator): array {
 
         return $this->doSplit($this->data, $separator);
     }
@@ -152,7 +152,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @return Set[]
      * @ignore
      */
-    protected function doSplit (array $data, $separator) {
+    protected function doSplit (array $data, string $separator): array {
 
         if (empty($data)) {
 
@@ -190,7 +190,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * @param Value $value
      * @return $this
      */
-    public function add(Value $value) {
+    public function add(Value $value): Set {
 
         $this->data[] = $value;
         return $this;
@@ -209,7 +209,7 @@ class Set implements IteratorAggregate, JsonSerializable, Countable, ObjectInter
      * return an array of internal data
      * @return Value[]
      */
-    public function toArray() {
+    public function toArray(): array {
 
         return $this->data;
     }

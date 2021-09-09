@@ -30,7 +30,7 @@ abstract class Element implements ElementInterface  {
     /**
      * @ignore
      */
-    protected $parent = null;
+    protected ?RuleListInterface $parent = null;
 
     /**
      * Element constructor.
@@ -53,11 +53,6 @@ abstract class Element implements ElementInterface  {
 
             foreach ($ast as $key => $value) {
 
-                if (is_null($value)) {
-
-                    continue;
-                }
-
                 if (is_callable([$this, 'set'.$key])) {
 
                     $this->{'set'.$key}($value);
@@ -76,16 +71,7 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-     * @param $location
-     * @return SourceLocation
-     */
-
-    protected function createLocation ($location) {
-
-        return SourceLocation::getInstance($location);
-    }
-
-    /**    * @inheritDoc
+     * @inheritDoc
      */
     public static function getInstance($ast) {
 
@@ -134,7 +120,7 @@ abstract class Element implements ElementInterface  {
      */
     public function traverse(callable $fn, $event) {
 
-        return (new Traverser())->on($event, $fn)->traverse($this);
+        return (new Element\Traverser())->on($event, $fn)->traverse($this);
     }
 
     /**
@@ -142,8 +128,7 @@ abstract class Element implements ElementInterface  {
      * @inheritDoc
      * @throws Parser\SyntaxError
      */
-
-    public function query($query) {
+    public function query($query): array {
 
         return (new Evaluator())->evaluate($query, $this);
     }
@@ -153,7 +138,7 @@ abstract class Element implements ElementInterface  {
      * @inheritDoc
      * @throws Parser\SyntaxError
      */
-    public function queryByClassNames($query) {
+    public function queryByClassNames($query): array {
 
         return (new Evaluator())->evaluateByClassName($query, $this);
     }
@@ -178,12 +163,12 @@ abstract class Element implements ElementInterface  {
      */
     public function getValue() {
 
-        if (isset($this->ast->name) && !((isset($this->ast->value) ? $this->ast->value : '') instanceof Set)) {
+        if (isset($this->ast->name) && !(($this->ast->value ?? '') instanceof Set)) {
 
-            $this->ast->value = Value::parse(isset($this->ast->value) ? $this->ast->value : '', $this->ast->name);
+            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name);
         }
 
-        return isset($this->ast->value) ? $this->ast->value : '';
+        return $this->ast->value ?? '';
     }
 
     /**
@@ -241,7 +226,7 @@ abstract class Element implements ElementInterface  {
      */
     public function getSrc() {
 
-        return isset($this->ast->src) ? $this->ast->src : null;
+        return $this->ast->src ?? null;
     }
 
     /**
@@ -249,13 +234,13 @@ abstract class Element implements ElementInterface  {
      */
     public function getPosition() {
 
-        return isset($this->ast->position) ? $this->ast->position : null;
+        return $this->ast->position ?? null;
     }
 
     /**
      * @inheritDoc
      */
-    public function setTrailingComments($comments) {
+    public function setTrailingComments(?array $comments): RenderableInterface {
 
         return $this->setComments($comments, 'trailing');
     }
@@ -263,14 +248,56 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function getTrailingComments() {
+    public function getTrailingComments(): ?array {
 
-        return isset($this->ast->trailingcomments) ? $this->ast->trailingcomments : null;
+        return $this->ast->trailingcomments ?? null;
     }
 
-    public function getLocation() {
+    /**
+     * @param string[]|Value\Comment[]|null $comments
+     * @return Element
+     */
+    protected function setComments(?array $comments, $type): RenderableInterface {
 
-        return isset($this->ast->location) ? $this->ast->location : null;
+        if (empty($comments)) {
+
+            unset($this->ast->{$type.'comments'});
+            return $this;
+        }
+
+        $this->ast->{$type.'comments'} = array_map(function ($comment) {
+
+            if (is_string($comment)) {
+
+                return $comment;
+            }
+
+            if (($comment->type ?? null) != 'Comment') {
+
+                throw new InvalidArgumentException('Comment expected');
+            }
+
+            return $comment->value;
+
+        }, $comments);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLeadingComments(?array $comments): Element {
+
+        return $this->setComments($comments, 'leading');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLeadingComments(): ?array {
+
+        return $this->ast->leadingcomments ?? null;
     }
 
     /**
@@ -312,28 +339,28 @@ abstract class Element implements ElementInterface  {
 
         $signature = ['type:' . $this->ast->type];
 
-        $name = isset($this->ast->name) ? $this->ast->name : null;
+        $name = $this->ast->name ?? null;
 
         if (isset($name)) {
 
             $signature[] = 'name:' . $name;
         }
 
-        $value = isset($this->ast->value) ? $this->ast->value : null;
+        $value = $this->ast->value ?? null;
 
         if (isset($value)) {
 
             $signature[] = 'value:' . $value;
         }
 
-        $selector = isset($this->ast->selector) ? $this->ast->selector : null;
+        $selector = $this->ast->selector ?? null;
 
         if (isset($selector)) {
 
             $signature[] = 'selector:' . implode(',', $selector);
         }
 
-        $vendor = isset($this->ast->vendor) ? $this->ast->vendor : null;
+        $vendor = $this->ast->vendor ?? null;
 
         if (isset($vendor)) {
 
@@ -344,56 +371,6 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-<<<<<<< HEAD
-     * @param string[]|Value\Comment[]|null $comments
-     * @return Element
-     */
-    protected function setComments($comments, $type) {
-
-        if (empty($comments)) {
-
-            unset($this->ast->{$type.'comments'});
-            return $this;
-        }
-
-        $this->ast->{$type.'comments'} = array_map(function ($comment) {
-
-            if (is_string($comment)) {
-
-                return $comment;
-            }
-
-            if ((isset($comment->type) ? $comment->type : null) != 'Comment') {
-
-                throw new InvalidArgumentException('Comment expected');
-            }
-
-            return $comment->value;
-
-        }, $comments);
-
-        return $this;
-    }
-
-    /**
-=======
->>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
-     * @inheritDoc
-     */
-    public function setLeadingComments($comments) {
-
-        return $this->setComments($comments, 'leading');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getLeadingComments() {
-
-        return isset($this->ast->leadingcomments) ? $this->ast->leadingcomments : null;
-    }
-
-    /**
      * merge duplicate rules
      * @param array $options
      * @return object
@@ -401,7 +378,7 @@ abstract class Element implements ElementInterface  {
      */
     protected function deduplicateRules(array $options = [])
     {
-        if (!is_null(isset($this->ast->children) ? $this->ast->children : null)) {
+        if (!is_null($this->ast->children ?? null)) {
 
             if (empty($options['allow_duplicate_rules']) ||
                 is_array($options['allow_duplicate_rules'])) {

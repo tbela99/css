@@ -1,5 +1,5 @@
 <?php
-// declare(strict_types=1);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +12,7 @@ final class Path extends TestCase
      * @param string $actual
      * @dataProvider testRelativeProvider
      */
-    public function testRelative($expected, $actual)
+    public function testRelative($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -26,7 +26,7 @@ final class Path extends TestCase
      * @param string $actual
      * @dataProvider testAbsoluteProvider
      */
-    public function testAbsolute($expected, $actual)
+    public function testAbsolute($expected, $actual): void
     {
 
         $this->assertEquals(

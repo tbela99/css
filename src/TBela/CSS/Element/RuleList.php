@@ -159,7 +159,7 @@ abstract class RuleList extends Element implements RuleListInterface
     public function getChildren()
     {
 
-        return isset($this->ast->children) ? $this->ast->children : [];
+        return $this->ast->children ?? [];
     }
 
     public function setChildren(array $elements) {

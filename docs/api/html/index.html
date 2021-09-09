@@ -89,7 +89,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <hr  />
 <p><img src="https://img.shields.io/badge/dynamic/json?label=current%20version&amp;query=version&amp;url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json" alt="Current version" class="inline"/> <a href="https://packagist.org/packages/tbela99/css"><object type="image/svg+xml" data="https://img.shields.io/packagist/v/tbela99/css.svg" style="pointer-events: none;">Packagist</object></a> <a href="https://tbela99.github.io/css"><img src="https://img.shields.io/badge/dynamic/json?label=documentation&amp;query=version&amp;url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json" alt="Documentation" class="inline"/></a> <a href="https://snyk.io/test/github/tbela99/css"><object type="image/svg+xml" data="https://snyk.io/test/github/tbela99/gzip/badge.svg" style="pointer-events: none;">Known Vulnerabilities</object></a></p>
 <p>A <a class="el" href="d6/ded/namespaceCSS.html">CSS</a> parser, beautifier and minifier written in PHP. It supports the following features</p>
-<h2><a class="anchor" id="autotoc_md4"></a>
+<h2><a class="anchor" id="autotoc_md1"></a>
 Features</h2>
 <ul>
 <li>generate sourcemap</li>
@@ -100,18 +100,18 @@ Features</h2>
 <li>remove empty rules</li>
 <li>process @import directive</li>
 <li>remove @charset directive</li>
-<li>compute css shorthand (margin, padding, outline, border-radius, font, background)</li>
+<li>compute css shorthand (margin, padding, outline, border-radius, font)</li>
 <li>query the css nodes using xpath like syntax or class name</li>
 <li>transform the css and ast using the traverser api</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md5"></a>
+<h2><a class="anchor" id="autotoc_md2"></a>
 Installation</h2>
 <p>install using <a href="https://getcomposer.org/">Composer</a></p>
-<div class="fragment"><div class="line">$ composer require &quot;tbela99/css:dev-php56-backport&quot;</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
+<div class="fragment"><div class="line">$ composer require tbela99/css</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md3"></a>
 Requirements</h2>
-<p>This library requires PHP version &gt;= 5.6</p>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<p>This library requires PHP version &gt;= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout <a href="https://github.com/tbela99/css/tree/php56-backport">this branch</a></p>
+<h2><a class="anchor" id="autotoc_md4"></a>
 Usage:</h2>
 <div class="fragment"><div class="line">h1 {</div>
 <div class="line">  color: green;</div>
@@ -198,7 +198,7 @@ Usage:</h2>
 <div class="line">]);</div>
 <div class="line"> </div>
 <div class="line">$css = $renderer-&gt;renderAst($ast);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md8"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md5"></a>
 Sourcemap generation</h2>
 <div class="fragment"><div class="line">$renderer = <span class="keyword">new</span> Renderer([</div>
 <div class="line">  <span class="stringliteral">&#39;sourcemap&#39;</span> =&gt; <span class="keyword">true</span></div>
@@ -207,7 +207,7 @@ Sourcemap generation</h2>
 <div class="line"><span class="comment">// call save and specify the file name</span></div>
 <div class="line"><span class="comment">// generate sourcemap -&gt; css/all.css.map</span></div>
 <div class="line">$renderer-&gt;save($element, <span class="stringliteral">&#39;css/all.css&#39;</span>);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
 The CSS Query API</h2>
 <p>Example: Extract Font-src declaration</p>
 <p><a class="el" href="d6/ded/namespaceCSS.html">CSS</a> source</p>
@@ -301,7 +301,7 @@ The CSS Query API</h2>
 <div class="line">   src: local(&quot;Helvetica Neue Bold&quot;), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)</div>
 <div class="line"> }</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
 The Traverser Api</h2>
 <p>The traverser will iterate over all the nodes and process them with the callbacks provided. It will return a new tree Example using ast</p>
 <div class="fragment"><div class="line">use <a class="code" href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a>;</div>
@@ -347,7 +347,7 @@ The Traverser Api</h2>
 <div class="line"> </div>
 <div class="line">$newElement = $traverser-&gt;traverse($element);</div>
 <div class="line">echo $renderer-&gt;renderAst($newElement);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md11"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md8"></a>
 Build a CSS Document</h2>
 <div class="fragment"><div class="line">use \TBela\CSS\Element\Stylesheet;</div>
 <div class="line"> </div>
@@ -418,7 +418,7 @@ Build a CSS Document</h2>
 <div class="line">$stylesheet-&gt;append(<span class="stringliteral">&#39;style/main.css&#39;</span>);</div>
 <div class="line"><span class="comment">// append url</span></div>
 <div class="line">$stylesheet-&gt;append(<span class="stringliteral">&#39;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css&#39;</span>);</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md12"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
 Performance</h2>
 <p>parsing and rendering ast is 3x faster than parsing an element.</p>
 <div class="fragment"><div class="line">use \TBela\CSS\Element\Parser;</div>
@@ -435,14 +435,14 @@ Performance</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// slower</span></div>
 <div class="line">echo $renderer-&gt;render($parser-&gt;parse());</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md13"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md10"></a>
 Parser Options</h2>
 <ul>
 <li>flatten_import: process @import directive and import the content into the css. default to false.</li>
 <li>allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged</li>
 <li>allow_duplicate_declarations: allow duplicated declarations in the same rule.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 Renderer Options</h2>
 <ul>
 <li>sourcemap: generate sourcemap, default false</li>
@@ -467,7 +467,7 @@ Renderer Options</h2>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div class="ttc" id="aclassTBela_1_1CSS_1_1Parser_html"><div class="ttname"><a href="d8/d8b/classTBela_1_1CSS_1_1Parser.html">TBela\CSS\Parser</a></div><div class="ttdef"><b>Definition:</b> Parser.php:22</div></div>
-<div class="ttc" id="aclassTBela_1_1CSS_1_1Ast_1_1Traverser_html"><div class="ttname"><a href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a></div><div class="ttdef"><b>Definition:</b> Traverser.php:10</div></div>
+<div class="ttc" id="aclassTBela_1_1CSS_1_1Ast_1_1Traverser_html"><div class="ttname"><a href="dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html">TBela\CSS\Ast\Traverser</a></div><div class="ttdef"><b>Definition:</b> Traverser.php:12</div></div>
 <div class="ttc" id="aclassTBela_1_1CSS_1_1Renderer_html"><div class="ttname"><a href="df/d08/classTBela_1_1CSS_1_1Renderer.html">TBela\CSS\Renderer</a></div><div class="ttdef"><b>Definition:</b> Renderer.php:20</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

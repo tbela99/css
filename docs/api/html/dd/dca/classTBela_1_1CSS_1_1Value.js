@@ -7,9 +7,9 @@ var classTBela_1_1CSS_1_1Value =
     [ "__toString", "dd/dca/classTBela_1_1CSS_1_1Value.html#ac0f06ad9860d4e38f6c0ffb7b63a85fb", null ],
     [ "getHash", "dd/dca/classTBela_1_1CSS_1_1Value.html#a746ea17cfc529f665fdaf7239aa2f29c", null ],
     [ "jsonSerialize", "dd/dca/classTBela_1_1CSS_1_1Value.html#a0a2da145cd7af258f5767476894026a2", null ],
-    [ "match", "dd/dca/classTBela_1_1CSS_1_1Value.html#af6649166624d64991f545a13b2db4f88", null ],
+    [ "match", "dd/dca/classTBela_1_1CSS_1_1Value.html#adf189721f243920e98f5bc254160ad83", null ],
     [ "render", "dd/dca/classTBela_1_1CSS_1_1Value.html#a1de9767e7adc0fa928ff57816518b9f6", null ],
     [ "toObject", "dd/dca/classTBela_1_1CSS_1_1Value.html#afff6cd71662dd8d598e7fcbb3561c0ac", null ],
-    [ "$data", "dd/dca/classTBela_1_1CSS_1_1Value.html#aaf4fbcea00c36975c4cd223e13240153", null ],
-    [ "$hash", "dd/dca/classTBela_1_1CSS_1_1Value.html#ab5f15991ba44dd56bf57edd367e32630", null ]
+    [ "$data", "dd/dca/classTBela_1_1CSS_1_1Value.html#a9993f8c895176ab2e933d4a3cb2e6643", null ],
+    [ "$hash", "dd/dca/classTBela_1_1CSS_1_1Value.html#a32a600071098d36a9513c6123fb8eaa8", null ]
 ];

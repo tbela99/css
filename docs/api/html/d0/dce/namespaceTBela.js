@@ -119,7 +119,6 @@ var namespaceTBela =
       [ "Element", "d8/d23/classTBela_1_1CSS_1_1Element.html", "d8/d23/classTBela_1_1CSS_1_1Element" ],
       [ "Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", "d8/d8b/classTBela_1_1CSS_1_1Parser" ],
       [ "Renderer", "df/d08/classTBela_1_1CSS_1_1Renderer.html", "df/d08/classTBela_1_1CSS_1_1Renderer" ],
-      [ "Traverser", "d8/d60/classTBela_1_1CSS_1_1Traverser.html", "d8/d60/classTBela_1_1CSS_1_1Traverser" ],
       [ "Value", "dd/dca/classTBela_1_1CSS_1_1Value.html", "dd/dca/classTBela_1_1CSS_1_1Value" ]
     ] ]
 ];

@@ -16,7 +16,7 @@ class ShortHand extends Value
      * @var array
      * @ignore
      */
-    protected static $patterns = [
+    protected static array $patterns = [
 
         /*
         'keyword',
@@ -36,8 +36,7 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-
-    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
 
         $separator = Config::getPath('map.'.static::type().'.separator');
@@ -109,7 +108,7 @@ class ShortHand extends Value
                     $className = static::getClassName($pattern['type']) . '::matchToken';
 
                     $k = $i + 1;
-                    $next = isset($tokens[$k]) ? $tokens[$k] : null;
+                    $next = $tokens[$k] ?? null;
 
                     while (!is_null($next)) {
 
@@ -118,11 +117,10 @@ class ShortHand extends Value
                             break;
                         }
 
-                        ++$k;
-                        $next = isset($tokens[$k]) ? $tokens[$k] : null;
+                        $next = $tokens[++$k] ?? null;
                     }
 
-                    if (call_user_func($className, $tokens[$i], isset($tokens[$i - 1]) ? $tokens[$i - 1] : null, $previous, isset($tokens[$i + 1]) ? $tokens[$i + 1] : null, $next, $i, $tokens)) {
+                    if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous, $tokens[$i + 1] ?? null, $next, $i, $tokens)) {
 
                         $tokens[$i]->type = $pattern['type'];
                         $previous = $tokens[$i];
@@ -147,17 +145,17 @@ class ShortHand extends Value
                                         break;
                                     }
 
-                                    $next = isset($tokens[++$w]) ? $tokens[$w] : null;
+                                    $next = $tokens[++$w] ?? null;
                                 }
 
-                                if (call_user_func($className, $tokens[$k], $tokens[$k - 1], $previous, isset($tokens[$k + 1]) ? $tokens[$k + 1] : null, $next, $k, $tokens)) {
+                                if (call_user_func($className, $tokens[$k], $tokens[$k - 1], $previous, $tokens[$k + 1] ?? null, $next, $k, $tokens)) {
 
                                     $tokens[$k]->type = $pattern['type'];
                                     $i = $k;
                                     $previous = $tokens[$k];
 
                                     $w = $k;
-                                    $next = isset($tokens[$k + 1]) ? $tokens[$k + 1] : null;
+                                    $next = $tokens[$k + 1] ?? null;
 
                                     while (!is_null($next)) {
 
@@ -166,8 +164,7 @@ class ShortHand extends Value
                                             break;
                                         }
 
-                                        
-                                        $next = isset($tokens[++$w]) ? $tokens[$w] : null;
+                                        $next = $tokens[++$w] ?? null;
                                     }
                                 }
 
@@ -177,7 +174,7 @@ class ShortHand extends Value
                                 }
                             }
 
-                            $previous = isset($tokens[$i - 1]) ? $tokens[$i - 1] : null;
+                            $previous = $tokens[$i - 1] ?? null;
                         }
 
                         unset($patterns[$key]);

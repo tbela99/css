@@ -10,26 +10,26 @@ class Parser
     /**
      * @var int
      */
-    protected $position;
+    protected int $position;
     /**
      * @var int
      */
-    protected $last;
+    protected int $last;
     /**
      * @var string
      */
-    protected $string;
+    protected string $string;
     /**
      * @var array
      */
-    protected $tokens;
+    protected array $tokens;
 
     /**
      * @param string $string
      * @return TokenList
      * @throws SyntaxError
      */
-    public function parse($string)
+    public function parse(string $string): TokenList
     {
 
         $string = trim($string);
@@ -92,7 +92,7 @@ class Parser
      * @return array
      * @throws SyntaxError
      */
-    protected function doParse($string)
+    protected function doParse(string $string)
     {
 
         $string = ltrim($string);
@@ -149,7 +149,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_selectors()
+    protected function parse_selectors(): void
     {
 
         $j = $this->last;
@@ -232,7 +232,7 @@ class Parser
      * @return array
      * @throws SyntaxError
      */
-    protected function parse_selector($selector, $context = 'selector')
+    protected function parse_selector(string $selector, string $context = 'selector'): array
     {
 
         $selector = trim($selector);
@@ -299,7 +299,7 @@ class Parser
 
                         $token = end($result);
 
-                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+                        if (($token->type ?? '') == 'whitespace') {
 
                             array_pop($result);
                         }
@@ -330,7 +330,7 @@ class Parser
 
                             $token = end($result);
 
-                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+                            if (($token->type ?? '') == 'whitespace') {
 
                                 array_pop($result);
                             }
@@ -380,6 +380,7 @@ class Parser
                                     $result[] = (object)['type' => 'operator', 'value' => $selector[$i]];
                                 }
                             } else {
+
                                 $buffer .= $selector[$i];
                             }
 
@@ -394,7 +395,7 @@ class Parser
 
                             $token = end($result);
 
-                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+                            if (($token->type ?? '') == 'whitespace') {
 
                                 array_pop($result);
                             }
@@ -429,7 +430,7 @@ class Parser
 
                             $token = end($result);
 
-                            if ((isset($token->type) ? $token->type : '') == 'whitespace') {
+                            if (($token->type ?? '') == 'whitespace') {
 
                                 array_pop($result);
                             }
@@ -619,7 +620,7 @@ class Parser
      * @param string $context
      * @return object
      */
-    protected function getTokenType($token, $context)
+    protected function getTokenType(string $token, string $context)
     {
 
         $value = trim($token);
@@ -643,7 +644,7 @@ class Parser
     /**
      * @throws SyntaxError
      */
-    protected function parse_path()
+    protected function parse_path(): void
     {
 
         $j = strlen($this->string) - 1;
@@ -659,7 +660,7 @@ class Parser
 
             $this->position += 1;
             $this->tokens[] = (object)['type' => 'select', 'node' => '*'];
-        } else if ($substr !== false) {
+        } else {
             $token = substr($substr, 0, 1);
 
             if ($token == '/') {
@@ -672,13 +673,13 @@ class Parser
         }
     }
 
-    protected function is_whitespace($char)
+    protected function is_whitespace($char): bool
     {
 
         return preg_match('#^\s+$#sm', $char);
     }
 
-    protected function match_token($string, $close, $position, $start)
+    protected function match_token($string, $close, $position, $start): string
     {
 
         $j = strlen($string) - 1;
@@ -745,7 +746,7 @@ class Parser
         return $buffer;
     }
 
-    public function split($string, $char = '|')
+    public function split(string $string, $char = '|')
     {
 
         $result = [];

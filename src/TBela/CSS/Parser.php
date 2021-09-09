@@ -24,56 +24,33 @@ class Parser implements ParsableInterface
 
     use ParserTrait;
 
-    /**
-     * @var stdClass
-     * @ignore
-     */
-    protected $currentPosition;
-    /**
-     * @var stdClass
-     * @ignore
-     */
-    protected $previousPosition;
-    /**
-     * @var int
-     * @ignore
-     */
-    protected $end = 0;
+    protected stdClass $currentPosition;
+    protected stdClass $previousPosition;
+    protected int $end = 0;
 
+    protected array $errors = [];
 
-    protected $errors = [];
-
-    /**
-     * @var stdClass|null
-     * @ignore
-     */
-    protected $ast = null;
-
-    /**
-     * @var RuleListInterface|null
-     * @ignore
-     */
-    protected $element = null;
+    protected ?stdClass $ast = null;
+    protected ?RuleListInterface $element = null;
 
     /**
      * css data
      * @var string
      * @ignore
      */
-
-    protected $css = '';
+    protected string $css = '';
 
     /**
      * @var string
      * @ignore
      */
-    protected $src = '';
+    protected string $src = '';
 
     /**
      * @var array
      * @ignore
      */
-    protected $options = [
+    protected array $options = [
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
@@ -131,7 +108,6 @@ class Parser implements ParsableInterface
      * @return Parser
      * @throws SyntaxError
      */
-
     public function merge($parser)
     {
 
@@ -203,7 +179,6 @@ class Parser implements ParsableInterface
     /**
      * @return string
      */
-
     public function getContent()
     {
 
@@ -318,29 +293,28 @@ class Parser implements ParsableInterface
 
         $signature = 'type:' . $ast->type;
 
-        $name = isset($ast->name) ? $ast->name : null;
+        $name = $ast->name ?? null;
 
         if (isset($name)) {
 
             $signature .= ':name:' . $name;
         }
 
-        $value = isset($ast->value) ? $ast->value : null;
+        $value = $ast->value ?? null;
 
         if (isset($value)) {
 
-            $value = is_string($value) ? Value::parse($value, $name) : $value;
-            $signature .= ':value:'.$value->render(['convert_color' => 'hex', 'compress' => true]);
+            $signature .= ':value:'.(is_string($value) ? Value::parse($value, $name) : $value)->render(['convert_color' => 'hex', 'compress' => true]);
         }
 
-        $selector = isset($ast->selector) ? $ast->selector : null;
+        $selector = $ast->selector ?? null;
 
         if (isset($selector)) {
 
             $signature .= ':selector:' . (is_array($selector) ? implode(',', $selector) : $selector);
         }
 
-        $vendor = isset($ast->vendor) ? $ast->vendor : null;
+        $vendor = $ast->vendor ?? null;
 
         if (isset($vendor)) {
 
@@ -499,7 +473,7 @@ class Parser implements ParsableInterface
      * @throws Exception
      * @ignore
      */
-    protected function getFileContent($file, $media = '')
+    protected function getFileContent(string $file, string $media = '')
     {
 
         if (!preg_match('#^(https?:)?//#', $file)) {
@@ -771,7 +745,7 @@ class Parser implements ParsableInterface
      * @return stdClass
      * @ignore
      */
-    protected function update($position, $string)
+    protected function update($position, string $string)
     {
 
         $j = strlen($string);
@@ -1022,7 +996,6 @@ class Parser implements ParsableInterface
 
             if (!empty($leading)) {
 
-                $node->{$property} = Value::parse(trim($node->{$property}));
                 $node->leadingcomments = $leading;
             }
         }

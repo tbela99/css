@@ -25,17 +25,17 @@ var NAVTREE =
   [ "CSS", "index.html", [
     [ "Deprecated List", "da/d58/deprecated.html", null ],
     [ "Namespaces", "namespaces.html", [
-      [ "Features", "index.html#autotoc_md4", null ],
-      [ "Installation", "index.html#autotoc_md5", null ],
-      [ "Requirements", "index.html#autotoc_md6", null ],
-      [ "Usage:", "index.html#autotoc_md7", null ],
-      [ "Sourcemap generation", "index.html#autotoc_md8", null ],
-      [ "The CSS Query API", "index.html#autotoc_md9", null ],
-      [ "The Traverser Api", "index.html#autotoc_md10", null ],
-      [ "Build a CSS Document", "index.html#autotoc_md11", null ],
-      [ "Performance", "index.html#autotoc_md12", null ],
-      [ "Parser Options", "index.html#autotoc_md13", null ],
-      [ "Renderer Options", "index.html#autotoc_md14", null ],
+      [ "Features", "index.html#autotoc_md1", null ],
+      [ "Installation", "index.html#autotoc_md2", null ],
+      [ "Requirements", "index.html#autotoc_md3", null ],
+      [ "Usage:", "index.html#autotoc_md4", null ],
+      [ "Sourcemap generation", "index.html#autotoc_md5", null ],
+      [ "The CSS Query API", "index.html#autotoc_md6", null ],
+      [ "The Traverser Api", "index.html#autotoc_md7", null ],
+      [ "Build a CSS Document", "index.html#autotoc_md8", null ],
+      [ "Performance", "index.html#autotoc_md9", null ],
+      [ "Parser Options", "index.html#autotoc_md10", null ],
+      [ "Renderer Options", "index.html#autotoc_md11", null ],
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -55,7 +55,7 @@ var NAVTREEINDEX =
 [
 ".html",
 "d8/d23/classTBela_1_1CSS_1_1Element.html#a05cac710db9aeb8363904badd286cca6",
-"dd/dca/classTBela_1_1CSS_1_1Value.html#af6649166624d64991f545a13b2db4f88"
+"dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html#a2649a9b9a651adfc358b7308fb149a55"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

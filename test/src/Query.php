@@ -1,5 +1,5 @@
 <?php
-//declare(strict_types=1);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -20,7 +20,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryProvider
      */
-    public function testQuery(array $expected, array $actual)
+    public function testQuery(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -34,7 +34,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider querySelectorProvider
      */
-    public function testQuerySelector(array $expected, array $actual)
+    public function testQuerySelector(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -48,7 +48,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider combinatorProvider
      */
-    public function testCombinator(array $expected, array $actual)
+    public function testCombinator(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -62,7 +62,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryFunctionsProvider
      */
-    public function testQueryFunctions(array $expected, array $actual)
+    public function testQueryFunctions(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -76,7 +76,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryProviderOr
      */
-    public function testQueryOr(array $expected, array $actual)
+    public function testQueryOr(array $expected, array $actual): void
     {
 
         $this->assertEquals(
@@ -90,7 +90,7 @@ final class Query extends TestCase
      * @param string $actual
      * @dataProvider renderQuery
      */
-    public function testRenderQuery($expected, $actual)
+    public function testRenderQuery(string $expected, string $actual): void
     {
 
         $this->assertEquals(
@@ -104,7 +104,7 @@ final class Query extends TestCase
      * @param string $actual
      * @dataProvider dedupProvider
      */
-    public function testDedupQuery($expected, $actual)
+    public function testDedupQuery(string $expected, string $actual): void
     {
 
         $this->assertEquals(
@@ -118,7 +118,7 @@ final class Query extends TestCase
      * @param array $actual
      * @dataProvider queryByClassNameProvider
      */
-    public function testQueryByClassName(array $expected, array $actual)
+    public function testQueryByClassName(array $expected, array $actual): void
     {
 
         $this->assertEquals(

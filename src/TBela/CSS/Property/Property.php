@@ -22,17 +22,17 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * @var string
      * @ignore
      */
-    protected $name;
+    protected string $name;
 
-    protected $leadingcomments = null;
+    protected ?array $leadingcomments = null;
 
-    protected $trailingcomments = null;
+    protected ?array $trailingcomments = null;
 
     /**
      * @var string
      * @ignore
      */
-    protected $type = 'Property';
+    protected string $type = 'Property';
 
     /**
      * @var Set|string
@@ -138,7 +138,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function setTrailingComments($comments)
+    public function setTrailingComments(?array $comments):RenderableInterface
     {
         $this->trailingcomments = $comments;
         return $this;
@@ -147,7 +147,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function getTrailingComments()
+    public function getTrailingComments(): ?array
     {
         return $this->trailingcomments;
     }
@@ -155,7 +155,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function setLeadingComments($comments)
+    public function setLeadingComments(?array $comments):RenderableInterface
     {
         $this->leadingcomments = $comments;
         return $this;
@@ -164,7 +164,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @inheritDoc
      */
-    public function getLeadingComments()
+    public function getLeadingComments(): ?array
     {
         return $this->leadingcomments;
     }

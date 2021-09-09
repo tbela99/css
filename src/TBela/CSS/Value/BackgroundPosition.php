@@ -13,13 +13,13 @@ class BackgroundPosition extends Value
 
     use ValueTrait;
 
-    protected static $keywords = ['left', 'center', 'right', 'top', 'bottom'];
+    protected static array $keywords = ['left', 'center', 'right', 'top', 'bottom'];
 
-    protected static $x = ['left', 'right'];
+    protected static array $x = ['left', 'right'];
 
-    protected static $y = ['top', 'bottom'];
+    protected static array $y = ['top', 'bottom'];
 
-    public static $patterns = [
+    public static array $patterns = [
         [
             [
                 'type' => 'background-position', 'multiple' => true
@@ -55,7 +55,7 @@ class BackgroundPosition extends Value
         ]
     ];
 
-    protected static $defaults = ['0 0'];
+    protected static array $defaults = ['0 0'];
 
     /**
      * @inheritDoc
@@ -71,7 +71,7 @@ class BackgroundPosition extends Value
      * @inheritDoc
      */
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
         $test = false;
@@ -181,7 +181,7 @@ class BackgroundPosition extends Value
      * @return bool
      * @ignore
      */
-    protected static function check(array $set, $value, ...$values)
+    protected static function check(array $set, $value, ...$values): bool
     {
 
         if (in_array($value, $set)) {
@@ -198,7 +198,7 @@ class BackgroundPosition extends Value
         return true;
     }
 
-    public function render(array $options = [])
+    public function render(array $options = []): string
     {
 
         if (isset($this->data->unit)) {

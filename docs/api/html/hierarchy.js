@@ -11,8 +11,7 @@ var hierarchy =
     [ "TBela\\CSS\\Query\\Evaluator", "d8/d89/classTBela_1_1CSS_1_1Query_1_1Evaluator.html", null ],
     [ "TBela\\CSS\\Event\\EventInterface", "d0/d24/interfaceTBela_1_1CSS_1_1Event_1_1EventInterface.html", [
       [ "TBela\\CSS\\Event\\Event", "dc/dc7/classTBela_1_1CSS_1_1Event_1_1Event.html", [
-        [ "TBela\\CSS\\Ast\\Traverser", "dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html", null ],
-        [ "TBela\\CSS\\Traverser", "d8/d60/classTBela_1_1CSS_1_1Traverser.html", null ]
+        [ "TBela\\CSS\\Ast\\Traverser", "dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html", null ]
       ] ]
     ] ],
     [ "TBela\\CSS\\Parser\\Helper", "d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html", null ],
