@@ -53,6 +53,11 @@ abstract class Element implements ElementInterface  {
 
             foreach ($ast as $key => $value) {
 
+                if (is_null($value)) {
+
+                    continue;
+                }
+
                 if (is_callable([$this, 'set'.$key])) {
 
                     $this->{'set'.$key}($value);
@@ -125,23 +130,14 @@ abstract class Element implements ElementInterface  {
     }
 
     /**
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
      * @inheritDoc
      */
     public function traverse(callable $fn, $event) {
 
-        return (new Element\Traverser())->on($event, $fn)->traverse($this);
+        return (new Traverser())->on($event, $fn)->traverse($this);
     }
 
     /**
-<<<<<<< HEAD
-=======
-=======
->>>>>>> ae7546465ede1f52ef71c7afb34da035dda76552
->>>>>>> 8c86a81ac1d7c25cacb54574ff654b4493f5feb0
      *
      * @inheritDoc
      * @throws Parser\SyntaxError
