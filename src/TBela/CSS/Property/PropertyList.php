@@ -60,7 +60,7 @@ class PropertyList implements IteratorAggregate
      * @return $this
      */
 
-    public function set(?string $name, $value, $propertyType = null, ?array $leadingcomments = null, ?array $trailingcomments = null, $src = null) {
+    public function set(?string $name, $value, $propertyType = null, ?array $leadingcomments = null, ?array $trailingcomments = null, $src = null, $vendor = null) {
 
         if ($propertyType == 'Comment') {
 
@@ -80,6 +80,11 @@ class PropertyList implements IteratorAggregate
                 if (!is_null($src)) {
 
                     $property->setSrc($src);
+                }
+
+                if (!is_null($vendor)) {
+
+                    $property->setVendor($vendor);
                 }
 
                 if (!empty($leadingcomments)) {
@@ -104,6 +109,11 @@ class PropertyList implements IteratorAggregate
             if (!is_null($src)) {
 
                 $property->setSrc($src);
+            }
+
+            if (!is_null($vendor)) {
+
+                $property->setVendor($vendor);
             }
 
             if (!empty($leadingcomments)) {
@@ -172,6 +182,11 @@ class PropertyList implements IteratorAggregate
                 }
 
                 $property = $this->properties[$name]->setValue($value);
+
+                if (!is_null($vendor)) {
+
+                    $property->setVendor($vendor);
+                }
 
                 if (!empty($leadingcomments)) {
 

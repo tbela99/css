@@ -24,6 +24,11 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     protected string $name;
 
+    /**
+     * @var string | null
+     */
+    protected string $vendor;
+
     protected ?array $leadingcomments = null;
 
     protected ?array $trailingcomments = null;
@@ -73,6 +78,24 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
         }
 
         return $this->value;
+    }
+
+    /**
+     * @param $vendor
+     * @return $this
+     */
+    public function setVendor($vendor) {
+
+        $this->vendor = $vendor;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getVendor() {
+
+        return $this->vendor;
     }
 
     /**
