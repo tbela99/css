@@ -9,19 +9,6 @@ use TBela\CSS\Renderer;
 final class Color extends TestCase
 {
     /**
-     * @param Parser $parser
-     * @param string $expected
-     *
-     * @dataProvider cssVariableProvider
-     */
-    public function testCssVariable (Parser $parser, $expected) {
-
-        $this->assertEquals(
-            $expected,
-            (string) $parser
-        );
-    }
-    /**
      * @param Compiler $compiler
      * @param $content
      * @param string $expected
@@ -215,21 +202,6 @@ p {
 }', 'p {
  /* red 50% translucent hsla(0, 100%, 50%, .5) */
  color: hsla(0, 100%, 50%, .5)
-}'];
-
-        return $data;
-    }
-
-    public function cssVariableProvider () {
-
-        $data = [];
-
-        $data[] = [new TBela\CSS\Parser('.a{color:rgba(var(--cassiopeia-color-primary), .25);
-background-color: rgba(255, 255, 255, 1);
-}'),
-            '.a {
- color: rgba(var(--cassiopeia-color-primary), .25);
- background-color: white
 }'];
 
         return $data;
