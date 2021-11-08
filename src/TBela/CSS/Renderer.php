@@ -791,6 +791,11 @@ class Renderer
 
         $result = $ast->name;
 
+        if (!empty($ast->vendor)) {
+
+            $result = '-'.$ast->vendor.'-'.$result;
+        }
+
         if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
             $comments = $ast->leadingcomments;
@@ -863,7 +868,7 @@ class Renderer
 
             foreach ($ast->children ?? [] as $child) {
 
-                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null);
+                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
             }
         } else {
 
