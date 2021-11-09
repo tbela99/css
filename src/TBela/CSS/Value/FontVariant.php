@@ -13,7 +13,7 @@ class FontVariant extends Value
 
     use UnitTrait, ValueTrait;
 
-    protected static array $keywords = [
+    protected static $keywords = [
         'normal',
         'none',
         'small-caps',
@@ -24,12 +24,12 @@ class FontVariant extends Value
         'titling-caps'
     ];
 
-    protected static array $defaults = ['normal'];
+    protected static $defaults = ['normal'];
 
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
     {
 
         if ($token->type == 'css-string' && in_array(strtolower($token->value), static::$keywords)) {

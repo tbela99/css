@@ -28,31 +28,31 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * var stdClass;
      * @ignore
      */
-    protected ?stdClass $data = null;
+    protected $data = null;
 
     /**
      * @var array
      * @ignore
      */
-    protected static array $defaults = [];
+    protected static $defaults = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected static array $keywords = [];
+    protected static $keywords = [];
 
     /**
      * @var string|null
      * @ignore
      */
-    protected ?string $hash = null;
+    protected $hash = null;
 
     /**
      * @var array
      * @ignore
      */
-    protected static array $cache = [];
+    protected static $cache = [];
 
     /**
      * Value constructor.
@@ -120,7 +120,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $type
      * @return bool
      */
-    public function match(string $type): bool
+    public function match($type)
     {
 
         return strtolower($this->data->type) == $type;
@@ -131,7 +131,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $type
      * @return string
      */
-    public static function getClassName(string $type): string
+    public static function getClassName($type)
     {
 
         static $classNames = [];
@@ -152,7 +152,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return string
      * @ignore
      */
-    protected static function type(): string
+    protected static function type()
     {
 
         static $types = [];
@@ -175,7 +175,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return bool
      * @ignore
      */
-    protected static function matchDefaults($token): bool
+    protected static function matchDefaults($token)
     {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);
@@ -191,7 +191,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $tokens
      * @return bool
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
     {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
@@ -202,7 +202,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param stdClass $data
      * @return bool
      */
-    protected static function validate($data): bool
+    protected static function validate($data)
     {
 
         return isset($data->value);
@@ -213,7 +213,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param stdClass $data
      * @return Value
      */
-    public static function getInstance($data): Value
+    public static function getInstance($data)
     {
 
         if ($data instanceof Value) {
@@ -247,7 +247,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $options
      * @return string
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         return $this->data->value;
@@ -262,7 +262,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $contextName
      * @return Set
      */
-    public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    public static function parse($string, $property = null, $capture_whitespace = true, $context = '', $contextName = '')
     {
         if ($string instanceof Set) {
 
@@ -303,7 +303,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $options
      * @return array
      */
-    public static function reduce(array $tokens, array $options = []): array
+    public static function reduce(array $tokens, array $options = [])
     {
         $j = count($tokens);
 
@@ -366,7 +366,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                             array_splice($tokens, $j, 1);
                         }
 
-                        $key = $tokens[$j - 1] ?? null;
+                        $key = isset($tokens[$j - 1]) ? $tokens[$j - 1] : null;
 
                         if (!is_null($key) && $key->type == 'separator' && $key->value == $prefix) {
 
@@ -408,7 +408,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $contextName
      * @return Set
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context, $contextName)));
@@ -422,7 +422,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $contextName
      * @return array|null
      */
-    protected static function getTokens(string $string, $capture_whitespace = true, $context = '', $contextName = '')
+    protected static function getTokens($string, $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $string = trim($string);
@@ -639,7 +639,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                         $token = end($tokens);
 
-                        if (($token->type ?? '') == 'whitespace') {
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
 
                             array_pop($tokens);
                         }
@@ -739,7 +739,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                         $token = end($tokens);
 
-                        if (($token->type ?? '') == 'whitespace') {
+                        if ((isset($token->type) ? $token->type : '') == 'whitespace') {
 
                             array_pop($tokens);
                         }
@@ -812,7 +812,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param $token
      * @return stdClass
      */
-    protected static function getType(string $token)
+    protected static function getType($token)
     {
 
         $type = new stdClass;
@@ -822,7 +822,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
         if (substr($token, 0, 1) != '#' && is_numeric($token)) {
 
             $type->type = 'number';
-        } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
+        } else if ($token == 'currentcolor' || array_key_exists($token, Color::COLORS_NAMES) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
             $type->type = 'color';
             $type->colorType = $token == 'currentcolor' ? 'keyword' : 'hex';
@@ -876,7 +876,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return array
      * @ignore
      */
-    public static function keywords(): array
+    public static function keywords()
     {
 
         return static::$keywords;
@@ -888,7 +888,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return string|null
      * @ignore
      */
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword($string, array $keywords = null)
     {
 
         if (is_null($keywords)) {
@@ -914,7 +914,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $options
      * @return string
      */
-    public static function getNumericValue(?Value $value, array $options = []): ?string
+    public static function getNumericValue(Value $value = null, array $options = [])
     {
 
         if (is_null($value) || $value->value === '') {
@@ -929,7 +929,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param Value $value
      * @return string
      */
-    public static function getRGBValue(Value $value): string
+    public static function getRGBValue(Value $value)
     {
 
         return Number::compress($value->unit == '%' ? 255 * $value->value / 100 : $value->value);
@@ -940,7 +940,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $options
      * @return string
      */
-    public static function getAngleValue(?Value $value, array $options = []): ?string
+    public static function getAngleValue(Value $value = null, array $options = [])
     {
 
         if (is_null($value) || $value->value === '') {

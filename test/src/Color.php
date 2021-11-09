@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Compiler;
@@ -15,7 +14,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaCss4ColorProvider
      */
-    public function testRgbaCss4Color(Compiler $compiler, $content, $expected): void
+    public function testRgbaCss4Color(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -30,7 +29,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaColorProvider
      */
-    public function testRgbaColor(Compiler $compiler, $content, $expected): void
+    public function testRgbaColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -45,7 +44,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaColorCompressProvider
      */
-    public function testRgbaColorCompress(Compiler $compiler, $content, $expected): void
+    public function testRgbaColorCompress(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -59,7 +58,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaHexColorProvider
      */
-    public function testRgbaHexColor(Compiler $compiler, $content, $expected): void
+    public function testRgbaHexColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -74,7 +73,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider rgbaHexColorCompressProvider
      */
-    public function testRgbaHexColorCompress(Compiler $compiler, $content, $expected): void
+    public function testRgbaHexColorCompress(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -89,7 +88,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider blackColorProvider
      */
-    public function testBlackColor(Compiler $compiler, $content, $expected): void
+    public function testBlackColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -104,7 +103,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider redColorProvider
      */
-    public function testRedColor(Compiler $compiler, $content, $expected): void
+    public function testRedColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -119,7 +118,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider yellowColorProvider
      */
-    public function testYellowColor(Compiler $compiler, $content, $expected): void
+    public function testYellowColor(Compiler $compiler, $content, $expected)
     {
         $this->assertEquals(
             $expected,
@@ -134,7 +133,7 @@ final class Color extends TestCase
      * @throws Exception
      * @dataProvider yellowColorAstProvider
      */
-    public function testYellowColorAst(Parser $parser, Renderer $renderer, $content, $expected): void
+    public function testYellowColorAst(Parser $parser, Renderer $renderer, $content, $expected)
     {
         $this->assertEquals(
             $expected,

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapProvider
      */
-    public function testSourcemap($expected, $actual): void
+    public function testSourcemap($expected, $actual)
     {
 
         $this->assertEquals(
@@ -26,7 +25,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapImportProvider
      */
-    public function testSourcemapImport($expected, $actual): void
+    public function testSourcemapImport($expected, $actual)
     {
 
         $this->assertEquals(
@@ -40,7 +39,7 @@ final class Sourcemap extends TestCase
      * @param string $actual
      * @dataProvider testSourcemapUrlProvider
      */
-    public function testSourcemapUrl($expected, $actual): void
+    public function testSourcemapUrl($expected, $actual)
     {
 
         $this->assertEquals(
@@ -80,8 +79,8 @@ final class Sourcemap extends TestCase
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -114,7 +113,7 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,6DAaA,+LAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
@@ -151,8 +150,8 @@ body {
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -187,7 +186,7 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,6DAaA,+LAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }

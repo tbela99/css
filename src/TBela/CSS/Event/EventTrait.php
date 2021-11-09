@@ -7,9 +7,9 @@ trait EventTrait {
     /**
      * @var callable[]
      */
-    protected array $events = [];
+    protected $events = [];
 
-    public function on(string $event, callable $callable) {
+    public function on($event, callable $callable) {
 
         $this->events[strtolower($event)][] = $callable;
         return $this;
@@ -23,7 +23,7 @@ trait EventTrait {
      * @param callable|null $callable
      * @return $this
      */
-    public function off(string $event = null, callable $callable = null) {
+    public function off($event = null, callable $callable = null) {
 
         if (is_null($event)) {
 
@@ -55,7 +55,7 @@ trait EventTrait {
         return $this;
     }
 
-    public function emit(string $event, ...$args): array {
+    public function emit($event, ...$args) {
 
         $result = [];
         $event = strtolower($event);

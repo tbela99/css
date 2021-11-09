@@ -107,7 +107,7 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    protected static function validate($data):bool
+    protected static function validate($data)
     {
 
         if (isset($data->name) && isset($data->arguments)) {
@@ -115,13 +115,13 @@ class Color extends Value
             return in_array($data->name, ['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk']);
         }
 
-        return isset(ColorUtil::COLORS_NAMES[$data->value]) || (isset($data->colorType) && in_array($data->colorType, ['hex', 'keyword']));
+        return array_key_exists($data->value, ColorUtil::COLORS_NAMES) || (isset($data->colorType) && in_array($data->colorType, ['hex', 'keyword']));
     }
 
     /**
      * @inheritDoc
      */
-    public function match($type): bool
+    public function match($type)
     {
 
         return $type == 'color';
@@ -130,7 +130,7 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         $key = md5(json_encode($options).json_encode($this->data));
@@ -167,7 +167,7 @@ class Color extends Value
             $options['convert_color'] = isset($data->colorType) ? $data->colorType : $data->name;
         }
 
-        if (isset(ColorUtil::NAMES_COLORS[$hex])) {
+        if (array_key_exists($hex, ColorUtil::NAMES_COLORS)) {
 
             $hex = ColorUtil::NAMES_COLORS[$hex];
         }
@@ -183,7 +183,7 @@ class Color extends Value
             //
             if ($css3 && substr($value, 0, 1) == '#' && in_array(strlen($value), [5, 9])) {
 
-                $options['convert_color'] = $data->name ?? 'rgba';
+                $options['convert_color'] = isset($data->name) ? $data->name : 'rgba';
             }
 
             if ($options['convert_color'] == 'hex') {

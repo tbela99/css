@@ -8,12 +8,12 @@ namespace TBela\CSS\Value;
  */
 class CssUrl extends CssFunction {
 
-    protected static function validate($data): bool {
+    protected static function validate($data) {
 
-        return $data->name ?? null === 'url' && isset($data->arguments) && $data->arguments instanceof Set;
+        return (isset($data->name) ? $data->name : null) === 'url' && isset($data->arguments) && $data->arguments instanceof Set;
     }
 
-    public function render(array $options = []): string {
+    public function render(array $options = []) {
 
         return $this->data->name.'('. preg_replace('~^(["\'])([^\s\\1]+)\\1$~', '$2', $this->data->arguments->render($options)).')';
     }

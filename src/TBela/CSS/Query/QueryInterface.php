@@ -12,5 +12,5 @@ interface QueryInterface extends RenderableInterface
      * @param string $query
      * @return QueryInterface[]
      */
-    public function query(string $query): array;
+    public function query($query);
 }

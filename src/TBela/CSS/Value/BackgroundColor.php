@@ -9,9 +9,9 @@ namespace TBela\CSS\Value;
 class BackgroundColor extends Color
 {
 
-    public static array $defaults = ['transparent', '#0000'];
+    public static $defaults = ['transparent', '#0000'];
 
-    public static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    public static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
     {
         $tokens = [];
 
@@ -28,7 +28,7 @@ class BackgroundColor extends Color
         return new Set(static::reduce($tokens));
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
     {
         return $token->type == 'color';
     }

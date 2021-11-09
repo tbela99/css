@@ -24,33 +24,33 @@ class Parser implements ParsableInterface
 
     use ParserTrait;
 
-    protected stdClass $currentPosition;
-    protected stdClass $previousPosition;
-    protected int $end = 0;
+    protected $currentPosition;
+    protected $previousPosition;
+    protected $end = 0;
 
-    protected array $errors = [];
+    protected $errors = [];
 
-    protected ?stdClass $ast = null;
-    protected ?RuleListInterface $element = null;
+    protected $ast = null;
+    protected $element = null;
 
     /**
      * css data
      * @var string
      * @ignore
      */
-    protected string $css = '';
+    protected $css = '';
 
     /**
      * @var string
      * @ignore
      */
-    protected string $src = '';
+    protected $src = '';
 
     /**
      * @var array
      * @ignore
      */
-    protected array $options = [
+    protected $options = [
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
@@ -293,28 +293,29 @@ class Parser implements ParsableInterface
 
         $signature = 'type:' . $ast->type;
 
-        $name = $ast->name ?? null;
+        $name = isset($ast->name) ? $ast->name : null;
 
         if (isset($name)) {
 
             $signature .= ':name:' . $name;
         }
 
-        $value = $ast->value ?? null;
+        $value = isset($ast->value) ? $ast->value : null;
 
         if (isset($value)) {
 
-            $signature .= ':value:'.(is_string($value) ? Value::parse($value, $name) : $value)->render(['convert_color' => 'hex', 'compress' => true]);
+            $value = (is_string($value) ? Value::parse($value, $name) : $value);
+            $signature .= ':value:'.$value->render(['convert_color' => 'hex', 'compress' => true]);
         }
 
-        $selector = $ast->selector ?? null;
+        $selector = isset($ast->selector) ? $ast->selector : null;
 
         if (isset($selector)) {
 
             $signature .= ':selector:' . (is_array($selector) ? implode(',', $selector) : $selector);
         }
 
-        $vendor = $ast->vendor ?? null;
+        $vendor = isset($ast->vendor) ? $ast->vendor : null;
 
         if (isset($vendor)) {
 
@@ -473,7 +474,7 @@ class Parser implements ParsableInterface
      * @throws Exception
      * @ignore
      */
-    protected function getFileContent(string $file, string $media = '')
+    protected function getFileContent($file, $media = '')
     {
 
         if (!preg_match('#^(https?:)?//#', $file)) {
@@ -745,7 +746,7 @@ class Parser implements ParsableInterface
      * @return stdClass
      * @ignore
      */
-    protected function update($position, string $string)
+    protected function update($position, $string)
     {
 
         $j = strlen($string);

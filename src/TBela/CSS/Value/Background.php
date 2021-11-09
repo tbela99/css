@@ -11,13 +11,13 @@ use TBela\CSS\Value;
 class Background extends ShortHand
 {
 
-    public static array $keywords = ['none'];
+    public static $keywords = ['none'];
 
     /**
      * @var array
      * @ignore
      */
-    protected static array $patterns = [
+    protected static $patterns = [
 
         'keyword',
         [

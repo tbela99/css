@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class Vendor extends TestCase
      * @param string $actual
      * @dataProvider testVendorProvider
      */
-    public function testVendor($expected, $actual): void
+    public function testVendor($expected, $actual)
     {
 
         $this->assertEquals(

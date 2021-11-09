@@ -4,9 +4,9 @@ namespace TBela\CSS\Event;
 
 interface EventInterface {
 
-    public function on(string $event, callable $callable);
+    public function on($event, callable $callable);
 
-    public function off(string $event, callable $callable);
+    public function off($event, callable $callable);
 
-    public function emit(string $event, ...$args): array ;
+    public function emit($event, ...$args);
 }

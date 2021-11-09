@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Element;
@@ -25,7 +24,7 @@ final class Duplicate extends TestCase
      * @param string $expected
      * @dataProvider beautifyProvider
      */
-    public function testBeautifyDuplicate($content, $expected): void
+    public function testBeautifyDuplicate($content, $expected)
     {
 
         $this->assertEquals(
@@ -39,7 +38,7 @@ final class Duplicate extends TestCase
      * @param string $expected
      * @dataProvider duplicateRules
      */
-    public function testDuplicateRules($content, $expected): void
+    public function testDuplicateRules($content, $expected)
     {
 
         $this->assertEquals(
@@ -48,7 +47,7 @@ final class Duplicate extends TestCase
         );
     }
 
-    public function beautifyProvider(): array
+    public function beautifyProvider()
     {
 
         $parser = new Parser();
@@ -69,7 +68,7 @@ final class Duplicate extends TestCase
         return $data;
     }
 
-    public function duplicateRules(): array
+    public function duplicateRules()
     {
 
         $parser = new Parser();

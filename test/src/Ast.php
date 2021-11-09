@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class Ast extends TestCase
      * @param string $actual
      * @dataProvider identifierProvider
      */
-    public function testIdentifier($expected, $actual): void
+    public function testIdentifier($expected, $actual)
     {
 
         $this->assertEquals(
@@ -26,7 +25,7 @@ final class Ast extends TestCase
      * @param string $actual
      * @dataProvider mediaAllProvider
      */
-    public function testMediaAll($expected, $actual): void
+    public function testMediaAll($expected, $actual)
     {
 
         $this->assertEquals(
@@ -167,8 +166,8 @@ final class Ast extends TestCase
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;

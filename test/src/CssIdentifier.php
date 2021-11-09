@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class CssIdentifier extends TestCase
      * @param string $actual
      * @dataProvider identifierProvider
      */
-    public function testIdentifier($expected, $actual): void
+    public function testIdentifier($expected, $actual)
     {
 
         $this->assertEquals(
