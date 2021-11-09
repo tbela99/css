@@ -5,6 +5,7 @@ namespace TBela\CSS;
 use Exception;
 use InvalidArgumentException;
 use stdClass;
+use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
@@ -125,7 +126,7 @@ abstract class Element implements ElementInterface  {
      */
     public function traverse(callable $fn, $event) {
 
-        return (new Element\Traverser())->on($event, $fn)->traverse($this);
+        return (new Traverser())->on($event, $fn)->traverse($this);
     }
 
     /**
