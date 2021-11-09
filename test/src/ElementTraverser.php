@@ -124,6 +124,26 @@ $traverser->off('enter')->on('enter', function ($node) {
   font-size: 13px
  }
 }', $renderer->render($traverser->traverse($ast))];
+
+        $data[] = [(string) (new Parser('/* this comment is here */
+@media print {
+ body {
+  font-size: 10pt
+ }
+}
+@media screen {
+ body {
+  font-size: 13px
+ }
+}'))->parse()->traverse(function ($node) {
+
+            // remove 'line-height'
+            if ($node->type == 'Declaration' && $node->name == 'line-height') {
+
+                return Traverser::IGNORE_NODE;
+            }
+        }, 'enter'), $renderer->render($traverser->traverse($ast))];
+
         return $data;
     }
 }
