@@ -95,7 +95,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function getVendor() {
 
-        return $this->vendor;
+        return $this->vendor ?? null;
     }
 
     /**

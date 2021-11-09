@@ -167,8 +167,8 @@ final class Ast extends TestCase
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
