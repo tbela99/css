@@ -27,7 +27,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @var string | null
      */
-    protected $vendor;
+    protected $vendor = null;
 
     protected $leadingcomments = null;
 
