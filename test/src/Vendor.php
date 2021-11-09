@@ -34,6 +34,13 @@ final class Vendor extends TestCase
  -webkit-text-size-adjust: 100%
 }', (string) (new Parser())->load(__DIR__.'/../var/style.css')];
 
+        $data[] = ['body {
+ box-shadow: inset 0 0 0 9999px var(--table-accent-bg)
+}
+.box {
+ -webkit-box-shadow: 0 0 0 .25rem rgba(var(--cassiopeia-color-primary), .25)
+}', (string) (new Parser())->load(__DIR__.'/../var/var.css')];
+
         return $data;
     }
 }
