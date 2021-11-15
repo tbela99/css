@@ -564,7 +564,6 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                     $params = static::_close($string, ')', '(', $i, $j);
 
-
                     if ($params !== false) {
 
                         $token = new stdClass;

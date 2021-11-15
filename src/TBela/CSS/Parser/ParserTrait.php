@@ -241,7 +241,7 @@ trait ParserTrait
         return false;
     }
 
-    public static function split($string, $separator)
+    public static function split($string, $separator, $limit = PHP_INT_MAX)
     {
 
         $result = [];
@@ -249,6 +249,14 @@ trait ParserTrait
         $i = -1;
         $j = strlen($string) - 1;
         $buffer = '';
+
+        $max = $limit - 1;
+        $count = 0;
+
+        if ($max <= 0) {
+
+            return [$string];
+        }
 
         while (++$i <= $j) {
 
@@ -258,9 +266,24 @@ trait ParserTrait
 
                     if (trim($buffer) !== '') {
 
+                        $count++;
                         $result[] = $buffer;
+
+                        if ($count == $max) {
+
+                            $buffer = trim(substr($string, $i), "\t\r\n $separator");
+
+                            if ($buffer !== '') {
+
+                                $result[] = $buffer;
+                            }
+
+                            return $result;
+                        }
+
                         $buffer = '';
                     }
+
                     break;
 
                 case '\\':
@@ -337,6 +360,6 @@ trait ParserTrait
     protected static function is_whitespace($char)
     {
 
-        return preg_match("#^\s$#", $char);
+        return (bool) preg_match("#^\s$#", $char);
     }
 }
