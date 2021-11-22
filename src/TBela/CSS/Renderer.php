@@ -116,6 +116,7 @@ class Renderer
      * @param string $file
      * @return Renderer
      * @throws IOException
+     * @throws Exception
      */
     public function save($ast, $file)
     {
@@ -178,8 +179,7 @@ class Renderer
             case 'AtRule':
             case 'Stylesheet':
 
-                if ($ast->type == 'AtRule'&& $ast->name == 'media' && $ast->value == 'all') {
-
+                if ($ast->type == 'AtRule' && $ast->name == 'media' && (!isset($ast->value) || $ast->value === '' || $ast->value == 'all')) {
                     // render children
                     $css = '';
                     $d = clone $data;
@@ -248,7 +248,8 @@ class Renderer
 
                         if ($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) {
 
-                            $children = new PropertyList(null, $this->options);
+                            $children = [];
+                            $properties = new PropertyList(null, $this->options);
 
                             foreach (($ast->children ?? []) as $child) {
 
@@ -262,10 +263,23 @@ class Renderer
                                     $map[] = $child;
                                 }
 
-                                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, $child->src ?? null);
+                                if (empty($children) && ($child->type == 'Declaration' || $child->type == 'Comment')) {
+
+                                    $properties->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, $child->src ?? null, $child->vendor ?? null);
+                                }
+
+                                else {
+
+                                    $children[] = $child;
+                                }
                             }
 
-                            if ($children->isEmpty() && $this->options['remove_empty_nodes']) {
+                            if (!$properties->isEmpty()) {
+
+                                array_splice($children, 0, 0, iterator_to_array($properties->getProperties()));
+                            }
+
+                            if (empty($children) && $this->options['remove_empty_nodes']) {
 
                                 return null;
                             }
@@ -278,7 +292,6 @@ class Renderer
                     }
 
                     $this->addPosition($data, $ast);
-
 
                     if ($type == 'Rule') {
 
@@ -595,7 +608,7 @@ class Renderer
         }
 
         $output = '@' . $this->renderName($ast);
-        $value = $this->renderValue($ast);
+        $value = isset($ast->value) ? $this->renderValue($ast) : '';
 
         if ($value !== '') {
 
@@ -644,7 +657,7 @@ class Renderer
             return $media;
         }
 
-        if ($ast->name == 'media' && $ast->value == 'all') {
+        if ($ast->name == 'media' && (!isset($ast->value) || $ast->value == 'all')) {
 
             $css = '';
             
@@ -864,12 +877,35 @@ class Renderer
 
         if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && $glue == ';') {
 
-            $children = new PropertyList(null, $this->options);
+            $children = [];
+
+            $properties = new PropertyList(null, $this->options);
 
             foreach ($ast->children ?? [] as $child) {
 
-                $children->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
+                if (!empty($children)) {
+
+                    $children[] = $child;
+                }
+
+                else if ($child->type == 'Declaration' || $child->type == 'Comment') {
+
+                    $properties->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
+                }
+
+                else {
+
+                    $glue = $this->options['glue'];
+                    $children[] = $child;
+                }
             }
+
+            if (!$properties->isEmpty()) {
+
+                array_splice($children, 0, 0, iterator_to_array($properties->getProperties()));
+//                $children = array_merge(iterator_to_array($properties->getProperties()), $children);
+            }
+
         } else {
 
             $children = isset($ast->children) ? $ast->children : [];

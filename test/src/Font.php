@@ -157,35 +157,36 @@ strong {
 
         $data = [];
 
-        $compiler = new Compiler(['compress' => true]);
+        $parser = new Parser();
+        $renderer = new \TBela\CSS\Renderer(['compress' => true]);
 
-        $data[] = [$compiler->setContent('
+        $data[] = [$renderer->renderAst($parser->setContent('
 strong {
 
 font-weight: Extra Black;
 }
-')->compile(), 'strong{font-weight:950}'];
+')), 'strong{font-weight:950}'];
 
-        $data[] = [$compiler->setContent('
+        $data[] = [$renderer->renderAst($parser->setContent('
 strong {
 
 font-weight: light;
 }
-')->compile(), 'strong{font-weight:300}'];
+')), 'strong{font-weight:300}'];
 
-        $data[] = [$compiler->setContent('
+        $data[] = [$renderer->renderAst($parser->setContent('
 strong {
 
 font-weight: ultra bold;
 }
-')->compile(), 'strong{font-weight:800}'];
+')), 'strong{font-weight:800}'];
 
-        $data[] = [$compiler->setContent('
+        $data[] = [$renderer->renderAst($parser->setContent('
 strong {
 
 font-weight: Regular;
 }
-')->compile(), 'strong{font-weight:400}'];
+')), 'strong{font-weight:400}'];
 
         return $data;
     }

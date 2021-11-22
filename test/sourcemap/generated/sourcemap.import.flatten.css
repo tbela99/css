@@ -1,4 +1,6 @@
 /*! this is supposed to be the license. */
+/* import the cookie monster file */
+/* import the media library */
 body {
  font-size: 108px;
  color: #fff;
@@ -15,8 +17,8 @@ body {
 .far,
 .fas {
  /* don't comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -26,7 +28,6 @@ body {
 .bg {
  background: no-repeat url(../images/bg.png) 50% 50%/cover
 }
-/* import the cookie monster file */
 .fa-bahai {
  display: inline-block
 }
@@ -34,7 +35,6 @@ body {
  content: "s-2 ";
  font-size: 80%
 }
-/* import the media library */
 body {
  /*font-size: 14px*/
  line-height: 1.3

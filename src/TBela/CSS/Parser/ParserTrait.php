@@ -158,7 +158,8 @@ trait ParserTrait
                 case '"':
                 case "'":
 
-                    $substr = static::_close($string, $string[$startPosition], $string[$startPosition], $startPosition, $endPosition);
+                    $buffer .= $string[$startPosition];
+                    $substr = static::_close($string, $string[$startPosition], $string[$startPosition], $startPosition + 1, $endPosition);
 
                     if ($substr === false) {
 
@@ -166,7 +167,7 @@ trait ParserTrait
                     }
 
                     $buffer .= $substr;
-                    $startPosition += strlen($substr) - 1;
+                    $startPosition += strlen($substr);
                     break;
 
                 default:
@@ -241,6 +242,12 @@ trait ParserTrait
         return false;
     }
 
+    /**
+     * @param string $string
+     * @param string $separator
+     * @param int $limit
+     * @return array
+     */
     public static function split($string, $separator, $limit = PHP_INT_MAX)
     {
 
@@ -339,7 +346,7 @@ trait ParserTrait
                     }
 
                     $buffer .= $substr;
-                    $i += strlen($substr) - 1;
+                    $i += strlen($substr) ;
                     break;
 
                 default:
@@ -360,6 +367,6 @@ trait ParserTrait
     protected static function is_whitespace($char)
     {
 
-        return (bool) preg_match("#^\s$#", $char);
+        return preg_match("#^\s$#", $char);
     }
 }

@@ -26,9 +26,10 @@ final class ElementProperties extends TestCase
 
     public function elementPropertiesProvider () {
 
-        $compiler = new Compiler();
+//        $renderer = new Renderer();
+        $parser = new Parser();
 
-        $compiler->setContent('body{
+        $parser->setContent('body{
 background-color: green;
 color: #fff;
 font-family: Arial, Helvetica, sans-serif;
@@ -44,7 +45,7 @@ font-family: Arial, Helvetica, sans-serif;
 font-weight: bold;
 }');
 
-        $element = $compiler->getData();
+        $element = $parser->parse();
 
         $data = [];
 

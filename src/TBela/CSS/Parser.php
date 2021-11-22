@@ -261,19 +261,18 @@ class Parser implements ParsableInterface
     public function deduplicate($ast)
     {
 
-        if ((empty($this->options['allow_duplicate_rules']) ||
-            $this->options['allow_duplicate_rules'] !== true ||
-            empty($this->options['allow_duplicate_declarations']) || $this->options['allow_duplicate_declarations'] !== true)) {
+        if ($this->options['allow_duplicate_rules'] !== true ||
+            $this->options['allow_duplicate_declarations'] !== true) {
 
             switch ($ast->type) {
-
-                case 'AtRule':
-
-                    return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
 
                 case 'Stylesheet':
 
                     return $this->deduplicateRules($ast);
+
+                case 'AtRule':
+
+                    return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
 
                 case 'Rule':
 
@@ -348,6 +347,8 @@ class Parser implements ParsableInterface
 
                         $el = $ast->children[$total];
 
+                        $i = $total;
+
                         if ($el->type == 'Comment') {
 
                             continue;
@@ -378,7 +379,7 @@ class Parser implements ParsableInterface
 
                         $nextSignature = $this->computeSignature($next);
 
-                        while ($signature == $nextSignature) {
+                        while ($next != $el && $signature == $nextSignature) {
 
                             array_splice($ast->children, $total - 1, 1);
 
@@ -429,10 +430,9 @@ class Parser implements ParsableInterface
     protected function deduplicateDeclarations($ast)
     {
 
-        if (!empty($this->options['allow_duplicate_declarations']) && !empty($ast->children)) {
+        if ($this->options['allow_duplicate_declarations'] !== true && !empty($ast->children)) {
 
             $elements = $ast->children;
-
             $total = count($elements);
 
             $hash = [];
@@ -503,9 +503,10 @@ class Parser implements ParsableInterface
 
     /**
      *
+     * @return Parser
      * @ignore
      */
-    protected function getRoot()
+    protected function getRoot(): Parser
     {
 
         if (is_null($this->ast)) {
@@ -531,6 +532,8 @@ class Parser implements ParsableInterface
                 $this->ast->src = $this->src;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -551,6 +554,8 @@ class Parser implements ParsableInterface
         }
 
         array_splice($this->ast->children, count($this->ast->children), 0, $this->getTokens());
+        $this->deduplicate($this->ast);
+
         return $this;
     }
 
@@ -626,16 +631,16 @@ class Parser implements ParsableInterface
 
                 $this->update($position, $name);
                 $position->index += strlen($name);
+                continue;
             }
 
             $char = trim(substr($name, -1));
 
             if (substr($name, 0, 1) != '@' &&
-                $char == ';' ||
-                $char == '}' ||
-                trim($char) === '') {
+                $char != '{') {
 
-                if ($char == trim($name)) {
+                // $char === ''
+                if ('' === trim($name, "; \r\n\t")) {
 
                     $this->update($position, $name);
                     $position->index += strlen($name);
@@ -643,11 +648,11 @@ class Parser implements ParsableInterface
                     continue;
                 }
 
-                $declaration = Value::split(substr($name, 0, -1), ':', 2);
+                $declaration = Value::split(!in_array($char, [';', '}']) ? $name : substr($name, 0, -1), ':', 2);
 
-                if (count($declaration) < 2) {
+                if (count($declaration) < 2 || $this->ast->type == 'Stylesheet') {
 
-                    throw new SyntaxError(sprintf('invalid declaration %s:%s', $position->line, $position->column));
+                    throw new SyntaxError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
                 }
 
                 $end = clone $position;
@@ -691,7 +696,7 @@ class Parser implements ParsableInterface
 
                     if (!empty($leading)) {
 
-                        $declaration->leading = $leading;
+                        $declaration->leadingcomments = $leading;
                     }
                 }
 
@@ -712,8 +717,29 @@ class Parser implements ParsableInterface
 
                     if (!empty($trailing)) {
 
-                        $declaration->trailing = $trailing;
+                        $declaration->trailingcomments = $trailing;
                     }
+                }
+
+                if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
+
+                    $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+
+                        $file = trim($matches[3]);
+
+                        if (strpos($file, 'data:') !== false) {
+
+                            return $matches[0];
+                        }
+
+                        if (!preg_match('#^(/|((https?:)?//))#', $file)) {
+
+                            $file = Helper::absolutePath($file, dirname($this->src));
+                        }
+
+                        return $matches[1] . 'url(' . $file . ')';
+
+                    }, $declaration->value);
                 }
 
                 $tokens[] = $declaration;
@@ -736,7 +762,7 @@ class Parser implements ParsableInterface
                 if ($name[0] == '@') {
 
                     // at-rule
-                    if (preg_match('#^@(\S+)(.*?$)#', trim($name, ";{ \n\r\t"), $matches)) {
+                    if (preg_match('#^@([a-z-]+)([^{;}]*)#', trim($name, ";{ \n\r\t"), $matches)) {
 
                         $rule = (object)array_merge([
                             'type' => 'AtRule',
@@ -752,24 +778,29 @@ class Parser implements ParsableInterface
                             ]
                         );
 
-                        if (strpos($rule->value, '/*') !== false) {
+//                        if (strpos($rule->value, '/*') !== false) {
+//
+//                            $trailing = [];
+//                            $rule->value = Value::parse($rule->value)->filter(function ($value) use (&$trailing) {
+//
+//                                if ($value->type == 'Comment') {
+//
+//                                    $trailing[] = $value;
+//                                    return false;
+//                                }
+//
+//                                return true;
+//                            });
+//
+//                            if (!empty($trailing)) {
+//
+//                                $rule->trailingcomments = $trailing;
+//                            }
+//                        }
 
-                            $trailing = [];
-                            $rule->value = Value::parse($rule->value)->filter(function ($value) use (&$trailing) {
+                        if ($rule->hasDeclarations) {
 
-                                if ($value->type == 'Comment') {
-
-                                    $trailing[] = $value;
-                                    return false;
-                                }
-
-                                return true;
-                            });
-
-                            if (!empty($trailing)) {
-
-                                $rule->trailingcomments = $trailing;
-                            }
+                            $rule->hasDeclarations = !in_array($rule->name, ['media', 'document', 'container', 'keyframes']);
                         }
 
                         if ($this->src !== '') {
@@ -799,7 +830,7 @@ class Parser implements ParsableInterface
                                     $file = preg_replace('#' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($this->src) . '/' . $file);
                                 }
 
-                                $parser = (new self('', $this->options))->load($file)->tokenize();
+                                $parser = (new self('', $this->options))->load($file);
 
                                 if (!isset($rule->children)) {
 
@@ -816,12 +847,9 @@ class Parser implements ParsableInterface
                                     $rule->value = $media;
                                 }
 
-                                $rule->children = $parser->ast->children;
-                                $rule->hasDeclarations = true;
+                                $rule->children = $parser->getRoot()->getTokens();
                                 unset($rule->isLeaf);
-                            }
-
-                            else {
+                            } else {
 
                                 $rule->value = trim("\"$file\" $media");
                                 unset($rule->hasDeclarations);
@@ -833,17 +861,18 @@ class Parser implements ParsableInterface
                             unset($rule->isLeaf);
                         }
 
-                        if ($char == ';') {
+                        if ($char != '{') {
 
                             $tokens[] = $rule;
-
-                            $this->update($rule->location->end, $name);                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
-                            $rule->location->end->index += strlen($name);
-                            $rule->location->end->column = max(1, $rule->location->end->column - 1);
 
                             $this->update($position, $name);
                             $position->index += strlen($name);
 
+                            $rule->location->end = clone $position;
+
+//                            $this->update($rule->location->end, $name);                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
+//                            $rule->location->end->index += strlen($name);
+                            $rule->location->end->column = max(1, $rule->location->end->column - 1);
                             $i += strlen($name) - 1;
                             unset($rule->hasDeclarations);
                             continue;
@@ -856,7 +885,7 @@ class Parser implements ParsableInterface
 
                     } else {
 
-                        throw new SyntaxError(sprintf('cannot parse rule at %s:%s', $position->line, $position->column));
+                        throw $this->createError('cannot parse rule at %s:%s:%s', $rule);
                     }
 
                     if (!empty($rule->isLeaf)) {
@@ -908,30 +937,54 @@ class Parser implements ParsableInterface
                     }
                 }
 
-                $tokens[] = $rule;
-
                 $this->update($rule->location->end, $name);
                 $rule->location->end->index += strlen($name);
 
-                if ($name[0] == '{') {
+                if ($rule->type == 'Rule') {
 
+                    if ($this->ast->type == 'Rule') {
+
+                        $rule->selector = Value::split($rule->selector, ',');
+
+                        foreach ($rule->selector as $selector) {
+
+                            if (!preg_match('#^&([^A-Za-z0-9]|$)#', $selector[0])) {
+
+                                throw $this->createError('nesting selector must start with "&" at %s:%s:%s', $rule);
+                            }
+                        }
+                    }
                 }
 
+                if ($rule->type == 'AtRule' && $rule->name == 'nest') {
+
+                    if ($this->ast->type != 'Rule') {
+
+                        throw $this->createError('nesting at-rule is allowed in a rule %s:%s:%s', $rule);
+                    }
+
+                    if (!preg_match('#(^|[^A-Za-z0-9])&([^A-Za-z0-9]|$)#', $rule->name)) {
+
+                        throw $this->createError('nesting at-rule must contain "&" %s:%s:%s', $rule);
+                    }
+                }
+
+                $tokens[] = $rule;
 
                 $body = static::_close($this->css, '}', '{', $i + strlen($name), $j);
 
                 $parser = new self(substr($body, 0, -1), $this->options);
-
+                $parser->src = $this->src;
                 $parser->ast = $rule;
                 $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
 
                 $rule->location->end->index = 0;
                 $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                $parser->tokenize();
+                $parser->ast->children = $parser->getTokens();
 
-                $rule->location->start->index += $this->parentOffset;
-                $rule->location->end->index += $parser->parentOffset + $this->parentOffset;
+//                $rule->location->start->index += $this->parentOffset;
+//                $rule->location->end->index += $parser->parentOffset + $this->parentOffset;
 
                 $string = $name . $body;
                 $this->update($position, $string);
@@ -943,7 +996,7 @@ class Parser implements ParsableInterface
                 $rule->location->end->index = max(1, $rule->location->end->index - 1);
                 $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                continue;
+//                continue;
             }
         }
 
@@ -954,7 +1007,6 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @return stdClass|null
      * @throws SyntaxError
      * @throws Exception
      * @ignore
@@ -1025,6 +1077,17 @@ class Parser implements ParsableInterface
         }
 
         return ['name' => $str];
+    }
+
+    /**
+     * @param $string
+     * @param stdClass $token
+     * @return SyntaxError
+     */
+    protected function createError($string, $token): SyntaxError
+    {
+
+        return new SyntaxError(sprintf($string, $token->src, $token->location->start->line, $token->location->start->column));
     }
 
     /**

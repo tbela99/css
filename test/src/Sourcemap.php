@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
@@ -80,8 +81,8 @@ final class Sourcemap extends TestCase
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -114,11 +115,15 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,6DAaA,+LAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
 
+    /**
+     * @throws IOException
+     * @throws Parser\SyntaxError
+     */
     public function testSourcemapImportProvider() {
 
         $data = [];
@@ -135,6 +140,8 @@ body {
         $renderer->save($element, $outFile);
 
         $data[] = ['/*! this is supposed to be the license. */
+/* import the cookie monster file */
+/* import the media library */
 body {
  font-size: 108px;
  color: #fff;
@@ -151,8 +158,8 @@ body {
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -162,7 +169,6 @@ body {
 .bg {
  background: no-repeat url(../images/bg.png) 50% 50%/cover
 }
-/* import the cookie monster file */
 .fa-bahai {
  display: inline-block
 }
@@ -170,16 +176,14 @@ body {
  content: "s-2 ";
  font-size: 80%
 }
-/* import the media library */
 body {
  /*font-size: 14px*/
  line-height: 1.3
-}
-',
-            preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
+}',
+            preg_replace('#\n'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = [';AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = [';;;AACA;;;;;;;;;;AAaA;;;;;;;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.min.css';
 
@@ -187,11 +191,15 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,kEAaA,4NAgBA,iEC7BA,yCAIA,+DCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
 
+    /**
+     * @throws IOException
+     * @throws Parser\SyntaxError
+     */
     public function testSourcemapUrlProvider() {
 
         $data = [];
