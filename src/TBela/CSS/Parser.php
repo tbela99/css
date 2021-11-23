@@ -10,24 +10,21 @@ use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
-use TBela\CSS\Value\Set;
 use function preg_replace_callback;
-use function str_replace;
 use function substr;
 
 /**
  * Css Parser
  * @package TBela\CSS
- */
+ * ok */
 class Parser implements ParsableInterface
 {
 
     use ParserTrait;
 
-    protected stdClass $currentPosition;
-    protected stdClass $previousPosition;
-    protected int $end = 0;
     protected int $parentOffset = 0;
+
+    protected ?stdClass $parentStylesheet = null;
 
     protected array $errors = [];
 
@@ -46,12 +43,12 @@ class Parser implements ParsableInterface
      * @ignore
      */
     protected string $src = '';
-
     /**
      * @var array
      * @ignore
      */
     protected array $options = [
+        'capture_errors' => true,
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
@@ -112,7 +109,7 @@ class Parser implements ParsableInterface
     public function merge($parser)
     {
 
-        assert($parser instanceof Parser);
+        assert($parser instanceof self);
 
         if (is_null($this->ast)) {
 
@@ -142,8 +139,7 @@ class Parser implements ParsableInterface
             $css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
         }
 
-        $this->css .= rtrim($css);
-        $this->end = strlen($this->css);
+       $this->css .= rtrim($css);
 
         if (is_null($this->ast)) {
 
@@ -161,13 +157,13 @@ class Parser implements ParsableInterface
      * @param string $media
      * @return Parser
      */
-    public function setContent($css, $media = '')
+    public function setContent(string $css, string $media = '')
     {
 
         if ($media !== '' && $media != 'all') {
 
             $css = '@media ' . $media . '{ ' . rtrim($css) . ' }';
-        }
+      }
 
         $this->css = $css;
         $this->src = '';
@@ -588,7 +584,7 @@ class Parser implements ParsableInterface
 
                 if ($comment === false) {
 
-                    throw new SyntaxError(sprintf('unterminated comment at %s:%s', $position->line, $position->column));
+                    $this->handleError(sprintf('unterminated comment at %s:%s', $position->line, $position->column));
                 }
 
                 $start = clone $position;
@@ -652,7 +648,7 @@ class Parser implements ParsableInterface
 
                 if (count($declaration) < 2 || $this->ast->type == 'Stylesheet') {
 
-                    throw new SyntaxError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
+                    $this->handleError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
                 }
 
                 $end = clone $position;
@@ -778,26 +774,6 @@ class Parser implements ParsableInterface
                             ]
                         );
 
-//                        if (strpos($rule->value, '/*') !== false) {
-//
-//                            $trailing = [];
-//                            $rule->value = Value::parse($rule->value)->filter(function ($value) use (&$trailing) {
-//
-//                                if ($value->type == 'Comment') {
-//
-//                                    $trailing[] = $value;
-//                                    return false;
-//                                }
-//
-//                                return true;
-//                            });
-//
-//                            if (!empty($trailing)) {
-//
-//                                $rule->trailingcomments = $trailing;
-//                            }
-//                        }
-
                         if ($rule->hasDeclarations) {
 
                             $rule->hasDeclarations = !in_array($rule->name, ['media', 'document', 'container', 'keyframes']);
@@ -837,6 +813,7 @@ class Parser implements ParsableInterface
                                     $rule->children = [];
                                 }
 
+                                $parser->parentStylesheet = $this->ast;
                                 $rule->name = 'media';
 
                                 if ($media === '') {
@@ -848,6 +825,12 @@ class Parser implements ParsableInterface
                                 }
 
                                 $rule->children = $parser->getRoot()->getTokens();
+
+                                if (!empty($parser->errors)) {
+
+                                    array_splice($this->errors, count($this->errors), 0, $parser);
+                                }
+
                                 unset($rule->isLeaf);
                             } else {
 
@@ -855,7 +838,6 @@ class Parser implements ParsableInterface
                                 unset($rule->hasDeclarations);
                             }
 
-//                            $tokens[] = $rule;
                         } else if ($char == '{') {
 
                             unset($rule->isLeaf);
@@ -869,23 +851,15 @@ class Parser implements ParsableInterface
                             $position->index += strlen($name);
 
                             $rule->location->end = clone $position;
-
-//                            $this->update($rule->location->end, $name);                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
-//                            $rule->location->end->index += strlen($name);
                             $rule->location->end->column = max(1, $rule->location->end->column - 1);
                             $i += strlen($name) - 1;
                             unset($rule->hasDeclarations);
                             continue;
                         }
 
-//                        if ($rule->name == 'media' && $rule->value == 'all') {
-//
-//                            unset($rule->value);
-//                        }
-
                     } else {
 
-                        throw $this->createError('cannot parse rule at %s:%s:%s', $rule);
+                        $this->handleError(sprintf('cannot parse rule at %s:%s:%s', $this->src, $position->line, $position->column));
                     }
 
                     if (!empty($rule->isLeaf)) {
@@ -950,7 +924,7 @@ class Parser implements ParsableInterface
 
                             if (!preg_match('#^&([^A-Za-z0-9]|$)#', $selector[0])) {
 
-                                throw $this->createError('nesting selector must start with "&" at %s:%s:%s', $rule);
+                                $this->handleError(sprintf('nesting selector must start with "&" at %s:%s:%s', $rule->src, $rule->location->start->line, $rule->location->start->column));
                             }
                         }
                     }
@@ -960,12 +934,12 @@ class Parser implements ParsableInterface
 
                     if ($this->ast->type != 'Rule') {
 
-                        throw $this->createError('nesting at-rule is allowed in a rule %s:%s:%s', $rule);
+                        $this->handleError('nesting at-rule is allowed in a rule %s:%s:%s', $rule);
                     }
 
                     if (!preg_match('#(^|[^A-Za-z0-9])&([^A-Za-z0-9]|$)#', $rule->name)) {
 
-                        throw $this->createError('nesting at-rule must contain "&" %s:%s:%s', $rule);
+                        $this->handleError(sprintf('nesting at-rule must contain "&" %s:%s:%s', $rule->src, $rule->location->start->line, $rule->location->start->column));
                     }
                 }
 
@@ -976,15 +950,20 @@ class Parser implements ParsableInterface
                 $parser = new self(substr($body, 0, -1), $this->options);
                 $parser->src = $this->src;
                 $parser->ast = $rule;
+
+                $parser->parentStylesheet = $rule->type == 'Rule' ? $rule : $this->ast;
                 $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
+
+                if (($this->parentStylesheet->type ?? null) == 'Rule') {
+
+                    $this->parentStylesheet->type = 'NestingRule';
+//                    var_dump($this->parentStylesheet->type);
+                }
 
                 $rule->location->end->index = 0;
                 $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                 $parser->ast->children = $parser->getTokens();
-
-//                $rule->location->start->index += $this->parentOffset;
-//                $rule->location->end->index += $parser->parentOffset + $this->parentOffset;
 
                 $string = $name . $body;
                 $this->update($position, $string);
@@ -996,6 +975,10 @@ class Parser implements ParsableInterface
                 $rule->location->end->index = max(1, $rule->location->end->index - 1);
                 $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
+                if (!empty($parser->errors)) {
+
+                    array_splice($this->errors, count($this->errors), 0, $parser);
+                }
 //                continue;
             }
         }
@@ -1015,20 +998,7 @@ class Parser implements ParsableInterface
     {
 
         $this->errors = [];
-
         $this->css = rtrim($this->css);
-
-        // initialize ast
-//        $this->getRoot();
-//
-//        $this->end = strlen($this->css);
-//        $start = $this->ast->location->start;
-//        $this->currentPosition = clone $start;
-//
-//        $this->currentPosition->index = 0;
-//        $this->previousPosition = clone $this->currentPosition;
-//
-//        return $this->analyse();
 
         return $this->tokenize();
     }
@@ -1080,14 +1050,21 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param $string
-     * @param stdClass $token
-     * @return SyntaxError
+     * @param string $message
+     * @param int $error_code
+     * @throws SyntaxError
      */
-    protected function createError($string, $token): SyntaxError
+    protected function handleError(string $message, int $error_code = 400)
     {
 
-        return new SyntaxError(sprintf($string, $token->src, $token->location->start->line, $token->location->start->column));
+        $error = new SyntaxError($message, $error_code);
+
+        if (!$this->options['capture_errors']) {
+
+            throw $error;
+        }
+
+        $this->errors[] = $error;
     }
 
     /**

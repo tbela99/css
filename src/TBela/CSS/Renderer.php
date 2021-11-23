@@ -29,6 +29,7 @@ class Renderer
         'compress' => false,
         'sourcemap' => false,
         'convert_color' => false,
+        'nesting_rules' => false,
         'remove_comments' => false,
         'preserve_license' => false,
         'compute_shorthand' => true,
@@ -67,7 +68,7 @@ class Renderer
 
         if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
 
-            return $this->render($element->copy()->getRoot(), $level);
+            $element = $element->copy()->getRoot();
         }
 
         return $this->renderAst($element->getAst(), $level);
@@ -95,11 +96,12 @@ class Renderer
 
 //                return $this->renderCollection($ast, $level);
 
-            case 'Comment':
-            case 'Declaration':
-            case 'Property':
             case 'Rule':
             case 'AtRule':
+            case 'Comment':
+            case 'Property':
+            case 'NestingRule':
+            case 'Declaration':
 
                 return $this->{'render' . $ast->type}($ast, $level);
 
@@ -572,6 +574,70 @@ class Renderer
      * @throws Exception
      * @ignore
      */
+    protected function renderNestingRule($ast, $level)
+    {
+
+        if ($this->options['nesting_rules']) {
+
+            return $this->renderRule($ast, $level);
+        }
+
+        $selectors = is_array($ast->selector) ? $ast->selector : Value::split($ast->selector, ',');
+        $declarations = [];
+        $rules = [];
+
+        foreach ($ast->children as $key => $child) {
+
+            if ($child->type != 'Declaration' && $child->type != 'Comment') {
+
+                $rules = array_slice($ast->children, $key);
+                break;
+            }
+
+            $declarations[] = $child;
+        }
+
+        $cloned = clone $ast;
+        $output = '';
+
+        if (!empty($declarations)) {
+
+            $cloned->children = $declarations;
+            $output = $this->renderRule($cloned, $level).$this->options['glue'];
+        }
+
+        if (!empty($rules)) {
+
+            $selectors = count($selectors) == 1 ? $selectors[0] : ':is('.implode(','.$this->options['indent'], $selectors).')';
+
+            foreach ($rules as $child) {
+
+                $cloned = clone $child;
+                $cloned->selector = array_map(function ($selector) use($selectors) {
+
+                    return str_replace('&', $selectors, $selector);
+                }, is_string($cloned->selector) ? Value::split($cloned->selector, ',') : $cloned->selector);
+
+                $r = $this->{'render'.$cloned->type}($cloned, $level);
+
+                if ($r !== '') {
+
+                    $output .= $r.$this->options['glue'];
+                }
+            }
+        }
+
+        return rtrim($output, $this->options['glue']);
+    }
+
+    /**
+     * render a rule
+     * @param \stdClass $ast
+     * @param int|null $level
+     * @return string
+     * @throws Exception
+     * @ignore
+     */
     protected function renderRule($ast, $level)
     {
 
@@ -670,10 +736,10 @@ class Renderer
                     continue;
                 }
 
-                $css .= $r.$this->options['glue'];
+                $css .= $r.($child->type == 'Declaration' ? ';' : $this->options['glue']);
             }
 
-            return rtrim($css);
+            return rtrim($css, ';'.$this->options['glue']);
         }
 
         $elements = $this->renderCollection($ast, $level + 1);
@@ -878,7 +944,6 @@ class Renderer
         if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && $glue == ';') {
 
             $children = [];
-
             $properties = new PropertyList(null, $this->options);
 
             foreach ($ast->children ?? [] as $child) {
@@ -895,7 +960,7 @@ class Renderer
 
                 else {
 
-                    $glue = $this->options['glue'];
+//                    $glue = $this->options['glue'];
                     $children[] = $child;
                 }
             }
@@ -935,10 +1000,7 @@ class Renderer
                 }
             }
 
-            if ($el->type != 'Comment') {
-
-                $output .= $glue;
-            }
+            $output .= in_array($el->type, ['Declaration', 'Property']) ? ';' : '';
 
             if (isset($result[$output])) {
 
@@ -961,7 +1023,7 @@ class Renderer
             $output .= $res . $join;
         }
 
-        return rtrim($output, $glue . $this->options['glue']);
+        return rtrim($output, ';' . $this->options['glue']);
     }
 
     /**
