@@ -23,8 +23,8 @@ class Parser implements ParsableInterface
     use ParserTrait;
 
     protected int $parentOffset = 0;
-
     protected ?stdClass $parentStylesheet = null;
+    protected ?stdClass $parentMediaRule = null;
 
     protected array $errors = [];
 
@@ -139,7 +139,7 @@ class Parser implements ParsableInterface
             $css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
         }
 
-       $this->css .= rtrim($css);
+        $this->css .= rtrim($css);
 
         if (is_null($this->ast)) {
 
@@ -163,7 +163,7 @@ class Parser implements ParsableInterface
         if ($media !== '' && $media != 'all') {
 
             $css = '@media ' . $media . '{ ' . rtrim($css) . ' }';
-      }
+        }
 
         $this->css = $css;
         $this->src = '';
@@ -345,7 +345,7 @@ class Parser implements ParsableInterface
 
                         $i = $total;
 
-                        if ($el->type == 'Comment') {
+                        if ($el->type == 'Comment' || $el->type == 'NestingRule') {
 
                             continue;
                         }
@@ -591,7 +591,7 @@ class Parser implements ParsableInterface
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
 
-                $token = (object)(object)[
+                $token = (object)[
                     'type' => 'Comment',
                     'location' => (object)[
                         'start' => $start,
@@ -814,6 +814,7 @@ class Parser implements ParsableInterface
                                 }
 
                                 $parser->parentStylesheet = $this->ast;
+                                $parser->parentMediaRule = $this->parentMediaRule;
                                 $rule->name = 'media';
 
                                 if ($media === '') {
@@ -822,6 +823,11 @@ class Parser implements ParsableInterface
                                 } else {
 
                                     $rule->value = $media;
+
+                                    if ($media != 'all') {
+
+                                        $parser->parentMediaRule = $rule;
+                                    }
                                 }
 
                                 $rule->children = $parser->getRoot()->getTokens();
@@ -911,6 +917,19 @@ class Parser implements ParsableInterface
                     }
                 }
 
+                if ($rule->type == 'AtRule') {
+
+                    if ($rule->name == 'nest') {
+
+                        $rule->type = 'NestingAtRule';
+                        $rule->selector = $rule->value;
+
+                        unset($rule->name);
+                        unset($rule->value);
+                        unset($rule->hasDeclarations);
+                    }
+                }
+
                 $this->update($rule->location->end, $name);
                 $rule->location->end->index += strlen($name);
 
@@ -932,7 +951,7 @@ class Parser implements ParsableInterface
 
                 if ($rule->type == 'AtRule' && $rule->name == 'nest') {
 
-                    if ($this->ast->type != 'Rule') {
+                    if (is_null($this->parentStylesheet) || !in_array($this->parentStylesheet->type, ['Rule', 'NestingRule', 'NestingAtRule', 'AtRule'])) {
 
                         $this->handleError('nesting at-rule is allowed in a rule %s:%s:%s', $rule);
                     }
@@ -950,6 +969,18 @@ class Parser implements ParsableInterface
                 $parser = new self(substr($body, 0, -1), $this->options);
                 $parser->src = $this->src;
                 $parser->ast = $rule;
+                $parser->parentMediaRule = $this->parentMediaRule;
+
+                if ($rule->type == 'AtRule' && $rule->name == 'media' &&
+                    isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
+//
+//                    if (isset($parser->parentMediaRule)) {
+//
+//                        $parser->parentMediaRule->type = 'NestingMediaRule';
+//                    }
+
+                    $parser->parentMediaRule = $rule;
+                }
 
                 $parser->parentStylesheet = $rule->type == 'Rule' ? $rule : $this->ast;
                 $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
@@ -957,7 +988,6 @@ class Parser implements ParsableInterface
                 if (($this->parentStylesheet->type ?? null) == 'Rule') {
 
                     $this->parentStylesheet->type = 'NestingRule';
-//                    var_dump($this->parentStylesheet->type);
                 }
 
                 $rule->location->end->index = 0;
