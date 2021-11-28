@@ -973,11 +973,11 @@ class Parser implements ParsableInterface
 
                 if ($rule->type == 'AtRule' && $rule->name == 'media' &&
                     isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
-//
-//                    if (isset($parser->parentMediaRule)) {
-//
-//                        $parser->parentMediaRule->type = 'NestingMediaRule';
-//                    }
+
+                    if (isset($parser->parentMediaRule)) {
+
+                        $parser->parentMediaRule->type = 'NestingMediaRule';
+                    }
 
                     $parser->parentMediaRule = $rule;
                 }

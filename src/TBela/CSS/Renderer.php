@@ -619,11 +619,6 @@ class Renderer
 
         if (isset($parentStylesheet)) {
 
-//            if (!isset($parentStylesheet->selector)) {
-//
-//                echo new Exception();
-//            }
-
             $parentSelector = is_string($parentStylesheet->selector) ? array_map('trim', Value::split($parentStylesheet->selector, ',')) : $parentStylesheet->selector;
             $parentSelector = count($parentSelector) == 1 ? $parentSelector[0] : ':is(' . implode(',' . $this->options['indent'], $parentSelector) . ')';
             $cloned->selector = array_map(function ($selector) use($parentSelector) {
@@ -690,9 +685,26 @@ class Renderer
 
                 if (in_array($child->type, ['AtRule', 'NestingMediaRule']) && $child->name == 'media') {
 
-                    if (isset($child->children)) {
+                    if (isset($parentMediaRule->value) || isset($child->children)) {
 
                         $child = clone $child;
+                    }
+
+                    $value = [];
+
+                    if (isset($parentMediaRule->value)) {
+
+                        $value[] = $parentMediaRule->value;
+                    }
+
+                    if (isset($child->value)) {
+
+                        $value[] = $child->value;
+                    }
+
+                    $child->value = implode(' and ', $value);
+
+                    if (isset($child->children)) {
 
                         $cloned->children = $child->children;
                         $child->children = [$cloned];
@@ -918,7 +930,7 @@ class Renderer
 
             foreach ($rules as $child) {
 
-                if (in_array($child->type, ['AtRule', 'NestingMediaRule'])) {
+                if (in_array($child->type, ['AtRule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule'])) {
 
                     if (!empty($children)) {
 
@@ -937,38 +949,20 @@ class Renderer
 
                         $r = $this->renderAtRule($cloned, $level);
 
-                        if ($r !== '' || !$this->options['remove_empty_nodes']) {
+                        if ($r !== '') {
 
                             $output .= $r.$this->options['glue'];
                         }
                     }
 
-                    $c = clone $child;
-                    $values = [];
+                    if ($child->type == 'NestingRule') {
 
-                    if (isset($cloned->value)) {
+                        $r = $this->{'render'.$child->type}($child, $level, null, $ast);
 
-                        $values[] = $cloned->value;
-                    }
+                        if ($r !== '') {
 
-                    if (isset($c->value)) {
-
-                        $values[] = $c->value;
-                    }
-
-                    $c->value = implode(' and ', $values);
-
-                    if (isset($clonedParent)) {
-
-                        $clonedParent->children = $c->children;
-                        $c->children = [$clonedParent];
-                    }
-
-                    $r = $this->renderAtRule($c, $level, $parentStylesheet);
-
-                    if ($r !== '' || !$this->options['remove_empty_nodes']) {
-
-                        $output .= $r.$this->options['glue'];
+                            $output .= $r.$this->options['glue'];
+                        }
                     }
 
                     continue;

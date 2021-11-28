@@ -1,0 +1,15 @@
+.foo {
+    display: grid;
+
+@media (orientation: portrait) {
+    grid-auto-flow: column;
+
+    @media (min-inline-size > 1024px) {
+        max-inline-size: 1024px;
+
+        @media (min-width:1024px) {
+            whitespace: wrap;
+        }
+    }
+    }
+}

@@ -49,6 +49,20 @@ final class NestingRule extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider testNestingMediaRuleProvider
+     */
+    public function testNestingMediaRule($expected, $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
     public function testNestingRuleProvider()
     {
 
@@ -221,6 +235,45 @@ p .foo {
  display: grid;
  @media (orientation:landscape) {
   grid-auto-flow: column
+ }
+}', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
+
+        return $data;
+    }
+
+    public function testNestingMediaRuleProvider()
+    {
+
+        $data = [];
+
+        $parser = (new Parser())->load(__DIR__ . '/../nested/at-rule2.css');
+        $renderer = new Renderer();
+
+        $data[] = ['.foo {
+ display: grid
+}
+.foo {
+ grid-auto-flow: column
+}
+.foo {
+ max-inline-size: 1024px
+}
+@media (orientation:portrait)and(min-inline-size > 1024px)and(min-width:1024px) {
+ .foo {
+  whitespace: wrap
+ }
+}', $renderer->setOptions(['nesting_rules' => false])->renderAst($parser)];
+
+        $data[] = ['.foo {
+ display: grid;
+ @media (orientation:portrait) {
+  grid-auto-flow: column;
+  @media (min-inline-size > 1024px) {
+   max-inline-size: 1024px;
+   @media (min-width:1024px) {
+    whitespace: wrap
+   }
+  }
  }
 }', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
 
