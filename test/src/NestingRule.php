@@ -69,7 +69,7 @@ final class NestingRule extends TestCase
         $data = [];
 
         $parser = (new Parser())->load(__DIR__ . '/../nested/nested.css');
-        $renderer = new Renderer();
+        $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['/* this row */
 table.colortable {
@@ -84,7 +84,7 @@ table.colortable td.c {
  text-transform: uppercase
 }
 table.colortable td:first-child,
-table.colortable td:first-child + td {
+table.colortable td:first-child+td {
  border: 1px solid #000
 }
 table.colortable th {
@@ -93,7 +93,6 @@ table.colortable th {
  color: #fff
 }
 .foo {
- color: blue;
  padding: 2ch
 }
 .foo {
@@ -105,7 +104,7 @@ table.colortable th {
 /* The parent selector can be arbitrarily complicated */
 :is(.error, #404):hover > .baz {
  color: red
-}', $renderer->setOptions(['nesting_rules' => false])->renderAst($parser)];
+}', $renderer->setOptions(['legacy_rendering' => true])->renderAst($parser)];
 
         $data[] = ['/* this row */
 table.colortable {
@@ -146,7 +145,7 @@ table.colortable {
  &:hover > .baz {
   color: red
  }
-}', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
+}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
 
         return $data;
     }
@@ -157,7 +156,7 @@ table.colortable {
         $data = [];
 
         $parser = (new Parser())->load(__DIR__ . '/../nested/rule.css');
-        $renderer = new Renderer();
+        $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['.foo {
  color: red
@@ -174,7 +173,7 @@ p .foo {
 }
 .bar .foo.baz {
  color: green
-}', $renderer->setOptions(['nesting_rules' => false])->renderAst($parser)];
+}', $renderer->renderAst($parser)];
 
         $data[] = ['.foo {
  color: red;
@@ -191,7 +190,7 @@ p .foo {
    color: green
   }
  }
-}', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
+}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
 
         return $data;
     }
@@ -202,7 +201,7 @@ p .foo {
         $data = [];
 
         $parser = (new Parser())->load(__DIR__ . '/../nested/at-rule.css');
-        $renderer = new Renderer();
+        $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['@media (min-width:540px) {
  div p {
@@ -219,7 +218,7 @@ p .foo {
  .foo {
   grid-auto-flow: column
  }
-}', $renderer->setOptions(['nesting_rules' => false])->renderAst($parser)];
+}', $renderer->renderAst($parser)];
 
         $data[] = ['div {
  @media (min-width:540px) {
@@ -236,7 +235,7 @@ p .foo {
  @media (orientation:landscape) {
   grid-auto-flow: column
  }
-}', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
+}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
 
         return $data;
     }
@@ -247,25 +246,35 @@ p .foo {
         $data = [];
 
         $parser = (new Parser())->load(__DIR__ . '/../nested/at-rule2.css');
-        $renderer = new Renderer();
+        $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['.foo {
  display: grid
 }
-.foo {
- grid-auto-flow: column
+.foo span {
+ display: inline-block
 }
-.foo {
- max-inline-size: 1024px
+@media (orientation:portrait) {
+ .foo {
+  grid-auto-flow: column
+ }
+}
+@media (orientation:portrait)and(min-inline-size > 1024px) {
+ .foo {
+  max-inline-size: 1024px
+ }
 }
 @media (orientation:portrait)and(min-inline-size > 1024px)and(min-width:1024px) {
  .foo {
   whitespace: wrap
  }
-}', $renderer->setOptions(['nesting_rules' => false])->renderAst($parser)];
+}', $renderer->renderAst($parser)];
 
         $data[] = ['.foo {
  display: grid;
+ & span {
+  display: inline-block
+ }
  @media (orientation:portrait) {
   grid-auto-flow: column;
   @media (min-inline-size > 1024px) {
@@ -275,7 +284,7 @@ p .foo {
    }
   }
  }
-}', $renderer->setOptions(['nesting_rules' => true])->renderAst($parser)];
+}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
 
         return $data;
     }

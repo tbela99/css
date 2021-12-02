@@ -4,7 +4,7 @@ namespace TBela\CSS;
 
 use Exception;
 use stdClass;
-use TBela\CSS\Interfaces\ElementInterface;
+//use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
@@ -29,7 +29,7 @@ class Parser implements ParsableInterface
     protected array $errors = [];
 
     protected ?stdClass $ast = null;
-    protected ?RuleListInterface $element = null;
+//    protected ?RuleListInterface $element = null;
 
     /**
      * css data
@@ -48,7 +48,7 @@ class Parser implements ParsableInterface
      * @ignore
      */
     protected array $options = [
-        'capture_errors' => true,
+        'capture_errors' => false,
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => false
@@ -83,7 +83,7 @@ class Parser implements ParsableInterface
         $this->src = Helper::absolutePath($file, Helper::getCurrentDirectory());
         $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
-        $this->element = null;
+//        $this->element = null;
         return $this;
     }
 
@@ -111,17 +111,17 @@ class Parser implements ParsableInterface
 
         assert($parser instanceof self);
 
-        if (is_null($this->ast)) {
+//        if (is_null($this->ast)) {
+//
+//            $this->doParse();
+//        }
 
-            $this->doParse();
-        }
+//        if (is_null($parser->ast)) {
+//
+//            $parser->doParse();
+//        }
 
-        if (is_null($parser->ast)) {
-
-            $parser->doParse();
-        }
-
-        array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+        array_splice($this->tokenize()->ast->children, count($this->ast->children), 0, $parser->tokenize()->ast->children);
         return $this;
     }
 
@@ -141,14 +141,12 @@ class Parser implements ParsableInterface
 
         $this->css .= rtrim($css);
 
-        if (is_null($this->ast)) {
+//        if (is_null($this->ast)) {
+//
+//            $this->doParse();
+//        }
 
-            $this->doParse();
-        }
-
-        $this->analyse();
-
-        return $this;
+        return $this->tokenize();
     }
 
     /**
@@ -168,7 +166,7 @@ class Parser implements ParsableInterface
         $this->css = $css;
         $this->src = '';
         $this->ast = null;
-        $this->element = null;
+//        $this->element = null;
         return $this;
     }
 
@@ -244,16 +242,9 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param ElementInterface $element
-     * @return Parser
+     * @param stdClass $ast
+     * @return stdClass
      */
-    public function setAst(ElementInterface $element)
-    {
-
-        $this->ast = $element->getAst();
-        return $this;
-    }
-
     public function deduplicate($ast)
     {
 
@@ -343,7 +334,7 @@ class Parser implements ParsableInterface
 
                         $el = $ast->children[$total];
 
-                        $i = $total;
+//                        $i = $total;
 
                         if ($el->type == 'Comment' || $el->type == 'NestingRule') {
 
@@ -558,6 +549,7 @@ class Parser implements ParsableInterface
     /**
      * @return array
      * @throws SyntaxError
+     * @throws Exception
      */
     protected function getTokens(): array
     {
@@ -644,107 +636,113 @@ class Parser implements ParsableInterface
                     continue;
                 }
 
-                $declaration = Value::split(!in_array($char, [';', '}']) ? $name : substr($name, 0, -1), ':', 2);
+                $declaration = !in_array($char, [';', '}']) ? $name : substr($name, 0, -1);
+                $declaration = rtrim($declaration, " \r\n\t;}");
 
-                if (count($declaration) < 2 || $this->ast->type == 'Stylesheet') {
+                if ($declaration !== '') {
 
-                    $this->handleError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
-                }
+                    $declaration = Value::split($declaration, ':', 2);
 
-                $end = clone $position;
+                    if (count($declaration) < 2 || $this->ast->type == 'Stylesheet') {
 
-                $string = rtrim($name);
-                $this->update($end, $string);
-                $end->index += strlen($string);
-
-                $declaration = (object)array_merge(
-                    [
-                        'type' => 'Declaration',
-                        'location' => (object)[
-                            'start' => clone $position,
-                            'end' => $end
-                        ]
-                    ],
-                    $this->parseVendor(trim($declaration[0])),
-                    [
-                        'value' => rtrim($declaration[1], "\n\r\t ")
-                    ]);
-
-                if ($this->src !== '') {
-
-                    $declaration->src = $this->src;
-                }
-
-                if (strpos($declaration->name, '/*') !== false) {
-
-                    $leading = [];
-                    $declaration->name = trim(Value::parse($declaration->name)->
-                    filter(function ($value) use (&$leading) {
-
-                        if ($value->type == 'Comment') {
-
-                            $leading[] = $value;
-                            return false;
-                        }
-
-                        return true;
-                    }));
-
-                    if (!empty($leading)) {
-
-                        $declaration->leadingcomments = $leading;
+                        $this->handleError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
                     }
-                }
 
-                if (strpos($declaration->value, '/*') !== false) {
+                    $end = clone $position;
 
-                    $trailing = [];
-                    $declaration->value = Value::parse($declaration->value)->
-                    filter(function ($value) use (&$trailing) {
+                    $string = rtrim($name);
+                    $this->update($end, $string);
+                    $end->index += strlen($string);
 
-                        if ($value->type == 'Comment') {
+                    $declaration = (object)array_merge(
+                        [
+                            'type' => 'Declaration',
+                            'location' => (object)[
+                                'start' => clone $position,
+                                'end' => $end
+                            ]
+                        ],
+                        $this->parseVendor(trim($declaration[0])),
+                        [
+                            'value' => rtrim($declaration[1], "\n\r\t ")
+                        ]);
 
-                            $trailing[] = $value;
-                            return false;
-                        }
+                    if ($this->src !== '') {
 
-                        return true;
-                    });
-
-                    if (!empty($trailing)) {
-
-                        $declaration->trailingcomments = $trailing;
+                        $declaration->src = $this->src;
                     }
-                }
 
-                if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
+                    if (strpos($declaration->name, '/*') !== false) {
 
-                    $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+                        $leading = [];
+                        $declaration->name = trim(Value::parse($declaration->name)->
+                        filter(function ($value) use (&$leading) {
 
-                        $file = trim($matches[3]);
+                            if ($value->type == 'Comment') {
 
-                        if (strpos($file, 'data:') !== false) {
+                                $leading[] = $value;
+                                return false;
+                            }
 
-                            return $matches[0];
+                            return true;
+                        }));
+
+                        if (!empty($leading)) {
+
+                            $declaration->leadingcomments = $leading;
                         }
+                    }
 
-                        if (!preg_match('#^(/|((https?:)?//))#', $file)) {
+                    if (strpos($declaration->value, '/*') !== false) {
 
-                            $file = Helper::absolutePath($file, dirname($this->src));
+                        $trailing = [];
+                        $declaration->value = Value::parse($declaration->value)->
+                        filter(function ($value) use (&$trailing) {
+
+                            if ($value->type == 'Comment') {
+
+                                $trailing[] = $value;
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        if (!empty($trailing)) {
+
+                            $declaration->trailingcomments = $trailing;
                         }
+                    }
 
-                        return $matches[1] . 'url(' . $file . ')';
+                    if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
 
-                    }, $declaration->value);
+                        $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+
+                            $file = trim($matches[3]);
+
+                            if (strpos($file, 'data:') !== false) {
+
+                                return $matches[0];
+                            }
+
+                            if (!preg_match('#^(/|((https?:)?//))#', $file)) {
+
+                                $file = Helper::absolutePath($file, dirname($this->src));
+                            }
+
+                            return $matches[1] . 'url(' . $file . ')';
+
+                        }, $declaration->value);
+                    }
+
+                    $tokens[] = $declaration;
+
+                    $declaration->location->start->index += $this->parentOffset;
+                    $declaration->location->end->index += $this->parentOffset;
+
+                    $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
+                    $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
                 }
-
-                $tokens[] = $declaration;
-
-                $declaration->location->start->index += $this->parentOffset;
-                $declaration->location->end->index += $this->parentOffset;
-
-                $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
-                $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
 
                 $this->update($position, $name);
                 $position->index += strlen($name);
@@ -896,7 +894,7 @@ class Parser implements ParsableInterface
                     if ($this->src !== '') {
 
                         $rule->src = $this->src;
-                    };
+                    }
 
                     if (strpos($name, '/*') !== false) {
 
@@ -953,7 +951,7 @@ class Parser implements ParsableInterface
 
                     if (is_null($this->parentStylesheet) || !in_array($this->parentStylesheet->type, ['Rule', 'NestingRule', 'NestingAtRule', 'AtRule'])) {
 
-                        $this->handleError('nesting at-rule is allowed in a rule %s:%s:%s', $rule);
+                        $this->handleError(sprintf('nesting at-rule is allowed in a rule %s:%s:%s', $rule->file, $rule->line, $rule->column), 400);
                     }
 
                     if (!preg_match('#(^|[^A-Za-z0-9])&([^A-Za-z0-9]|$)#', $rule->name)) {
@@ -971,17 +969,6 @@ class Parser implements ParsableInterface
                 $parser->ast = $rule;
                 $parser->parentMediaRule = $this->parentMediaRule;
 
-                if ($rule->type == 'AtRule' && $rule->name == 'media' &&
-                    isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
-
-                    if (isset($parser->parentMediaRule)) {
-
-                        $parser->parentMediaRule->type = 'NestingMediaRule';
-                    }
-
-                    $parser->parentMediaRule = $rule;
-                }
-
                 $parser->parentStylesheet = $rule->type == 'Rule' ? $rule : $this->ast;
                 $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
 
@@ -994,6 +981,11 @@ class Parser implements ParsableInterface
                 $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                 $parser->ast->children = $parser->getTokens();
+
+                if (isset($this->parentMediaRule) && $rule->type == 'NestingRule') {
+
+                    $this->parentMediaRule->type = 'NestingMediaRule';
+                }
 
                 $string = $name . $body;
                 $this->update($position, $string);
@@ -1009,6 +1001,41 @@ class Parser implements ParsableInterface
 
                     array_splice($this->errors, count($this->errors), 0, $parser);
                 }
+
+                if ($rule->type == 'AtRule' && $rule->name == 'media' &&
+                    isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
+
+                    if (isset($parser->parentMediaRule)) {
+
+                        $parser->parentMediaRule->type = 'NestingMediaRule';
+                    }
+
+                    if ($this->ast->type == 'NestingRule' || $this->ast->type == 'NestingAtRule') {
+
+                        $rule->type = 'NestingMediaRule';
+                    }
+
+//                    else {
+//
+//                        foreach ($rule->children as $child) {
+//
+//                            if ($child->type != 'Comment' && $child->type != 'Rule') {
+//
+//                                $rule->type = 'NestingMediaRule';
+//                                break;
+//                            }
+//                        }
+//                    }
+
+                    $parser->parentMediaRule = $rule;
+                }
+
+//                if ($rule->type == 'NestingRule') {
+
+//                    var_dump(isset($this->parentMediaRule));
+//                    die;
+//                }
+
 //                continue;
             }
         }
@@ -1110,14 +1137,22 @@ class Parser implements ParsableInterface
     public function __toString()
     {
 
-        if (!isset($this->ast)) {
+        try {
 
-            $this->getAst();
+            if (!isset($this->ast)) {
+
+                $this->getAst();
+            }
+
+            if (isset($this->ast)) {
+
+                return (new Renderer())->renderAst($this->ast);
+            }
         }
 
-        if (isset($this->ast)) {
+        catch (Exception $ex) {
 
-            return (new Renderer())->renderAst($this->ast);
+            error_log($ex);
         }
 
         return '';

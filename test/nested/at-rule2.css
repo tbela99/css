@@ -1,6 +1,11 @@
 .foo {
     display: grid;
 
+    & span{
+
+    display: inline-block;
+}
+
 @media (orientation: portrait) {
     grid-auto-flow: column;
 
