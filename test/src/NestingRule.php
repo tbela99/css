@@ -63,6 +63,20 @@ final class NestingRule extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider testNestingInvalidProvider
+     */
+    public function testNestingInvalid($expected, $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
     public function testNestingRuleProvider()
     {
 
@@ -102,7 +116,7 @@ table.colortable th {
  padding: 2ch
 }
 /* The parent selector can be arbitrarily complicated */
-:is(.error, #404):hover > .baz {
+:is(.error, #404):hover>.baz {
  color: red
 }', $renderer->setOptions(['legacy_rendering' => true])->renderAst($parser)];
 
@@ -142,7 +156,7 @@ table.colortable {
 /* The parent selector can be arbitrarily complicated */
 .error,
 #404 {
- &:hover > .baz {
+ &:hover>.baz {
   color: red
  }
 }', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
@@ -285,6 +299,75 @@ p .foo {
   }
  }
 }', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
+
+        return $data;
+    }
+
+    public function testNestingInvalidProvider()
+    {
+
+        $data = [];
+
+        $parser = (new Parser())->load(__DIR__ . '/../nested/invalid.css');
+        $renderer = new Renderer();
+
+        $data[] = ['/* invalid */
+/* & isn’t the first simple selector */
+.foo {
+ color: blue
+}
+/* & isn’t the first selector of every one in the list */
+.foo,
+.bar {
+ color: blue
+}
+article {
+ color: green;
+ & {
+  color: blue
+ }
+ &.foo {
+  color: #ff0
+ }
+ /* valid! */
+}
+.foo {
+ color: red;
+ @media (min-width:480px) {
+
+ }
+}
+/* Invalid because not all selectors in the list
+  contain a nesting selector */
+.foo {
+ color: red
+}', $renderer->renderAst($parser)];
+
+        $data[] = ['/* invalid */
+/* & isn’t the first simple selector */
+.foo {
+ color: blue
+}
+/* & isn’t the first selector of every one in the list */
+.foo,
+.bar {
+ color: blue
+}
+article {
+ color: green;
+ & {
+  color: blue
+ }
+ &.foo {
+  color: #ff0
+ }
+ /* valid! */
+}
+/* Invalid because not all selectors in the list
+  contain a nesting selector */
+.foo {
+ color: red
+}', $renderer->setOptions(['remove_empty_nodes' => true])->renderAst($parser)];
 
         return $data;
     }

@@ -1,0 +1,55 @@
+/* invalid */
+
+background: url(./images.png);
+
+.foo {
+    color: blue;
+.bar {
+    color: red;
+}
+}
+
+/* & isn’t the first simple selector */
+.foo {
+    color: blue;
+.bar& {
+    color: red;
+}
+
+@nest a &, div span {
+
+    line-height: 1.4;
+}
+}
+
+/* & isn’t the first selector of every one in the list */
+.foo, .bar {
+    color: blue;
+& + .baz, .qux { color: red; }
+}
+article {
+    color: green;
+& { color: blue; }
+color: red;
+&.foo { color: yellow; } /* valid! */
+}
+
+.foo {
+    color: red;
+
+@media (min-width: 480px) {
+& h1, h2 { color: blue; }
+}
+}
+/* Invalid because not all selectors in the list
+  contain a nesting selector */
+
+.foo {
+    color: red;
+
+@nest @media (min-width: 480px) {
+& { color: blue; }
+}
+}
+
+left over;
