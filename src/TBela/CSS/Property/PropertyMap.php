@@ -19,31 +19,31 @@ class PropertyMap
      * @var array
      * @ignore
      */
-    protected array $config;
+    protected $config;
 
     /**
      * @var Property[]
      * @ignore
      */
-    protected array $properties = [];
+    protected $properties = [];
 
     /**
      * @var array
      * @ignore
      */
-    protected array $property_type = [];
+    protected $property_type = [];
     /**
      * @var string
      * @ignore
      */
-    protected string $shorthand;
+    protected $shorthand;
 
     /**
      * PropertySet constructor.
      * @param string $shorthand
      * @param array $config
      */
-    public function __construct(string $shorthand, array $config)
+    public function __construct($shorthand, array $config)
     {
 
         $this->shorthand = $shorthand;
@@ -77,7 +77,7 @@ class PropertyMap
      * @return PropertyMap
      * @throws \Exception
      */
-    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null)
+    public function set($name, $value, array $leadingcomments = null, array $trailingcomments = null)
     {
 
         // is valid property

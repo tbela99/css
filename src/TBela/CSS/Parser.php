@@ -22,13 +22,13 @@ class Parser implements ParsableInterface
 
     use ParserTrait;
 
-    protected int $parentOffset = 0;
-    protected ?stdClass $parentStylesheet = null;
-    protected ?stdClass $parentMediaRule = null;
+    protected $parentOffset = 0;
+    protected $parentStylesheet = null;
+    protected $parentMediaRule = null;
 
-    protected array $errors = [];
+    protected $errors = [];
 
-    protected ?stdClass $ast = null;
+    protected $ast = null;
 //    protected ?RuleListInterface $element = null;
 
     /**
@@ -36,18 +36,18 @@ class Parser implements ParsableInterface
      * @var string
      * @ignore
      */
-    protected string $css = '';
+    protected $css = '';
 
     /**
      * @var string
      * @ignore
      */
-    protected string $src = '';
+    protected $src = '';
     /**
      * @var array
      * @ignore
      */
-    protected array $options = [
+    protected $options = [
         'capture_errors' => true,
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
@@ -156,7 +156,7 @@ class Parser implements ParsableInterface
      * @param string $media
      * @return Parser
      */
-    public function setContent(string $css, string $media = '')
+    public function setContent($css, $media = '')
     {
 
         if ($media !== '' && $media != 'all') {
@@ -282,28 +282,29 @@ class Parser implements ParsableInterface
 
         $signature = 'type:' . $ast->type;
 
-        $name = $ast->name ?? null;
+        $name = isset($ast->name) ? $ast->name : null;
 
         if (isset($name)) {
 
             $signature .= ':name:' . $name;
         }
 
-        $value = $ast->value ?? null;
+        $value = isset($ast->value) ? $ast->value : null;
 
         if (isset($value)) {
 
-            $signature .= ':value:' . (is_string($value) ? Value::parse($value, $name) : $value)->render(['convert_color' => 'hex', 'compress' => true]);
+            $val = is_string($value) ? Value::parse($value, $name) : $value;
+            $signature .= ':value:' . $val->render(['convert_color' => 'hex', 'compress' => true]);
         }
 
-        $selector = $ast->selector ?? null;
+        $selector = isset($ast->selector) ? $ast->selector : null;
 
         if (isset($selector)) {
 
             $signature .= ':selector:' . (is_array($selector) ? implode(',', $selector) : $selector);
         }
 
-        $vendor = $ast->vendor ?? null;
+        $vendor = isset($ast->vendor) ? $ast->vendor : null;
 
         if (isset($vendor)) {
 
@@ -463,7 +464,7 @@ class Parser implements ParsableInterface
      * @throws Exception
      * @ignore
      */
-    protected function getFileContent(string $file, string $media = '')
+    protected function getFileContent($file, $media = '')
     {
 
         if (!preg_match('#^(https?:)?//#', $file)) {
@@ -494,7 +495,7 @@ class Parser implements ParsableInterface
      * @return Parser
      * @ignore
      */
-    protected function getRoot(): Parser
+    protected function getRoot()
     {
 
         if (is_null($this->ast)) {
@@ -552,7 +553,7 @@ class Parser implements ParsableInterface
      * @throws SyntaxError
      * @throws Exception
      */
-    protected function getTokens(): array
+    protected function getTokens()
     {
 
         $position = $this->ast->location->end;
@@ -982,7 +983,7 @@ class Parser implements ParsableInterface
                     $parser->parentStylesheet = $rule->type == 'Rule' ? $rule : $this->ast;
                     $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
 
-                    if (($this->parentStylesheet->type ?? null) == 'Rule') {
+                    if ((isset($this->parentStylesheet->type) ? $this->parentStylesheet->type : null) == 'Rule') {
 
                         $this->parentStylesheet->type = 'NestingRule';
                     }
@@ -1121,7 +1122,7 @@ class Parser implements ParsableInterface
      * @return stdClass
      * @ignore
      */
-    protected function update($position, string $string)
+    protected function update($position, $string)
     {
 
         $j = strlen($string);
@@ -1166,7 +1167,7 @@ class Parser implements ParsableInterface
      * @param int $error_code
      * @throws SyntaxError
      */
-    protected function handleError(string $message, int $error_code = 400)
+    protected function handleError($message, $error_code = 400)
     {
 
         $error = new SyntaxError($message, $error_code);

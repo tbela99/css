@@ -15,7 +15,7 @@ trait UnitTrait
      * @inheritDoc
      */
 
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         if (isset($this->data->unit)) {

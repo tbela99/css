@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
@@ -12,7 +11,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testNestingRuleProvider
      */
-    public function testNestingRule($expected, $actual): void
+    public function testNestingRule($expected, $actual)
     {
 
         $this->assertEquals(
@@ -26,7 +25,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testNestingAtRuleProvider
      */
-    public function testNestingAtRule($expected, $actual): void
+    public function testNestingAtRule($expected, $actual)
     {
 
         $this->assertEquals(
@@ -40,7 +39,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testAtRuleProvider
      */
-    public function testAtRule($expected, $actual): void
+    public function testAtRule($expected, $actual)
     {
 
         $this->assertEquals(
@@ -54,7 +53,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testNestingMediaRuleProvider
      */
-    public function testNestingMediaRule($expected, $actual): void
+    public function testNestingMediaRule($expected, $actual)
     {
 
         $this->assertEquals(
@@ -68,7 +67,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testNestingInvalidProvider
      */
-    public function testNestingInvalid($expected, $actual): void
+    public function testNestingInvalid($expected, $actual)
     {
 
         $this->assertEquals(

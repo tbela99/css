@@ -16,7 +16,7 @@ class BackgroundRepeat extends Value
     /**
      * @var string[]
      */
-    protected static array $keywords = [
+    protected static $keywords = [
         'repeat-x',
         'repeat-y',
         'repeat',
@@ -28,7 +28,7 @@ class BackgroundRepeat extends Value
     /**
      * @var string[]
      */
-    protected static array $keymap = [
+    protected static $keymap = [
         'repeat no-repeat' => 'repeat-x',
         'no-repeat repeat' => 'repeat-y',
         'repeat repeat' => 'repeat',
@@ -37,7 +37,7 @@ class BackgroundRepeat extends Value
         'no-repeat no-repeat' => 'no-repeat'
     ];
 
-    protected static array $patterns = [
+    protected static $patterns = [
         'keyword',
         [
             ['type' => 'background-repeat'],
@@ -48,9 +48,9 @@ class BackgroundRepeat extends Value
     /**
      * @var string[]
      */
-    protected static array $defaults = ['repeat'];
+    protected static $defaults = ['repeat'];
 
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword($string, array $keywords = null)
     {
 
         $key = preg_replace('~(\s+)~', ' ', trim($string));

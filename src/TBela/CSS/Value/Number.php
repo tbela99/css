@@ -38,7 +38,7 @@ class Number extends Value
     /**
      * @inheritDoc
      */
-    public function match (string $type): bool {
+    public function match ($type) {
 
         return ($this->data->value == '0' && $type == 'unit') || $this->data->type == $type;
     }
@@ -46,7 +46,7 @@ class Number extends Value
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool
+    protected static function validate($data)
     {
 
         return isset($data->value) && is_numeric($data->value) && $data->value !== '';
@@ -57,7 +57,7 @@ class Number extends Value
      * @return string
      * @ignore
      */
-    public static function compress(string $value): string
+    public static function compress($value)
     {
 
         if (is_null($value)) {
@@ -97,7 +97,7 @@ class Number extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         if (!empty($options['compress'])) {

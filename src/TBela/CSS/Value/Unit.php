@@ -14,7 +14,7 @@ class Unit extends Number {
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool {
+    protected static function validate($data) {
 
         return isset($data->unit) || (isset($data->value) && $data->value == '0') || in_array(strtolower($data->value), static::$keywords);
     }
@@ -22,7 +22,7 @@ class Unit extends Number {
     /**
      * @inheritDoc
      */
-    public function match ($type): bool {
+    public function match ($type) {
 
         $dataType = strtolower($this->data->type);
         return $dataType == static::type() || ($type == 'number' && $this->data->value == 0);
@@ -31,7 +31,7 @@ class Unit extends Number {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         if (in_array(strtolower($this->value), static::$keywords)) {

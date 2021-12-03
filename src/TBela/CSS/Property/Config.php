@@ -20,7 +20,7 @@ final class Config {
      * @var array
      * @ignore
      */
-    protected static array $config = [
+    protected static $config = [
         'properties' => [],
         'alias' => []
     ];
@@ -31,7 +31,9 @@ final class Config {
      */
     public static function load($file) {
 
-        static::$config = json_decode(file_get_contents($file), true) ?? [];
+        $result = json_decode(file_get_contents($file), true);
+
+        static::$config = isset($result) ? $result : [];
     }
 
     /**
@@ -142,7 +144,7 @@ final class Config {
 
         $config[$shorthand] = [
 
-            'shorthand' => $shorthandOverride ?? $shorthand,
+            'shorthand' => isset($shorthandOverride) ? $shorthandOverride : $shorthand,
             'pattern' => $pattern,
             'value_map' => []
         ];

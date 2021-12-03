@@ -13,7 +13,7 @@ class FontSize extends Unit
 
     use UnitTrait, ValueTrait;
 
-    protected static array $keywords = [
+    protected static $keywords = [
         'xx-small',
         'x-small',
         'small',
@@ -26,12 +26,12 @@ class FontSize extends Unit
         'smaller'
     ];
 
-    protected static array $defaults = ['medium'];
+    protected static $defaults = ['medium'];
 
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
     {
         if (($token->type == 'number' && $token->value == 0) || ($token->type == 'unit' && !in_array($token->unit, ['turn', 'rad', 'grad', 'deg']))) {
 
@@ -49,7 +49,7 @@ class FontSize extends Unit
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
 
         $value = $this->data->value;

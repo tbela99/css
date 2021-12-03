@@ -8,59 +8,110 @@ use TBela\CSS\Query\Parser as QueryParser;
 
 require 'autoload.php';
 
-$css = '@font-face {
+
+$css = '
+*[class*=jdb-container], *[class*=jdb-container] *, *[class*=jdb-container]::before {
+    box-sizing: border-box
+}
+
+.jdb-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+@media (min-width: 576px) {
+    .jdb-container {
+        max-width: 540px
+    }
+}
+
+@media (min-width: 768px) {
+    .jdb-container {
+        max-width: 720px
+    }
+}
+
+@media (min-width: 992px) {
+    .jdb-container {
+        max-width: 960px
+    }
+}
+
+@media (min-width: 1200px) {
+    .jdb-container {
+        max-width: 1140px
+    }
+}
+
+.jdb-container-fluid, .jdb-container-sm, .jdb-container-md, .jdb-container-lg, .jdb-container-xl {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto
+}
+
+#outdated {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 170px;
+    text-align: center;
+    text-transform: uppercase;
+    z-index: 1500;
+    background-color: #f25648;
+    color: #fff
+}
+
+* html #outdated {
+    position: absolute
+}
+
+#outdated h6 {
+    font-size: 25px;
+    line-height: 25px;
+    margin: 30px 0 10px
+}
+
+#outdated p {
+    font-size: 12px;
+    line-height: 12px;
+    margin: 0
+}
+
+#outdated #btnUpdateBrowser {
+    display: block;
+    position: relative;
+    padding: 10px 20px;
+    margin: 30px auto 0;
+    width: 230px;
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid #fff;
+    cursor: pointer
+}
+
+input[type="text"]
+{
+background:red;
+}
+
+
+@font-face {
   font-family: "Bitstream Vera Serif Bold";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 
-body {
-  background-color: green;
-  color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-}
-h1 {
-  color: #fff;
-  font-size: 50px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-}
+';
 
-@media print, screen and (max-width: 12450px) {
+$element = (new TBela\CSS\Parser($css))->parse();
 
-p {
-      color: #f0f0f0;
-      background-color: #030303;
-  }
-}
-
-@media print {
-  @font-face {
-    font-family: MaHelvetica;
-    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
-    font-weight: bold;
-  }
-  body {
-    font-family: "Bitstream Vera Serif Bold", serif;
-  }
-  p {
-    font-size: 12px;
-    color: #000;
-    text-align: left;
-  }
-
-  @font-face {
-    font-family: Arial, MaHelvetica;
-    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
-      ;
-    font-weight: bold;
-  }
-}';
-
-$element = (new CssParser($css))->parse();
+$query = '*[class*=jdb-container] *';
 
 
-//$context = '// @font-face / src / ..';
-$context = '// @font-face';
-var_dump(
-    array_map('trim', $element->query($context)));
+var_dump(array_map('trim', $element->queryByClassNames($query)));

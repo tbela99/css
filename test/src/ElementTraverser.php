@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Ast\Traverser;
@@ -13,7 +12,7 @@ final class ElementTraverser extends TestCase
      * @param string $actual
      * @dataProvider traverseProvider
      */
-    public function testTraverse($expected, $actual): void
+    public function testTraverse($expected, $actual)
     {
 
         $this->assertEquals(
@@ -125,7 +124,6 @@ $traverser->off('enter')->on('enter', function ($node) {
   font-size: 13px
  }
 }', $renderer->render($traverser->traverse($ast))];
-
 
         $data[] = [(string) (new Parser('/* this comment is here */
 @media print {

@@ -13,7 +13,7 @@ class CSSFunction extends Value {
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool {
+    protected static function validate($data) {
 
         return isset($data->name) && isset($data->arguments) && $data->arguments instanceof Set;
     }
@@ -21,7 +21,7 @@ class CSSFunction extends Value {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string {
+    public function render(array $options = []) {
 
         return $this->data->name.'('. $this->data->arguments->render($options).')';
     }

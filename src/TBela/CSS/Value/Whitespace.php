@@ -13,7 +13,7 @@ class Whitespace extends Value {
     /**
      * @inheritDoc
      */
-    protected static function validate($data): bool {
+    protected static function validate($data) {
 
         return true;
     }
@@ -29,7 +29,7 @@ class Whitespace extends Value {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public function render(array $options = [])
     {
         return ' ';
     }
@@ -37,7 +37,7 @@ class Whitespace extends Value {
     /**
      * @inheritDoc
      */
-    public function getHash(): string
+    public function getHash()
     {
         return ' ';
     }
