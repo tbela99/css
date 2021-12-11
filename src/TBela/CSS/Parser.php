@@ -4,7 +4,7 @@ namespace TBela\CSS;
 
 use Exception;
 use stdClass;
-//use TBela\CSS\Interfaces\ElementInterface;
+
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser\Helper;
@@ -29,8 +29,6 @@ class Parser implements ParsableInterface
     protected $errors = [];
 
     protected $ast = null;
-//    protected ?RuleListInterface $element = null;
-
     /**
      * css data
      * @var string
@@ -69,8 +67,7 @@ class Parser implements ParsableInterface
         $this->setOptions($options);
     }
 
-    /**
-     * load css content from a file
+    /**     * load css content from a file
      * @param string $file
      * @param string $media
      * @return Parser
@@ -83,7 +80,7 @@ class Parser implements ParsableInterface
         $this->src = Helper::absolutePath($file, Helper::getCurrentDirectory());
         $this->css = $this->getFileContent($file, $media);
         $this->ast = null;
-//        $this->element = null;
+
         return $this;
     }
 
@@ -111,16 +108,6 @@ class Parser implements ParsableInterface
 
         assert($parser instanceof self);
 
-//        if (is_null($this->ast)) {
-//
-//            $this->doParse();
-//        }
-
-//        if (is_null($parser->ast)) {
-//
-//            $parser->doParse();
-//        }
-
         array_splice($this->tokenize()->ast->children, count($this->ast->children), 0, $parser->tokenize()->ast->children);
         array_splice($this->errors, count($this->errors), 0, $parser->errors);
         return $this;
@@ -141,12 +128,6 @@ class Parser implements ParsableInterface
         }
 
         $this->css .= rtrim($css);
-
-//        if (is_null($this->ast)) {
-//
-//            $this->doParse();
-//        }
-
         return $this->tokenize();
     }
 
@@ -167,7 +148,7 @@ class Parser implements ParsableInterface
         $this->css = $css;
         $this->src = '';
         $this->ast = null;
-//        $this->element = null;
+
         return $this;
     }
 
@@ -223,7 +204,6 @@ class Parser implements ParsableInterface
 
             $this->doParse();
         }
-
         return Element::getInstance($this->ast);
     }
 
@@ -335,9 +315,6 @@ class Parser implements ParsableInterface
                     if ($total > 0) {
 
                         $el = $ast->children[$total];
-
-//                        $i = $total;
-
                         if ($el->type == 'Comment' || $el->type == 'NestingRule') {
 
                             continue;
@@ -533,7 +510,6 @@ class Parser implements ParsableInterface
     {
 
         if (!isset($this->ast)) {
-
             $this->getRoot();
         }
 
@@ -639,7 +615,6 @@ class Parser implements ParsableInterface
 
                 $declaration = !in_array($char, [';', '}']) ? $name : substr($name, 0, -1);
                 $declaration = rtrim($declaration, " \r\n\t;}");
-
                 if ($declaration !== '') {
 
                     $declaration = Value::split($declaration, ':', 2);
@@ -647,9 +622,7 @@ class Parser implements ParsableInterface
                     if (count($declaration) < 2 || $this->ast->type == 'Stylesheet') {
 
                         $this->handleError(sprintf('invalid declaration %s:%s:%s "%s"', $this->src, $position->line, $position->column, $name));
-                    }
-
-                    else {
+                    } else {
 
                         $end = clone $position;
 
@@ -680,7 +653,6 @@ class Parser implements ParsableInterface
                             $leading = [];
                             $declaration->name = trim(Value::parse($declaration->name)->
                             filter(function ($value) use (&$leading) {
-
                                 if ($value->type == 'Comment') {
 
                                     $leading[] = $value;
@@ -722,7 +694,6 @@ class Parser implements ParsableInterface
                             $declaration->value = preg_replace_callback('#(^|[\s,/])url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
 
                                 $file = trim($matches[3]);
-
                                 if (strpos($file, 'data:') !== false) {
 
                                     return $matches[0];
@@ -882,7 +853,6 @@ class Parser implements ParsableInterface
                         continue;
                     }
                 } else {
-
                     $selector = rtrim(substr($name, 0, -1));
                     $rule = (object)[
 
@@ -938,7 +908,21 @@ class Parser implements ParsableInterface
 
                 if ($rule->type == 'NestingAtRule') {
 
-                    if (substr(ltrim($rule->selector), 0, 1) == '@') {
+                    $validRule = in_array($this->ast->type, ['NestingRule', 'Rule']) && substr(ltrim($rule->selector), 0, 1) != '@';
+
+                    if ($validRule) {
+
+                        foreach (Value::split($rule->selector, ',') as $selector) {
+
+                            if (strpos($selector, '&') === false) {
+
+                                $validRule = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$validRule) {
 
                         $this->handleError(sprintf('invalid nesting at-rule at %s:%s:%s "@nest %s"',
                             $rule->src,
@@ -946,31 +930,47 @@ class Parser implements ParsableInterface
                             $rule->location->start->column,
                             $rule->selector
                         ));
-
-                        $validRule = false;
                     }
+                } else if (in_array($rule->type, ['AtRule', 'NestingMedialRule'])) {
 
-                    else {
+                    $validRule = ($rule->type == 'AtRule' && in_array($this->ast->type, ['Rule', 'AtRule', 'NestingRule', 'NestingMediaRule', 'Stylesheet'])) ||
+                        ($rule->type == 'NestingMedialRule' && in_array($this->ast->type, ['Rule', 'AtRule', 'NestingRule', 'NestingMediaRule']));
 
-                        foreach (Value::split($rule->selector, ',') as $selector) {
+                    if (!$validRule) {
 
-                            if (strpos($selector, '&') === false) {
+                        $this->handleError(sprintf('invalid nesting %s at %s:%s:%s "@%s %s"',
+                            preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
 
-                                $this->handleError(sprintf('invalid nesting at-rule at %s:%s:%s "@nest %s"',
-                                    $rule->src,
-                                    $rule->location->start->line,
-                                    $rule->location->start->column,
-                                    $rule->selector
-                                ));
+                                return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
 
-                                $validRule = false;
-                                break;
-                            }
-                        }
+                            }, $rule->type),
+                            $rule->src,
+                            $rule->location->start->line,
+                            $rule->location->start->column,
+                            $rule->name,
+                            $rule->value
+                        ));
+
                     }
                 }
 
                 $body = static::_close($this->css, '}', '{', $i + strlen($name), $j);
+
+                if ($validRule && substr($body, -1) != '}') {
+
+                    $validRule = false;
+                    $this->handleError(sprintf('invalid %s at %s:%s:%s "%s"',
+                        preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
+
+                            return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
+
+                        }, $rule->type),
+                        $rule->src,
+                        $rule->location->start->line,
+                        $rule->location->start->column,
+                        isset($rule->name) ? $rule->name : $rule->selector
+                    ));
+                }
 
                 if ($validRule) {
 
@@ -1024,14 +1024,46 @@ class Parser implements ParsableInterface
                         $parser->parentMediaRule = $rule;
                     }
 
-                    if (in_array($rule->type , ['NestingRule', 'NestingMediaRule', 'NestedAtRule'])) {
+                    $errors = [];
+                    $e = count($rule->children);
 
-                        $errors = [];
-                        $e = count($rule->children);
+                    while ($e-- > 0) {
 
-                        while($e--) {
+                        $child = $rule->children[$e];
 
-                            $child = $rule->children[$e];
+                        if (in_array($rule->type, ['AtRule', 'NestingMedialRule']) && $rule->name == 'media' && in_array($child->type, ['AtRule', 'Declaration']) && $this->ast->type == 'Stylesheet') {
+
+                            if ($child->type == 'AtRule' && $child->name == 'media') {
+
+                                $this->handleError(sprintf('invalid nesting %s at %s:%s:%s "@%s %s"',
+                                    preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
+
+                                        return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
+
+                                    }, $child->type),
+                                    isset($child->src) ? $child->src : '',
+                                    $child->location->start->line,
+                                    $child->location->start->column,
+                                    $child->name,
+                                    $child->value
+                                ));
+                                array_splice($rule->children, $e, 1);
+                            } else if ($child->type == 'Declaration') {
+
+                                $this->handleError(sprintf('invalid declaration at %s:%s:%s "%s"',
+                                    $child->src,
+                                    $child->location->start->line,
+                                    $child->location->start->column,
+                                    $child->name . ':' . $child->value
+                                ));
+
+                                array_splice($rule->children, $e, 1);
+                            }
+
+                            continue;
+                        }
+
+                        if (in_array($rule->type, ['NestingRule', 'NestingMediaRule', 'NestedAtRule'])) {
 
                             if ($child->type == 'Declaration' && $e > 0) {
 
@@ -1043,7 +1075,7 @@ class Parser implements ParsableInterface
                                         $child->src,
                                         $child->location->start->line,
                                         $child->location->start->column,
-                                        $child->name
+                                        $child->name . ':' . $child->value
                                     );
 
                                     array_splice($rule->children, $e, 1);
@@ -1059,7 +1091,12 @@ class Parser implements ParsableInterface
 
                                     if (substr(ltrim($selector), 0, 1) != '&') {
 
-                                        $errors[] = sprintf('invalid nesting selector at %s:%s:%s "%s"',
+                                        $errors[] = sprintf('invalid nesting %s at %s:%s:%s "%s"',
+                                            preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
+
+                                                return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
+
+                                            }, $child->type),
                                             $child->src,
                                             $child->location->start->line,
                                             $child->location->start->column,
@@ -1067,6 +1104,7 @@ class Parser implements ParsableInterface
                                         );
 
                                         array_splice($rule->children, $e, 1);
+                                        break;
                                     }
                                 }
                             }
@@ -1090,9 +1128,6 @@ class Parser implements ParsableInterface
                 $this->update($position, $string);
                 $position->index += strlen($string);
                 $i += strlen($string) - 1;
-
-
-//                continue;
             }
         }
 
@@ -1204,9 +1239,7 @@ class Parser implements ParsableInterface
 
                 return (new Renderer())->renderAst($this->ast);
             }
-        }
-
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
 
             error_log($ex);
         }

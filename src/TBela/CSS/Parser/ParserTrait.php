@@ -25,26 +25,6 @@ trait ParserTrait
         return $string;
     }
 
-    /*
-    protected static function is_separator($char)
-    {
-
-        switch ($char) {
-
-            case ',':
-            case '/':
-            case '+':
-            case '-':
-            case '>':
-            case '~':
-            case ':':
-
-                return true;
-        }
-
-        return false;
-    }
-*/
     protected static function match_comment($string, $start, $end)
     {
 

@@ -87,23 +87,27 @@ final class NestingRule extends TestCase
         $data[] = ['/* this row */
 table.colortable {
  /* clean all */
+ width: 100%;
  text-shadow: none;
- color /* hidden */: blue /* blues */
+ border-collapse /* collapse */: collapse /* collapsed */
 }
 table.colortable td {
  text-align: center
 }
 table.colortable td.c {
- text-transform: uppercase
-}
-table.colortable td:first-child,
-table.colortable td:first-child+td {
- border: 1px solid #000
+ text-transform: uppercase;
+ background: #ff0
 }
 table.colortable th {
  text-align: center;
- background: #000;
- color: #fff
+ color: green;
+ font-weight: 400;
+ padding: 2px 3px
+}
+table.colortable td,
+table.colortable th {
+ border: 1px solid #d9dadd;
+ padding: 5px
 }
 .foo {
  padding: 2ch
@@ -117,27 +121,36 @@ table.colortable th {
 /* The parent selector can be arbitrarily complicated */
 :is(.error, #404):hover>.baz {
  color: red
-}', $renderer->setOptions(['legacy_rendering' => true])->renderAst($parser)];
+}', $renderer->setOptions([
+    'remove_empty_nodes' => true,
+    'legacy_rendering' => true])->renderAst($parser)];
 
         $data[] = ['/* this row */
 table.colortable {
  /* clean all */
+ width: 100%;
  text-shadow: none;
- color /* hidden */: blue /* blues */;
+ border-collapse /* collapse */: collapse /* collapsed */;
  & td {
   text-align: center;
   &.c {
-   text-transform: uppercase
+   text-transform: uppercase;
+   background: #ff0
   }
-  &:first-child,
-  &:first-child+td {
-   border: 1px solid #000
-  }
+  /*
+      &:first-child, &:first-child + td { border:1px solid black }
+                      */
  }
  & th {
   text-align: center;
-  background: #000;
-  color: #fff
+  color: green;
+  font-weight: 400;
+  padding: 2px 3px
+ }
+ & td,
+ & th {
+  border: 1px solid #d9dadd;
+  padding: 5px
  }
 }
 .foo {
@@ -158,7 +171,9 @@ table.colortable {
  &:hover>.baz {
   color: red
  }
-}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
+}', $renderer->setOptions([
+    'legacy_rendering' => false
+        ])->renderAst($parser)];
 
         return $data;
     }
@@ -330,16 +345,35 @@ article {
  }
  /* valid! */
 }
-.foo {
- color: red;
- @media (min-width:480px) {
-
- }
-}
 /* Invalid because not all selectors in the list
   contain a nesting selector */
 .foo {
+ @media (min-width:480px) {
+
+ }
  color: red
+}
+.foo {
+ color: blue;
+ @nest .bar & {
+  color: red;
+  &.baz {
+   color: green
+  }
+ }
+}
+/*
+    */
+@media (orientation:landscape) {
+
+}
+p {
+ @media (orientation:landscape) {
+  grid-auto-flow: column;
+  @media (min-inline-size > 1024px) {
+   max-inline-size: 1024px
+  }
+ }
 }', $renderer->renderAst($parser)];
 
         $data[] = ['/* invalid */
@@ -366,6 +400,25 @@ article {
   contain a nesting selector */
 .foo {
  color: red
+}
+.foo {
+ color: blue;
+ @nest .bar & {
+  color: red;
+  &.baz {
+   color: green
+  }
+ }
+}
+/*
+    */
+p {
+ @media (orientation:landscape) {
+  grid-auto-flow: column;
+  @media (min-inline-size > 1024px) {
+   max-inline-size: 1024px
+  }
+ }
 }', $renderer->setOptions(['remove_empty_nodes' => true])->renderAst($parser)];
 
         return $data;

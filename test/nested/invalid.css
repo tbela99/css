@@ -52,4 +52,41 @@ color: red;
 }
 }
 
-left over;
+.foo {
+    color: blue;
+@nest .bar & {
+    color: red;
+&.baz {
+     color: green;
+ }
+
+
+    @nest :not(&) {
+        color: blue;
+    }
+}
+}
+
+/*
+    */
+@media (orientation: landscape) {
+    grid-auto-flow: column;
+
+    @media (min-inline-size > 1024px) {
+        max-inline-size: 1024px;
+    }
+    }
+
+p {
+
+    @media (orientation: landscape) {
+        grid-auto-flow: column;
+
+        @media (min-inline-size > 1024px) {
+            max-inline-size: 1024px;
+        }
+        }
+}
+
+    background: none;
+left over {
