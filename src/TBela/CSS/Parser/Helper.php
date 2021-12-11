@@ -13,7 +13,7 @@ class Helper
      * @var bool
      * @ignore
      */
-    protected static $fixParseUrl;
+    protected static bool $fixParseUrl;
 
     /**
      * fix parsing bug in parse_url for php < 8 : parse_url('/?#iefix') will not return the query string

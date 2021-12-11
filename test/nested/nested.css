@@ -2,19 +2,28 @@
 table.colortable {
 
     /* clean all */
+    width: 100%;
     text-shadow: none;
+    border-collapse /* collapse */: collapse /* collapsed */;
 
-    color /* hidden */ : /* blues */ blue;
     & td {
       text-align:center;
-      &.c { text-transform:uppercase }
+      &.c { text-transform:uppercase; background: yellow; }
+       /*
       &:first-child, &:first-child + td { border:1px solid black }
+                      */
     }
     & th {
       text-align:center;
-      background:black;
-      color:white;
+      color:green;
+        font-weight: 400;
+        padding: 2px 3px;
     }
+      & td, & th {
+
+         border: 1px solid #d9dadd;
+          padding: 5px;
+      }
   }
 
 .foo {

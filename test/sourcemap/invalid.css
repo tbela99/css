@@ -1,0 +1,52 @@
+/* invalid */
+.foo {
+ color: blue
+}
+/* & isn’t the first simple selector */
+.foo {
+ color: blue
+}
+/* & isn’t the first selector of every one in the list */
+.foo,
+.bar {
+ color: blue
+}
+article {
+ color: green
+}
+article {
+ color: blue
+}
+article.foo {
+ color: #ff0
+}
+article {
+ /* valid! */
+}
+/* Invalid because not all selectors in the list
+  contain a nesting selector */
+.foo {
+ color: red
+}
+.foo {
+ color: blue
+}
+.bar .foo {
+ color: red
+}
+.bar .foo.baz {
+ color: green
+}
+/*
+    */
+@media (orientation:landscape) {
+ p {
+  grid-auto-flow: column
+ }
+}
+@media (orientation:landscape)and(min-inline-size > 1024px) {
+ p {
+  max-inline-size: 1024px
+ }
+}
+/*# sourceMappingURL=invalid.css.map */
