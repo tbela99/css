@@ -1011,6 +1011,7 @@ class Parser implements ParsableInterface
                     if ($rule->type == 'AtRule' && $rule->name == 'media' &&
                         isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
 
+                        // top level media rule
                         if (isset($parser->parentMediaRule)) {
 
                             $parser->parentMediaRule->type = 'NestingMediaRule';
@@ -1021,6 +1022,7 @@ class Parser implements ParsableInterface
                             $rule->type = 'NestingMediaRule';
                         }
 
+                        // change the current mediaRule
                         $parser->parentMediaRule = $rule;
                     }
 
