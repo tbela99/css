@@ -9,6 +9,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 ## Features
 
 - generate sourcemap
+- support CSS Nesting module
 - parse and render CSS
 - support CSS4 colors
 - merge duplicate rules
@@ -481,18 +482,18 @@ echo $renderer->render($parser->parse());
 
 ## Renderer Options
 
-- sourcemap: generate sourcemap, default false
 - remove_comments: remove comments.
 - preserve_license: preserve comments starting with '/*!'
 - compress: minify output, will also remove comments
 - remove_empty_nodes: do not render empty css nodes
 - compute_shorthand: compute shorthand declaration
-- charset: preserve @charset
+- charset: preserve @charset. default to false
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: produce CSS color level 3 or 4. default to _4_
 - allow_duplicate_declarations: allow duplicate declarations.
+- legacy_rendering: flatten CSS nesting rules. default false
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 

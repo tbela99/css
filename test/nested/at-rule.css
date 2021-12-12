@@ -1,0 +1,24 @@
+
+div {
+
+    @media (min-width: 540px) {
+
+        & p {
+
+            line-height: 24px;
+
+            & span {
+
+                  line-height: 1.2;
+              }
+        }
+    }
+}
+
+.foo {
+    display: grid;
+
+@media (orientation: landscape) {
+    grid-auto-flow: column;
+}
+}

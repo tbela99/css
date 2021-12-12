@@ -1,0 +1,40 @@
+/* this row */
+table.colortable {
+
+    /* clean all */
+    width: 100%;
+    text-shadow: none;
+    border-collapse /* collapse */: collapse /* collapsed */;
+
+    & td {
+      text-align:center;
+      &.c { text-transform:uppercase; background: yellow; }
+       /*
+      &:first-child, &:first-child + td { border:1px solid black }
+                      */
+    }
+    & th {
+      text-align:center;
+      color:green;
+        font-weight: 400;
+        padding: 2px 3px;
+    }
+      & td, & th {
+
+         border: 1px solid #d9dadd;
+          padding: 5px;
+      }
+  }
+
+.foo {
+    color: blue;
+& { padding: 2ch; }
+}
+.foo {
+    color: blue;
+&& { padding: 2ch; }
+}
+/* The parent selector can be arbitrarily complicated */
+.error, #404 {
+&:hover > .baz { color: red; }
+}

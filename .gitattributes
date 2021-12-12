@@ -15,4 +15,10 @@
 /Doxyfile export-ignore
 /package.json export-ignore
 # exclude all files in test/ from stats
-/test/* linguist-vendored
+/bin/** linguist-vendored
+/test/** linguist-vendored
+/docs/** linguist-vendored
+/tool/** linguist-vendored
+/benchmark/** linguist-vendored
+
+

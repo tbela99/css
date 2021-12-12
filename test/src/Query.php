@@ -469,11 +469,11 @@ p {
   }
 }';
 
-        $compiler = new Compiler();
+        $parser = new Parser();
 
-        $compiler->setContent($css);
+        $parser->setContent($css);
 
-        $element = $compiler->getData();
+        $element = $parser->parse();
 
         // select @font-face that contains a src declaration
         $context = '// @font-face / src / ..';
@@ -917,11 +917,10 @@ p {
   }
 }';
 
-        $compiler = new Compiler();
+        $parser = new Parser();
 
-        $compiler->setContent($css);
-
-        $element = $compiler->getData();
+        $parser->setContent($css);
+        $element = $parser->parse();
 
         // select @font-face that contains a src declaration
         $context = '// @font-face / src / .. | @media[@value^=print][1],p';
@@ -1010,11 +1009,11 @@ h1,h2, a {
   font-weight: bold;
 }';
 
-        $compiler = new Compiler();
+        $parser = new Parser();
 
-        $compiler->setContent($css);
+        $parser->setContent($css);
 
-        $element = $compiler->getData();
+        $element = $parser->parse();
 
         // select @font-face that contains a src declaration
         $context = '[color(@value, "red")]';
@@ -1220,11 +1219,11 @@ h1,h2, a {
   font-weight: bold;
 }';
 
-        $compiler = new Compiler();
+        $parser = new Parser();
 
-        $compiler->setContent($css);
+        $parser->setContent($css);
 
-        $element = $compiler->getData();
+        $element = $parser->parse();
 
         // select @font-face that contains a src declaration
         $context = 'h1,a';
@@ -1363,8 +1362,8 @@ a {
 
         $query = '[name $= foo_bar]';
 
-        $compiler = new Compiler();
-        $compiler->setContent($css);
+        $parser = new Parser();
+        $parser->setContent($css);
 
         $data[] = [
             [
@@ -1372,7 +1371,7 @@ a {
 strong {
  background: blue
 }'],
-            array_map('trim', $compiler->getData()->query($query))
+            array_map('trim', $parser->parse()->query($query))
         ];
 
 

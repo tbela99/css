@@ -1,0 +1,16 @@
+.foo {
+    color: red;
+@nest .parent &, p & {
+    color: blue;
+}
+}
+
+.foo {
+    color: blue;
+@nest .bar & {
+    color: red;
+&.baz {
+     color: green;
+ }
+}
+}

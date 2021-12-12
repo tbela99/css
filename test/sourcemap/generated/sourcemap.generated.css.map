@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+{"version":3,"file":"","sourceRoot":"","sources":["\/home\/tbela\/git\/css\/test\/sourcemap\/sourcemap.css","\/home\/tbela\/git\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/tbela\/git\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI"}
+=======
 {"version":3,"file":"","sourceRoot":"","sources":["\/home\/tbela\/import\/git\/css\/test\/sourcemap\/sourcemap.css","\/home\/tbela\/import\/git\/css\/test\/sourcemap\/sourcemap.2.css","\/home\/tbela\/import\/git\/css\/test\/sourcemap\/sourcemap.media.css"],"names":[],"mappings":"AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI"}
+>>>>>>> 557993fb7cd0d0c4a00bb8b914d0ac5e0ba19f9f

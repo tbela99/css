@@ -31,7 +31,7 @@ final class Renderer extends TestCase
     */
     public function testProvider () {
 
-        $element = (new Compiler())->setContent('@font-face {
+        $element = (new \TBela\CSS\Parser())->setContent('@font-face {
   font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
@@ -41,7 +41,7 @@ background: no-repeat url("imgs/lizard.png");
 .element {
 background-image: url("imgs/lizard.png"),
                   url("imgs/star.png");
-}')->getData();
+}')->parse();
 
         $renderer = new RendererClass();
         $traverser = new Traverser();
