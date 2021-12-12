@@ -97,9 +97,10 @@ final class Ast extends TestCase
 }
 ');
 
-
-        $data[] = [(string) $parser, (new Renderer())->renderAst($parser->getAst())];
-        $data[] = [(string) $parser, (string) $parser->parse()];
+        $data[] = [(string) $parser,
+            (new Renderer())->renderAst($parser->getAst())];
+        $data[] = [(string) $parser,
+            (string) $parser->parse()];
 
         $parser->setContent('
 .btn .caret {
@@ -130,7 +131,8 @@ final class Ast extends TestCase
         $data[] = [(string) $parser, (string) $parser->parse()];
 
         $parser->load(__DIR__.'/../perf_files/php-net.css');
-        $data[] = [(string) $parser, (string) $parser->parse()];
+        $data[] = [(string) $parser,
+            (string) $parser->parse()];
 
         $parser->load(__DIR__.'/../css/template.css');
         $data[] = [(string) $parser, (string) $parser->parse()];

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
@@ -49,6 +50,20 @@ final class Sourcemap extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider testSourcemapNestedProvider
+     */
+    public function testSourcemapNested($expected, $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
     public function testSourcemapProvider() {
 
         $data = [];
@@ -80,8 +95,8 @@ final class Sourcemap extends TestCase
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -114,11 +129,15 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,6DAaA,+LAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
 
+    /**
+     * @throws IOException
+     * @throws Parser\SyntaxError
+     */
     public function testSourcemapImportProvider() {
 
         $data = [];
@@ -135,6 +154,8 @@ body {
         $renderer->save($element, $outFile);
 
         $data[] = ['/*! this is supposed to be the license. */
+/* import the cookie monster file */
+/* import the media library */
 body {
  font-size: 108px;
  color: #fff;
@@ -151,8 +172,8 @@ body {
 .far,
 .fas {
  /* don\'t comment */
- osx-font-smoothing: grayscale;
- font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ -webkit-font-smoothing: antialiased;
  display: inline-block;
  font-style: normal;
  font-variant: normal;
@@ -162,7 +183,6 @@ body {
 .bg {
  background: no-repeat url(../images/bg.png) 50% 50%/cover
 }
-/* import the cookie monster file */
 .fa-bahai {
  display: inline-block
 }
@@ -170,16 +190,14 @@ body {
  content: "s-2 ";
  font-size: 80%
 }
-/* import the media library */
 body {
  /*font-size: 14px*/
  line-height: 1.3
-}
-',
-            preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
+}',
+            preg_replace('#\n'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = [';AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = [';;;AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.min.css';
 
@@ -187,11 +205,15 @@ body {
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AACA,6DAaA,kLAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AACA,6DAaA,+LAgBA,6DC7BA,+BAIA,8CCFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }
 
+    /**
+     * @throws IOException
+     * @throws Parser\SyntaxError
+     */
     public function testSourcemapUrlProvider() {
 
         $data = [];
@@ -199,7 +221,7 @@ body {
         $element = 
 $parser = (new Parser('', [
         'flatten_import' => true
-]))->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css')->parse();
+]))->load(__DIR__.'/../sourcemap/sourcemap-url.css')->parse();
 
         $renderer = new Renderer([
             'sourcemap' => true
@@ -234,7 +256,88 @@ $parser = (new Parser('', [
             'compress' => true
         ])->save($element, $outFile);
 
-        $data[] = ['AAIA,iqBAAgb', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = ['AAIA,gqBAAgb', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+
+        return $data;
+    }
+
+    /**
+     * @throws IOException;;;;AAIA;;;;;;;AAAgb
+     */
+    public function testSourcemapNestedProvider() {
+
+        $data = [];
+
+        $parser = (new Parser('', [
+            'flatten_import' => true,
+            'capture_errors' => true
+        ]))->load(__DIR__.'/../nested/nested.css');
+
+        $renderer = new Renderer([
+
+            'sourcemap' => true,
+            'remove_empty_nodes' => true,
+            'legacy_rendering' => true
+        ]);
+
+        $outFile = __DIR__.'/../sourcemap/generated/nested.test.css';
+        $renderer->save($parser, $outFile);
+
+        $data[] = ['/* this row */
+table.colortable {
+ /* clean all */
+ width: 100%;
+ text-shadow: none;
+ border-collapse /* collapse */: collapse /* collapsed */
+}
+table.colortable td {
+ text-align: center
+}
+table.colortable td.c {
+ text-transform: uppercase;
+ background: #ff0
+}
+table.colortable th {
+ text-align: center;
+ color: green;
+ font-weight: 400;
+ padding: 2px 3px
+}
+table.colortable td,
+table.colortable th {
+ border: 1px solid #d9dadd;
+ padding: 5px
+}
+.foo {
+ padding: 2ch
+}
+.foo {
+ color: blue
+}
+.foo.foo {
+ padding: 2ch
+}
+/* The parent selector can be arbitrarily complicated */
+:is(.error, #404):hover>.baz {
+ color: red
+}
+',
+            preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
+        ];
+
+        $data[] = [';AACA;;;;;;AAOI;;;AAEE;;;;AAKF;;;;;;AAME;;;;;AASN;;;AAEA;;;AAEA;;;;AAIA', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $outFile = __DIR__.'/../sourcemap/generated/nested.test.min.css';
+        $renderer->setOptions([
+            'compress' => true
+        ])->save($parser, $outFile);
+
+        $data[] = [
+            'table.colortable{width:100%;text-shadow:none;border-collapse:collapse}table.colortable td{text-align:center}table.colortable td.c{text-transform:uppercase;background:#ff0}table.colortable th{text-align:center;color:green;font-weight:400;padding:2px 3px}table.colortable td,table.colortable th{border:1px solid #d9dadd;padding:5px}.foo{padding:2ch}.foo{color:blue}.foo.foo{padding:2ch}:is(.error,#404):hover>.baz{color:red}
+',
+            preg_replace('#'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
+        ];
+
+        $data[] = ['AACA,sEAOI,sCAEE,+DAKF,kFAME,6EASN,iBAEA,gBAEA,qBAIA', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         return $data;
     }

@@ -3,7 +3,7 @@
 
 /**
  * Utility tool to generate the relationship used to compute css properties shorthand.
- * generated is stored in src/TBela/CSS/config.json
+ * generated JSON is stored in src/TBela/CSS/config.json
  * @todo add support for background shorthand
  */
 

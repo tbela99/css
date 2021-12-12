@@ -13,7 +13,7 @@ class Helper
      * @var bool
      * @ignore
      */
-    protected static $fixParseUrl;
+    protected static bool $fixParseUrl;
 
     /**
      * fix parsing bug in parse_url for php < 8 : parse_url('/?#iefix') will not return the query string
@@ -321,7 +321,7 @@ class Helper
         // google font sends a different response when this header is missing
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
 
-            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0'
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/93.0'
         ]);
 
         if (!empty($curlOptions)) {

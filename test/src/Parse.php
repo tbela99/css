@@ -41,11 +41,6 @@ final class Parse extends TestCase
  width: calc((100% + 2rem)/2);
  /* This */
  /* Is very different from this */
-}
-@media (min-width:calc(40rem + 1px)) {
- /* Wider than 40rem */
- transform: rotate(calc(1turn + 45deg));
- animation-delay: calc(1s + 15ms)
 }',
             (string) (new Parser('.el {
   margin: 10px calc(2vw + 5px);
@@ -90,12 +85,6 @@ final class Parse extends TestCase
 
   /* Is very different from this */
   width: calc((100% + 2rem) / 2);
-}
-@media (min-width: calc(40rem + 1px)) {
-  /* Wider than 40rem */
-  transform: rotate(calc(1turn + 45deg));
-
-animation-delay: calc(1s + 15ms);
 }
 
 '))->parse()];
@@ -168,7 +157,7 @@ animation-delay: calc(1s + 15ms);
 }
 '))->parse())];
 
-        $data[] = ['.el{margin:10px calc(2vw + 5px);border-radius:15px calc(15px/3) 4px 2px;transition:transform calc(1s - .12s);counter-reset:calc("My " + counter)}.el::before{content:calc("Candyman " * 3)}.el{width:calc((100% + 2rem)/2)}@media(min-width:calc(40rem + 1px)){transform:rotate(calc(1turn + 45deg));animation-delay:calc(1s + 15ms)}',
+        $data[] = ['.el{margin:10px calc(2vw + 5px);border-radius:15px calc(15px/3) 4px 2px;transition:transform calc(1s - .12s);counter-reset:calc("My " + counter)}.el::before{content:calc("Candyman " * 3)}.el{width:calc((100% + 2rem)/2)}',
             (new Renderer(['compress' => true]))->render((new Parser('.el {
   margin: 10px calc(2vw + 5px);
   border-radius: 15px calc(15px / 3) 4px 2px;
@@ -212,12 +201,6 @@ animation-delay: calc(1s + 15ms);
 
   /* Is very different from this */
   width: calc((100% + 2rem) / 2);
-}
-@media (min-width: calc(40rem + 1px)) {
-  /* Wider than 40rem */
-  transform: rotate(calc(1turn + 45deg));
-
-animation-delay: calc(1s + 15ms);
 }
 
 '))->parse())];

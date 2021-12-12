@@ -1,0 +1,39 @@
+/* this row */
+table.colortable {
+ /* clean all */
+ width: 100%;
+ text-shadow: none;
+ border-collapse /* collapse */: collapse /* collapsed */
+}
+table.colortable td {
+ text-align: center
+}
+table.colortable td.c {
+ text-transform: uppercase;
+ background: #ff0
+}
+table.colortable th {
+ text-align: center;
+ color: green;
+ font-weight: 400;
+ padding: 2px 3px
+}
+table.colortable td,
+table.colortable th {
+ border: 1px solid #d9dadd;
+ padding: 5px
+}
+.foo {
+ padding: 2ch
+}
+.foo {
+ color: blue
+}
+.foo.foo {
+ padding: 2ch
+}
+/* The parent selector can be arbitrarily complicated */
+:is(.error, #404):hover>.baz {
+ color: red
+}
+/*# sourceMappingURL=nested.css.map */

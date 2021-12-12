@@ -313,6 +313,12 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                 $token = $tokens[$j];
 
+                if ($token->type == 'css-string' && $token->value === '') {
+
+                    array_splice($tokens, $j, 1);
+                    continue;
+                }
+
                 if ($token->type == 'css-string' && $token->value == '!important' && count($tokens) <= 2) {
 
                     break;
@@ -422,7 +428,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $contextName
      * @return array|null
      */
-    protected static function getTokens(string $string, $capture_whitespace = true, $context = '', $contextName = '')
+    public static function getTokens(string $string, $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $string = trim($string);
@@ -442,7 +448,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case "\n":
                 case "\r":
 
-                    if ($buffer !== '') {
+                    if (rtrim($buffer) !== '') {
 
                         $tokens[] = static::getType($buffer);
                         $buffer = '';
@@ -501,14 +507,18 @@ abstract class Value implements JsonSerializable, ObjectInterface
                         }
                     }
 
+
                     $token = new stdClass;
 
                     $token->type = 'css-string';
                     $token->value = substr($string, $i, $next === false ? $j + 1 : $next - $i + 1);
 
-                    $tokens[] = $token;
-                    $buffer = '';
+                    if ($token->value !== '') {
 
+                        $tokens[] = $token;
+                    }
+
+                    $buffer = '';
 
                     if ($next === false) {
 
@@ -563,7 +573,6 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case '(':
 
                     $params = static::_close($string, ')', '(', $i, $j);
-
 
                     if ($params !== false) {
 
