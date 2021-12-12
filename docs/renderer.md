@@ -125,6 +125,10 @@ _boolean_|_string_|_array_. If false then duplicated declarations are removed. i
 
 _boolean_. compute shorthand properties. default true
 
+### legacy_rendering
+
+_boolean_. convert nesting css. default false
+
 ## Renderer Methods
 
 ### Constructor
