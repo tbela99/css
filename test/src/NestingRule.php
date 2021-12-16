@@ -77,6 +77,20 @@ final class NestingRule extends TestCase
         );
     }
 
+    /**
+     * @param string $expected
+     * @param string $actual
+     * @dataProvider testNestingRulesProvider
+     */
+    public function testNestingRules($expected, $actual): void
+    {
+
+        $this->assertEquals(
+            $expected,
+            $actual
+        );
+    }
+
     public function testNestingRuleProvider()
     {
 
@@ -421,6 +435,126 @@ p {
   }
  }
 }', $renderer->setOptions(['remove_empty_nodes' => true])->renderAst($parser)];
+
+        return $data;
+    }
+
+    public function testNestingRulesProvider()    {
+
+        $css = 'table.colortable {
+  & td {
+    text-align:center;
+    &.c { text-transform:uppercase }
+    &:first-child, &:first-child + td { border:1px solid black }
+  }
+  & th {
+    text-align:center;
+    background:black;
+    color:white;
+  }
+}
+figure {
+  margin: 0;
+
+  & > figcaption {
+    background: hsl(0 0% 0% / 50%);
+
+    & > p {
+      font-size: .9rem;
+    }
+  }
+}
+article {
+  color: green;
+  & { color: blue; }
+  color: red;
+  &.foo { color: yellow; } /* valid! */
+}';
+
+        $data = [];
+
+        $parser = new Parser($css,
+            [
+                'flatten_import' => true,
+                'capture_errors' => true
+        ]);
+
+        $renderer = new Renderer([
+            'sourcemap' => true,
+            'legacy_rendering' => true,
+            'remove_empty_nodes' => true
+        ]);
+
+        $data[] = ['table.colortable td {
+ text-align: center
+}
+table.colortable td.c {
+ text-transform: uppercase
+}
+table.colortable td:first-child,
+table.colortable td:first-child+td {
+ border: 1px solid #000
+}
+table.colortable th {
+ text-align: center;
+ background: #000;
+ color: #fff
+}
+figure {
+ margin: 0
+}
+figure>figcaption {
+ background: hsl(0 0 0 / .5)
+}
+figure>figcaption>p {
+ font-size: .9rem
+}
+article {
+ color: green
+}
+article {
+ color: blue
+}
+article.foo {
+ color: #ff0
+}', $renderer->renderAst($parser)];
+
+        $data[] = ['table.colortable {
+ & td {
+  text-align: center;
+  &.c {
+   text-transform: uppercase
+  }
+  &:first-child,
+  &:first-child+td {
+   border: 1px solid #000
+  }
+ }
+ & th {
+  text-align: center;
+  background: #000;
+  color: #fff
+ }
+}
+figure {
+ margin: 0;
+ &>figcaption {
+  background: hsl(0 0 0 / .5);
+  &>p {
+   font-size: .9rem
+  }
+ }
+}
+article {
+ color: green;
+ & {
+  color: blue
+ }
+ &.foo {
+  color: #ff0
+ }
+ /* valid! */
+}', $renderer->setOptions(['legacy_rendering' => false])->renderAst($parser)];
 
         return $data;
     }

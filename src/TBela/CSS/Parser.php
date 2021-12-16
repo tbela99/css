@@ -1073,7 +1073,7 @@ class Parser implements ParsableInterface
                                 if ($prev->type != 'Comment' && $prev->type != 'Declaration') {
 
                                     $errors[] = sprintf('invalid declaration at %s:%s:%s "%s"',
-                                        $child->src,
+                                        $child->src ?? '',
                                         $child->location->start->line,
                                         $child->location->start->column,
                                         $child->name . ':' . $child->value
