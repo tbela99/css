@@ -105,15 +105,23 @@ h1 {
 
 ### flatten_import
 
-_boolean_. Default _['@font-face']_. Replace the @import directive with actual content
+_boolean_. Default _false_. Replace the @import directive with target stylesheet content
 
 ### allow_duplicate_rules
 
-_boolean_. Default _false_. allow duplicate rules or merge them into one rule
+_boolean_|_string_|_array_. Default _['font-face']_. Allow duplicate @font-face rules by default.
+
+- if specified as array, then allow duplicate rules that are specified in that array
+- if true allow any duplicate rule. 
+- Otherwise, merge  all duplicates into a single rule
 
 ### allow_duplicate_declarations
 
-_boolean_|_string_|_array_. Default _['font-face']_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
+_boolean_|_string_|_array_. Default _false_. Remove duplicate declarations under the same rule. If you want to preserve multiple declarations for some properties, you can specify them as a string or an array.
+
+### capture_errors
+
+_boolean_: Default _true_. if false, throw an exception on parse error. Otherwise, use getErrors() method to retrieve the error details. default to true
 
 ## Parser Methods
 
