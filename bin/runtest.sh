@@ -12,7 +12,7 @@ cd "$DIR/../test/"
 [ ! -f "../phpunit-5.phar" ] &&
   wget -O ../phpunit-5.phar https://phar.phpunit.de/phpunit-5.phar &&
   chmod +x ../phpunit-5.phar
-php56=`which php5.6 2>/dev/null`
+php56=`command -v php5.6 2>/dev/null`
 
 
 if [ ! -f "$php56" ]; then
@@ -30,7 +30,7 @@ if [ ! -f "$php56" ]; then
     sudo apt-get install -y php5.6
 
 
-php56=`which php5.6 2>/dev/null`
+php56=`cmmand -v php5.6 2>/dev/null`
 #    break
 #    ;;
 #  *)
