@@ -81,7 +81,7 @@ final class NestingRule extends TestCase
      * @param string $actual
      * @dataProvider testNestingRulesProvider
      */
-    public function testNestingRules($expected, $actual): void
+    public function testNestingRules($expected, $actual)
     {
 
         $this->assertEquals(
