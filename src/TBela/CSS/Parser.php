@@ -173,17 +173,32 @@ class Parser implements ParsableInterface
 
             if (isset($options[$key])) {
 
-                $this->options[$key] = $options[$key];
-
                 if ($key == 'allow_duplicate_declarations') {
 
                     if (is_string($this->options[$key])) {
 
                         $this->options[$key] = [$this->options[$key]];
-                    } else if (is_array($this->options[$key])) {
+                    }
+
+                    if (is_array($this->options[$key])) {
 
                         $this->options[$key] = array_flip($this->options[$key]);
                     }
+                }
+
+                else if ($key == 'allow_duplicate_rules' && is_string($v)) {
+
+                    $this->options[$key] = [$v];
+                }
+
+                else {
+
+                    $this->options[$key] = $options[$key];
+                }
+
+                if ($key == 'allow_duplicate_rules' && is_array($this->options[$key]) && !in_array('font-face', $this->options[$key])) {
+
+                    $this->options[$key][] = 'font-face';
                 }
             }
         }
@@ -422,7 +437,11 @@ class Parser implements ParsableInterface
 
                 if (isset($hash[$signature])) {
 
-                    $declaration->parent = null;
+                    if (isset($declaration->parent)) {
+
+                        $declaration->parent = null;
+                    }
+
                     array_splice($ast->children, $total, 1);
                     continue;
                 }
@@ -1074,7 +1093,7 @@ class Parser implements ParsableInterface
                                 if ($prev->type != 'Comment' && $prev->type != 'Declaration') {
 
                                     $errors[] = sprintf('invalid declaration at %s:%s:%s "%s"',
-                                        $child->src,
+                                        $child->src ?? '',
                                         $child->location->start->line,
                                         $child->location->start->column,
                                         $child->name . ':' . $child->value
