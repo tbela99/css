@@ -741,6 +741,11 @@ class Renderer
             }, $value);
         }
 
+        else if ($name == 'grid-template-areas') {
+
+            $value = ' '.implode("\n ", Value::parse($value)->split(' '));
+        }
+
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
             $comments = $ast->trailingcomments;
