@@ -30,7 +30,7 @@ class Comment extends Property {
         $this->setValue($value);
     }
 
-    public function getName() {
+    public function getName(bool $vendor = false) {
 
         return null;
     }
