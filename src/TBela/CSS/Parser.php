@@ -1097,7 +1097,7 @@ class Parser implements ParsableInterface
                             } else if ($child->type == 'Declaration') {
 
                                 $this->handleError(sprintf('invalid declaration at %s:%s:%s "%s"',
-                                    $child->src,
+                                    isset($child->src) ? $child->src : '',
                                     $child->location->start->line,
                                     $child->location->start->column,
                                     $child->name . ':' . $child->value
