@@ -768,7 +768,32 @@ class Parser implements ParsableInterface
 
                         if ($rule->hasDeclarations) {
 
-                            $rule->hasDeclarations = !in_array($rule->name, ['media', 'document', 'container', 'keyframes']);
+                            $rule->hasDeclarations = !in_array($rule->name, [
+                                'media',
+                                'document',
+                                'container',
+                                'keyframes',
+                                'supports',
+                                'font-feature-values'
+                            ]);
+                        }
+
+                        if ($rule->isLeaf) {
+
+                            $rule->isLeaf = !in_array($rule->name, [
+                                'page',
+                                'font-face',
+                                'viewport',
+                                'counter-style',
+                                'swash',
+                                'annotation',
+                                'ornaments',
+                                'stylistic',
+                                'styleset',
+                                'character-variant',
+                                'property',
+                                'color-profile'
+                            ]);
                         }
 
                         if ($this->src !== '') {
