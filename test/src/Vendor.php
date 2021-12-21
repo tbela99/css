@@ -41,6 +41,22 @@ final class Vendor extends TestCase
  -webkit-box-shadow: 0 0 0 .25rem rgba(var(--cassiopeia-color-primary), .25)
 }', (string) (new Parser())->load(__DIR__.'/../var/var.css')];
 
+        $data[] = ['.site-grid>[class*=" container-"],
+.site-grid>[class^=container-] {
+ -webkit-column-gap: 1em;
+ -moz-column-gap: 1em;
+ column-gap: 1em;
+ max-width: none;
+ width: 100%
+}', (string) new Parser('.site-grid>[class*=" container-"], .site-grid>[class^=container-] {
+    -webkit-column-gap: 1em;
+    -moz-column-gap: 1em;
+    column-gap: 1em;
+    max-width: none;
+    width: 100%;
+}
+')];
+
         return $data;
     }
 }
