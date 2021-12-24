@@ -575,32 +575,36 @@ class Parser implements ParsableInterface
                     $this->handleError(sprintf('unterminated comment at %s:%s', $position->line, $position->column));
                 }
 
-                $start = clone $position;
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
 
-                $token = (object)[
-                    'type' => 'Comment',
-                    'location' => (object)[
-                        'start' => $start,
-                        'end' => clone $position
-                    ],
-                    'value' => $comment
-                ];
+                // ignore sourcemap #97
+                if (strpos($comment, '/*# sourceMappingURL=') !== 0) {
 
-                $token->location->start->index += $this->parentOffset;
-                $token->location->end->index += $this->parentOffset;
+                    $start = clone $position;
+                    $token = (object)[
+                        'type' => 'Comment',
+                        'location' => (object)[
+                            'start' => $start,
+                            'end' => clone $position
+                        ],
+                        'value' => $comment
+                    ];
 
-                if ($this->src !== '') {
+                    $token->location->start->index += $this->parentOffset;
+                    $token->location->end->index += $this->parentOffset;
 
-                    $token->src = $this->src;
+                    if ($this->src !== '') {
+
+                        $token->src = $this->src;
+                    }
+
+                    $token->location->end->index = max(1, $token->location->end->index - 1);
+                    $token->location->end->column = max($token->location->end->column - 1, 1);
+                    $tokens[] = $token;
                 }
 
-                $token->location->end->index = max(1, $token->location->end->index - 1);
-                $token->location->end->column = max($token->location->end->column - 1, 1);
-
                 $i += strlen($comment) - 1;
-                $tokens[] = $token;
                 continue;
             }
 
