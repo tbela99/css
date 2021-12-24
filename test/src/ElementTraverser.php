@@ -51,7 +51,7 @@ final class ElementTraverser extends TestCase
   line-height: 1.2
  }
 }
-@media only screen and(min-width:320px)and(max-width:480px)and(resolution:150dpi) {
+@media only screen and (min-width:320px) and (max-width:480px) and (resolution:150dpi) {
  body {
   line-height: 1.4
  }
@@ -87,7 +87,7 @@ final class ElementTraverser extends TestCase
   line-height: 1.2
  }
 }
-@media only screen and(min-width:320px)and(max-width:480px)and(resolution:150dpi) {
+@media only screen and (min-width:320px) and (max-width:480px) and (resolution:150dpi) {
  body {
   line-height: 1.4
  }

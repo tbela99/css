@@ -516,7 +516,7 @@ p {
  font-family: Arial, Helvetica, sans-serif;
  font-weight: bold
 }',
-                2 => '@media print, screen and(max-width:12450px) {
+                2 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -610,7 +610,7 @@ p {
   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
-                1 => '@media print, screen and(max-width:12450px) {
+                1 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -630,7 +630,7 @@ p {
         $context = '@media[@value^=print]';
 
         $data[] = [
-            [ 0 => '@media print, screen and(max-width:12450px) {
+            [ 0 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -663,7 +663,7 @@ p {
         $context = '@media[@value*=print]';
 
         $data[] = [
-            [ 0 => '@media print, screen and(max-width:12450px) {
+            [ 0 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -777,7 +777,7 @@ p {
         $context = '@media[@value^=print][1]';
 
         $data[] = [
-            [ 0 => '@media print, screen and(max-width:12450px) {
+            [ 0 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -837,7 +837,7 @@ p {
   src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local(HelveticaNeue-Bold)
  }
 }',
-                1 => '@media print, screen and(max-width:12450px) {
+                1 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
@@ -853,7 +853,7 @@ p {
             [ 0 => 'body {
  background-color: green
 }',
-                1 => '@media print, screen and(max-width:12450px) {
+                1 => '@media print, screen and (max-width:12450px) {
  p {
   background-color: #030303
  }
@@ -931,7 +931,7 @@ p {
  font-family: "Bitstream Vera Serif Bold";
  src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }',
-                1 => '@media print, screen and(max-width:12450px) {
+                1 => '@media print, screen and (max-width:12450px) {
  p {
   color: #f0f0f0;
   background-color: #030303
