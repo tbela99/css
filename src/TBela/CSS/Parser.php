@@ -822,9 +822,17 @@ class Parser implements ParsableInterface
 
                                 $file = Helper::absolutePath($file, dirname($this->src));
 
-                                if ($this->src !== '' && !preg_match('#^(/|(https?:))#i', $file)) {
+                                if ($this->src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
 
-                                    $file = preg_replace('#' . preg_quote(Helper::getCurrentDirectory() . '/', '#') . '#', '', dirname($this->src) . '/' . $file);
+                                    $curDir = Helper::getCurrentDirectory();
+
+                                    if ($curDir != '/') {
+
+                                        $curDir .= '/';
+                                    }
+
+                                    $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
+
                                 }
 
                                 $parser = (new self('', $this->options))->load($file);
