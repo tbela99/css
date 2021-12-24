@@ -624,19 +624,35 @@ class Renderer
         $result = $indent;
         $join = ',' . $this->options['glue'] . $indent;
 
-        if (is_string($selector) && preg_match('#[,\s"\']|(\b0)#', $selector)) {
+        if (is_string($selector)) {
 
-            $selector = array_map(function (Set $set) {
-
-                return $set->render($this->options);
-            }, Value::parse($selector)->split(','));
+            $selector = Value::parse($selector)->split(',');
         }
 
         if (is_array($selector)) {
 
-            foreach ($selector as $sel) {
+            foreach ($selector as $set) {
 
-                $result .= $sel . $join;
+                if (is_string($set)) {
+
+                    $result .= $set.$join;
+                    continue;
+                }
+
+                foreach ($set as $sel) {
+
+                    if ($sel->type == 'unit' && $sel->value == 0) {
+
+                        $result .= $sel.$sel->unit;
+                    }
+
+                    else {
+
+                        $result .= $sel->render($this->options);
+                    }
+                }
+
+                $result .= $join;
             }
         } else {
 

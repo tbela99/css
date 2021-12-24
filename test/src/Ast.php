@@ -144,6 +144,46 @@ final class Ast extends TestCase
             file_get_contents(__DIR__.'/../files/test_2_parsed_comments.css'),
             (string) $parser->parse()
         ];
+
+        $data[] = [
+
+            '@keyframes identifier {
+ 0% {
+  top: 0;
+  left: 0
+ }
+ 0%,
+ 100% {
+  top: 0;
+  left: 0
+ }
+}',
+            (string) (new Parser('@keyframes identifier {
+	0% {
+		top: 0;
+		left: 0;
+	}
+	0%, 100% {
+		top: 0;
+		left: 0;
+	}
+}'))
+        ];
+
+        $data[] = [
+
+            '@keyframes identifier{0%{top:0;left:0}0%,100%{top:0;left:0}}',
+            (new Renderer(['compress' => true]))->renderAst(new Parser('@keyframes identifier {
+	0% {
+		top: 0;
+		left: 0;
+	}
+	0%, 100% {
+		top: 0;
+		left: 0;
+	}
+}'))
+        ];
         return $data;
     }
 
