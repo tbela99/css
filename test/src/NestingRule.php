@@ -302,12 +302,12 @@ p .foo {
   grid-auto-flow: column
  }
 }
-@media (orientation:portrait)and(min-inline-size > 1024px) {
+@media (orientation:portrait) and (min-inline-size > 1024px) {
  .foo {
   max-inline-size: 1024px
  }
 }
-@media (orientation:portrait)and(min-inline-size > 1024px)and(min-width:1024px) {
+@media (orientation:portrait) and (min-inline-size > 1024px) and (min-width:1024px) {
  .foo {
   whitespace: wrap
  }

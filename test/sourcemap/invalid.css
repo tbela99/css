@@ -44,7 +44,7 @@ article {
   grid-auto-flow: column
  }
 }
-@media (orientation:landscape)and(min-inline-size > 1024px) {
+@media (orientation:landscape) and (min-inline-size > 1024px) {
  p {
   max-inline-size: 1024px
  }

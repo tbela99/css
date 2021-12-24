@@ -326,12 +326,12 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                 if ($token->type == 'whitespace' &&
                     isset($tokens[$j + 1]) &&
-                    (in_array($tokens[$j + 1]->type, ['separator', 'operator', 'whitespace', 'css-parenthesis-expression']) ||
+                    (in_array($tokens[$j + 1]->type, ['separator', 'operator', 'whitespace']) ||
                         $tokens[$j + 1]->type == 'css-string' && $tokens[$j + 1]->value == '!important')
                 ) {
 
                     array_splice($tokens, $j, 1);
-                } else if (in_array($token->type, ['separator', 'operator', 'css-parenthesis-expression']) && isset($tokens[$j + 1]) && $tokens[$j + 1]->type == 'whitespace') {
+                } else if (in_array($token->type, ['separator', 'operator']) && isset($tokens[$j + 1]) && $tokens[$j + 1]->type == 'whitespace') {
 
                     array_splice($tokens, $j + 1, 1);
                 } else if (!empty($options['remove_defaults']) && !in_array($token->type, ['whitespace', 'separator'])) {
