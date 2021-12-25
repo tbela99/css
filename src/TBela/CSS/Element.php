@@ -240,6 +240,7 @@ abstract class Element implements ElementInterface  {
      */
     public function getPosition() {
 
+        // should return new Position()?
         return isset($this->ast->position) ? $this->ast->position : null;
     }
 

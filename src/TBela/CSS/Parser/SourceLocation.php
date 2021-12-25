@@ -10,6 +10,7 @@ use JsonSerializable;
  *
  * @property Position $start
  * @property Position $end
+ * @todo verify usage / delete
  */
 
 class SourceLocation implements JsonSerializable {
