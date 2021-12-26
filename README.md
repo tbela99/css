@@ -476,7 +476,7 @@ echo $renderer->render($parser->parse());
 ```
 ## Parser Options
 
-- flatten_import: process @import directive and import the content into the css. default to false.
+- flatten_import: process @import directive and import the content into the css document. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - capture_errors: if false, throw an exception on parse error. Otherwise, use getErrors() method to retrieve the error details. default to true

@@ -262,7 +262,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param string $contextName
      * @return Set
      */
-    public static function parse(string $string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    public static function parse($string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
     {
         if ($string instanceof Set) {
 
@@ -547,7 +547,6 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                     if ($params !== false) {
 
-
                         if (trim($buffer) !== '') {
 
                             $tokens[] = static::getType($buffer);
@@ -566,6 +565,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                     } else {
 
                         $tokens[] = static::getType($buffer . substr($string, $i));
+                        $buffer = '';
                         $i = $j;
                     }
 
@@ -635,7 +635,29 @@ abstract class Value implements JsonSerializable, ObjectInterface
                         $i += strlen($params) - 1;
                     } else {
 
-                        $tokens[] = static::getType($buffer . substr($string, $i));
+                        if ($buffer === '') {
+
+                            $tokens[] = static::getType($buffer . substr($string, $i));
+                        }
+                        else {
+
+                            $token = (object) [
+                                'type' => 'invalid-css-function',
+                                'name' => $buffer,
+                                'arguments' => new Set
+                            ];
+
+                            $args = substr($string, $i + 1);
+
+                            if (trim($args) !== '') {
+
+                                $token->arguments->merge(Value::parse($args));
+                            }
+
+                            $tokens[] = $token;
+                        }
+
+                        $buffer = '';
                         $i = $j;
                     }
 

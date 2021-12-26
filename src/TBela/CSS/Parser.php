@@ -2,6 +2,7 @@
 
 namespace TBela\CSS;
 
+use Closure;
 use Exception;
 use stdClass;
 
@@ -21,6 +22,11 @@ class Parser implements ParsableInterface
 {
 
     use ParserTrait;
+
+    /**
+     * @var bool recover invalid tokens
+     */
+    protected bool $recover = false;
 
     protected int $parentOffset = 0;
     protected ?stdClass $parentStylesheet = null;
@@ -471,7 +477,7 @@ class Parser implements ParsableInterface
                 return $media === '' || $media == 'all' ? $content : '@media ' . $media . ' {' . $content . '}';
             }
 
-            throw new Exception('File Not Found', 404);
+            throw new Exception(sprintf('File Not Found: "%s"', $file), 404);
         } else {
 
             $content = Helper::fetchContent($file);
@@ -635,8 +641,9 @@ class Parser implements ParsableInterface
                     continue;
                 }
 
-                $declaration = !in_array($char, [';', '}']) ? $name : substr($name, 0, -1);
-                $declaration = rtrim($declaration, " \r\n\t;}");
+//                $declaration = !in_array($char, [';', '}']) ? $name : substr($name, 0, -1);
+                $declaration = rtrim($name, " \r\n\t;}");
+
                 if ($declaration !== '') {
 
                     $declaration = Value::split($declaration, ':', 2);
@@ -687,6 +694,41 @@ class Parser implements ParsableInterface
                             if (!empty($leading)) {
 
                                 $declaration->leadingcomments = $leading;
+                            }
+                        }
+
+                        // check for invalid declaration
+                        if (is_string($declaration->value) && strpos($declaration->value, '(') !== false) {
+
+                            $declaration->value = Value::parse($declaration->value, (string) $declaration->name);
+
+                            $doRecover = $this->recover && $i + strlen($name) >= $j;
+                            $isValidDeclaration = true;
+
+                            $declaration->value->map(Closure::bind(function ($value) use ($doRecover, $declaration, &$isValidDeclaration) {
+
+                                if (strpos($value->type, 'invalid-') === 0) {
+
+                                    // invalid declaration
+                                    // check for eof
+                                    if ($doRecover) {
+
+                                        return $value->recover($declaration->name);
+                                    }
+
+                                    $isValidDeclaration = false;
+                                    $this->handleError(sprintf('invalid declaration %s:%s:%s', $declaration->src ?? '', $declaration->location->start->line, $declaration->location->start->column));
+                                }
+
+                                return $value;
+                            }, $this));
+
+                            if (!$isValidDeclaration) {
+
+                                $this->update($position, $name);
+                                $position->index += strlen($name);
+
+                                $i += strlen($name) - 1;
                             }
                         }
 
@@ -819,53 +861,64 @@ class Parser implements ParsableInterface
 
                             if (!empty($this->options['flatten_import'])) {
 
-                                $file = Helper::absolutePath($file, dirname($this->src));
+                                try {
 
-                                if ($this->src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
+                                    $file = Helper::absolutePath($file, dirname($this->src));
 
-                                    $curDir = Helper::getCurrentDirectory();
+                                    if ($this->src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
 
-                                    if ($curDir != '/') {
+                                        $curDir = Helper::getCurrentDirectory();
 
-                                        $curDir .= '/';
+                                        if ($curDir != '/') {
+
+                                            $curDir .= '/';
+                                        }
+
+                                        $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
+
                                     }
 
-                                    $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
+                                    $parser = (new self('', $this->options))->load($file);
 
-                                }
+                                    if (!isset($rule->children)) {
 
-                                $parser = (new self('', $this->options))->load($file);
-
-                                if (!isset($rule->children)) {
-
-                                    $rule->children = [];
-                                }
-
-                                $parser->parentStylesheet = $this->ast;
-                                $parser->parentMediaRule = $this->parentMediaRule;
-                                $rule->name = 'media';
-
-                                if ($media === '') {
-
-                                    unset($rule->value);
-                                } else {
-
-                                    $rule->value = $media;
-
-                                    if ($media != 'all') {
-
-                                        $parser->parentMediaRule = $rule;
+                                        $rule->children = [];
                                     }
+
+                                    $parser->parentStylesheet = $this->ast;
+                                    $parser->parentMediaRule = $this->parentMediaRule;
+                                    $rule->name = 'media';
+
+                                    if ($media === '') {
+
+                                        unset($rule->value);
+                                    } else {
+
+                                        $rule->value = $media;
+
+                                        if ($media != 'all') {
+
+                                            $parser->parentMediaRule = $rule;
+                                        }
+                                    }
+
+                                    $rule->children = $parser->getRoot()->getTokens();
+
+                                    if (!empty($parser->errors)) {
+
+                                        array_splice($this->errors, count($this->errors), 0, $parser->errors);
+                                    }
+
+                                    unset($rule->isLeaf);
                                 }
 
-                                $rule->children = $parser->getRoot()->getTokens();
+                                catch (\Exception $e) {
 
-                                if (!empty($parser->errors)) {
+                                    $this->handleError(sprintf('%s:%s:%s %s', $rule->src ?? '', $rule->location->start->line, $rule->location->start->column, $e->getMessage()), $e->getCode());
 
-                                    array_splice($this->errors, count($this->errors), 0, $parser->errors);
+                                    $rule->value = trim("\"$file\" $media");
+                                    unset($rule->hasDeclarations);
                                 }
-
-                                unset($rule->isLeaf);
                             } else {
 
                                 $rule->value = trim("\"$file\" $media");
@@ -1011,32 +1064,46 @@ class Parser implements ParsableInterface
 
                 $body = static::_close($this->css, '}', '{', $i + strlen($name), $j);
 
+                $recover = false;
+
                 if ($validRule && substr($body, -1) != '}') {
 
-                    $validRule = false;
-                    $this->handleError(sprintf('invalid %s at %s:%s:%s "%s"',
-                        preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
+                    // if EOF then we must recover this rule #102
+                    $recover = $this->ast->type == 'Stylesheet';
 
-                            return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
+                    if ($recover) {
 
-                        }, $rule->type),
-                        $rule->src,
-                        $rule->location->start->line,
-                        $rule->location->start->column,
-                        $rule->name ?? $rule->selector
-                    ));
+                        $body = substr($this->css, $i +  + strlen($name));
+                    }
+
+                    else {
+
+                        $validRule = false;
+                        $this->handleError(sprintf('invalid %s at %s:%s:%s "%s"',
+                            preg_replace_callback('#(^|[a-z])([A-Z])#', function ($matches) {
+
+                                return ($matches[1] === '' ? '' : $matches[1] . '-') . strtolower($matches[2]);
+
+                            }, $rule->type),
+                            $rule->src ?? '',
+                            $rule->location->start->line,
+                            $rule->location->start->column,
+                            $rule->name ?? $rule->selector
+                        ));
+                    }
                 }
 
                 if ($validRule) {
 
                     $rule->location->end->index += strlen($name);
-                    $parser = new self(substr($body, 0, -1), $this->options);
+                    $parser = new self($recover ? $body : substr($body, 0, -1), $this->options);
                     $parser->src = $this->src;
                     $parser->ast = $rule;
                     $parser->parentMediaRule = $this->parentMediaRule;
 
                     $parser->parentStylesheet = $rule->type == 'Rule' ? $rule : $this->ast;
                     $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
+                    $parser->recover = $recover;
 
                     if (($this->parentStylesheet->type ?? null) == 'Rule') {
 
