@@ -8,7 +8,7 @@ if [ ! -d ./vendor/sabberworm ]; then
   exit 1
 fi
 
-# files
+# css files
 files=$(ls -d ../test/perf_files/*.css)
 # files size
 sizes=()
@@ -177,7 +177,9 @@ hpad="\t\t"
 echo 'Parsing performance'
 #. ./parser.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./parse.php" "./parseSabberWorm.php" "./parseast.php"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./parse.php" "./parseSabberWorm.php" "./parseast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./parseSabberWorm.php" "./parseast.php"
 
 echo ""
 #pad="\t\t"
@@ -185,13 +187,17 @@ echo ""
 echo 'Rendering performance (Uncompressed)'
 #. ./render-uncompressed.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
 
 echo ""
 echo 'Rendering performance (Compressed)'
 #. ./render-compressed.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"
 
 echo ""
 #pad="\t\t"
@@ -199,10 +205,14 @@ echo ""
 echo 'Size (Uncompressed)'
 #. ./uncompressed-size.sh
 #
-getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+#getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
 
 echo ""
 echo 'Size (Compressed)'
 # . ./compressed-size.sh
 #
-getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+#getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"

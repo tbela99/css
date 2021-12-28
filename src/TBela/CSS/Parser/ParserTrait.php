@@ -38,7 +38,7 @@ trait ParserTrait
 
                     if ($string[$i + 1] == '/') {
 
-                        return substr($string, $start, $i + 2 - $start);
+                        return is_array($string) ? implode('', array_slice($string, $start, $i + 2 - $start)) : substr($string, $start, $i + 2 - $start);
                     }
 
                     break;
@@ -166,7 +166,12 @@ trait ParserTrait
         $count = 1;
         $i = $start;
 
-        if (\substr($string, $start, 1) === $search) {
+        if (is_array($string) && $string[$start] === $search) {
+
+            return $search;
+        }
+
+        if (is_string($string) && \substr($string, $start, 1) === $search) {
 
             return $search;
         }
@@ -216,7 +221,7 @@ trait ParserTrait
 
         if ($count == 0) {
 
-            return substr($string, $start, $i - $start + 1);
+            return is_array($string) ?  implode('', array_slice($string, $start, $i - $start + 1)) : substr($string, $start, $i - $start + 1);
         }
 
         return false;
@@ -228,14 +233,10 @@ trait ParserTrait
      * @param int $limit
      * @return array
      */
-    public static function split($string, $separator, $limit = PHP_INT_MAX)
+    public static function split($string, $separator = '', $limit = PHP_INT_MAX)
     {
 
         $result = [];
-
-        $i = -1;
-        $j = strlen($string) - 1;
-        $buffer = '';
 
         $max = $limit - 1;
         $count = 0;
@@ -244,6 +245,25 @@ trait ParserTrait
 
             return [$string];
         }
+
+        $string = preg_split('##u', $string, -1, PREG_SPLIT_NO_EMPTY);
+
+        if ($separator === '') {
+
+            if ($limit >= count($string)) {
+
+                return $string;
+            }
+
+            $result = array_slice($string, $limit - 1);
+            $result[] = implode('', array_slice($string, $limit));
+
+            return $result;
+        }
+
+        $i = -1;
+        $j = count($string) - 1;
+        $buffer = '';
 
         while (++$i <= $j) {
 
@@ -258,7 +278,7 @@ trait ParserTrait
 
                         if ($count == $max) {
 
-                            $buffer = trim(substr($string, $i), "\t\r\n $separator");
+                            $buffer = trim(implode('', array_slice($string, $i)), "\t\r\n $separator");
 
                             if ($buffer !== '') {
 

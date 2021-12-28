@@ -182,7 +182,7 @@ abstract class Element implements ElementInterface  {
      */
     public function setValue ($value) {
 
-        $this->ast->value = $value;
+        $this->ast->value = is_string($value) ? Value::escape($value) : $value;
         return $this;
     }
 

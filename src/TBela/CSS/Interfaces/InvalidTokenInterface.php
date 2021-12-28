@@ -8,5 +8,10 @@ use TBela\CSS\Value;
  */
 interface InvalidTokenInterface {
 
+    /**
+     * attempt to return a valid token
+     * @param string|Value|null|Set $property
+     * @return Value
+     */
     public function recover($property = null): Value;
 }

@@ -5,14 +5,14 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Vendor extends TestCase
+final class Invalid extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testVendorProvider
+     * @dataProvider testRecoverProvider
      */
-    public function testVendor($expected, $actual): void
+    public function testRecover($expected, $actual): void
     {
 
         $this->assertEquals(
@@ -21,42 +21,171 @@ final class Vendor extends TestCase
         );
     }
 
-    public function testVendorProvider() {
+    /**
+     * @param $actual
+     * @param Parser $parser
+     * @return void
+     * @throws Parser\SyntaxError
+     * @dataProvider testExceptionProvider
+     */
+    public function testException($actual, Parser $parser): void
+    {
+
+        $this->expectException(Parser\SyntaxError::class);
+
+        $parser->setContent($actual)->getAst();
+    }
+
+    public function testRecoverProvider() {
 
         $data = [];
 
-        $data[] = ['body {
- font-family: var(--body-font-family);
- font-size: var(--body-font-size);
- font-weight: var(--body-font-weight);
- line-height: var(--body-line-height);
- color: var(--body-color);
- text-align: var(--body-text-align);
- -webkit-text-size-adjust: 100%
-}', (string) (new Parser())->load(__DIR__.'/../var/style.css')];
+        $data[] = ['.foo {
 
-        $data[] = ['body {
- box-shadow: inset 0 0 0 9999px var(--table-accent-bg)
-}
-.box {
- -webkit-box-shadow: 0 0 0 .25rem rgba(var(--cassiopeia-color-primary), .25)
-}', (string) (new Parser())->load(__DIR__.'/../var/var.css')];
+}', (string) (new Parser('
+.foo { '))];
+        $data[] = ['.foo {
 
-        $data[] = ['.site-grid>[class*=" container-"],
-.site-grid>[class^=container-] {
- -webkit-column-gap: 1em;
- -moz-column-gap: 1em;
- column-gap: 1em;
- max-width: none;
- width: 100%
-}', (string) new Parser('.site-grid>[class*=" container-"], .site-grid>[class^=container-] {
-    -webkit-column-gap: 1em;
-    -moz-column-gap: 1em;
-    column-gap: 1em;
-    max-width: none;
-    width: 100%;
+}', (string) (new Parser('
+.foo { ;'))];
+
+        $data[] = ['.foo {
+ transform: translate(50px)
+}', (string) (new Parser('
+.foo { transform: translate(50px'))];
+
+        $data[] = ['.foo {
+ content: bar
+}', (string) (new Parser('
+.foo { content: "bar
+'))];
+
+        $data[] = ['.foo {
+ content: "bar bar"
+}', (string) (new Parser('
+.foo { content: "bar bar
+'))];
+
+        $data[] = ['@media screen {
+ .green {
+  transform: translate(50px)
+ }
+}', (string) (new Parser('
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px
+'))];
+
+        $data[] = ['@media screen {
+ .green {
+  transform: translate(50px)
+ }
+}', (string) (new Parser('
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px /* comment is invalid
+'))];
+
+        $data[] = ['@media screen {
+ .green {
+  transform: translate(50px)
+ }
+}', (string) (new Parser('
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px) ; /* comment is invalid
+'))];
+
+        $data[] = ['.foo {
+ name: "jame barr";
+ content: "bar bar;"
+}', (string) (new Parser('
+.foo { 
+name: "jame barr";;
+content: "bar bar;
+'))];
+
+        $data[] = ['.foo {
+ content: "bar bar;"
+}', (string) (new Parser('
+.foo { content: "bar bar;
+'))];
+
+        $data[] = ['@media screen {
+ .green {
+  transform: translate(50px)
+ }
+}', (string) (new Parser('
+
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px /* comment
+    ;'))];
+
+        $data[] = ['.selector {
+ color: green
+}', (string) (new Parser('
+@ media screen { 
+
+ .green {
+ 
+    transform: translate(50px)
 }
-')];
+}
+
+.selector {
+
+    color: green;
+'))];
+
+        return $data;
+    }
+
+
+    public function testExceptionProvider() {
+
+        $data = [];
+
+        $parser = new Parser('', [
+            'capture_errors' => false
+        ]);
+
+        $data[] = ['.foo { transform: translate(50px;', $parser];
+        $data[] = ['
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px
+    ;
+', $parser];
+
+        $data[] = ['
+@media screen { 
+
+ .green {
+ 
+    transform: translate(50px
+    ; /* comment
+', $parser];
+
+        $data[] = ['
+@ media screen { 
+
+ .green {
+ 
+    transform: translate(50px)
+}
+}
+', $parser];
 
         return $data;
     }

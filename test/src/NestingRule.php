@@ -389,6 +389,9 @@ p {
    max-inline-size: 1024px
   }
  }
+}
+left over {
+
 }', $renderer->renderAst($parser)];
 
         $data[] = ['/* invalid */

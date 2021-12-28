@@ -184,16 +184,6 @@ Configure the parser options.
 
 \TBela\CSS\Parser instance
 
-### GetContent
-
-#### Parameters
-
-none
-
-#### Return type
-
-string. the css content that will be parsed
-
 ### Append
 
 Parse a css file and append the result to the existing ast

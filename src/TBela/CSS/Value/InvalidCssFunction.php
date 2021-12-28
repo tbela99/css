@@ -40,7 +40,7 @@ class InvalidCssFunction extends Value implements InvalidTokenInterface {
      */
     public function getHash() {
 
-        return $this->data->name.'('. $this->data->arguments->getHash().')';
+        return $this->data->name.'('. $this->data->arguments->getHash();
     }
 
     public function recover($property = null): Value
