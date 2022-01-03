@@ -5,7 +5,7 @@ namespace TBela\CSS\Event;
 trait EventTrait {
 
     /**
-     * @var callable[]
+     * @var callable[][]
      */
     protected array $events = [];
 

@@ -51,8 +51,16 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function __construct($name)
     {
+        if (substr($name, 0, 1) == '-' && preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
 
-        $this->name = (string) $name;
+            $this->name = $match[3];
+            $this->vendor = $match[2];
+        }
+
+        else {
+
+            $this->name = (string) $name;
+        }
     }
 
     /**
@@ -102,7 +110,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * get the property name
      * @return string|null
      */
-    public function getName(bool $vendor = false) {
+    public function getName(bool $vendor = true) {
 
         return ($vendor && $this->vendor ? '-'.$this->vendor.'-' : '').$this->name;
     }

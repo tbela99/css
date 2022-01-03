@@ -78,7 +78,7 @@ final class NestingRule extends TestCase
     }
 
     /**
-     * @param string $expected
+     * @param string/ $expected
      * @param string $actual
      * @dataProvider testNestingRulesProvider
      */
@@ -360,12 +360,15 @@ article {
  }
  /* valid! */
 }
-/* Invalid because not all selectors in the list
-  contain a nesting selector */
 .foo {
+ color: red;
  @media (min-width:480px) {
 
  }
+}
+/* Invalid because not all selectors in the list
+  contain a nesting selector */
+.foo {
  color: red
 }
 .foo {
@@ -375,12 +378,17 @@ article {
   &.baz {
    color: green
   }
+  @nest :not(&) {
+   color: blue
+  }
  }
 }
 /*
     */
 @media (orientation:landscape) {
+ @media (min-inline-size > 1024px) {
 
+ }
 }
 p {
  @media (orientation:landscape) {
@@ -425,6 +433,9 @@ article {
   color: red;
   &.baz {
    color: green
+  }
+  @nest :not(&) {
+   color: blue
   }
  }
 }

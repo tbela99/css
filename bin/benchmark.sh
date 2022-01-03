@@ -1,4 +1,4 @@
-##!/bin/bash -x
+##!/bin/bash -x -v
 cd $(dirname "$0")
 cd ../benchmark
 
@@ -25,16 +25,20 @@ size() {
   # shellcheck disable=SC2046
   result=$($(echo "$prog" | cut -f1 -d ' ') $(echo "$prog" | cut -f2 -s -d ' ') "$@" 2>&1)
   output=$(convert_file_size "${#result}")
-  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
+#  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
+  echo $(lpad "$output" 9)
 }
 # left pad with '\ ', will pipe to sed 's/\\ //g' to display the actual space character
 lpad() {
 
   x="$1"
   i="${#x}"
+  pad="$3"
+
+  [ -z "$pad" ] && pad="\\ "
 
   while [ "$i" -lt "$2" ]; do
-    x="\\ $x"
+    x="$pad$x"
     i=$((i + 1))
   done
 
@@ -135,6 +139,7 @@ measure_stats() {
   declare -a result=()
 
   declare min=-1
+  declare minval=""
   declare i=0
   declare v
 
@@ -144,10 +149,11 @@ measure_stats() {
       continue
     fi
 
-    v=$(echo "$t" | cut -d "s" -f1)
+    v=$(echo "$t" | tr -d "sKMb")
 
     if [ $(echo "$min == -1 " | bc) -eq 1 ] || [ $(echo "$min > $v" | bc) -eq 1 ]; then
       min="$v"
+      minval="$t"
     fi
 
     result[i]="$t"
@@ -156,13 +162,24 @@ measure_stats() {
 
   i=0
 
+  #
   while [ "$i" -lt "${#result[@]}" ]; do
 
-    result[i]=$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | cut -d "s" -f1)" - $min) * 100 / $min" | bc) 6)"%)$pad"
+    if [ "$minval" = "${result[i]}" ]; then
+      result[i]="\e[32m"$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | tr -d "sKMb")" - $min) * 100 / $min" | bc) 6)"%)$pad\e[0m"
+    else
+      result[i]=$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | tr -d "sKMb")" - $min) * 100 / $min" | bc) 6)"%)$pad"
+    fi
+
     i=$((i + 1))
   done
 
   echo -e "${result[@]}"
+}
+
+size_stats() {
+
+  measure_stats "$@"
 }
 
 i=0

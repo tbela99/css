@@ -2,6 +2,8 @@
 
 namespace TBela\CSS\Parser;
 
+use TBela\CSS\Exceptions\IOException;
+
 /**
  * Class Helper
  * @package TBela\CSS\Parser

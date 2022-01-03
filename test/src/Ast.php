@@ -137,7 +137,7 @@ final class Ast extends TestCase
         $parser->load(__DIR__.'/../css/template.css');
         $data[] = [(string) $parser, (string) $parser->parse()];
 
-        $parser->setOptions(['sourcemap' => true, 'flatten_import' => true])->load(__DIR__.'/../files/test_2.css');
+        $parser->setOptions(['flatten_import' => true])->load(__DIR__.'/../files/test_2.css');
 
         $data[] = [
 

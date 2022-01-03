@@ -474,7 +474,7 @@ class Renderer
 
         foreach ($children as $el) {
 
-            if (!($el instanceof \stdClass)) {
+            if ($el instanceof RenderableInterface) {
 
                 $el = $el->getAst();
             }
@@ -1126,7 +1126,7 @@ class Renderer
                             $clone = clone $node;
                             $child = clone $child;
 
-                            $clone->children = $child->children;
+                            $clone->children = $child->children ?? [];
                             $child->children = [$clone];
                             $frag->children[] = $this->flatten($child);
                             continue;

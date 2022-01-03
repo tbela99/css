@@ -966,7 +966,7 @@ p {
         $data[] = [
             [
                 0 => 'div,
-.selector \1f600 {
+.selector \1F600 {
  font-family: IcoMoon
 }'
             ],
@@ -980,8 +980,8 @@ div, .selector     😀 {
         $data[] = [
             [
                 0 => 'div,
-.selector \1f600 {
- font-family: IcoMoon, "\1f602"
+.selector \1F600 {
+ font-family: IcoMoon, "\1F602"
 }'
             ],
             array_map('trim', (new Parser('
@@ -989,7 +989,7 @@ div, .selector     😀 {
 font-size: 14px;
  font-family: \'IcoMoon\', "😂";
 }', [
-            ]))->parse()->query('[value*="\1f602"]'))];
+            ]))->parse()->query('[value*="\1F602"]'))];
 
 
 

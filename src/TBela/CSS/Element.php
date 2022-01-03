@@ -202,6 +202,27 @@ abstract class Element implements ElementInterface  {
         return $this->ast->type;
     }
 
+    protected function deepClone() {
+
+        $clone = new static;
+        $clone->ast = clone $this->ast;
+        $clone->parent = null;
+
+        if (isset($clone->ast->children)) {
+
+            /**
+             * @var ElementInterface[]
+             */
+            foreach ($clone->ast->children as $key => $value) {
+
+                $clone->ast->children[$key] = $value->deepClone();
+                $clone->ast->children[$key]->parent = $clone;
+            }
+        }
+
+        return $clone;
+    }
+
     /**
      * @inheritDoc
      */
@@ -600,15 +621,6 @@ abstract class Element implements ElementInterface  {
     {
         $this->ast = clone $this->ast;
         $this->parent = null;
-
-        if (isset($this->ast->children)) {
-
-            foreach ($this->ast->children as $key => $value) {
-
-                $this->ast->children[$key] = clone $value;
-                $this->ast->children[$key]->parent = $this;
-            }
-        }
     }
 
     /**

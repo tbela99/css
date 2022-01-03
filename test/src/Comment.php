@@ -9,8 +9,7 @@ use TBela\CSS\Renderer;
 final class Comment extends TestCase
 {
     /**
-     * @param Compiler $compiler
-     * @param $content
+     * @param string $content
      * @param string $expected
      * @throws Exception
      * @dataProvider testLicenseCommentsProvider

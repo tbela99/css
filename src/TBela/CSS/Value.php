@@ -439,6 +439,53 @@ abstract class Value implements JsonSerializable, ObjectInterface
                     $buffer .= '\fffd';
                     break;
 
+                case '<':
+
+                    if (implode('', array_slice($string, $i, 4)) == '<!--') {
+
+                        if (trim($buffer) !== '') {
+
+                            $tokens[] = static::getType($buffer);
+                        }
+
+                        $buffer = '';
+
+                        $k = $i + 3;
+
+                        $buffer = '<!--';
+
+                        while ($k++ < $j) {
+
+                            $buffer .= $string[$k];
+                            if ($string[$k] == '-' && implode('', array_slice($string, $k, 3)) == '-->') {
+
+                                $buffer .= '->';
+
+                                $tokens[] = (object) [
+                                    'type' => 'Comment',
+                                    'value' => $buffer
+                                ];
+
+                                $buffer = '';
+                                $i = $k + 2;
+                                break 2;
+                            }
+                        }
+
+                        // unclosed comment
+                        $tokens[] = (object) [
+                            'type' => 'invalid-comment',
+                            'value' => $buffer
+                        ];
+
+                        $buffer = '';
+                        $i = $j;
+                        break;
+                    }
+
+                    $buffer .= '<';
+                    break;
+
                 case ' ':
                 case "\t":
                 case "\n":
@@ -875,7 +922,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
             if ($val == "\0") {
 
-                $result .= '\fffd';
+                $result .= '\FFFD';
                 continue;
             }
 
@@ -883,7 +930,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
             if ($base > 128) {
 
-                $result .= '\\' . base_convert($base, 10, 16);
+                $result .= '\\' . strtoupper(base_convert($base, 10, 16));
             } else {
 
                 $result .= $val;

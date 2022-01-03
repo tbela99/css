@@ -9,9 +9,9 @@
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR/../test/"
-[ ! -f "../phpunit.phar" ] && \
-wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar && \
-chmod +x ../phpunit.phar
+[ ! -f "../phpunit.phar" ] &&
+  wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar &&
+  chmod +x ../phpunit.phar
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -24,22 +24,35 @@ fail() {
   exit 1
 }
 
-flag=$(echo "$1" | cut -c1-1)
-if [ "$1" = "" ] || [ "$flag" = "-" ]; then
-  skip=""
-  [ -n "$1" ] && [ "$flag" = "-" ] && skip=$(echo "$1" | cut -c2-11)
-  for file in src/*.php
-    do
-      [ "$file" = "src/$skip.php" ] && continue;
-      echo "Run test $file"
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file || fail "$file"
-    done
-else
+if [ $# -gt 0 ]; then
 
-    file="src/$1.php"
-    if [ -f "$file" ]; then
-      php -dmemory_limit=256M ../phpunit.phar --bootstrap autoload.php --testdox $file
-    else
-      echo "Invalid test: $1" && exit 1
-    fi
+  case "$@" in
+
+  *"-"*)
+    for file in src/*.php; do
+      fname=$(echo "$file" | cut -c 5- | awk -F . '{print $1}')
+
+      case "$@" in
+      *-$fname*) continue ;;
+      *) php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file" ;;
+      esac
+    done
+    ;;
+  *)
+    for file in src/*.php; do
+      fname=$(echo "$file" | cut -c 5- | awk -F . '{print $1}')
+
+      case "$@" in
+      *$fname*)
+        php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+        ;;
+      esac
+    done
+    ;;
+  esac
+else
+    # no argument
+    for file in src/*.php; do
+        php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+    done
 fi
