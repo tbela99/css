@@ -58,7 +58,12 @@ class Parser implements ParsableInterface
     public function __construct($css = '', array $options = [])
     {
         $this->setOptions($options);
-        $this->lexer = $this->createLexer();
+        $this->lexer = (new Lexer('', $this->getContext(), $this->options))->
+        on('enter', Closure::fromCallable([$this, 'enterNode']))->
+        on('exit', Closure::fromCallable([$this, 'exitNode']))->
+        on('replace', Closure::fromCallable([$this, 'replaceNode']))->
+        on('remove', Closure::fromCallable([$this, 'removeNode']))->
+        on('error', Closure::fromCallable([$this, 'onError']));
 
         if ($css !== '') {
 
@@ -66,241 +71,27 @@ class Parser implements ParsableInterface
         }
     }
 
+
     /**
-     * @return Lexer
+     * @param string $event parse event name in ['enter', 'exit', 'replace', 'remove', 'error', 'start', 'end']
+     * @param callable $callable
+     * @return $this
      */
-    protected function createLexer(): Lexer
-    {
+    public function on($event, callable $callable) {
 
-        if (!isset($this->lexer)) {
-
-            $this->lexer = (new Lexer('', $this->getContext(), $this->options))->
-            on('enter', Closure::fromCallable([$this, 'enterNode']))->
-            on('exit', Closure::fromCallable([$this, 'exitNode']))->
-            on('replace', Closure::fromCallable([$this, 'replaceNode']))->
-            on('remove', Closure::fromCallable([$this, 'removeNode']))->
-            on('error', Closure::fromCallable([$this, 'onError']));
-        }
-
-        return $this->lexer;
-    }
-
-    protected function validate(object $token, object $parentRule, object $parentStylesheet)
-    {
-
-        if (!isset(static::$validators[$token->type])) {
-
-            $type = static::class . '\\Validator\\' . $token->type;
-
-            if (class_exists($type)) {
-
-                static::$validators[$token->type] = new $type;
-            }
-        }
-
-        if (isset(static::$validators[$token->type])) {
-
-            return static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
-        }
-
-        return ValidatorInterface::VALID;
-    }
-
-    protected function getContext()
-    {
-
-        return end($this->context) ?: $this->ast;
-    }
-
-
-    protected function pushContext(object $context)
-    {
-
-        $this->context[] = $context;
-    }
-
-    protected function popContext()
-    {
-
-        array_pop($this->context);;
+        $this->lexer->on($event, $callable);
+        return $this;
     }
 
     /**
-     * @throws SyntaxError
+     * @param string $event parse event name in ['enter', 'exit', 'replace', 'remove', 'error', 'start', 'end']
+     * @param callable $callable
+     * @return $this
      */
-    protected function enterNode($token, $parentRule, $parentStylesheet)
-    {
+    public function off($event, callable $callable) {
 
-        if ($token->type != 'Comment' && strpos($token->type, 'Invalid') !== 0) {
-
-            $property = property_exists($token, 'name') ? 'name' : (property_exists($token, 'selector') ? 'selector' : null);
-
-            if ($property) {
-
-                if (strpos($token->{$property}, '/*') !== false ||
-                    strpos($token->{$property}, '<!--') !== false) {
-
-                    $leading = [];
-                    $token->{$property} = trim(Value::parse($token->{$property})->
-                    filter(function ($value) use (&$leading, $token) {
-
-                        if ($value->type == 'Comment') {
-
-                            if (substr($value, 0, 4) == '<!--') {
-
-                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-                            } else {
-
-                                $leading[] = $value;
-                            }
-
-                            return false;
-                        }
-
-                        return true;
-                    }));
-
-                    if (!empty($leading)) {
-
-                        $token->leadingcomments = $leading;
-                    }
-                }
-            }
-
-            if (property_exists($token, 'value')) {
-                if (strpos($token->value, '/*') !== false ||
-                    strpos($token->value, '<!--') !== false) {
-
-                    $trailing = [];
-                    $token->value = Value::parse($token->value)->
-                    filter(function ($value) use (&$trailing, $token) {
-
-                        if ($value->type == 'Comment') {
-
-                            if (substr($value, 0, 4) == '<!--') {
-
-                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-                            } else {
-
-                                $trailing[] = $value;
-                            }
-
-                            return false;
-                        } else if ($value->type == 'invalid-comment') {
-
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    if (!empty($trailing)) {
-
-                        $token->trailingcomments = $trailing;
-                    }
-                }
-            }
-        }
-
-        $context = $this->getContext();
-        $status = $this->doValidate($token, $context, $parentStylesheet);
-
-        if ($status == ValidatorInterface::VALID) {
-
-            $context->children[] = $token;
-
-            if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
-
-                $this->pushContext($token);
-            }
-        }
-
-        return $status;
-    }
-
-    /**
-     * @param object $token
-     * @param object $oldToken
-     * @param object $parentStylesheet
-     * @return int
-     * @throws SyntaxError
-     */
-    protected function replaceNode(object $token, object $oldToken, object $parentStylesheet)
-    {
-
-        $context = $this->getContext();
-        $status = $this->doValidate($token, $context, $parentStylesheet);
-
-        if ($status == ValidatorInterface::VALID && $token != $oldToken) {
-
-            if (!empty($context->children)) {
-
-                $i = count($context->children);
-
-                while ($i--) {
-
-                    if ($context->children[$i] == $oldToken) {
-
-                        array_splice($context->children, $i, 1, [$token]);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if ($status == ValidatorInterface::VALID && in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
-
-            if (!in_array($token, $this->context)) {
-
-                $this->pushContext($token);
-            }
-        }
-
-        return $status;
-    }
-
-
-    protected function removeNode($token)
-    {
-
-        $context = $this->getContext();
-
-        if (!empty($context->children)) {
-
-            $i = count($context->children);
-
-            while ($i--) {
-
-                if ($context->children[$i] == $token) {
-
-                    array_splice($context->children, $i, 1);
-                    break;
-                }
-            }
-        }
-    }
-
-    protected function exitNode(object $token)
-    {
-
-        if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
-
-            $this->popContext();
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function onError($token, Exception $exception)
-    {
-
-        if (!$this->options['capture_errors']) {
-
-            throw $exception;
-        }
-
-        $this->errors[] = $exception;
+        $this->lexer->off($event, $callable);
+        return $this;
     }
 
     /**
@@ -376,7 +167,9 @@ class Parser implements ParsableInterface
         }
 
         $this->ast = null;
-        $this->lexer = $this->createLexer()->setContent($css);
+        $this->errors = [];
+        $this->context = [];
+        $this->lexer->setContent($css);
 
         return $this;
     }
@@ -392,7 +185,7 @@ class Parser implements ParsableInterface
     public function load($file, $media = '')
     {
 
-        $this->lexer = $this->createLexer()->load($file, $media);
+        $this->lexer->load($file, $media);
 
         $this->ast = null;
         $this->errors = [];
@@ -696,6 +489,16 @@ class Parser implements ParsableInterface
     }
 
     /**
+     * return parse errors
+     * @return Exception[]
+     */
+    public function getErrors()
+    {
+
+        return $this->errors;
+    }
+
+    /**
      * @param string $message
      * @param int $error_code
      * @return SyntaxError
@@ -717,13 +520,286 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * return parse errors
-     * @return Exception[]
+     * syntax validation
+     * @param object $token
+     * @param object $parentRule
+     * @param object $parentStylesheet
+     * @return int
+     * @ignore
      */
-    public function getErrors()
+    protected function validate(object $token, object $parentRule, object $parentStylesheet)
     {
 
-        return $this->errors;
+        if (!isset(static::$validators[$token->type])) {
+
+            $type = static::class . '\\Validator\\' . $token->type;
+
+            if (class_exists($type)) {
+
+                static::$validators[$token->type] = new $type;
+            }
+        }
+
+        if (isset(static::$validators[$token->type])) {
+
+            return static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
+        }
+
+        return ValidatorInterface::VALID;
+    }
+
+    /**
+     * get the current parent node
+     * @return object|null
+     * @ignore
+     */
+    protected function getContext()
+    {
+
+        return end($this->context) ?: $this->ast;
+    }
+
+    /**
+     * push the current parent node
+     * @param object $context
+     * @return void
+     * @ignore
+     */
+    protected function pushContext(object $context)
+    {
+
+        $this->context[] = $context;
+    }
+
+    /**
+     * pop the current parent node
+     * @return void
+     * @ignore
+     */
+    protected function popContext()
+    {
+
+        array_pop($this->context);;
+    }
+
+    /**
+     * parse event handler
+     * @param object $token
+     * @param object $parentRule
+     * @param object $parentStylesheet
+     * @return int
+     * @throws SyntaxError
+     * @ignore
+     */
+    protected function enterNode(object $token, object $parentRule, object $parentStylesheet)
+    {
+
+        if ($token->type != 'Comment' && strpos($token->type, 'Invalid') !== 0) {
+
+            $property = property_exists($token, 'name') ? 'name' : (property_exists($token, 'selector') ? 'selector' : null);
+
+            if ($property) {
+
+                if (strpos($token->{$property}, '/*') !== false ||
+                    strpos($token->{$property}, '<!--') !== false) {
+
+                    $leading = [];
+                    $token->{$property} = trim(Value::parse($token->{$property})->
+                    filter(function ($value) use (&$leading, $token) {
+
+                        if ($value->type == 'Comment') {
+
+                            if (substr($value, 0, 4) == '<!--') {
+
+                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+                            } else {
+
+                                $leading[] = $value;
+                            }
+
+                            return false;
+                        }
+
+                        return true;
+                    }));
+
+                    if (!empty($leading)) {
+
+                        $token->leadingcomments = $leading;
+                    }
+                }
+            }
+
+            if (property_exists($token, 'value')) {
+                if (strpos($token->value, '/*') !== false ||
+                    strpos($token->value, '<!--') !== false) {
+
+                    $trailing = [];
+                    $token->value = Value::parse($token->value)->
+                    filter(function ($value) use (&$trailing, $token) {
+
+                        if ($value->type == 'Comment') {
+
+                            if (substr($value, 0, 4) == '<!--') {
+
+                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+                            } else {
+
+                                $trailing[] = $value;
+                            }
+
+                            return false;
+                        } else if ($value->type == 'invalid-comment') {
+
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    if (!empty($trailing)) {
+
+                        $token->trailingcomments = $trailing;
+                    }
+                }
+            }
+        }
+
+        $context = $this->getContext();
+        $status = $this->doValidate($token, $context, $parentStylesheet);
+
+        if ($status == ValidatorInterface::VALID) {
+
+            $context->children[] = $token;
+
+            if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+
+                $this->pushContext($token);
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * parse event handler
+     * @param object $token
+     * @param object $oldToken
+     * @param object $parentStylesheet
+     * @return int
+     * @throws SyntaxError
+     * @ignore
+     */
+    protected function replaceNode(object $token, object $oldToken, object $parentStylesheet)
+    {
+
+        $context = $this->getContext();
+        $status = $this->doValidate($token, $context, $parentStylesheet);
+
+        if ($status == ValidatorInterface::VALID && $token != $oldToken) {
+
+            if (!empty($context->children)) {
+
+                $i = count($context->children);
+
+                while ($i--) {
+
+                    if ($context->children[$i] == $oldToken) {
+
+                        array_splice($context->children, $i, 1, [$token]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if ($status == ValidatorInterface::VALID && in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+
+            if (!in_array($token, $this->context)) {
+
+                $this->pushContext($token);
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * parse event handler
+     * @param $token
+     * @return void
+     * @ignore
+     */
+    protected function removeNode($token)
+    {
+
+        $context = $this->getContext();
+
+        if (!empty($context->children)) {
+
+            $i = count($context->children);
+
+            while ($i--) {
+
+                if ($context->children[$i] == $token) {
+
+                    array_splice($context->children, $i, 1);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * parse event handler
+     * @param object $token
+     * @return void
+     * @ignore
+     */
+    protected function exitNode(object $token)
+    {
+
+        if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+
+            $this->popContext();
+        }
+    }
+
+    /**
+     * parse event handler
+     * @throws Exception
+     * @ignore
+     */
+    protected function onError(Exception $exception)
+    {
+
+        if (!$this->options['capture_errors']) {
+
+            throw $exception;
+        }
+
+        $this->errors[] = $exception;
+    }
+
+    /**
+     * perform the syntax validation
+     * @param object $token
+     * @param object $context
+     * @param object $parentStylesheet
+     * @return int
+     * @throws SyntaxError
+     * @ignore
+     */
+    protected function doValidate(object $token, object $context, object $parentStylesheet): int
+    {
+        $status = $this->validate($token, $context, $parentStylesheet);
+
+        if ($status == ValidatorInterface::REJECT) {
+
+            $this->handleError(sprintf('invalid token %s at %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+        }
+
+        return $status;
     }
 
     public function __toString()
@@ -746,24 +822,5 @@ class Parser implements ParsableInterface
         }
 
         return '';
-    }
-
-    /**
-     * @param object $token
-     * @param object $context
-     * @param object $parentStylesheet
-     * @return int
-     * @throws SyntaxError
-     */
-    protected function doValidate(object $token, object $context, object $parentStylesheet): int
-    {
-        $status = $this->validate($token, $context, $parentStylesheet);
-
-        if ($status == ValidatorInterface::REJECT) {
-
-            $this->handleError(sprintf('invalid token %s at %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-        }
-
-        return $status;
     }
 }

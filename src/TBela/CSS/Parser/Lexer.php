@@ -100,7 +100,7 @@ class Lexer
 
         if ($content === false) {
 
-            throw new IOException(sprintf('File Not Found "%s" => '.$file, $file), 404);
+            throw new IOException(sprintf('File Not Found "%s" => ' . $file, $file), 404);
         }
 
         $this->css = $content;
@@ -117,14 +117,14 @@ class Lexer
 
             $this->parentMediaRule = $root;
 
-            $this->on('start', function ($context) use($root, $file) {
+            $this->on('start', function ($context) use ($root, $file) {
 
                 $root->location = clone $context->location;
                 $root->location->start = clone $context->location->start;
                 $root->location->end = clone $context->location->end;
                 $root->src = $file;
                 $this->emit('enter', $root, $this->context, $this->parentStylesheet);
-            })->on('end', function ($context) use($root) {
+            })->on('end', function ($context) use ($root) {
 
                 if (isset($root->children)) {
 
@@ -144,7 +144,6 @@ class Lexer
                 $this->emit('exit', $root, $this->context, $this->parentStylesheet);
             });
         }
-
 
         return $this;
     }
@@ -243,6 +242,7 @@ class Lexer
                             ],
                             'value' => $comment
                         ];
+                        break;
                     }
                 }
 
@@ -264,6 +264,7 @@ class Lexer
             if ($comment !== false) {
 
                 $token->location->end->index += strlen($comment) - 1;
+                $token->location->end->column = max($token->location->end->column - 1, 1);
 
                 if ($this->src !== '') {
 
@@ -271,7 +272,6 @@ class Lexer
                 }
 
                 $this->emit('enter', $token, $this->context, $this->parentStylesheet);
-//                $this->emit('exit', $token, $this->context, $this->parentStylesheet);
 
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
@@ -326,7 +326,7 @@ class Lexer
                         ];
 
                         $this->emit('enter', $token, $this->context, $this->parentStylesheet);
-//                        $this->emit('exit', $token, $this->context, $this->parentStylesheet);
+
                     } else {
 
                         $end = clone $position;
@@ -386,9 +386,7 @@ class Lexer
 
                                         array_pop($data);
                                         continue;
-                                    }
-
-                                    else {
+                                    } else {
 
                                         $end = $end->toObject();
 
@@ -406,9 +404,7 @@ class Lexer
                             }
 
                             $declaration->value = new Set($data);
-                        }
-
-                        else {
+                        } else {
 
                             $declaration->value = rtrim($declaration->value, ';');
                         }
@@ -454,7 +450,6 @@ class Lexer
                         $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
 
                         $this->emit('enter', $declaration, $this->context, $this->parentStylesheet);
-//                        $this->emit('exit', $declaration, $this->context, $this->parentStylesheet);
                     }
                 }
 
@@ -473,7 +468,7 @@ class Lexer
                     if (preg_match('#^@([a-z-]+)([^{;}]*)#', trim($name, ";{ \n\r\t"), $matches)) {
 
                         $rule = (object)array_merge([
-                           'type' => 'AtRule',
+                            'type' => 'AtRule',
                             'location' => (object)[
                                 'start' => clone $position,
                                 'end' => clone $position
@@ -565,8 +560,7 @@ class Lexer
                                         unset($rule->isLeaf);
 
                                         $this->emit('replace', $rule, $rule, $this->context, $this->parentStylesheet);
-                                    }
-                                    else {
+                                    } else {
 
                                         $this->emit('remove', $rule, $this->context);
                                     }
@@ -594,14 +588,13 @@ class Lexer
 
                                 } catch (IOException $e) {
 
-                                    $this->emit('error', $token, $e);
+                                    $this->emit('error', $e, $token);
 
                                     $rule->name = 'import';
                                     $rule->value = trim("\"$file\" $media");
                                     $rule->isLeaf = true;
                                     unset($rule->hasDeclarations);
                                 }
-
                             }
 
                         } else if ($char == '{') {
@@ -612,19 +605,19 @@ class Lexer
                         if (!empty($rule->isLeaf)) {
 
                             $rule->isLeaf = $char == ';' || $char === '' || !in_array($rule->name, [
-                                'page',
-                                'font-face',
-                                'viewport',
-                                'counter-style',
-                                'swash',
-                                'annotation',
-                                'ornaments',
-                                'stylistic',
-                                'styleset',
-                                'character-variant',
-                                'property',
-                                'color-profile'
-                            ]);
+                                    'page',
+                                    'font-face',
+                                    'viewport',
+                                    'counter-style',
+                                    'swash',
+                                    'annotation',
+                                    'ornaments',
+                                    'stylistic',
+                                    'styleset',
+                                    'character-variant',
+                                    'property',
+                                    'color-profile'
+                                ]);
                         }
 
                         if ($char == '{') {
@@ -663,7 +656,6 @@ class Lexer
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                         $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
-//                        $this->emit('exit', $rule, $this->context, $this->parentStylesheet);
 
                         $this->update($position, $name);
                         $position->index += strlen($name);
@@ -680,7 +672,6 @@ class Lexer
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
 
                         $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
-//                        $this->emit('exit', $rule, $this->context, $this->parentStylesheet);
 
                         $i += strlen($name) - 1;
                         continue;
@@ -741,7 +732,6 @@ class Lexer
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
                         $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
-//                        $this->emit('exit', $rule, $this->context, $this->parentStylesheet);
                     }
                 }
 
@@ -773,9 +763,7 @@ class Lexer
                     if (isset($this->parentMediaRule) && $rule->type == 'NestingRule') {
 
                         $this->parentMediaRule->type = 'NestingMediaRule';
-                    }
-
-                    else if ($rule->type == 'AtRule' && $rule->name == 'media' &&
+                    } else if ($rule->type == 'AtRule' && $rule->name == 'media' &&
                         isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
 
                         // top level media rule
@@ -794,9 +782,6 @@ class Lexer
                     }
 
                     $parser->parentStylesheet = !in_array($rule->type, ['AtRule', 'NestingMediaRule']) ? $rule : $this->parentStylesheet;
-
-//                    echo sprintf("parentStylesheet -> %s (%s)\n", $this->parentStylesheet->type, $this->parentStylesheet->name ?? ($this->parentStylesheet->selector ?? 'Stylesheet'));
-
 
                     $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
                     $parser->recover = $recover;
@@ -839,27 +824,27 @@ class Lexer
 
     /**
      *
-     * @ignore
      * @return object
+     * @ignore
      */
     public function createContext()
     {
 
-       return (object)[
-                'type' => 'Stylesheet',
-                'location' => (object)[
-                    'start' => (object)[
-                        'line' => 1,
-                        'column' => 1,
-                        'index' => 0
-                    ],
-                    'end' => (object)[
-                        'line' => 1,
-                        'column' => 1,
-                        'index' => 0
-                    ]
+        return (object)[
+            'type' => 'Stylesheet',
+            'location' => (object)[
+                'start' => (object)[
+                    'line' => 1,
+                    'column' => 1,
+                    'index' => 0
+                ],
+                'end' => (object)[
+                    'line' => 1,
+                    'column' => 1,
+                    'index' => 0
                 ]
-            ];
+            ]
+        ];
     }
 
     /**

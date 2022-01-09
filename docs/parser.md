@@ -121,7 +121,7 @@ _boolean_|_string_|_array_. Default _false_. Remove duplicate declarations under
 
 ### capture_errors
 
-_boolean_: Default _true_. if false, throw an exception on parse error. Otherwise, use getErrors() method to retrieve the error details. default to true
+_boolean_: Default _true_. silently capture error. use getErrors() method to retrieve the error details. If false throw an exception on parse error. default to true
 
 ## Parser Methods
 

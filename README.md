@@ -8,9 +8,10 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
-- support sourcemap
-- support CSS Nesting module
-- support CSS4 colors
+- sourcemap
+- CSS Nesting module
+- partial CSS Syntax module level 3
+- CSS colors module level 4
 - parse and render CSS
 - merge duplicate rules
 - remove duplicate declarations
@@ -479,7 +480,7 @@ echo $renderer->render($parser->parse());
 - flatten_import: process @import directive and import the content into the css document. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
-- capture_errors: if false, throw an exception on parse error. Otherwise, use getErrors() method to retrieve the error details. default to true
+- capture_errors: silently capture parse error. Default to true
 
 ## Renderer Options
 

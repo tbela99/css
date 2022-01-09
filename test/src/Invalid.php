@@ -32,7 +32,6 @@ final class Invalid extends TestCase
     {
 
         $this->expectException(Parser\SyntaxError::class);
-
         $parser->setContent($actual)->getAst();
     }
 
