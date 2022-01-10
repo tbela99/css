@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use stdClass;
 
+use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Interfaces\ValidatorInterface;
@@ -69,10 +70,7 @@ class Parser implements ParsableInterface
         $this->setOptions($options);
         $this->lexer = (new Lexer())->
         on('enter', Closure::fromCallable([$this, 'enterNode']))->
-        on('exit', Closure::fromCallable([$this, 'exitNode']))->
-        on('replace', Closure::fromCallable([$this, 'replaceNode']))->
-        on('remove', Closure::fromCallable([$this, 'removeNode']))->
-        on('error', Closure::fromCallable([$this, 'onError']));
+        on('exit', Closure::fromCallable([$this, 'exitNode']));
 
         if ($css !== '') {
 
@@ -81,7 +79,7 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param string $event parse event name in ['enter', 'exit', 'replace', 'remove', 'error', 'start', 'end']
+     * @param string $event parse event name in ['enter', 'exit'', 'start', 'end']
      * @param callable $callable
      * @return $this
      */
@@ -95,7 +93,7 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param string $event parse event name in ['enter', 'exit', 'replace', 'remove', 'error', 'start', 'end']
+     * @param string $event parse event name in ['enter', 'exit', 'start', 'end']
      * @param callable $callable
      * @return $this
      */
@@ -295,81 +293,90 @@ class Parser implements ParsableInterface
 
                 foreach ($this->imports as $token) {
 
-                    preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', $token->value, $matches);
+                    try {
 
-                    $media = trim($matches[4] ?? '');
+                        preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', $token->value, $matches);
 
-                    if ($media == 'all') {
+                        $media = trim($matches[4] ?? '');
 
-                        $media = '';
-                    }
+                        if ($media == 'all') {
 
-                    $src = $token->src ?? '';
-                    $file = $matches[3];
-
-                    $file = Helper::absolutePath($file, dirname($src));
-
-                    if ($src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
-
-                        $curDir = Helper::getCurrentDirectory();
-
-                        if ($curDir != '/') {
-
-                            $curDir .= '/';
+                            $media = '';
                         }
 
-                        $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
-                    }
+                        $src = $token->src ?? '';
+                        $file = $matches[3];
 
-                    $parser = (new static)->load($file);
-                    $parser->event_handlers = $this->event_handlers;
-                    $parser->options = $this->options;
+                        $file = Helper::absolutePath($file, dirname($src));
 
-                    foreach ($this->event_handlers as $event => $handlers) {
+                        if ($src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
 
-                        foreach ($handlers as $handler) {
+                            $curDir = Helper::getCurrentDirectory();
 
-                            $parser->lexer->on($event, $handler);
+                            if ($curDir != '/') {
+
+                                $curDir .= '/';
+                            }
+
+                            $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
                         }
+
+                        $parser = (new static)->load($file);
+                        $parser->event_handlers = $this->event_handlers;
+                        $parser->options = $this->options;
+
+                        foreach ($this->event_handlers as $event => $handlers) {
+
+                            foreach ($handlers as $handler) {
+
+                                $parser->lexer->on($event, $handler);
+                            }
+                        }
+
+                        $parser->getAst();
+
+                        if (!empty($parser->errors)) {
+
+                            array_splice($this->errors, count($this->errors), $parser->errors);
+                        }
+
+                        $token->name = 'media';
+
+                        if ($media === '') {
+
+                            unset($token->value);
+                        } else {
+
+                            $token->value = $media;
+                        }
+
+                        $token->children = $parser->ast->children ?? [];
+                        $token->hasDeclaration = true;
+
+                        unset($token->isLeaf);
+                        array_shift($this->imports);
+                    } catch (IOException $e) {
+
+                        if (empty($this->options['capture_errors'])) {
+
+                            throw $e;
+                        }
+
+                        $this->errors[] = $e;
                     }
 
-                    $parser->getAst();
+                    $this->imports = [];
 
-                    if (!empty($parser->errors)) {
+                    $i = count($this->ast->children);
 
-                        array_splice($this->errors, count($this->errors), $parser->errors);
-                    }
+                    while ($i--) {
 
-                    $token->name = 'media';
+                        if ($this->ast->children[$i]->type == 'AtRule' &&
+                            $this->ast->children[$i]->name == 'media' &&
+                            !isset($this->ast->children[$i]->value)) {
 
-                    if ($media === '') {
-
-                        unset($token->value);
-                    }
-
-                    else {
-
-                        $token->value = $media;
-                    }
-
-                    $token->children = $parser->ast->children ?? [];
-                    $token->hasDeclaration = true;
-
-                    unset($token->isLeaf);
-                    array_shift($this->imports);
-                }
-
-                $this->imports = [];
-
-                $i = count($this->ast->children);
-
-                while ($i--) {
-
-                    if ($this->ast->children[$i]->type == 'AtRule' &&
-                        $this->ast->children[$i]->name == 'media' &&
-                        !isset($this->ast->children[$i]->value)) {
-
-                        array_splice($this->ast->children, $i, 1, $this->ast->children[$i]->children ?? []);
+                            array_splice($this->ast->children, $i, 1, $this->ast->children[$i]->children ?? []);
+                        }
                     }
                 }
             }
@@ -514,7 +521,11 @@ class Parser implements ParsableInterface
                             if ($el->type != 'Declaration') {
 
                                 $next->parent = null;
-                                array_splice($el->children, 0, 0, $next->children);
+
+                                if (isset($el->children)) {
+
+                                    array_splice($el->children, 0, 0, $next->children);
+                                }
 
                                 if (isset($next->location) && isset($el->location)) {
 
@@ -801,75 +812,6 @@ class Parser implements ParsableInterface
     /**
      * parse event handler
      * @param object $token
-     * @param object $oldToken
-     * @param object $parentStylesheet
-     * @return int
-     * @throws SyntaxError
-     * @ignore
-     */
-    protected function replaceNode(object $token, object $oldToken, object $parentStylesheet)
-    {
-
-        $context = $this->getContext();
-        $status = $this->doValidate($token, $context, $parentStylesheet);
-
-        if ($status == ValidatorInterface::VALID && $token != $oldToken) {
-
-            if (!empty($context->children)) {
-
-                $i = count($context->children);
-
-                while ($i--) {
-
-                    if ($context->children[$i] == $oldToken) {
-
-                        array_splice($context->children, $i, 1, [$token]);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if ($status == ValidatorInterface::VALID && in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
-
-            if (!in_array($token, $this->context)) {
-
-                $this->pushContext($token);
-            }
-        }
-
-        return $status;
-    }
-
-    /**
-     * parse event handler
-     * @param $token
-     * @return void
-     * @ignore
-     */
-    protected function removeNode($token)
-    {
-
-        $context = $this->getContext();
-
-        if (!empty($context->children)) {
-
-            $i = count($context->children);
-
-            while ($i--) {
-
-                if ($context->children[$i] == $token) {
-
-                    array_splice($context->children, $i, 1);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * parse event handler
-     * @param object $token
      * @return void
      * @ignore
      */
@@ -880,22 +822,6 @@ class Parser implements ParsableInterface
 
             $this->popContext();
         }
-    }
-
-    /**
-     * parse event handler
-     * @throws Exception
-     * @ignore
-     */
-    protected function onError(Exception $exception)
-    {
-
-        if (!$this->options['capture_errors']) {
-
-            throw $exception;
-        }
-
-        $this->errors[] = $exception;
     }
 
     /**

@@ -9,7 +9,11 @@ class AtRule implements ValidatorInterface
     public function validate(object $token, object $parentRule, object $parentStylesheet): int
     {
 
-        if ($token->name == 'charset' && !empty($parentRule->children)) {
+        if ($token->name == 'charset' && (
+            !empty($parentRule->children) ||
+            $token->location->start->index != 0||
+            substr($token->value, 0, 1) != '"')
+        ) {
 
             return static::REJECT;
         }

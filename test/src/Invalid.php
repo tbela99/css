@@ -186,6 +186,21 @@ content: "bar bar;
 }
 ', $parser];
 
+        $data[] = ['
+@charset "utf-8";
+', $parser];
+
+        $data[] = ["@charset 'utf-8';
+", $parser];
+
+        $data[] = ['
+        * {
+            box-sizing: border-box;
+        }
+        
+        @import "foo.css";
+', $parser];
+
         return $data;
     }
 }
