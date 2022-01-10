@@ -30,6 +30,8 @@ class AtRule implements ValidatorInterface
 
                    return static::REJECT;
                }
+
+               break;
            }
        }
 
