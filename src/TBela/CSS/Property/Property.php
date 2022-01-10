@@ -66,7 +66,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * set the property value
      * @param Set|string $value
-     * @return $this
+     * @return Property
      */
     public function setValue($value) {
 
@@ -90,7 +90,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
 
     /**
      * @param $vendor
-     * @return $this
+     * @return Property
      */
     public function setVendor($vendor) {
 

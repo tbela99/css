@@ -30,26 +30,16 @@ class Lexer
     protected ?object $context;
     protected bool $recover = false;
 
-    protected array $options = [
-        'flatten_import' => false
-    ];
-
     /**
      * Parser constructor.
      * @param string $css
      * @param object|null $context
-     * @param array $options
      */
-    public function __construct(string $css = '', object $context = null, array $options = [])
+    public function __construct(string $css = '', object $context = null)
     {
 
         $this->css = rtrim($css);
         $this->context = $context;
-
-        if (!empty($options)) {
-
-            $this->setOptions($options);
-        }
     }
 
     /**
@@ -87,7 +77,6 @@ class Lexer
     {
 
         $file = Helper::absolutePath($file, Helper::getCurrentDirectory());
-        $content = false;
 
         if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
 
@@ -143,25 +132,6 @@ class Lexer
 
                 $this->emit('exit', $root, $this->context, $this->parentStylesheet);
             });
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options): Lexer
-    {
-
-        foreach ($options as $key => $value) {
-
-            if (array_key_exists($key, $this->options)) {
-
-                $this->options[$key] = $value;
-            }
         }
 
         return $this;
@@ -514,89 +484,6 @@ class Lexer
                             $rule->value = trim("\"$file\" $media");
                             unset($rule->hasDeclarations);
 
-                            $status = $this->getStatus('enter', $rule);
-
-                            // invalid node
-                            if ($status != ValidatorInterface::VALID) {
-
-                                $this->update($position, $name);
-                                $position->index += strlen($name);
-                                $i += strlen($name) - 1;
-                                continue;
-                            }
-
-                            if (!empty($this->options['flatten_import'])) {
-
-                                try {
-
-                                    $file = Helper::absolutePath($file, dirname($this->src));
-
-                                    if ($this->src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
-
-                                        $curDir = Helper::getCurrentDirectory();
-
-                                        if ($curDir != '/') {
-
-                                            $curDir .= '/';
-                                        }
-
-                                        $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
-                                    }
-
-                                    $parser = (new self)->load($file);
-                                    $parser->recover = true;
-                                    $parser->events = $this->events;
-                                    $parser->options = $this->options;
-                                    $parser->parentStylesheet = $this->parentStylesheet ?: $this->context;
-
-                                    $parser->off('start')->off('end');
-                                    $parser->context = $parser->createContext();
-
-                                    if ($media !== '') {
-
-                                        $rule->name = 'media';
-                                        $rule->value = $media;
-                                        $parser->parentMediaRule = $rule;
-                                        unset($rule->isLeaf);
-
-                                        $this->emit('replace', $rule, $rule, $this->context, $this->parentStylesheet);
-                                    } else {
-
-                                        $this->emit('remove', $rule, $this->context);
-                                    }
-
-                                    $parser->tokenize();
-
-                                    $this->update($position, $name);
-                                    $position->index += strlen($name);
-
-                                    if ($media !== '') {
-
-                                        $rule->location->end = clone $position;
-
-                                        $rule->location->start->index += $this->parentOffset;
-                                        $rule->location->end->index += $this->parentOffset;
-
-                                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
-                                        $rule->location->end->column = max($rule->location->end->column - 1, 1);
-
-                                        $this->emit('exit', $rule, $this->context, $this->parentStylesheet);
-                                    }
-
-                                    $i += strlen($name) - 1;
-                                    continue;
-
-                                } catch (IOException $e) {
-
-                                    $this->emit('error', $e, $token);
-
-                                    $rule->name = 'import';
-                                    $rule->value = trim("\"$file\" $media");
-                                    $rule->isLeaf = true;
-                                    unset($rule->hasDeclarations);
-                                }
-                            }
-
                         } else if ($char == '{') {
 
                             unset($rule->isLeaf);
@@ -751,7 +638,6 @@ class Lexer
 
                     $parser = new self($recover ? $body : substr($body, 0, -1), $rule);
                     $parser->src = $this->src;
-//                    $parser->ast = $rule;
                     $parser->events = $this->events;
                     $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
                     $parser->recover = $recover;

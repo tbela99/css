@@ -10,7 +10,7 @@ class NestingRule implements ValidatorInterface
     public function validate(object $token, object $parentRule, object $parentStylesheet): int
     {
 
-       if(in_array($parentRule->type, ['NestingRule', 'NestingMediaRule'])) {
+       if (in_array($parentRule->type, ['NestingRule', 'NestingMediaRule'])) {
 
            foreach (Value::split($token->selector, ',') as $selector) {
 
@@ -20,7 +20,6 @@ class NestingRule implements ValidatorInterface
                }
            }
        }
-
 
         return static::VALID;
     }

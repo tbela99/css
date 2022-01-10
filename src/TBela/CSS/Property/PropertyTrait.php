@@ -1,6 +1,5 @@
 <?php
 
-
 namespace TBela\CSS\Property;
 
 trait PropertyTrait

@@ -7,6 +7,7 @@ trait ParserTrait
 
     /**
      * @param string $string
+     * @param bool $force
      * @return false|string
      */
     public static function stripQuotes(string $string, bool $force = false)

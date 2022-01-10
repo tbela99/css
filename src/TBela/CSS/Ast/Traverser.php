@@ -63,10 +63,7 @@ class Traverser extends Event
 
             if (is_object($res)) {
 
-//                if ($res !== $node) {
-
                 return $res;
-//                }
             }
         }
 

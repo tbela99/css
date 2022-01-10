@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Interfaces;
 use TBela\CSS\Value;
+use TBela\CSS\Value\Set;
 
 /**
  * Interface implemented by Elements

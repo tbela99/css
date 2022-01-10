@@ -17,20 +17,10 @@ class Rule implements ValidatorInterface
 
                if (strpos(trim($selector), '&') !== 0) {
 
-//                   var_dump(
-//                       sprintf('(rejected "%s") '.$parentRule->type.' -> '.$token->type.' '.$token->selector, $selector));
                    return static::REJECT;
                }
            }
-
-//           return static::VALID;
        }
-
-//       else {
-
-//           var_dump(sprintf('(context %s:%s \ %s) ', $parentStylesheet->type, $parentStylesheet->name ?? $parentStylesheet->selector, $parentRule->type).' -> '.$token->type.' '.$token->selector);
-
-//       }
 
         return static::VALID;
     }

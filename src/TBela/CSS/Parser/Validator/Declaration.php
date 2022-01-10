@@ -14,7 +14,6 @@ class Declaration implements ValidatorInterface
             ($parentRule->type == 'AtRule' && !empty($parentRule->hasDeclarations)) ||
             ($parentStylesheet->type == 'AtRule' && !empty($parentStylesheet->hasDeclarations)))) {
 
-//            var_dump($parentStylesheet);
             return static::REJECT;
         }
 

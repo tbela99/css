@@ -354,11 +354,6 @@ class Renderer
     protected function renderAtRuleMedia($ast, $level)
     {
 
-        if ($ast->name == 'charset' && !$this->options['charset']) {
-
-            return '';
-        }
-
         $output = '@' . $this->renderName($ast);
         $value = isset($ast->value) && $ast->value != 'all' ? $this->renderValue($ast) : '';
 
@@ -401,6 +396,11 @@ class Renderer
 
     protected function renderAtRule($ast, $level)
     {
+
+        if ($ast->name == 'charset' && !$this->options['charset']) {
+
+            return '';
+        }
 
         settype($level, 'int');
         $media = $this->renderAtRuleMedia($ast, $level);

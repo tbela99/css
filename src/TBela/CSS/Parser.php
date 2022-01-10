@@ -6,7 +6,6 @@ use Closure;
 use Exception;
 use stdClass;
 
-use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Interfaces\ValidatorInterface;
@@ -14,8 +13,6 @@ use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\Lexer;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
-use TBela\CSS\Value\Set;
-use function preg_replace_callback;
 use function substr;
 
 /**
@@ -26,6 +23,12 @@ class Parser implements ParsableInterface
 {
 
     use ParserTrait;
+
+    /**
+     * import rules
+     * @var object[]
+     */
+    protected array $imports = [];
 
     /**
      * @var ValidatorInterface[]
@@ -51,14 +54,20 @@ class Parser implements ParsableInterface
     ];
 
     /**
+     * @var array<string, callable>
+     */
+    protected array $event_handlers = [];
+
+    /**
      * Parser constructor.
      * @param string $css
      * @param array $options
      */
     public function __construct($css = '', array $options = [])
     {
+
         $this->setOptions($options);
-        $this->lexer = (new Lexer('', $this->getContext(), $this->options))->
+        $this->lexer = (new Lexer())->
         on('enter', Closure::fromCallable([$this, 'enterNode']))->
         on('exit', Closure::fromCallable([$this, 'exitNode']))->
         on('replace', Closure::fromCallable([$this, 'replaceNode']))->
@@ -71,15 +80,17 @@ class Parser implements ParsableInterface
         }
     }
 
-
     /**
      * @param string $event parse event name in ['enter', 'exit', 'replace', 'remove', 'error', 'start', 'end']
      * @param callable $callable
      * @return $this
      */
-    public function on($event, callable $callable) {
+    public function on($event, callable $callable)
+    {
 
         $this->lexer->on($event, $callable);
+        $this->event_handlers[$event][] = $callable;
+
         return $this;
     }
 
@@ -88,9 +99,23 @@ class Parser implements ParsableInterface
      * @param callable $callable
      * @return $this
      */
-    public function off($event, callable $callable) {
+    public function off($event, callable $callable)
+    {
 
-        $this->lexer->off($event, $callable);
+        if (isset($this->event_handlers[$event])) {
+
+            $this->lexer->off($event, $callable);
+
+            foreach ($this->event_handlers as $key => $handler) {
+
+                if ($handler == $callable) {
+
+                    array_splice($this->event_handlers[$event], $key, 0);
+                    break;
+                }
+            }
+        }
+
         return $this;
     }
 
@@ -239,6 +264,7 @@ class Parser implements ParsableInterface
      * parse Css
      * @return RuleListInterface|null
      * @throws SyntaxError
+     * @throws Exceptions\IOException
      */
     public function parse()
     {
@@ -254,14 +280,100 @@ class Parser implements ParsableInterface
     /**
      * @inheritDoc
      * @throws SyntaxError
+     * @throws Exceptions\IOException
      */
     public function getAst()
     {
 
         if (is_null($this->ast)) {
 
+            $this->imports = [];
             $this->ast = $this->lexer->createContext();
-            $this->lexer->setOptions($this->options)->setContext($this->ast)->tokenize();
+            $this->lexer->setContext($this->ast)->tokenize();
+
+            if ($this->options['flatten_import'] && !empty($this->imports)) {
+
+                foreach ($this->imports as $token) {
+
+                    preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', $token->value, $matches);
+
+                    $media = trim($matches[4] ?? '');
+
+                    if ($media == 'all') {
+
+                        $media = '';
+                    }
+
+                    $src = $token->src ?? '';
+                    $file = $matches[3];
+
+                    $file = Helper::absolutePath($file, dirname($src));
+
+                    if ($src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
+
+                        $curDir = Helper::getCurrentDirectory();
+
+                        if ($curDir != '/') {
+
+                            $curDir .= '/';
+                        }
+
+                        $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
+                    }
+
+                    $parser = (new static)->load($file);
+                    $parser->event_handlers = $this->event_handlers;
+                    $parser->options = $this->options;
+
+                    foreach ($this->event_handlers as $event => $handlers) {
+
+                        foreach ($handlers as $handler) {
+
+                            $parser->lexer->on($event, $handler);
+                        }
+                    }
+
+                    $parser->getAst();
+
+                    if (!empty($parser->errors)) {
+
+                        array_splice($this->errors, count($this->errors), $parser->errors);
+                    }
+
+                    $token->name = 'media';
+
+                    if ($media === '') {
+
+                        unset($token->value);
+                    }
+
+                    else {
+
+                        $token->value = $media;
+                    }
+
+                    $token->children = $parser->ast->children ?? [];
+                    $token->hasDeclaration = true;
+
+                    unset($token->isLeaf);
+                    array_shift($this->imports);
+                }
+
+                $this->imports = [];
+
+                $i = count($this->ast->children);
+
+                while ($i--) {
+
+                    if ($this->ast->children[$i]->type == 'AtRule' &&
+                        $this->ast->children[$i]->name == 'media' &&
+                        !isset($this->ast->children[$i]->value)) {
+
+                        array_splice($this->ast->children, $i, 1, $this->ast->children[$i]->children ?? []);
+                    }
+                }
+            }
+
             $this->deduplicate($this->ast);
         }
 
@@ -671,6 +783,11 @@ class Parser implements ParsableInterface
         if ($status == ValidatorInterface::VALID) {
 
             $context->children[] = $token;
+
+            if ($token->type == 'AtRule' && $token->name == 'import') {
+
+                $this->imports[] = $token;
+            }
 
             if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
 
