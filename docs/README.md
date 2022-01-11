@@ -8,17 +8,21 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
-- generate sourcemap
+- multibyte characters encoding support
+- sourcemap
+- CSS Nesting module
+- partial CSS Syntax module level 3
+- CSS colors module level 4
 - parse and render CSS
-- support CSS4 colors
-- merge duplicate rules
-- remove duplicate declarations
-- remove empty rules
-- process @import directive
-- remove @charset directive
-- compute css shorthand (margin, padding, outline, border-radius, font, background)
-- query the css nodes using xpath like syntax or class name
-- transform the css and ast using the traverser api
+- optimize css:
+  - merge duplicate rules
+  - remove duplicate declarations
+  - remove empty rules
+  - compute css shorthand (margin, padding, outline, border-radius, font, background)
+  - process @import document to reduce the number of HTTP requests
+  - remove @charset directive
+- query api with xpath like or class name syntax
+- traverser api to transform the css and ast
 
 ## Installation
 
@@ -30,7 +34,8 @@ $ composer require tbela99/css
 
 ## Requirements
 
-This library requires PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+- PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+- mbstring extension
 
 ## Usage:
 
@@ -107,6 +112,8 @@ $renderer = new Renderer([
   ]);
 
 // fast
+$css = $renderer->renderAst($parser);
+// or
 $css = $renderer->renderAst($parser->getAst());
 // slow
 $css = $renderer->render($element);
@@ -125,6 +132,8 @@ Load the AST and generate css code
 use \TBela\CSS\Renderer;
 // fastest way to render css
 $beautify = (new Renderer())->renderAst($parser->setContent($css)->getAst());
+// or
+$beautify = (new Renderer())->renderAst($parser->setContent($css));
 
 // or
 $css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')));
@@ -185,7 +194,7 @@ h1 {
   @font-face {
     font-family: MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
   body {
@@ -200,7 +209,7 @@ h1 {
   @font-face {
     font-family: Arial, MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }
@@ -226,7 +235,6 @@ $nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
 // get all src properties in a @font-face rule
 $nodes = $stylesheet->query('@font-face/src');
 
-
 echo implode("\n", array_map('trim', $nodes));
 ```
 
@@ -239,13 +247,13 @@ result
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 ```
@@ -255,7 +263,6 @@ render optimized css
 ```php
 
 $stylesheet->setChildren(array_map(function ($node) { return $node->copy()->getRoot(); }, $nodes));
-
 $stylesheet->deduplicate();
 
 echo $stylesheet;
@@ -268,9 +275,9 @@ result
   src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }
 @media print {
- @font-face {
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+  @font-face {
+    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  }
 }
 ```
 
@@ -442,7 +449,13 @@ div {
 Adding existing css
 ```php
 
+// append css string
 $stylesheet->appendCss($css_string);
+// append css file
+$stylesheet->append('style/main.css');
+// append url
+$stylesheet->append('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
+
 
 ```
 
@@ -464,29 +477,30 @@ echo (string) $parser;
 $renderer = new Renderer(['compress' => true]);
 echo $renderer->renderAst($parser->getAst());
 
-// slower
+// slower - will build an Element
 echo $renderer->render($parser->parse());
 ```
 ## Parser Options
 
-- flatten_import: process @import directive and import the content into the css. default to false.
+- flatten_import: process @import directive and import the content into the css document. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
+- capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 
 ## Renderer Options
 
-- sourcemap: generate sourcemap, default false
 - remove_comments: remove comments.
 - preserve_license: preserve comments starting with '/*!'
 - compress: minify output, will also remove comments
 - remove_empty_nodes: do not render empty css nodes
 - compute_shorthand: compute shorthand declaration
-- charset: preserve @charset
+- charset: preserve @charset. default to false
 - glue: the line separator character. default to '\n'
 - indent: character used to pad lines in css, default to a space character
 - convert_color: convert colors to a format between _hex_, _hsl_, _rgb_, _hwb_ and _device-cmyk_
 - css_level: produce CSS color level 3 or 4. default to _4_
 - allow_duplicate_declarations: allow duplicate declarations.
+- legacy_rendering: convert nesting css. default false
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 

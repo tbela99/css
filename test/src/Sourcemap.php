@@ -142,7 +142,8 @@ body {
         $data = [];
 
         $element = (new Parser('', [
-            'flatten_import' => true
+            'flatten_import' => true,
+            'capture_errors' => false
         ]))->load(__DIR__ . '/../sourcemap/sourcemap.import.css')->parse();
 
         $renderer = new Renderer([
@@ -152,9 +153,7 @@ body {
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.css';
         $renderer->save($element, $outFile);
 
-        $data[] = ['/*! this is supposed to be the license. */
-/* import the cookie monster file */
-/* import the media library */
+        $data[] = ["/*! this is supposed to be the license. */
 body {
  font-size: 108px;
  color: #fff;
@@ -170,7 +169,7 @@ body {
 .fal,
 .far,
 .fas {
- /* don\'t comment */
+ /* don't comment */
  -moz-osx-font-smoothing: grayscale;
  -webkit-font-smoothing: antialiased;
  display: inline-block;
@@ -182,21 +181,23 @@ body {
 .bg {
  background: no-repeat url(../images/bg.png) 50% 50%/cover
 }
+/* import the cookie monster file */
 .fa-bahai {
  display: inline-block
 }
 .fa-bahai:before {
- content: "s-2 ";
+ content: \"s-2 \";
  font-size: 80%
 }
+/* import the media library */
 body {
  /*font-size: 14px*/
  line-height: 1.3
-}',
+}",
             preg_replace('#\n'.preg_quote('/*# sourceMappingURL=', '#').'.*?\*/#', '', file_get_contents($outFile))
         ];
 
-        $data[] = [';;;AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
+        $data[] = [';AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
         $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.min.css';
 

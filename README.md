@@ -8,18 +8,21 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
-- support sourcemap
-- support CSS Nesting module
-- support CSS4 colors
+- multibyte characters encoding support
+- sourcemap
+- CSS Nesting module
+- partial CSS Syntax module level 3
+- CSS colors module level 4
 - parse and render CSS
-- merge duplicate rules
-- remove duplicate declarations
-- remove empty rules
-- process @import directive
-- remove @charset directive
-- compute css shorthand (margin, padding, outline, border-radius, font, background)
-- query the css nodes using xpath like syntax or class name
-- transform the css and ast using the traverser api
+- optimize css:
+  - merge duplicate rules
+  - remove duplicate declarations
+  - remove empty rules
+  - compute css shorthand (margin, padding, outline, border-radius, font, background)
+  - process @import document to reduce the number of HTTP requests
+  - remove @charset directive
+- query api with xpath like or class name syntax
+- traverser api to transform the css and ast
 
 ## Installation
 
@@ -31,7 +34,12 @@ $ composer require "tbela99/css:dev-php56-backport"
 
 ## Requirements
 
+<<<<<<< HEAD
 This library requires PHP version >= 5.6
+=======
+- PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+- mbstring extension
+>>>>>>> v.next
 
 ## Usage:
 
@@ -108,6 +116,8 @@ $renderer = new Renderer([
   ]);
 
 // fast
+$css = $renderer->renderAst($parser);
+// or
 $css = $renderer->renderAst($parser->getAst());
 // slow
 $css = $renderer->render($element);
@@ -126,6 +136,8 @@ Load the AST and generate css code
 use \TBela\CSS\Renderer;
 // fastest way to render css
 $beautify = (new Renderer())->renderAst($parser->setContent($css)->getAst());
+// or
+$beautify = (new Renderer())->renderAst($parser->setContent($css));
 
 // or
 $css = (new Renderer())->renderAst(json_decode(file_get_contents('style.json')));
@@ -227,7 +239,6 @@ $nodes = $stylesheet->queryByClassNames('@font-face, .foo .bar');
 // get all src properties in a @font-face rule
 $nodes = $stylesheet->query('@font-face/src');
 
-
 echo implode("\n", array_map('trim', $nodes));
 ```
 
@@ -256,7 +267,6 @@ render optimized css
 ```php
 
 $stylesheet->setChildren(array_map(function ($node) { return $node->copy()->getRoot(); }, $nodes));
-
 $stylesheet->deduplicate();
 
 echo $stylesheet;
@@ -471,15 +481,15 @@ echo (string) $parser;
 $renderer = new Renderer(['compress' => true]);
 echo $renderer->renderAst($parser->getAst());
 
-// slower
+// slower - will build an Element
 echo $renderer->render($parser->parse());
 ```
 ## Parser Options
 
-- flatten_import: process @import directive and import the content into the css. default to false.
+- flatten_import: process @import directive and import the content into the css document. default to false.
 - allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
-- capture_errors: if false, throw an exception on parse error. Otherwise, use getErrors() method to retrieve the error details. default to true
+- capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 
 ## Renderer Options
 

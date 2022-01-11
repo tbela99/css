@@ -30,7 +30,7 @@ if [ ! -f "$php56" ]; then
     sudo apt-get install -y php5.6
 
 
-php56=`cmmand -v php5.6 2>/dev/null`
+php56=`command -v php5.6 2>/dev/null`
 #    break
 #    ;;
 #  *)
@@ -49,23 +49,35 @@ fail() {
   echo "test ""$1"" ended with failure" >&2
   exit 1
 }
+if [ $# -gt 0 ]; then
 
-flag=$(echo "$1" | cut -c1-1)
-if [ "$1" = "" ] || [ "$flag" = "-" ]; then
-  skip=""
-  [ -n "$1" ] && [ "$flag" = "-" ] && skip=$(echo "$1" | cut -c2-11)
-  for file in src/*.php
-    do
-      [ "$file" = "src/$skip.php" ] && continue;
-      echo "Run test $file"
-      $php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file || fail "$file"
+  case "$@" in
+
+  *"-"*)
+    for file in src/*.php; do
+      fname=$(echo -e "$file" | cut -c 5- | awk -F . '{print $1}')
+
+      case "$@" in
+      *-$fname*) continue ;;
+      *) $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file" ;;
+      esac
     done
-else
+    ;;
+  *)
+    for file in src/*.php; do
+      fname=$(echo -e "$file" | cut -c 5- | awk -F . '{print $1}')
 
-    file="src/$1.php"
-    if [ -f "$file" ]; then
-      $php56 -dmemory_limit=256M ../phpunit-5.phar --bootstrap autoload.php $file
-    else
-      echo "Invalid test: $1" && exit 1
-    fi
+      case "$@" in
+      *$fname*)
+        $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+        ;;
+      esac
+    done
+    ;;
+  esac
+else
+    # no argument
+    for file in src/*.php; do
+        $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+    done
 fi

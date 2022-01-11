@@ -962,6 +962,36 @@ p {
                 return (new \TBela\CSS\Renderer())->render($node, null, false);
             }, $element->query($context))];
 
+        $data[] = [
+            [
+                0 => 'div,
+.selector \1F600 {
+ font-family: IcoMoon
+}'
+            ],
+            array_map('trim', (new Parser('
+
+div, .selector     😀 {
+ font-family: \'IcoMoon\';
+}', [
+            ]))->parse()->query('.selector 😀'))];
+
+        $data[] = [
+            [
+                0 => 'div,
+.selector \1F600 {
+ font-family: IcoMoon, "\1F602"
+}'
+            ],
+            array_map('trim', (new Parser('
+div, .selector     😀 {
+font-size: 14px;
+ font-family: \'IcoMoon\', "😂";
+}', [
+            ]))->parse()->query('[value*="\1F602"]'))];
+
+
+
         return $data;
     }
 
