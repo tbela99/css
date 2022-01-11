@@ -8,18 +8,19 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- multibyte characters encoding support
 - sourcemap
 - CSS Nesting module
 - partial CSS Syntax module level 3
 - CSS colors module level 4
 - parse and render CSS
 - optimize css:
-    - merge duplicate rules
-    - remove duplicate declarations
-    - remove empty rules
-    - compute css shorthand (margin, padding, outline, border-radius, font, background)
-    - process @import document to reduce the number of HTTP requests
-    - remove @charset directive
+  - merge duplicate rules
+  - remove duplicate declarations
+  - remove empty rules
+  - compute css shorthand (margin, padding, outline, border-radius, font, background)
+  - process @import document to reduce the number of HTTP requests
+  - remove @charset directive
 - query api with xpath like or class name syntax
 - traverser api to transform the css and ast
 
@@ -33,7 +34,8 @@ $ composer require tbela99/css
 
 ## Requirements
 
-This library requires PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+- PHP version >= 7.4. If you need support for older versions of PHP 5.6 - 7.3 then checkout [this branch](https://github.com/tbela99/css/tree/php56-backport)
+- mbstring extension
 
 ## Usage:
 
@@ -192,7 +194,7 @@ h1 {
   @font-face {
     font-family: MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
   body {
@@ -207,7 +209,7 @@ h1 {
   @font-face {
     font-family: Arial, MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }
@@ -245,13 +247,13 @@ result
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 ```
@@ -273,9 +275,9 @@ result
   src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }
 @media print {
- @font-face {
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+  @font-face {
+    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  }
 }
 ```
 

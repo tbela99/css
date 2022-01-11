@@ -8,6 +8,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 ## Features
 
+- multibyte characters encoding support
 - sourcemap
 - CSS Nesting module
 - partial CSS Syntax module level 3
