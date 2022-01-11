@@ -8,5 +8,5 @@ interface EventInterface {
 
     public function off(string $event, callable $callable);
 
-    public function emit(string $event, ...$args): array ;
+    public function emit(string $event, ...$args): array;
 }

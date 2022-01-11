@@ -27,7 +27,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
     /**
      * @var string | null
      */
-    protected string $vendor;
+    protected ?string $vendor = null;
 
     protected ?array $leadingcomments = null;
 
@@ -51,14 +51,22 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function __construct($name)
     {
+        if (substr($name, 0, 1) == '-' && preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
 
-        $this->name = (string) $name;
+            $this->name = $match[3];
+            $this->vendor = $match[2];
+        }
+
+        else {
+
+            $this->name = (string) $name;
+        }
     }
 
     /**
      * set the property value
      * @param Set|string $value
-     * @return $this
+     * @return Property
      */
     public function setValue($value) {
 
@@ -82,7 +90,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
 
     /**
      * @param $vendor
-     * @return $this
+     * @return Property
      */
     public function setVendor($vendor) {
 
@@ -102,9 +110,9 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      * get the property name
      * @return string|null
      */
-    public function getName() {
+    public function getName(bool $vendor = true) {
 
-        return $this->name;
+        return ($vendor && $this->vendor ? '-'.$this->vendor.'-' : '').$this->name;
     }
 
     /**
@@ -122,7 +130,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function getHash() {
 
-        return $this->name.':'.$this->value->getHash();
+        return $this->name.':'.($this->vendor ? $this->vendor.':' : '').$this->value->getHash();
     }
 
     /**
@@ -132,7 +140,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
      */
     public function render (array $options = []) {
 
-        $result = $this->name;
+        $result = ($this->vendor ? '-'.$this->vendor.'-' : null).$this->name;
 
         if (!empty($this->leadingcomments)) {
 

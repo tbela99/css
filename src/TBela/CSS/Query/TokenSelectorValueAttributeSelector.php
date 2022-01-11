@@ -3,6 +3,7 @@
 namespace TBela\CSS\Query;
 
 use InvalidArgumentException;
+use TBela\CSS\Element\Rule;
 
 class TokenSelectorValueAttributeSelector implements TokenSelectorValueInterface
 {
@@ -35,7 +36,7 @@ class TokenSelectorValueAttributeSelector implements TokenSelectorValueInterface
             throw new InvalidArgumentException('invalid input', 400);
         }
 
-        if (!in_array($value[1]->value, ['=', '^=', '*=', '~=', '$='])) {
+        if (!in_array($value[1]->value, ['=', '^=', '*=', '$='])) {
 
             throw new InvalidArgumentException(sprintf('unsupported operator "%s"', $value[1]->value), 400);
         }
@@ -53,12 +54,60 @@ class TokenSelectorValueAttributeSelector implements TokenSelectorValueInterface
 
         foreach ($context as $element) {
 
-            foreach ($element['selector'] ?? [] as $val) {
+            if ($element instanceof Rule) {
 
-                if (strpos((string) $val, $this->_value) !== false) {
+                foreach ($element['selector'] ?? [] as $val) {
 
-                    $result[] = $element;
+                    if (strpos((string) $val, $this->_value) !== false) {
+
+                        $result[] = $element;
+                        continue 2;
+                    }
                 }
+            }
+
+            $attr = (string) $element[$this->value[0]->value];
+
+            $q = $this->value[2]->q ?? '';
+            $value = $q.$this->value[2]->value.$q;
+
+            switch ($this->value[1]->value) {
+
+                case '=':
+
+                    if ($value == $attr) {
+
+                        $result[] = $element;
+                    }
+
+                    break;
+
+                case '^=':
+
+                    if (strpos($attr, $value) === 0) {
+
+                        $result[] = $element;
+                    }
+
+                    break;
+
+                case '*=':
+
+                    if (strpos($attr, $value) !== false) {
+
+                        $result[] = $element;
+                    }
+
+                    break;
+
+                case '$=':
+
+                    if (substr($attr, -strlen($value)) === $value) {
+
+                        $result[] = $element;
+                    }
+
+                    break;
             }
         }
 

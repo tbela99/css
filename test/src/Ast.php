@@ -137,12 +137,52 @@ final class Ast extends TestCase
         $parser->load(__DIR__.'/../css/template.css');
         $data[] = [(string) $parser, (string) $parser->parse()];
 
-        $parser->setOptions(['sourcemap' => true, 'flatten_import' => true])->load(__DIR__.'/../files/test_2.css');
+        $parser->setOptions(['flatten_import' => true])->load(__DIR__.'/../files/test_2.css');
 
         $data[] = [
 
             file_get_contents(__DIR__.'/../files/test_2_parsed_comments.css'),
             (string) $parser->parse()
+        ];
+
+        $data[] = [
+
+            '@keyframes identifier {
+ 0% {
+  top: 0;
+  left: 0
+ }
+ 0%,
+ 100% {
+  top: 0;
+  left: 0
+ }
+}',
+            (string) (new Parser('@keyframes identifier {
+	0% {
+		top: 0;
+		left: 0;
+	}
+	0%, 100% {
+		top: 0;
+		left: 0;
+	}
+}'))
+        ];
+
+        $data[] = [
+
+            '@keyframes identifier{0%{top:0;left:0}0%,100%{top:0;left:0}}',
+            (new Renderer(['compress' => true]))->renderAst(new Parser('@keyframes identifier {
+	0% {
+		top: 0;
+		left: 0;
+	}
+	0%, 100% {
+		top: 0;
+		left: 0;
+	}
+}'))
         ];
         return $data;
     }

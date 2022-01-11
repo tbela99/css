@@ -1,4 +1,4 @@
-##!/bin/bash -x
+##!/bin/bash -x -v
 cd $(dirname "$0")
 cd ../benchmark
 
@@ -8,7 +8,7 @@ if [ ! -d ./vendor/sabberworm ]; then
   exit 1
 fi
 
-# files
+# css files
 files=$(ls -d ../test/perf_files/*.css)
 # files size
 sizes=()
@@ -25,16 +25,20 @@ size() {
   # shellcheck disable=SC2046
   result=$($(echo "$prog" | cut -f1 -d ' ') $(echo "$prog" | cut -f2 -s -d ' ') "$@" 2>&1)
   output=$(convert_file_size "${#result}")
-  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
+#  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
+  echo $(lpad "$output" 9)
 }
 # left pad with '\ ', will pipe to sed 's/\\ //g' to display the actual space character
 lpad() {
 
   x="$1"
   i="${#x}"
+  pad="$3"
+
+  [ -z "$pad" ] && pad="\\ "
 
   while [ "$i" -lt "$2" ]; do
-    x="\\ $x"
+    x="$pad$x"
     i=$((i + 1))
   done
 
@@ -135,6 +139,7 @@ measure_stats() {
   declare -a result=()
 
   declare min=-1
+  declare minval=""
   declare i=0
   declare v
 
@@ -144,10 +149,11 @@ measure_stats() {
       continue
     fi
 
-    v=$(echo "$t" | cut -d "s" -f1)
+    v=$(echo "$t" | tr -d "sKMb")
 
     if [ $(echo "$min == -1 " | bc) -eq 1 ] || [ $(echo "$min > $v" | bc) -eq 1 ]; then
       min="$v"
+      minval="$t"
     fi
 
     result[i]="$t"
@@ -156,13 +162,24 @@ measure_stats() {
 
   i=0
 
+  #
   while [ "$i" -lt "${#result[@]}" ]; do
 
-    result[i]=$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | cut -d "s" -f1)" - $min) * 100 / $min" | bc) 6)"%)$pad"
+    if [ "$minval" = "${result[i]}" ]; then
+      result[i]="\e[32m"$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | tr -d "sKMb")" - $min) * 100 / $min" | bc) 6)"%)$pad\e[0m"
+    else
+      result[i]=$(lpad "${result[i]}" 6)" ("$(lpad $(echo "scale=2; ("$(echo "${result[i]}" | tr -d "sKMb")" - $min) * 100 / $min" | bc) 6)"%)$pad"
+    fi
+
     i=$((i + 1))
   done
 
   echo -e "${result[@]}"
+}
+
+size_stats() {
+
+  measure_stats "$@"
 }
 
 i=0
@@ -177,7 +194,9 @@ hpad="\t\t"
 echo 'Parsing performance'
 #. ./parser.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./parse.php" "./parseSabberWorm.php" "./parseast.php"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./parse.php" "./parseSabberWorm.php" "./parseast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./parseSabberWorm.php" "./parseast.php"
 
 echo ""
 #pad="\t\t"
@@ -185,13 +204,17 @@ echo ""
 echo 'Rendering performance (Uncompressed)'
 #. ./render-uncompressed.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
 
 echo ""
 echo 'Rendering performance (Compressed)'
 #. ./render-compressed.sh
 #
-benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+#benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"
 
 echo ""
 #pad="\t\t"
@@ -199,10 +222,14 @@ echo ""
 echo 'Size (Uncompressed)'
 #. ./uncompressed-size.sh
 #
-getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+#getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
 
 echo ""
 echo 'Size (Compressed)'
 # . ./compressed-size.sh
 #
-getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+#getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
+# "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"

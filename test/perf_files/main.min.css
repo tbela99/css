@@ -4850,7 +4850,7 @@ a.jdb-close.jdb-disabled {
     }
 }
 
-@media (min-width: 768px)and(max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 991.98px) {
     .jdb-hide-tablet {
         display: none !important
     }
@@ -29212,19 +29212,19 @@ ul.pagenav li.next {
     }
 }
 
-@media (min-width: 576px)and(max-width: 767.98px) {
+@media (min-width: 576px) and (max-width: 767.98px) {
     .hideonsm {
         display: none !important
     }
 }
 
-@media (min-width: 768px)and(max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 991.98px) {
     .hideonmd {
         display: none !important
     }
 }
 
-@media (min-width: 992px)and(max-width: 1199.98px) {
+@media (min-width: 992px) and (max-width: 1199.98px) {
     .hideonlg {
         display: none !important
     }

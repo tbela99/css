@@ -77,7 +77,7 @@ color: red;
     }
     }
 
-p {
+    p {
 
     @media (orientation: landscape) {
         grid-auto-flow: column;
@@ -86,7 +86,7 @@ p {
             max-inline-size: 1024px;
         }
         }
-}
+    }
 
     background: none;
-left over {
+    left over {

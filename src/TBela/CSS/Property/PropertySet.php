@@ -71,17 +71,19 @@ class PropertySet
      * @param array|null $trailingcomments
      * @return PropertySet
      */
-    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null): PropertySet
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $vendor = null): PropertySet
     {
 
-        // is valid property
-        if (($this->shorthand != $name) && !in_array($name, $this->config['properties'])) {
+        $propertyName = ($vendor ? '-'.$vendor.'-' : '').$name;
 
-            throw new InvalidArgumentException('Invalid property ' . $name, 400);
+        // is valid property
+        if (($this->shorthand != $propertyName) && !in_array($propertyName, $this->config['properties'])) {
+
+            throw new InvalidArgumentException('Invalid property ' . $propertyName.' : '.$this->shorthand, 400);
         }
 
         // $name is shorthand -> expand
-        if ($this->shorthand == $name) {
+        if ($this->shorthand == $propertyName) {
 
             foreach ($this->config['properties'] as $property) {
 
@@ -97,20 +99,20 @@ class PropertySet
 
             if (is_array($result)) {
 
-                $this->expandProperties($result, $leadingcomments, $trailingcomments);
+                $this->expandProperties($result, $leadingcomments, $trailingcomments, $vendor);
                 unset($this->properties[$this->shorthand]);
             } else {
 
-                $this->setProperty($name, $value);
+                $this->setProperty($name, $value, $vendor);
 
                 if (!is_null($leadingcomments)) {
 
-                    $this->properties[$name]->setLeadingComments($leadingcomments);
+                    $this->properties[$propertyName]->setLeadingComments($leadingcomments);
                 }
 
                 if (!is_null($trailingcomments)) {
 
-                    $this->properties[$name]->setTrailingComments($trailingcomments);
+                    $this->properties[$propertyName]->setTrailingComments($trailingcomments);
                 }
             }
 
@@ -133,27 +135,26 @@ class PropertySet
                     }
                 }
 
-
                 unset($this->properties[$this->shorthand]);
             }
 
-            $this->setProperty($name, $value);
+            $this->setProperty($name, $value, $vendor);
 
             if (!is_null($leadingcomments)) {
 
-                $this->properties[$name]->setLeadingComments($leadingcomments);
+                $this->properties[$propertyName]->setLeadingComments($leadingcomments);
             }
 
             if (!is_null($trailingcomments)) {
 
-                $this->properties[$name]->setTrailingComments($trailingcomments);
+                $this->properties[$propertyName]->setTrailingComments($trailingcomments);
             }
         }
 
         return $this;
     }
 
-    protected function expandProperties(array $result, ?array $leadingcomments = null, ?array $trailingcomments = null)
+    protected function expandProperties(array $result, ?array $leadingcomments = null, ?array $trailingcomments = null, $vendor = null)
     {
 
         foreach ($result as $property => $values) {
@@ -165,7 +166,7 @@ class PropertySet
                 $separator = ' ' . $separator . ' ';
             }
 
-            $this->setProperty($property, implode($separator, $values));
+            $this->setProperty($property, implode($separator, $values), $vendor);
 
             if (!is_null($leadingcomments)) {
 
@@ -216,7 +217,7 @@ class PropertySet
 
         $vmap = $value_map;
 
-        foreach ($pattern as $key => $match) {
+        foreach ($pattern as $match) {
 
             foreach ($value_map as $index => $map) {
 
@@ -247,18 +248,6 @@ class PropertySet
         if (!empty($value_map)) {
 
             return false;
-        }
-
-        foreach ($value_map as $val) {
-
-            foreach ($val as $v) {
-
-                if ($v->type != 'whitespace' && $v->type != 'separator') {
-
-                    // failure to match the pattern
-                    return false;
-                }
-            }
         }
 
         foreach ($values as $types) {
@@ -316,7 +305,7 @@ class PropertySet
     {
         $result = [];
 
-        foreach ($this->property_type as $unit => $properties) {
+        foreach ($this->property_type as $properties) {
 
             foreach ($properties as $property) {
 
@@ -396,18 +385,26 @@ class PropertySet
      * set property
      * @param string $name
      * @param string $value
+     * @param null $vendor
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, $value): PropertySet
+    protected function setProperty($name, $value, $vendor = null): PropertySet
     {
 
-        if (!isset($this->properties[$name])) {
+        $propertyName = ($vendor && substr($name, 0, strlen($vendor) + 2) != '-'.$vendor.'-' ? '-'.$vendor.'-' : '').$name;
 
-            $this->properties[$name] = new Property($name);
+        if (!isset($this->properties[$propertyName])) {
+
+            $this->properties[$propertyName] = new Property($name);
         }
 
-        $this->properties[$name]->setValue($value);
+        if ($vendor) {
+
+            $this->properties[$propertyName]->setVendor($vendor);
+        }
+
+        $this->properties[$propertyName]->setValue($value);
 
         return $this;
     }
