@@ -108,7 +108,7 @@ class Parser implements ParsableInterface
 
                 if ($handler == $callable) {
 
-                    array_splice($this->event_handlers[$event], $key, 0);
+                    array_splice($this->event_handlers[$event], $key, 1);
                     break;
                 }
             }
