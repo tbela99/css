@@ -7,8 +7,8 @@
 # to run all the tests with no argument
 ## ./runtest.sh
 ##
-DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-cd "$DIR/../test/"
+DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
+
 [ ! -f "../phpunit.phar" ] &&
   wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar &&
   chmod +x ../phpunit.phar

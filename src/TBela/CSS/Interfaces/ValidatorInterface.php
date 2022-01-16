@@ -2,6 +2,8 @@
 
 namespace TBela\CSS\Interfaces;
 
+use TBela\CSS\Parser\SyntaxError;
+
 interface ValidatorInterface
 {
 
@@ -27,4 +29,5 @@ interface ValidatorInterface
      * @return int
      */
     public function validate(object $token, object $parentRule, object $parentStylesheet): int;
+    public function getError(): ?string;
 }

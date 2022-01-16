@@ -26,12 +26,6 @@ class Parser implements ParsableInterface
     use ParserTrait;
 
     /**
-     * import rules
-     * @var object[]
-     */
-    protected array $imports = [];
-
-    /**
      * @var ValidatorInterface[]
      */
     protected static array $validators = [];
@@ -40,6 +34,7 @@ class Parser implements ParsableInterface
     protected Lexer $lexer;
 
     protected array $errors = [];
+    protected ?string $error;
 
     protected ?stdClass $ast = null;
 
@@ -115,6 +110,22 @@ class Parser implements ParsableInterface
         }
 
         return $this;
+    }
+
+
+    /**
+     * @param Exception $error
+     * @return void
+     */
+    protected function emit(Exception $error): void
+    {
+        if (!empty($this->event_handlers['error'])) {
+
+            foreach ($this->event_handlers['error'] as $handler) {
+
+                call_user_func($handler, $error);
+            }
+        }
     }
 
     /**
@@ -285,15 +296,26 @@ class Parser implements ParsableInterface
 
         if (is_null($this->ast)) {
 
-            $this->imports = [];
             $this->ast = $this->lexer->createContext();
             $this->lexer->setContext($this->ast)->tokenize();
 
-            if ($this->options['flatten_import'] && !empty($this->imports)) {
+            if ($this->options['flatten_import'] && !empty($this->ast->children)) {
 
-                foreach ($this->imports as $token) {
+                $files = [];
+                $removed = [];
+
+                $i = count($this->ast->children);
+
+                while ($i--) {
 
                     try {
+
+                        if ($this->ast->children[$i]->type != 'AtRule' || $this->ast->children[$i]->name != 'import') {
+
+                            continue;
+                        }
+
+                        $token = $this->ast->children[$i];
 
                         preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', $token->value, $matches);
 
@@ -304,22 +326,7 @@ class Parser implements ParsableInterface
                             $media = '';
                         }
 
-                        $src = $token->src ?? '';
-                        $file = $matches[3];
-
-                        $file = Helper::absolutePath($file, dirname($src));
-
-                        if ($src !== '' && !preg_match('#^((https?:)?//)#i', $file)) {
-
-                            $curDir = Helper::getCurrentDirectory();
-
-                            if ($curDir != '/') {
-
-                                $curDir .= '/';
-                            }
-
-                            $file = preg_replace('#^' . preg_quote($curDir, '#') . '#', '', $file);
-                        }
+                        $file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
 
                         $parser = (new static)->load($file);
                         $parser->event_handlers = $this->event_handlers;
@@ -362,10 +369,12 @@ class Parser implements ParsableInterface
                             throw $e;
                         }
 
+                        $this->emit($e);
                         $this->errors[] = $e;
                     }
+                }
 
-                    $this->imports = [];
+                if (isset($this->ast->children)) {
 
                     $i = count($this->ast->children);
 
@@ -637,6 +646,8 @@ class Parser implements ParsableInterface
             throw $error;
         }
 
+        $this->emit($error);
+
         $this->errors[] = $error;
 
         return $error;
@@ -663,9 +674,13 @@ class Parser implements ParsableInterface
             }
         }
 
+        $this->error = null;
+
         if (isset(static::$validators[$token->type])) {
 
-            return static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
+            $result = static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
+            $this->error = static::$validators[$token->type]->getError();
+            return $result;
         }
 
         return ValidatorInterface::VALID;
@@ -839,7 +854,7 @@ class Parser implements ParsableInterface
 
         if ($status == ValidatorInterface::REJECT) {
 
-            $this->handleError(sprintf('invalid token %s at %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+            $this->handleError(sprintf("%s: %s at %s:%s:%s\n", $token->type, $this->error, $token->src ?? '', $token->location->start->line, $token->location->start->column));
         }
 
         return $status;

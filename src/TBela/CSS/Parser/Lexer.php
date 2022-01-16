@@ -716,7 +716,7 @@ class Lexer
     public function createContext()
     {
 
-        return (object)[
+        $context = (object)[
             'type' => 'Stylesheet',
             'location' => (object)[
                 'start' => (object)[
@@ -731,6 +731,13 @@ class Lexer
                 ]
             ]
         ];
+
+        if ($this->src !== '') {
+
+            $context->src = $this->src;
+        }
+
+        return $context;
     }
 
     /**
