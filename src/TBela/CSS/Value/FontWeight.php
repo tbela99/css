@@ -102,7 +102,7 @@ class FontWeight extends Value
      * @inheritDoc
      * @throws \Exception
      */
-    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = ''): Set
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
     {
 
         $type = static::type();
@@ -112,7 +112,8 @@ class FontWeight extends Value
 
         if (!is_null($matchKeyword)) {
 
-            return new Set([(object)['type' => $type, 'value' => $matchKeyword]]);
+            $tokens = [(object)['type' => $type, 'value' => $matchKeyword]];
+            return $raw_tokens ? $tokens : new Set($tokens);
         }
 
         foreach ($tokens as $key => $token) {
@@ -133,7 +134,9 @@ class FontWeight extends Value
             }
         }
 
-        return new Set(static::reduce($tokens));
+        $tokens = static::reduce($tokens);
+
+        return $raw_tokens ? $tokens : new Set($tokens);
     }
 
     public static function keywords(): array

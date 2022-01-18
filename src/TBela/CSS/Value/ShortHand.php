@@ -36,7 +36,7 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
     {
 
         $separator = Config::getPath('map.'.static::type().'.separator');
@@ -48,27 +48,27 @@ class ShortHand extends Value
 
             if (!is_null($keyword)) {
 
-                $results[] = new Set([(object)['value' => $keyword, 'type' => static::type()]]);
+                $results[] = [(object)['value' => $keyword, 'type' => static::type()]];
                 break;
             }
 
             $tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
-            $results[] = new Set(static::reduce(static::matchPattern($tokens)));
+            $results[] = static::reduce(static::matchPattern($tokens));
         }
 
         $j = count($results) - 1;
         $i = -1;
 
-        $set = new Set();
+        $set = [];
 
         while (++$i < $j) {
 
-            $set->merge($results[$i]);
-            $set->add(Value::getInstance((object) ['type' => 'separator', 'value' => $separator]));
+            array_splice($set, count($set), 0, $results[$i]);
+            $set[] = (object) ['type' => 'separator', 'value' => $separator];
         }
 
-        $set->merge($results[$j]);
-        return $set;
+        array_splice($set, count($set), 0, $results[$j]);
+        return $raw_tokens ? $set : new Set($set);
     }
 
     /**

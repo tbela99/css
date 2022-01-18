@@ -172,6 +172,9 @@ final class Path extends TestCase
         $kill_server = sprintf('ps -ux | grep %s | xargs k -9 >/dev/null 2>&1', $port);
         shell_exec(sprintf("%s; cd %s && php -S %s:%s -t . %s > /dev/null 2>&1 &", $kill_server, escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
 
+        // wait for the server to start
+        sleep(3);
+
         $data[] = [
 
             file_get_contents(__DIR__.'/../sourcemap/sourcemap.http.css'),

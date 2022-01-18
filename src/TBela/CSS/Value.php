@@ -251,9 +251,10 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param bool $capture_whitespace
      * @param string $context
      * @param string $contextName
+     * @param bool $raw_tokens
      * @return Set
      */
-    public static function parse($string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    public static function parse($string, $property = null, bool $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
     {
         if ($string instanceof Set) {
 
@@ -276,7 +277,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                 try {
 
-                    return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName);
+                    return call_user_func([$className, 'doParse'], $string, $capture_whitespace, $context, $contextName, $raw_tokens);
                 } catch (\Exception $e) {
 
 //                    throw $e;
@@ -285,7 +286,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
             }
         }
 
-        return static::doParse($string, $capture_whitespace, $context, $contextName);
+        return static::doParse($string, $capture_whitespace, $context, $contextName, $raw_tokens);
     }
 
     /**
@@ -403,12 +404,15 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param bool $capture_whitespace
      * @param string $context
      * @param string $contextName
-     * @return Set
+     * @param bool $raw_tokens
+     * @return Set|array
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = ''): Set
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
     {
 
-        return new Set(static::reduce(static::getTokens($string, $capture_whitespace, $context, $contextName)));
+        $tokens = static::reduce(static::getTokens($string, $capture_whitespace, $context, $contextName));
+
+        return $raw_tokens ? $tokens : new Set($tokens);
     }
 
     /**
