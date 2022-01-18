@@ -65,7 +65,7 @@ if [ $# -gt 0 ]; then
 
   *"-"*)
     for file in src/*.php; do
-      fname=$(echo -e "$file" | cut -c 5- | awk -F . '{print $1}')
+      fname=$(basename "$file" | awk -F . '{print $1}')
 
       case "$@" in
       *-$fname*) continue ;;
