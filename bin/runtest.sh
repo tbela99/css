@@ -1,9 +1,9 @@
 #!/bin/sh
 ##!/bin/sh -x
 # # to run run a particular test, give the file name without extension as a parameter
-##  ./runtest.sh Render
-# to run all tests but a specific test, prepend '-' in front of the test name
-## ./runtest.sh -Minify
+## $ ./runtest.sh Render Path Ast
+# to exclude specific tests, prepend '-' in front of the test name
+## $ ./runtest.sh -Minify -Ast
 # to run all the tests with no argument
 ## ./runtest.sh
 ##
@@ -14,8 +14,7 @@ cd "$DIR/../test/"
   chmod +x ../phpunit-5.phar
 php56=`command -v php5.6 2>/dev/null`
 
-
-if [ ! -f "$php56" ]; then
+if [ -z "$php56" ]; then
 
   echo "php5 is not installed, installing php5"
 
@@ -24,13 +23,24 @@ if [ ! -f "$php56" ]; then
 #  case "$resp" in
 
 #  [Yy])
-    sudo apt-get install python-software-properties
-    sudo add-apt-repository ppa:ondrej/php
-    sudo apt-get update
-    sudo apt-get install -y php5.6
+  which_apt=$(command -v apt 2>/dev/null)
 
+  if [ ! -z "$which_apt" ]; then
+    sudo apt-get install -y python-software-properties
+    sudo add-apt-repository -y ppa:ondrej/php
+    sudo apt-get update -y
+    sudo apt-get install -y php5.6 php7.4
+
+  fi
 
 php56=`command -v php5.6 2>/dev/null`
+
+if [ -z "$php56" ]; then
+
+  echo 'could not find php5 executable, please install it and try again'
+  exit 1
+fi
+
 #    break
 #    ;;
 #  *)
@@ -65,10 +75,13 @@ if [ $# -gt 0 ]; then
     ;;
   *)
     for file in src/*.php; do
-      fname=$(echo -e "$file" | cut -c 5- | awk -F . '{print $1}')
+
+      fname=$(basename "$file" | awk -F . '{print $1}')
 
       case "$@" in
-      *$fname*)
+        *$fname*)
+        echo "$fname"
+
         $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
         ;;
       esac

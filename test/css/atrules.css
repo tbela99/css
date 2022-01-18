@@ -1,4 +1,10 @@
-@charset 'utf-8';
+@charset "utf-8";
+@import "import-media.css" print;
+@import url('./css/url-import-media.css') all;
+@import "import.css";
+@import url('css/url-import.css');
+@import url('./css/url-import-media.css') all;
+
 @-moz-document url("https://www.example.com/") {
     h1 {
         color: green;
@@ -24,14 +30,8 @@
 .nice-look {
   font-variant-alternates: styleset(nice-style);
 }
-/*
-@import "import-media.css" print;
-@import url('./css/url-import-media.css') all;
-@import "import.css";
-@import url('css/url-import.css');
-*/
 
-@import url('./css/url-import-media.css') all;
+/**/
 
 .nav-pills .dropdown-menu {
     -webkit-border-radius: 6px;
