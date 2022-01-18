@@ -170,7 +170,6 @@ final class Path extends TestCase
         $port = '9992';
         $kill_server = sprintf('ps -ux | grep %s | xargs k -9 >/dev/null 2>&1', $port);
 
-        var_dump(sprintf("%s; cd %s && php5.6 -S %s:%s -t . %s > /dev/null 2>&1 &", $kill_server, escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
         shell_exec(sprintf("%s; cd %s && php5.6 -S %s:%s -t . %s > /dev/null 2>&1 &", $kill_server, escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
 
         $data[] = [
