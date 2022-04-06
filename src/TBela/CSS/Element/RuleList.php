@@ -29,7 +29,7 @@ abstract class RuleList extends Element implements RuleListInterface
 
         if ($name == 'firstChild') {
 
-            return isset($this->ast->children[0]) ? $this->ast->children[0] : null;
+            return isset($this->ast->children[0]) ? $this->ast->children[0] : [];
         }
 
         if ($name == 'lastChild') {
