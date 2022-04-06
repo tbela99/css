@@ -25,10 +25,10 @@ final class Comment extends TestCase
     /**
      * @param $content
      * @return void
-     * @dataProvider testCdoCdcExceptionsProvider
+     * @dataProvider testCdoCdeExceptionsProvider
      *
      */
-    public function testCDOCDCExceptions($content): void
+    public function testCdoCdeExceptions($content): void
     {
         $this->expectException(Parser\SyntaxError::class);
 
@@ -187,7 +187,7 @@ body {
         return $data;
     }
 
-    public function testCdoCdcExceptionsProvider() {
+    public function testCdoCdeExceptionsProvider() {
 
         $data = [];
 

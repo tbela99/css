@@ -16,7 +16,7 @@ trait ValueTrait
     /**
      * @inheritDoc
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $type = static::type();
@@ -66,7 +66,7 @@ trait ValueTrait
 
         if (count($result) == 1) {
 
-            return $raw_tokens ? $result[0] : new Set($result[0]);
+            return $result[0];
         }
 
         $i = 0;
@@ -80,6 +80,6 @@ trait ValueTrait
             array_splice($set, count($set), 0, $result[$i]);
         }
 
-        return $raw_tokens ? $set : new Set($set);
+        return $set;
     }
 }

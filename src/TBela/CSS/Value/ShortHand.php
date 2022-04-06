@@ -36,7 +36,7 @@ class ShortHand extends Value
      * @inheritDoc
      * @throws Exception
      */
-    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
+    protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $separator = Config::getPath('map.'.static::type().'.separator');
@@ -68,7 +68,7 @@ class ShortHand extends Value
         }
 
         array_splice($set, count($set), 0, $results[$j]);
-        return $raw_tokens ? $set : new Set($set);
+        return $set;
     }
 
     /**
@@ -195,23 +195,12 @@ class ShortHand extends Value
 
             if (!empty($mandatory)) {
 
-                throw new Exception(' Invalid "' . static::type() . '" definition, missing \'' . $mandatory[0]['type'] . '\' in "'.implode(' ', array_map(Value::class.'::getInstance', $tokens)).'"', 400);
+                throw new Exception(' Invalid "' . static::type() . '" definition, missing \'' . $mandatory[0]['type'] . '\' in "'.Value::renderTokens($tokens).'"', 400);
             }
 
             break;
         }
 
         return $tokens;
-    }
-
-    public function getHash()
-    {
-
-        if (is_null($this->hash)) {
-
-            $this->hash = $this->render(['compress' => true]);
-        }
-
-        return $this->hash;
     }
 }

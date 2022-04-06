@@ -24,14 +24,19 @@ abstract class Element implements ElementInterface  {
     use ArrayTrait;
 
     /**
-     * @var stdClass|null
+     * @var object|null
      * @ignore
      */
-    protected $ast = null;
+    protected ?object $ast = null;
+
     /**
      * @ignore
      */
     protected ?RuleListInterface $parent = null;
+    /**
+     * @var string|null
+     */
+    protected ?string $valueAsString = null;
 
     /**
      * Element constructor.
@@ -169,12 +174,25 @@ abstract class Element implements ElementInterface  {
      */
     public function getValue() {
 
-        if (isset($this->ast->name) && !(($this->ast->value ?? '') instanceof Set)) {
+        if (isset($this->ast->name) && isset($this->ast->value) && !is_array($this->ast->value)) {
 
-            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name);
+            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name, true, '', '', true);
         }
 
-        return $this->ast->value ?? '';
+        if (isset($this->ast->name) && isset($this->ast->value) && is_null($this->valueAsString)) {
+
+            $this->valueAsString = Value::renderTokens($this->ast->value);
+        }
+
+        return $this->valueAsString;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRawValue(): ?array {
+
+        return $this->ast->value;
     }
 
     /**
@@ -566,10 +584,10 @@ abstract class Element implements ElementInterface  {
 
         unset($ast->parent);
 
-        if (isset($ast->value)) {
-
-            $ast->value = trim($ast->value);
-        }
+//        if (isset($ast->value)) {
+//
+//            $ast->value = trim($ast->value);
+//        }
 
         if (empty($ast->location)) {
 

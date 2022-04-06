@@ -34,6 +34,7 @@ class Parser implements ParsableInterface
     protected Lexer $lexer;
 
     protected array $errors = [];
+    protected array $imports = [];
     protected ?string $error;
 
     protected ?stdClass $ast = null;
@@ -46,13 +47,18 @@ class Parser implements ParsableInterface
         'capture_errors' => true,
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
-        'allow_duplicate_declarations' => false
+        'allow_duplicate_declarations' => true
     ];
 
     /**
      * @var array<string, callable>
      */
     protected array $event_handlers = [];
+
+    /**
+     * @var object[]
+     */
+    protected array $import = [];
 
     /**
      * Parser constructor.
@@ -145,7 +151,7 @@ class Parser implements ParsableInterface
     /**
      * @param Parser $parser
      * @return Parser
-     * @throws SyntaxError
+     * @throws SyntaxError|IOException
      */
     public function merge($parser)
     {
@@ -242,25 +248,28 @@ class Parser implements ParsableInterface
 
                 if ($key == 'allow_duplicate_declarations') {
 
-                    if (is_string($this->options[$key])) {
+                    if (is_string($options[$key])) {
 
-                        $this->options[$key] = [$this->options[$key]];
+                        $this->options[$key] = [$options[$key]];
+                    } else if (is_array($options[$key])) {
+
+                        $this->options[$key] = array_flip($options[$key]);
+                    } else {
+
+                        $this->options[$key] = $options[$key];
                     }
 
-                    if (is_array($this->options[$key])) {
+                } else if ($key == 'allow_duplicate_rules' && is_string($options[$key])) {
 
-                        $this->options[$key] = array_flip($this->options[$key]);
-                    }
-                } else if ($key == 'allow_duplicate_rules' && is_string($v)) {
-
-                    $this->options[$key] = [$v];
+                    $this->options[$key] = [$options[$key]];
                 } else {
 
                     $this->options[$key] = $options[$key];
                 }
 
-                if ($key == 'allow_duplicate_rules' && is_array($this->options[$key]) && !in_array('font-face', $this->options[$key])) {
+                if ($key == 'allow_duplicate_rules' && is_array($options[$key]) && !in_array('font-face', $options[$key])) {
 
+                    $this->options[$key] = $options[$key];
                     $this->options[$key][] = 'font-face';
                 }
             }
@@ -301,9 +310,6 @@ class Parser implements ParsableInterface
 
             if ($this->options['flatten_import'] && !empty($this->ast->children)) {
 
-                $files = [];
-                $removed = [];
-
                 $i = count($this->ast->children);
 
                 while ($i--) {
@@ -317,7 +323,7 @@ class Parser implements ParsableInterface
 
                         $token = $this->ast->children[$i];
 
-                        preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', $token->value, $matches);
+                        preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
 
                         $media = trim($matches[4] ?? '');
 
@@ -443,12 +449,12 @@ class Parser implements ParsableInterface
             $signature .= ':name:' . $name;
         }
 
-        $value = $ast->value ?? null;
+//        $value = $ast->value ?? null;
 
-        if (isset($value)) {
-
-            $signature .= ':value:' . (is_string($value) ? Value::parse($value, $name) : $value)->getHash();
-        }
+//        if (isset($value)) {
+//
+//            $signature .= ':value:' .Value::renderTokens($value);
+//        }
 
         $selector = $ast->selector ?? null;
 
@@ -468,10 +474,10 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param stdClass $ast
-     * @return stdClass
+     * @param object $ast
+     * @return object
      */
-    protected function deduplicateRules($ast)
+    protected function deduplicateRules(object $ast)
     {
         if (isset($ast->children)) {
 
@@ -500,7 +506,7 @@ class Parser implements ParsableInterface
 
                         $next = $ast->children[$total - 1];
 
-                        while ($total > 1 && (string)$next->type == 'Comment') {
+                        while ($total > 1 && $next->type == 'Comment') {
 
                             $next = $ast->children[--$total - 1];
                         }
@@ -572,10 +578,10 @@ class Parser implements ParsableInterface
     }
 
     /**
-     * @param stdClass $ast
-     * @return stdClass
+     * @param object $ast
+     * @return object
      */
-    protected function deduplicateDeclarations($ast)
+    protected function deduplicateDeclarations(object $ast)
     {
 
         if ($this->options['allow_duplicate_declarations'] !== true && !empty($ast->children)) {
@@ -734,72 +740,39 @@ class Parser implements ParsableInterface
 
         if ($token->type != 'Comment' && strpos($token->type, 'Invalid') !== 0) {
 
-            $property = property_exists($token, 'name') ? 'name' : (property_exists($token, 'selector') ? 'selector' : null);
+            $hasCdoCdc = false;
 
-            if ($property) {
+            if (!empty($token->leadingcomments)) {
 
-                if (strpos($token->{$property}, '/*') !== false ||
-                    strpos($token->{$property}, '<!--') !== false) {
+                $i = count($token->leadingcomments);
 
-                    $leading = [];
-                    $token->{$property} = trim(Value::parse($token->{$property})->
-                    filter(function ($value) use (&$leading, $token) {
+                while ($i--) {
 
-                        if ($value->type == 'Comment') {
+                    if (substr($token->leadingcomments[$i], 0, 4) == '<!--') {
 
-                            if (substr($value, 0, 4) == '<!--') {
-
-                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-                            } else {
-
-                                $leading[] = $value;
-                            }
-
-                            return false;
-                        }
-
-                        return true;
-                    }));
-
-                    if (!empty($leading)) {
-
-                        $token->leadingcomments = $leading;
+                        $hasCdoCdc = true;
+                        array_splice($token->leadingcomments, $i, 1);
                     }
                 }
             }
 
-            if (property_exists($token, 'value')) {
-                if (strpos($token->value, '/*') !== false ||
-                    strpos($token->value, '<!--') !== false) {
+            if (!empty($token->trailingcomments)) {
 
-                    $trailing = [];
-                    $token->value = Value::parse($token->value)->
-                    filter(function ($value) use (&$trailing, $token) {
+                $i = count($token->trailingcomments);
 
-                        if ($value->type == 'Comment') {
+                while ($i--) {
 
-                            if (substr($value, 0, 4) == '<!--') {
+                    if (substr($token->trailingcomments[$i], 0, 4) == '<!--') {
 
-                                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-                            } else {
-
-                                $trailing[] = $value;
-                            }
-
-                            return false;
-                        } else if ($value->type == 'invalid-comment') {
-
-                            return false;
-                        }
-
-                        return true;
-                    });
-
-                    if (!empty($trailing)) {
-
-                        $token->trailingcomments = $trailing;
+                        $hasCdoCdc = true;
+                        array_splice($token->trailingcomments, $i, 1);
                     }
                 }
+            }
+
+            if ($hasCdoCdc) {
+
+                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
             }
         }
 
@@ -836,6 +809,25 @@ class Parser implements ParsableInterface
         if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
 
             $this->popContext();
+        }
+
+        if (
+            in_array($token->type, ['AtRule', 'NestingMediaRule']) &&
+            $token->name == 'media' &&
+            (
+                empty($token->value) ||
+                (
+                    count($token->value) == 1 &&
+                    ($token->value[0]->value ?? '') == 'all'
+                )
+            )
+        ) {
+
+            $context = $this->getContext();
+
+            array_pop($context->children);
+            array_splice($context->children, count($context->children), 0, $token->children);
+
         }
     }
 

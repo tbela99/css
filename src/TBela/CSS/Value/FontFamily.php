@@ -20,7 +20,7 @@ class FontFamily extends ShortHand
      * @inheritDoc
      * @throws \Exception
      */
-    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '', bool $raw_tokens = false)
+    protected static function doParse($string, $capture_whitespace = true, $context = '', $contextName = '')
     {
 
         $type = static::type();
@@ -39,7 +39,6 @@ class FontFamily extends ShortHand
             }
         }
 
-        $tokens = static::reduce($tokens);
-        return $raw_tokens ? $tokens : new Set($tokens);
+        return static::reduce($tokens);
     }
 }

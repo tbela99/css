@@ -2,6 +2,8 @@
 
 namespace TBela\CSS\Parser;
 
+use TBela\CSS\Property\Config;
+
 trait ParserTrait
 {
 
@@ -17,7 +19,7 @@ trait ParserTrait
 
         if (($q == '"' || $q == "'") && strlen($string) > 2 && substr($string, -1) == $q) {
 
-            if (($force || preg_match('#^' . $q . '[\w_-]+' . $q . '$#', $string))) {
+            if (($force || preg_match('#^' . $q . '([\w_-]+)' . $q . '$#', $string))) {
 
                 return substr($string, 1, -1);
             }
@@ -234,7 +236,7 @@ trait ParserTrait
      * @param int $limit
      * @return array
      */
-    public static function split($string, $separator = '', $limit = PHP_INT_MAX)
+    public static function split($string, $separator = '', int $limit = PHP_INT_MAX)
     {
 
         $result = [];
@@ -360,6 +362,32 @@ trait ParserTrait
         if (trim($buffer) !== '') {
 
             $result[] = $buffer;
+        }
+
+        return $result;
+    }
+
+    public static function splitValues(array $values, string $property): array {
+
+
+        $char = Config::getProperty($property . '.separator', ' ');
+        $token = (object) ($char == ' ' ? ['type' => 'whitespace'] : ['type' => 'separator', 'value' => $char]);
+
+        $result = [];
+        $index = 0;
+
+        foreach ($values as $value) {
+
+            if ($token->type == $value->type &&
+                ($token->type == 'whitespace' || $token->value == $char)) {
+
+                $index++;
+            }
+
+            else {
+
+                $result[$index][] = $value;
+            }
         }
 
         return $result;

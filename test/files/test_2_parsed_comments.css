@@ -1,5 +1,5 @@
 /* comment 1 */
-@media print /* comment 2 */ /* comment 3 */ {
+@media /* comment 2 */ print /* comment 3 */ {
  /* comment 4 */
  * {
   /* comment 5 */

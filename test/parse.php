@@ -1,16 +1,15 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
+use TBela\CSS\Value;
+
 require 'autoload.php';
 
-use TBela\CSS\Property\PropertyList;
+$comments = [];
+var_dump(Value::format('border-collapse  /* collapse */', $comments), $comments);
 
-$property = new PropertyList();
+//echo (new Parser())->load(__DIR__.'/files/test_2.css')->parse();
 
-//$property->set('outline', 'thick');
-$property->set('outline-width', '0px');
-$property->set('outline-style', 'none');
-$property->set('outline-color', 'rebeccapurple');
-//$property->set('outline', 'none');
-
-echo $property;
+//echo new Parser('@media print /* comment 2 */ /* comment 3 */ {');
