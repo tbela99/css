@@ -543,7 +543,12 @@ class Parser implements ParsableInterface
 
                                 $next->parent = null;
 
-                                if (isset($el->children)) {
+                                if (isset($next->children)) {
+
+                                    if (!isset($el->children)) {
+
+                                        $el->children = [];
+                                    }
 
                                     array_splice($el->children, 0, 0, $next->children);
                                 }

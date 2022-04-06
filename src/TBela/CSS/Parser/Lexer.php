@@ -789,7 +789,7 @@ class Lexer
     /**
      * @param string $event
      * @param object $rule
-     * @return void
+     * @return int
      */
     protected function getStatus($event, $rule)
     {

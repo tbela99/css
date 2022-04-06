@@ -5,12 +5,24 @@ require 'autoload.php';
 
 use TBela\CSS\Property\PropertyList;
 
-$property = new PropertyList();
+$element = (new \TBela\CSS\Parser('
+p {
 
-//$property->set('outline', 'thick');
-$property->set('outline-width', '0px');
-$property->set('outline-style', 'none');
-$property->set('outline-color', 'rebeccapurple');
-//$property->set('outline', 'none');
+}
 
-echo $property;
+p {
+
+margin: 1px;
+'))->parse();
+
+$element->firstChild->setChildren([]);
+$element->appendCss('
+
+p {
+
+margin: 1px;
+');
+
+$element->deduplicate();
+
+echo $element;
