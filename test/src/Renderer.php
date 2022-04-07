@@ -95,6 +95,34 @@ background-image: url("imgs/lizard.png"),
 }",
             $renderer->render($traverser->traverse($element))];
 
+        $element = (new \TBela\CSS\Parser('
+p {
+
+}
+
+p {
+
+margin: 1px;
+'))->parse();
+
+        $element->firstChild->setChildren([]);
+        $element->appendCss('
+
+p {
+
+margin: 1px;
+');
+
+        $element->deduplicate();
+
+        $data[] = [
+
+            'p {
+ margin: 1px
+}',
+            (string) $element
+        ];
+
         return $data;
     }
 }

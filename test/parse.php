@@ -1,15 +1,28 @@
 #!/usr/bin/php
 <?php
 
-use TBela\CSS\Parser;
-use TBela\CSS\Renderer;
-use TBela\CSS\Value;
-
 require 'autoload.php';
 
-$comments = [];
-var_dump(Value::format('border-collapse  /* collapse */', $comments), $comments);
+use TBela\CSS\Property\PropertyList;
 
-//echo (new Parser())->load(__DIR__.'/files/test_2.css')->parse();
+$element = (new \TBela\CSS\Parser('
+p {
 
-//echo new Parser('@media print /* comment 2 */ /* comment 3 */ {');
+}
+
+p {
+
+margin: 1px;
+'))->parse();
+
+$element->firstChild->setChildren([]);
+$element->appendCss('
+
+p {
+
+margin: 1px;
+');
+
+$element->deduplicate();
+
+echo $element;
