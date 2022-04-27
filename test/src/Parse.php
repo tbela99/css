@@ -38,9 +38,9 @@ final class Parse extends TestCase
  content: calc("Candyman " * 3)
 }
 .el {
+ width: calc((100% + 2rem)/2);
  /* This */
  /* Is very different from this */
- width: calc((100% + 2rem)/2)
 }',
             (string) (new Parser('.el {
   margin: 10px calc(2vw + 5px);

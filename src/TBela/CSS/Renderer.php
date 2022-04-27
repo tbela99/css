@@ -683,7 +683,17 @@ class Renderer
         }
 
         $name = $this->renderName($ast);
-        $value = is_string($ast->value) ? $ast->value : Value::renderTokens($ast->value, $this->options);
+
+        if (class_exists(Value::getClassName($ast->name)) || !is_string($ast->value)) {
+
+            $property = is_string($ast->value) ? Value::parse($ast->value, $ast->name) : $ast->value;
+            $value = Value::renderTokens($property, $this->options);
+        }
+
+        else {
+
+            $value = $ast->value;
+        }
 
         if ($value == 'none') {
 
@@ -768,6 +778,7 @@ class Renderer
      */
     protected function renderValue($ast)
     {
+
         $result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null, true, '', '', true) : $ast->value, $this->options);
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {

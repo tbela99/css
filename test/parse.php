@@ -1,28 +1,58 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Parser;
+
 require 'autoload.php';
 
-use TBela\CSS\Property\PropertyList;
-
-$element = (new \TBela\CSS\Parser('
-p {
-
+$css = '
+.el {
+  margin: 10px calc(2vw + 5px);
+  border-radius: 15px calc(15px/3) 4px 2px;
+  transition: transform calc(1s - 120ms);
 }
 
-p {
+.el {
+  /* Nope! */
+  counter-reset: calc("My " + "counter");
+}
+.el::before {
+  /* Nope! */
+  content: calc("Candyman " * 3);
+}
+.el {
+  width: calc(
+    100%     /   3
+  );
+}
 
-margin: 1px;
-'))->parse();
+.el {
+  width: calc(
+    calc(100% / 3)
+    -
+    calc(1rem * 2)
+  );
+}
+.el {
+  width: calc(
+   (100% / 3)
+    -
+   (1rem * 2)
+  );
+}
+.el {
+  width: calc(100% / 3 - 1rem * 2);
+}
+.el {
+  /* This */
+  width: calc(100% + 2rem / 2);
 
-$element->firstChild->setChildren([]);
-$element->appendCss('
+  /* Is very different from this */
+  width: calc((100% + 2rem) / 2);
+}
+';
 
-p {
 
-margin: 1px;
-');
+$parser = (new Parser($css, ['capture_errors' => false]))->parse();
 
-$element->deduplicate();
-
-echo $element;
+echo $parser->lastChild->lastChild;
