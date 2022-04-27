@@ -16,7 +16,7 @@ DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
 # legacy test display
-# for file in src/*.php; do ../phpunit.phar --bootstrap autoload.php $file; done
+# for file in $(ls src/*.php); do ../phpunit.phar --bootstrap autoload.php $file; done
 # pretty print test -> phpunit 9
 fail() {
 
@@ -29,7 +29,7 @@ if [ $# -gt 0 ]; then
   case "$@" in
 
   *"-"*)
-    for file in src/*.php; do
+    for file in $(ls src/*.php); do
       fname=$(basename "$file" | awk -F . '{print $1}')
 
       case "$@" in
@@ -39,7 +39,7 @@ if [ $# -gt 0 ]; then
     done
     ;;
   *)
-    for file in src/*.php; do
+    for file in $(ls src/*.php); do
 
       fname=$(basename "$file" | awk -F . '{print $1}')
 
@@ -53,7 +53,7 @@ if [ $# -gt 0 ]; then
   esac
 else
     # no argument
-    for file in src/*.php; do
+    for file in $(ls src/*.php); do
         php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
     done
 fi
