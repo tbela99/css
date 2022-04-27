@@ -10,7 +10,7 @@
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 
 [ ! -f "../phpunit.phar" ] &&
-  wget -O ../phpunit.phar https://phar.phpunit.de/phpunit.phar &&
+  wget -O ../phpunit.phar https://phar.phpunit.de/phpunit-9.5.11.phar  &&
   chmod +x ../phpunit.phar
 #
 #
