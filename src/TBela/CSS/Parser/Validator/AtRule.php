@@ -21,7 +21,7 @@ class AtRule implements ValidatorInterface
                 return static::REJECT;
             }
 
-            $firstChar = substr($token->value, 0, 1);
+            $firstChar = substr($token->value[0]->value ?? '', 0, 1);
 
             if ($firstChar != '"') {
 

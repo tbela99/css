@@ -74,12 +74,12 @@ class PropertySet
     public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $vendor = null): PropertySet
     {
 
-        $propertyName = ($vendor ? '-'.$vendor.'-' : '').$name;
+        $propertyName = ($vendor ? '-' . $vendor . '-' : '') . $name;
 
         // is valid property
         if (($this->shorthand != $propertyName) && !in_array($propertyName, $this->config['properties'])) {
 
-            throw new InvalidArgumentException('Invalid property ' . $propertyName.' : '.$this->shorthand, 400);
+            throw new InvalidArgumentException('Invalid property ' . $propertyName . ' : ' . $this->shorthand, 400);
         }
 
         // $name is shorthand -> expand
@@ -92,7 +92,7 @@ class PropertySet
 
             if (is_string($value)) {
 
-                $value = Value::parse($value, $name);
+                $value = Value::parse($value, $name, true, '', '', true);
             }
 
             $result = $this->expand($value);
@@ -131,7 +131,7 @@ class PropertySet
 
                     foreach ($this->config['properties'] as $property) {
 
-                        $this->properties[$property] = (new Property($property))->setValue(clone $shorthandValue);
+                        $this->properties[$property] = (new Property($property))->setValue($shorthandValue);
                     }
                 }
 
@@ -159,14 +159,7 @@ class PropertySet
 
         foreach ($result as $property => $values) {
 
-            $separator = Config::getProperty($property . '.separator', ' ');
-
-            if ($separator != ' ') {
-
-                $separator = ' ' . $separator . ' ';
-            }
-
-            $this->setProperty($property, implode($separator, $values), $vendor);
+            $this->setProperty($property, $values, $vendor);
 
             if (!is_null($leadingcomments)) {
 
@@ -184,7 +177,7 @@ class PropertySet
 
     /**
      * expand shorthand property
-     * @param Set $value
+     * @param Set|array|string $value
      * @return array|bool
      * @ignore
      */
@@ -193,7 +186,7 @@ class PropertySet
 
         if (is_string($value)) {
 
-            $value = Value::parse($value, $this->shorthand);
+            $value = Value::parse($value, $this->shorthand, true, '', '', true);
         }
 
         $pattern = explode(' ', $this->config['pattern']);
@@ -201,12 +194,12 @@ class PropertySet
         $values = [];
         $result = [];
 
-        $separator = isset($this->config['separator']) ? $this->config['separator'] : null;
+        $separator = $this->config['separator'] ?? null;
         $index = 0;
 
         foreach ($value as $v) {
 
-            if ($v->value == $separator) {
+            if (isset($v->value) && $v->value == $separator) {
 
                 $index++;
             } else {
@@ -223,10 +216,12 @@ class PropertySet
 
                 foreach ($map as $i => $v) {
 
+                    $className = Value::getClassName($v->type);
+
                     if ($v->type == 'whitespace') {
 
                         unset($vmap[$index][$i]);
-                    } else if ($v->match($match)) {
+                    } else if ($className::match($v, $match)) {
 
                         $values[$index][$match][] = $v;
                         unset($vmap[$index][$i]);
@@ -293,92 +288,31 @@ class PropertySet
             }
         }
 
+        foreach ($result as $property => $values) {
+
+            $i = count($values);
+
+            if ($i > 0) {
+
+                $separator = $this->config[$property]['separator'] ?? ' ';
+
+                $separator = (object)($separator == ' ' ? [
+
+                    'type' => 'whitespace'
+                ] :
+                    [
+                        'type' => 'separator',
+                        'value' => $separator
+                    ]);
+
+                while ($i-- > 1) {
+
+                    array_splice($result[$property], $i, 0, [clone $separator]);
+                }
+            }
+        }
+
         return $result;
-    }
-
-    /**
-     * convert 'border-radius: 10% 17% 10% 17% / 50% 20% 50% 20% -> 'border-radius: 10% 17% / 50% 20%
-     * @return string
-     * @ignore
-     */
-    protected function reduce(): string
-    {
-        $result = [];
-
-        foreach ($this->property_type as $properties) {
-
-            foreach ($properties as $property) {
-
-                if (isset($this->properties[$property])) {
-
-                    $prop = $this->properties[$property];
-                    $type = $this->config[$property]['type'];
-                    $separator = $this->config[$property]['separator'] ?? ' ';
-                    $index = 0;
-
-                    foreach ($prop['value'] as $v) {
-
-                        if ($v->type != 'whitespace' && $v->type != 'separator' && !$v->match($type)) {
-
-                            $result = [];
-                            break 3;
-                        }
-
-                        if (!is_null($separator) && $v->value == $separator) {
-
-                            $index++;
-                        } else {
-
-                            $result[$index][$property] = [$type, $v];
-                        }
-                    }
-                }
-            }
-        }
-
-        if (isset($this->config['value_map'])) {
-
-            foreach ($result as $index => $values) {
-
-                foreach ($this->config['value_map'] as $property => $set) {
-
-                    $prop = $this->config['properties'][$set[0]];
-
-                    if (isset($values[$property][1]) && isset($values[$prop][1]) && (string)$values[$property][1] == (string)$values[$prop][1]) {
-
-                        unset($values[$property]);
-                        continue;
-                    }
-
-                    break;
-                }
-
-                $result[$index] = trim(preg_replace_callback('#\S+#', function ($matches) use (&$values) {
-
-                    foreach ($values as $key => $property) {
-
-                        if ($property[0] == $matches[0]) {
-
-                            unset($values[$key]);
-
-                            return $property[1];
-                        }
-                    }
-
-                    return '';
-
-                }, $this->config['pattern']));
-            }
-        }
-
-        $separator = Config::getProperty($this->config['shorthand'] . '.separator', ' ');
-
-        if ($separator != ' ') {
-
-            $separator = ' ' . $separator . ' ';
-        }
-
-        return implode($separator, $result);
     }
 
     /**
@@ -392,7 +326,7 @@ class PropertySet
     protected function setProperty($name, $value, $vendor = null): PropertySet
     {
 
-        $propertyName = ($vendor && substr($name, 0, strlen($vendor) + 2) != '-'.$vendor.'-' ? '-'.$vendor.'-' : '').$name;
+        $propertyName = ($vendor && substr($name, 0, strlen($vendor) + 2) != '-' . $vendor . '-' ? '-' . $vendor . '-' : '') . $name;
 
         if (!isset($this->properties[$propertyName])) {
 
@@ -416,44 +350,114 @@ class PropertySet
     public function getProperties(): array
     {
 
-        // match pattern
-        if (count($this->properties) == count($this->config['properties'])) {
+        $properties = $this->properties;
 
-            $value = $this->reduce();
+        if (isset($this->config['value_map']) && count($this->config['properties']) == count($properties)) {
 
-            if ($value !== false && $value !== '') {
+            $all = [];
+            $keys = array_keys($properties);
 
-                return [(new Property($this->config['shorthand']))->setValue($value)];
+            foreach ($keys as $property) {
+
+                $all[$property] = Value::splitValues($properties[$property]->getValue(), $property);
             }
 
-            // does not match pattern, still check for identical values
-            $canReduce = true;
-            $hash = '';
-            $value = null;
+            $count = count(current($all));
 
-            foreach ($this->properties as $property) {
+            foreach ($all as $item) {
 
-                if ($hash === '') {
+                if (count($item) != $count) {
 
-                    $value = $property->getValue();
-                    $hash = $value->getHash();
-                    continue;
+                    return array_values($properties);
+                }
+            }
+
+            $result = [];
+            $separator = Config::getProperty($this->config['shorthand'] . '.separator', ' ');
+
+            for ($i = 0; $i < $count; $i++) {
+
+                $values = [];
+
+                foreach ($keys as $key) {
+
+                    $values[$key] = $all[$key][$i];
                 }
 
-                else if ($hash !== $property->getValue()->getHash()) {
+                foreach ($this->config['value_map'] as $property => $set) {
 
-                    $canReduce = false;
+                    $prop = $this->config['properties'][$set[0]];
+
+                    if (!isset($properties[$property]) || !isset($properties[$prop])) {
+
+                        break;
+                    }
+
+                    $v1 = $values[$property];
+                    $v2 = $values[$prop];
+
+                    if (count($v1) == count($v2) && Value::equals($v1, $v2)) {
+
+                        unset($values[$property]);
+                        continue;
+                    }
+
                     break;
                 }
+
+                $result[$i] = $values;
             }
 
-            if ($canReduce) {
+            $token = (object)['type' => $separator == ' ' ? 'whitespace' : 'separator'];
 
-                return [(new Property($this->config['shorthand']))->setValue($value)];
+            if ($token->type == 'separator') {
+
+                $token->value = $separator;
             }
+
+            $values = [];
+
+            $v = [];
+            foreach ($result[0] as $val) {
+
+                array_splice($v, count($v), 0, $val);
+            }
+
+            $l = count($v);
+
+            while ($l-- > 1) {
+
+                array_splice($v, $l, 0, [(object)['type' => 'whitespace']]);
+            }
+
+            array_splice($values, count($values), 0, $v);
+
+            $j = count($result);
+
+            for ($i = 1; $i < $j; $i++) {
+
+                $values[] = clone $token;
+
+                $v = [];
+                foreach ($result[$i] as $val) {
+
+                    array_splice($v, count($v), 0, $val);
+                }
+
+                $l = count($v);
+
+                while ($l-- > 1) {
+
+                    array_splice($v, $l, 0, [(object)['type' => 'whitespace']]);
+                }
+
+                array_splice($values, count($values), 0, $v);
+            }
+
+            return [(new Property($this->shorthand))->setValue($values)];
         }
 
-        return array_values($this->properties);
+        return array_values($properties);
     }
 
     /**
@@ -466,18 +470,7 @@ class PropertySet
         $glue = ';';
         $value = '';
 
-        // should use shorthand?
-        if (count($this->properties) == count($this->config['properties'])) {
-
-            $value = $this->reduce();
-
-            if ($value !== false) {
-
-                return $this->config['shorthand'] . ': ' . $value;
-            }
-        }
-
-        foreach ($this->properties as $property) {
+        foreach ($this->getProperties() as $property) {
 
             $value .= $property->render() . $glue . $join;
         }

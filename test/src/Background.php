@@ -210,19 +210,19 @@ final class Background extends TestCase
         // invalid
         $data[] = [
             '[{"type":"background-position","value":"left"}]',
-            json_encode(Value::parse('left ', 'background-position')->toObject())];
+            json_encode(Value::parse('left ', 'background-position', true, '', '', true))];
 
         $data[] = [
             '[{"value":"left","type":"background-position"},{"type":"whitespace"},{"value":"center","type":"background-position"}]',
-            json_encode(Value::parse('left  center', 'background-position')->toObject())];
+            json_encode(Value::parse('left  center', 'background-position', true, '', '', true))];
 
         $data[] = [
             '[{"value":"right","type":"background-position"},{"type":"whitespace"},{"value":"center","type":"background-position"},{"type":"whitespace"},{"value":"10","type":"background-position","unit":"%"}]',
-            json_encode(Value::parse(' right center 10%  ', 'background-position')->toObject())];
+            json_encode(Value::parse(' right center 10%  ', 'background-position', true, '', '', true))];
 
         $data[] = [
             '[{"value":"right","type":"background-position"},{"type":"whitespace"},{"value":"0","type":"background-position"},{"type":"whitespace"},{"value":"bottom","type":"background-position"},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"}]',
-            json_encode(Value::parse(' right 0 bottom 50%  ', 'background-position')->toObject())];
+            json_encode(Value::parse(' right 0 bottom 50%  ', 'background-position', true, '', '', true))];
 
         return $data;
     }
@@ -233,11 +233,11 @@ final class Background extends TestCase
 
         $data[] = [
             '[{"type":"background-image","value":"none"}]',
-            json_encode(Value::parse('none', 'background-image')->toObject())];
+            json_encode(Value::parse('none', 'background-image' , true, '', '', true))];
 
         $data[] = [
-            '[{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"cat.jpg","q":""}]}]',
-            json_encode(Value::parse('url(cat.jpg)', 'background-image')->toObject())];
+            '[{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"cat.jpg"}]}]',
+            json_encode(Value::parse('url(cat.jpg)', 'background-image' , true, '', '', true))];
 
         return $data;
     }
@@ -248,15 +248,15 @@ final class Background extends TestCase
 
         $data[] = [
             '[{"type":"background-origin","value":"padding-box"}]',
-            json_encode(Value::parse('padding-box', 'background-origin')->toObject())];
+            json_encode(Value::parse('padding-box', 'background-origin' , true, '', '', true))];
 
         $data[] = [
             '[{"type":"background-origin","value":"border-box"}]',
-            json_encode(Value::parse('border-box', 'background-origin')->toObject())];
+            json_encode(Value::parse('border-box', 'background-origin' , true, '', '', true))];
 
         $data[] = [
             '[{"type":"background-origin","value":"content-box"}]',
-            json_encode(Value::parse('content-box', 'background-origin')->toObject())];
+            json_encode(Value::parse('content-box', 'background-origin' , true, '', '', true))];
 
         return $data;
     }
@@ -267,19 +267,19 @@ final class Background extends TestCase
 
         $data[] = [
             '[{"type":"background-clip","value":"padding-box"}]',
-            json_encode(Value::parse('padding-box', 'background-clip')->toObject())];
+            json_encode(Value::parse('padding-box', 'background-clip' , true, '', '', true))];
 
         $data[] = [
             '[{"type":"background-clip","value":"border-box"}]',
-            json_encode(Value::parse('border-box', 'background-clip')->toObject())];
+            json_encode(Value::parse('border-box', 'background-clip' , true, '', '', true))];
 
         $data[] = [
             '[{"type":"background-clip","value":"content-box"}]',
-            json_encode(Value::parse('content-box', 'background-clip')->toObject())];
+            json_encode(Value::parse('content-box', 'background-clip' , true, '', '', true))];
 
         $data[] = [
             '[{"type":"background-clip","value":"text"}]',
-            json_encode(Value::parse('text', 'background-clip')->toObject())];
+            json_encode(Value::parse('text', 'background-clip' , true, '', '', true))];
 
         return $data;
     }
@@ -290,32 +290,32 @@ final class Background extends TestCase
 
         $data[] = [
             '[{"type":"background-repeat","value":"round"}]',
-            json_encode(Value::parse('round   round ', 'background')->toObject())];
+            json_encode(Value::parse('round   round ', 'background' , true, '', '', true))];
 
         $data[] = [
-            '[{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"images\/hero.jpg","q":""}]},{"type":"whitespace"},{"type":"background-repeat","value":"round"}]',
-            json_encode(Value::parse('url(images/hero.jpg) round   round ', 'background')->toObject())];
+            '[{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"images\/hero.jpg"}]},{"type":"whitespace"},{"type":"background-repeat","value":"round"}]',
+            json_encode(Value::parse('url(images/hero.jpg) round   round ', 'background' , true, '', '', true))];
 
         $data[] = [
             '[{"value":"none","type":"background"}]',
-            json_encode(Value::parse('none ', 'background')->toObject())];
+            json_encode(Value::parse('none ', 'background' , true, '', '', true))];
 
         $data[] = [
-            '[{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"sourcemap\/images\/bg.png","q":""}]},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"separator","value":"\/"},{"type":"background-size","value":"cover"}]',
-            json_encode(Value::parse('no-repeat url(sourcemap/images/bg.png) 50% 50%/cover ', 'background')->toObject())];
+            '[{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"sourcemap\/images\/bg.png"}]},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"whitespace"},{"value":"50","type":"background-position","unit":"%"},{"type":"separator","value":"\/"},{"type":"background-size","value":"cover"}]',
+            json_encode(Value::parse('no-repeat url(sourcemap/images/bg.png) 50% 50%/cover ', 'background' , true, '', '', true))];
 
         $data[] = [
-            '[{"value":"center","type":"background-position"},{"type":"separator","value":"\/"},{"value":"contain","type":"background-size"},{"type":"whitespace"},{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"..\/..\/media\/examples\/firefox-logo.svg","q":"\""}]},{"type":"separator","value":","},{"value":"#eee","type":"background-color","colorType":"hex","rgba":[238,238,238]},{"type":"whitespace"},{"value":"35","type":"background-position","unit":"%"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"..\/..\/media\/examples\/lizard.png","q":"\""}]}]',
+            '[{"value":"center","type":"background-position"},{"type":"separator","value":"\/"},{"value":"contain","type":"background-size"},{"type":"whitespace"},{"value":"no-repeat","type":"background-repeat"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"\"..\/..\/media\/examples\/firefox-logo.svg\""}]},{"type":"separator","value":","},{"value":"#eee","type":"background-color","colorType":"hex"},{"type":"whitespace"},{"value":"35","type":"background-position","unit":"%"},{"type":"whitespace"},{"name":"url","type":"background-image","arguments":[{"type":"css-string","value":"\"..\/..\/media\/examples\/lizard.png\""}]}]',
             json_encode(Value::parse('center / contain no-repeat url("../../media/examples/firefox-logo.svg"),
-            #eee 35% url("../../media/examples/lizard.png")  ', 'background')->toObject())];
+            #eee 35% url("../../media/examples/lizard.png")  ', 'background' , true, '', '', true))];
 
         $data[] = [
-            '[{"value":"transparent","type":"background-color","colorType":"hex","rgba":[0,0,0,"0"]},{"value":"!important","type":"css-string","q":""}]',
-            json_encode(Value::parse('transparent !important  ', 'background')->toObject())];
+            '[{"value":"transparent","type":"background-color","colorType":"hex"},{"value":"!important","type":"css-string"}]',
+            json_encode(Value::parse('transparent !important  ', 'background' , true, '', '', true))];
 
         $data[] = [
             '#0000!important',
-            (string) Value::parse('transparent !important  ', 'background')];
+            Value::renderTokens(Value::parse('transparent !important  ', 'background', true, '', '', true))];
 
         /*
          * , ],
