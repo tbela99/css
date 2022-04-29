@@ -7,7 +7,9 @@
 # to run all the tests with no argument
 ## ./runtest.sh
 ##
+set -x
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
+cd "$DIR"
 
 [ ! -f "../phpunit.phar" ] &&
   wget -O ../phpunit.phar https://phar.phpunit.de/phpunit-9.5.11.phar  &&
@@ -24,6 +26,12 @@ fail() {
   exit 1
 }
 
+#
+#
+cd ../test
+pwd
+#
+#
 if [ $# -gt 0 ]; then
 
   case "$@" in
