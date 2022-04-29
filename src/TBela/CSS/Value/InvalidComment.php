@@ -12,11 +12,6 @@ use \TBela\CSS\Value;
 class InvalidComment extends Value implements InvalidTokenInterface
 {
 
-    public function getHash() {
-
-        return '';
-    }
-
     /**
      * @inheritDoc
      * @ignore
@@ -38,5 +33,10 @@ class InvalidComment extends Value implements InvalidTokenInterface
             'type' => 'css-string',
             'value' => ''
         ]);
+    }
+
+    public static function doRecover(object $data): object
+    {
+        return (object) ['type' => 'css-string', 'value' => '', 'q' => ''];
     }
 }

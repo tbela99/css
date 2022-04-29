@@ -168,17 +168,20 @@ final class Path extends TestCase
 
         $data = [];
         $port = '9992';
-        $kill_server = sprintf('ps -ux | grep %s | xargs k -9 >/dev/null 2>&1', $port);
+        $kill_server = sprintf('ps -ux |  awk \' $0 ~ %s {print $2;}\'  | xargs kill -9 >/dev/null 2>&1', $port);
+        shell_exec($kill_server);
+        shell_exec(sprintf("cd %s && nohup php -S %s:%s -t . %s > /dev/null 2>&1 &", escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
 
-        shell_exec(sprintf("%s; cd %s && php5.6 -S %s:%s -t . %s > /dev/null 2>&1 &", $kill_server, escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
+        // wait for the server to start
+        sleep(3);
 
         $data[] = [
 
             file_get_contents(__DIR__.'/../sourcemap/sourcemap.http.css'),
-            Parser\Helper::fetchContent('http://127.0.0.1:'.$port.'/sourcemap/sourcemap.import.css')
+            file_get_contents('http://127.0.0.1:'.$port.'/sourcemap/sourcemap.import.css')
         ];
 
-        shell_exec($kill_server);
+//        shell_exec($kill_server);
 
         return $data;
     }

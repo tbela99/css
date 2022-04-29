@@ -55,29 +55,29 @@ background-image: url("imgs/lizard.png"),
             }
 
             // rewrite image url() path for local file
-            if ($node instanceof Declaration || $node instanceof PropertyList) {
+            if ($node instanceof Declaration) {
 
                 if (strpos((string) $node->getValue(), 'url(') !== false) {
 
                     $node = clone $node;
 
-                    $node->getValue()->map(function (Value $value) {
+                    $node->setValue(array_map(function ($value) {
 
-                        if ($value instanceof CSSFunction && $value->name == 'url') {
+                        if ($value->type == 'background-image') {
 
-                            $value->arguments->map(function (Value $value) {
+                            $value->arguments = array_map(function ($value) {
 
                                 if (is_file($value->value)) {
 
-                                    return Value::getInstance((object) ['type' => $value->type, 'value' => '/'.$value->value]);
+                                    return (object) ['type' => $value->type, 'value' => '/'.$value->value];
                                 }
 
                                 return $value;
-                            });
+                            }, $value->arguments);
                         }
 
                         return $value;
-                    });
+                    }, $node->getRawValue()));
                 }
             }
 
@@ -93,6 +93,34 @@ background-image: url("imgs/lizard.png"),
  background-image: url(/imgs/lizard.png), url(/imgs/star.png)
 }",
             $renderer->render($traverser->traverse($element))];
+
+        $element = (new \TBela\CSS\Parser('
+p {
+
+}
+
+p {
+
+margin: 1px;
+'))->parse();
+
+        $element->firstChild->setChildren([]);
+        $element->appendCss('
+
+p {
+
+margin: 1px;
+');
+
+        $element->deduplicate();
+
+        $data[] = [
+
+            'p {
+ margin: 1px
+}',
+            (string) $element
+        ];
 
         return $data;
     }

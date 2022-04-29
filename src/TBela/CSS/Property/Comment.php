@@ -69,15 +69,6 @@ class Comment extends Property {
     }
 
     /**
-     * get property hash.
-     * @return string
-     */
-    public function getHash() {
-
-        return ':'.$this->value;
-    }
-
-    /**
      * @inheritDoc
      */
     public function setTrailingComments(array $comments = null)

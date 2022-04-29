@@ -1,4 +1,5 @@
 ##!/bin/bash -x -v
+#set -x
 cd $(dirname "$0")
 cd ../benchmark
 

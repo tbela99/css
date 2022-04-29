@@ -4,7 +4,6 @@ namespace TBela\CSS\Element;
 
 use Exception;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Set;
 
 /**
  * Css node methods

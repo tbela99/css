@@ -19,6 +19,7 @@ function ellipsis ($string, $length = 15) {
 }
 
 $parser = new Parser();
+fwrite(STDERR, sprintf("curl dir %s >>>\n", getcwd()));
 
 echo $parser->setOptions([
     'flatten_import' => true,
@@ -38,10 +39,14 @@ on('error', function ($exception) {
 })->
 on('enter', function ($token) {
 
+    $value = !isset($token->value) ? '' :
+        (is_array($token->value) ? \TBela\CSS\Value::renderTokens($token->value) : $token->value);
+
     if ($token->type == 'AtRule' && $token->name == 'import') {
 
         fwrite(STDERR, sprintf("-> enter %s(%s#%s) at %s:%s:%s\n", $token->type,
-            $token->name, $token->value,
+            $token->name,
+            $value,
             isset($token->src) ? $token->src : '',
             $token->location->start->line,
             $token->location->start->column
@@ -51,7 +56,7 @@ on('enter', function ($token) {
     else {
 
         fwrite(STDERR, sprintf("-> enter %s(%s) at %s:%s:%s\n", $token->type,
-            isset($token->name) ? $token->name : (isset($token->selector) ? $token->selector : ellipsis($token->value, 40)),
+            isset($token->name) ? $token->name : (isset($token->selector) ? $token->selector : ellipsis($value, 40)),
             isset($token->src) ? $token->src : '',
             $token->location->start->line,
             $token->location->start->column
@@ -60,10 +65,14 @@ on('enter', function ($token) {
 })->
 on('exit', function ($token) {
 
+    $value = !isset($token->value) ? '' :
+        (is_array($token->value) ? \TBela\CSS\Value::renderTokens($token->value) : $token->value);
+
     if ($token->type == 'AtRule' && $token->name == 'import') {
 
         fwrite(STDERR, sprintf("-> enter %s(%s#%s) at %s:%s:%s\n", $token->type,
-            $token->name, $token->value,
+            $token->name,
+            $value,
             isset($token->src) ? $token->src : '',
             $token->location->end->line,
             $token->location->end->column
@@ -73,7 +82,7 @@ on('exit', function ($token) {
     else {
 
         fwrite(STDERR, sprintf("-> exit %s(%s) at %s:%s:%s\n", $token->type,
-            isset($token->name) ? $token->name : (isset($token->selector) ? $token->selector : ellipsis($token->value, 40)),
+            isset($token->name) ? $token->name : (isset($token->selector) ? $token->selector : ellipsis($value, 40)),
             isset($token->src) ? $token->src : '',
             $token->location->end->line,
             $token->location->end->column

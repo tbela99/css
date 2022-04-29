@@ -34,7 +34,7 @@ final class AstTraverser extends TestCase
         // remove @media print
         $traverser->on('enter', function ($node) {
 
-            if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+            if ($node->type == 'AtRule' && $node->name == 'media' && $node->value == 'print') {
 
                 return Traverser::IGNORE_NODE;
             }

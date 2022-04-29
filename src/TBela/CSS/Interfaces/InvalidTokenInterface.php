@@ -15,4 +15,6 @@ interface InvalidTokenInterface {
      * @return Value
      */
     public function recover($property = null);
+
+    public static function doRecover($data);
 }
