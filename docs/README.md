@@ -2,16 +2,17 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json) [![Packagist](https://img.shields.io/packagist/v/tbela99/css.svg)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fpackage.json) [![Packagist](https://img.shields.io/packagist/v/tbela99/css.svg)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
 ## Features
 
-- multibyte characters encoding support
+- multibyte characters encoding
 - sourcemap
 - CSS Nesting module
-- partial CSS Syntax module level 3
+- partially implemented CSS Syntax module level 3
+- partial CSS validation
 - CSS colors module level 4
 - parse and render CSS
 - optimize css:
@@ -194,7 +195,7 @@ h1 {
   @font-face {
     font-family: MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-    url(MgOpenModernaBold.ttf);
+      url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
   body {
@@ -209,7 +210,7 @@ h1 {
   @font-face {
     font-family: Arial, MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-    url(MgOpenModernaBold.ttf);
+      url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }
@@ -247,13 +248,13 @@ result
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-    url(MgOpenModernaBold.ttf);
+      url(MgOpenModernaBold.ttf);
   }
 }
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-    url(MgOpenModernaBold.ttf);
+      url(MgOpenModernaBold.ttf);
   }
 }
 ```
@@ -275,10 +276,95 @@ result
   src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }
 @media print {
-  @font-face {
-    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
-  }
+ @font-face {
+   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+ }
 }
+```
+
+## CSS Nesting
+
+```css
+table.colortable {
+  & td {
+    text-align:center;
+    &.c { text-transform:uppercase }
+    &:first-child, &:first-child + td { border:1px solid black }
+  }
+
+
+& th {
+text-align:center;
+background:black;
+color:white;
+}
+}
+```
+
+render CSS nesting
+
+```php
+
+use TBela\CSS\Parser;
+
+echo new Parser($css);
+
+```
+result
+
+```css
+table.colortable {
+ & td {
+  text-align: center;
+  &.c {
+   text-transform: uppercase
+  }
+  &:first-child,
+  &:first-child+td {
+   border: 1px solid #000
+  }
+ }
+ & th {
+  text-align: center;
+  background: #000;
+  color: #fff
+ }
+}
+
+```
+
+convert nesting CSS to older representation
+
+```php 
+
+use TBela\CSS\Parser;
+use \TBela\CSS\Renderer;
+
+$renderer = new Renderer( ['legacy_rendering' => true]);
+echo $renderer->renderAst(new Parser($css));
+
+```
+
+result
+
+```css
+
+table.colortable td {
+ text-align: center
+}
+table.colortable td.c {
+ text-transform: uppercase
+}
+table.colortable td:first-child,
+table.colortable td:first-child+td {
+ border: 1px solid #000
+}
+table.colortable th {
+ text-align: center;
+ background: #000;
+ color: #fff
+}
+
 ```
 
 ## The Traverser Api

@@ -84,16 +84,6 @@ class TokenSelectorValueAttributeFunctionColor implements TokenSelectorValueInte
             $value1 = $this->value[0]->type == 'attribute_name' ? $element[$this->value[0]->value] : $this->value[0]->value;
             $value2 = $this->value[2]->type == 'attribute_name' ? $element[$this->value[2]->value] : $this->value[2]->value;
 
-            if ($value1 instanceof Value\Set) {
-
-                $value1 = $value1->render($options);
-            }
-
-            if ($value2 instanceof Value\Set) {
-
-                $value2 = $value2->render($options);
-            }
-
             if ($value1 === $value2) {
 
                 $result[] = $element;

@@ -10,7 +10,6 @@ use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Query\Evaluator;
-use TBela\CSS\Value\Set;
 use function is_callable;
 use function is_null;
 use function str_ireplace;

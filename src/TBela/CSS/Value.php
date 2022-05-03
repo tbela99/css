@@ -6,18 +6,15 @@ use InvalidArgumentException;
 use JsonSerializable;
 use stdClass;
 use TBela\CSS\Interfaces\ObjectInterface;
-use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Property\Config;
-use TBela\CSS\Value\CssFunction;
 use TBela\CSS\Value\Number;
-use TBela\CSS\Value\Set;
 use TBela\CSS\Parser\ParserTrait;
 
 /**
  * CSS value base class
  * @package CSS
  * @property-read string|null $value
- * @property-read Set|null $arguments
+ * @property-read array|null $arguments
  * @method string getName()
  * @method \stdClass|null getData()
  * @method \stdClass|null getValue()
@@ -453,14 +450,14 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                     } else {
 
-                        $res =  static::format(substr($params, 1, -1), $comments);
+                        $res = static::format(substr($params, 1, -1), $comments);
 
                         if ($res === false) {
 
                             return false;
                         }
 
-                        $result .= $start . $res .$end;
+                        $result .= $start . $res . $end;
                         $i += strlen($params) - 1;
                     }
 
@@ -501,9 +498,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                                         $i++;
                                     }
-                                }
-
-                                else {
+                                } else {
 
                                     $result .= $comment;
                                 }
@@ -514,9 +509,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
 //                        throw new SyntaxError("unterminated comment", 400);
                         return false;
-                    }
-
-                    else {
+                    } else {
 
                         $result .= '/';
                     }
@@ -540,9 +533,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                                 if (!is_null($comments)) {
 
                                     $comments[] = $comment;
-                                }
-
-                                else {
+                                } else {
 
                                     $result .= $comment;
                                 }
@@ -555,9 +546,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                         // invalid comment
                         return false;
-                    }
-
-                    else {
+                    } else {
 
                         $result .= $string[$i];
                     }
@@ -743,7 +732,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
     /**
      * parse a css value
-     * @param Set|string $string
+     * @param string $string
      * @param bool $capture_whitespace
      * @param string $context
      * @param string $contextName
@@ -1359,17 +1348,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
         foreach ($this->data as $key => $value) {
 
-            $val = null;
-            if ($value instanceof Set) {
-
-                $val = array_map(function ($value) {
-
-                    return $value->toObject();
-                }, $value->toArray());
-            } else {
-
-                $val = $value;
-            }
+            $val = $value;
 
             if (!is_null($key) && $key !== false && $key !== "") {
 

@@ -12,7 +12,7 @@ class CssUrl extends CssFunction {
 
     protected static function validate($data) {
 
-        return (isset($data->name) ? $data->name : null) === 'url' && isset($data->arguments) && (is_array($data->arguments) || $data->arguments instanceof Set);
+        return (isset($data->name) ? $data->name : null) === 'url' && isset($data->arguments) && is_array($data->arguments);
     }
 
     public function render(array $options = []) {

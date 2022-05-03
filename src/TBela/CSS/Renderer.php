@@ -11,7 +11,6 @@ use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Property\PropertyList;
-use TBela\CSS\Value\Set;
 use function is_string;
 
 /**

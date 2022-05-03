@@ -8,8 +8,6 @@ use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Set;
-
 class Lexer
 {
 

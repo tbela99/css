@@ -4,7 +4,6 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Set;
 
 /**
  * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of different types
@@ -72,7 +71,7 @@ class PropertyMap
     /**
      * set property value
      * @param string $name
-     * @param Set|string $value
+     * @param array|string $value
      * @param array|null $leadingcomments
      * @param array|null $trailingcomments
      * @return PropertyMap
@@ -252,7 +251,6 @@ class PropertyMap
                     $val = [$val];
                 }
 
-//                $set = new Set;
                 $set = [];
 
                 if (isset($properties[$key]['prefix'])) {
@@ -348,7 +346,7 @@ class PropertyMap
     /**
      * set property
      * @param string $name
-     * @param Value\Set|string $value
+     * @param string $value
      * @return PropertyMap
      * @ignore
      */

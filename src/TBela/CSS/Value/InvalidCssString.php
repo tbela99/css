@@ -38,19 +38,7 @@ class InvalidCssString extends Value implements InvalidTokenInterface
         return $this->data->q.$this->data->value;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function recover($property = null)
-    {
-
-        return Value::getInstance((object) [
-            'type' => 'css-string',
-            'value' => $this->data->q.$this->value.$this->data->q
-        ]);
-    }
-
-    public static function doRecover($data) {
+    public static function doRecover(object $data):object {
 
         $result = clone $data;
         $result->type = substr($result->type, 8);

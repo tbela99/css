@@ -22,19 +22,6 @@ class InvalidComment extends Value implements InvalidTokenInterface
         return '';
     }
 
-    /**
-     * invalid comments are discarded
-     * @inheritDoc
-     */
-    public function recover($property = null)
-    {
-
-        return Value::getInstance((object) [
-            'type' => 'css-string',
-            'value' => ''
-        ]);
-    }
-
     public static function doRecover(object $data): object
     {
         return (object) ['type' => 'css-string', 'value' => '', 'q' => ''];

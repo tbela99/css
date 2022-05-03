@@ -1,11 +1,11 @@
 #!/bin/sh
-##!/bin/sh -x
 # # to run run a particular test, give the file name without extension as a parameter
 ## $ ./runtest.sh Render Path Ast
 # to exclude specific tests, prepend '-' in front of the test name
 ## $ ./runtest.sh -Minify -Ast
 # to run all the tests with no argument
 ## ./runtest.sh
+set -x
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR/../test/"
@@ -59,6 +59,13 @@ fail() {
   echo "test ""$1"" ended with failure" >&2
   exit 1
 }
+
+#
+#
+cd ../test
+pwd
+#
+#
 if [ $# -gt 0 ]; then
 
   case "$@" in
