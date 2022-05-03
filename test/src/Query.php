@@ -88,7 +88,7 @@ final class Query extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider renderQuery
+     * @dataProvider renderQueryProvider
      */
     public function testRenderQuery(string $expected, string $actual): void
     {
@@ -1294,14 +1294,14 @@ a {
     }
     /*
     */
-    public function renderQuery ()
+    public function renderQueryProvider ()
     {
 
         $data = [];
 
         $parser = new \TBela\CSS\Query\Parser();
 
-        $query = '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type="radio"]:not(:checked) + .octicon-check, .select-menu-item input[type="radio"]:not(:checked) + .octicon-circle-slash';
+        $query = '.select-menu-item .octicon-check , .select-menu-item .octicon-circle-slash, .select-menu-item input[type="radio"]:not(:checked) + .octicon-check, .select-menu-item input[type="radio"]:not(:checked) + .octicon-circle-slash';
 
         $data[] = [
             '.select-menu-item .octicon-check, .select-menu-item .octicon-circle-slash, .select-menu-item input[type=radio]:not(:checked) + .octicon-check, .select-menu-item input[type=radio]:not(:checked) + .octicon-circle-slash',
@@ -1391,7 +1391,7 @@ a {
     background: blue;
 }';
 
-        $query = '[name $= foo_bar]';
+        $query = '[value *= foo_bar]';
 
         $parser = new Parser();
         $parser->setContent($css);

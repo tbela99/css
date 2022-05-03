@@ -8,6 +8,7 @@ use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Element;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
+use TBela\CSS\Parser;
 use TBela\CSS\Property\Property;
 use TBela\CSS\Property\PropertyList;
 use Traversable;
@@ -19,6 +20,31 @@ use function in_array;
  */
 abstract class RuleList extends Element implements RuleListInterface
 {
+
+    public function __get($name) {
+
+        if (is_callable([$this, "get$name"])) {
+
+            return $this->{"get$name"}();
+        }
+
+        if ($name == 'firstChild') {
+
+            return $this->ast->children[0] ?? null;
+        }
+
+        if ($name == 'lastChild') {
+
+            $array = $this->ast->children ?? [];
+            return end($array);
+        }
+
+        if ($name == 'childNodes') {
+
+            return $this->ast->children ?? [];
+        }
+    }
+
     /**
      * @inheritDoc
      */

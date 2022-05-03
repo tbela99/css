@@ -10,7 +10,6 @@ use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Query\Evaluator;
-use TBela\CSS\Value\Set;
 use function is_callable;
 use function is_null;
 use function str_ireplace;
@@ -24,14 +23,19 @@ abstract class Element implements ElementInterface  {
     use ArrayTrait;
 
     /**
-     * @var stdClass|null
+     * @var object|null
      * @ignore
      */
-    protected $ast = null;
+    protected ?object $ast = null;
+
     /**
      * @ignore
      */
     protected ?RuleListInterface $parent = null;
+    /**
+     * @var string|null
+     */
+    protected ?string $valueAsString = null;
 
     /**
      * Element constructor.
@@ -169,12 +173,25 @@ abstract class Element implements ElementInterface  {
      */
     public function getValue() {
 
-        if (isset($this->ast->name) && !(($this->ast->value ?? '') instanceof Set)) {
+        if (isset($this->ast->name) && isset($this->ast->value) && !is_array($this->ast->value)) {
 
-            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name);
+            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name, true, '', '', true);
         }
 
-        return $this->ast->value ?? '';
+        if (isset($this->ast->name) && isset($this->ast->value) && is_null($this->valueAsString)) {
+
+            $this->valueAsString = Value::renderTokens($this->ast->value);
+        }
+
+        return $this->valueAsString;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRawValue(): ?array {
+
+        return $this->ast->value;
     }
 
     /**
@@ -462,7 +479,16 @@ abstract class Element implements ElementInterface  {
                             if ($el->ast->type != 'Declaration') {
 
                                 $next->parent = null;
-                                array_splice($el->ast->children, 0, 0, $next->ast->children);
+
+                                if (!empty($next->ast->children)) {
+
+                                    if (!isset($el->ast->children)) {
+
+                                        $el->ast->children = [];
+                                    }
+
+                                    array_splice($el->ast->children, 0, 0, $next->ast->children);
+                                }
 
                                 if (isset($next->ast->location) && isset($el->ast->location)) {
 
@@ -566,10 +592,10 @@ abstract class Element implements ElementInterface  {
 
         unset($ast->parent);
 
-        if (isset($ast->value)) {
-
-            $ast->value = trim($ast->value);
-        }
+//        if (isset($ast->value)) {
+//
+//            $ast->value = trim($ast->value);
+//        }
 
         if (empty($ast->location)) {
 

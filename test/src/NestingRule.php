@@ -341,11 +341,11 @@ p .foo {
         $renderer = new Renderer();
 
         $data[] = ['/* invalid */
-/* & isn’t the first simple selector */
+/* & isn\2019t the first simple selector */
 .foo {
  color: blue
 }
-/* & isn’t the first selector of every one in the list */
+/* & isn\2019t the first selector of every one in the list */
 .foo,
 .bar {
  color: blue
@@ -403,11 +403,11 @@ left over {
 }', $renderer->renderAst($parser)];
 
         $data[] = ['/* invalid */
-/* & isn’t the first simple selector */
+/* & isn\2019t the first simple selector */
 .foo {
  color: blue
 }
-/* & isn’t the first selector of every one in the list */
+/* & isn\2019t the first selector of every one in the list */
 .foo,
 .bar {
  color: blue

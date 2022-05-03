@@ -122,10 +122,10 @@ final class Properties extends TestCase
 
         $property4 = new PropertyList();
 
-        $data[] = [$property4, 'margin-top', '5px \9', 'margin-top: 5px \9'];
-        $data[] = [$property4, 'margin-left', '5px \9', "margin-top: 5px \\9;\nmargin-left: 5px \\9"];
-        $data[] = [$property4, 'margin-bottom', '5px \9', "margin-top: 5px \\9;\nmargin-left: 5px \\9;\nmargin-bottom: 5px \\9"];
-        $data[] = [$property4, 'margin-right', '5px \9', 'margin: 5px \9'];
+        $data[] = [$property4, 'margin-top', '5px \\9', 'margin-top: 5px \\9'];
+        $data[] = [$property4, 'margin-left', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9"];
+        $data[] = [$property4, 'margin-bottom', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9;\nmargin-bottom: 5px \\9"];
+        $data[] = [$property4, 'margin-right', '5px \\9', 'margin: 5px \\9'];
 
         return $data;
     }
@@ -135,10 +135,10 @@ final class Properties extends TestCase
 
         $property = new PropertyList();
 
-        $data[] = [$property, 'margin-top', '1px \9', 'margin-top: 1px \9'];
-        $data[] = [$property, 'margin-right', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9'];
-        $data[] = [$property, 'margin-bottom', '1px \9', 'margin-top: 1px \9;'."\n".'margin-right: 1px \9;'."\n".'margin-bottom: 1px \9'];
-        $data[] = [$property, 'margin-left', '1px \9', 'margin: 1px \9'];
+        $data[] = [$property, 'margin-top', '1px \\9', 'margin-top: 1px \\9'];
+        $data[] = [$property, 'margin-right', '1px \\9', 'margin-top: 1px \\9;'."\n".'margin-right: 1px \\9'];
+        $data[] = [$property, 'margin-bottom', '1px \\9', 'margin-top: 1px \\9;'."\n".'margin-right: 1px \\9;'."\n".'margin-bottom: 1px \\9'];
+        $data[] = [$property, 'margin-left', '1px \\9', 'margin: 1px \\9'];
         return $data;
     }
 }

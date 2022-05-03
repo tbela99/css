@@ -124,6 +124,18 @@ class Helper
     public static function absolutePath($file, $ref)
     {
 
+        // web server environment
+        if (substr($ref, 0, 1) == '/' && php_sapi_name() != 'cli') {
+
+            if (substr($file, 0, 1) == '/' &&
+                substr($file, 1, 1) != '/') {
+
+                return substr($file, 1);
+            }
+
+            return $file;
+        }
+
         if (static::isAbsolute($file)) {
 
             $data = static:: doParseUrl($file);

@@ -24,7 +24,7 @@ class BackgroundImage extends CssFunction
             return in_array($data->value, static::$keywords);
         }
 
-        return isset($data->name) && isset($data->arguments) && $data->arguments instanceof Set;
+        return isset($data->name) && isset($data->arguments) && is_array($data->arguments);
     }
 
     public function render(array $options = []): string
@@ -32,12 +32,9 @@ class BackgroundImage extends CssFunction
         return $this->data->value ?? parent::render($options);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getHash() {
-
-        return $this->data->value ?? $this->data->name.'('. $this->data->arguments->getHash().')';
+    public static function doRender(object $data, array $options = [])
+    {
+        return $data->value ?? parent::doRender($data, $options);
     }
 
     public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool

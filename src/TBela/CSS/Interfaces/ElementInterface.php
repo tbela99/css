@@ -63,14 +63,19 @@ interface ElementInterface extends QueryInterface, JsonSerializable, ArrayAccess
     public function getRoot ();
 
     /**
-     * return Value\Set|string
      * @return string
      */
     public function getValue();
 
     /**
+     * return parsed value
+     * @return array
+     */
+    public function getRawValue(): ?array;
+
+    /**
      * assign the value
-     * @param Value\Set|string $value
+     * @param string $value
      * @return $this
      */
     public function setValue ($value);

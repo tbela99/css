@@ -1,16 +1,23 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Parser;
+use \TBela\CSS\Renderer;
+
 require 'autoload.php';
 
-use TBela\CSS\Property\PropertyList;
+$css = 'table.colortable {
+  & td {
+    text-align:center;
+    &.c { text-transform:uppercase }
+    &:first-child, &:first-child + td { border:1px solid black }
+  }
+  & th {
+    text-align:center;
+    background:black;
+    color:white;
+  }
+}';
 
-$property = new PropertyList();
-
-//$property->set('outline', 'thick');
-$property->set('outline-width', '0px');
-$property->set('outline-style', 'none');
-$property->set('outline-color', 'rebeccapurple');
-//$property->set('outline', 'none');
-
-echo $property;
+$renderer = new Renderer( ['legacy_rendering' => true]);
+echo $renderer->renderAst(new Parser($css));
