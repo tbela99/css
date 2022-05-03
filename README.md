@@ -282,6 +282,91 @@ result
 }
 ```
 
+## CSS Nesting
+
+```css
+table.colortable {
+  & td {
+    text-align:center;
+    &.c { text-transform:uppercase }
+    &:first-child, &:first-child + td { border:1px solid black }
+  }
+
+
+& th {
+text-align:center;
+background:black;
+color:white;
+}
+}
+```
+
+render CSS nesting
+
+```php
+
+use TBela\CSS\Parser;
+
+echo new Parser($css);
+
+```
+result 
+
+```css
+table.colortable {
+ & td {
+  text-align: center;
+  &.c {
+   text-transform: uppercase
+  }
+  &:first-child,
+  &:first-child+td {
+   border: 1px solid #000
+  }
+ }
+ & th {
+  text-align: center;
+  background: #000;
+  color: #fff
+ }
+}
+
+```
+
+convert nesting CSS to older representation
+
+```php 
+
+use TBela\CSS\Parser;
+use \TBela\CSS\Renderer;
+
+$renderer = new Renderer( ['legacy_rendering' => true]);
+echo $renderer->renderAst(new Parser($css));
+
+```
+
+result
+
+```css
+
+table.colortable td {
+ text-align: center
+}
+table.colortable td.c {
+ text-transform: uppercase
+}
+table.colortable td:first-child,
+table.colortable td:first-child+td {
+ border: 1px solid #000
+}
+table.colortable th {
+ text-align: center;
+ background: #000;
+ color: #fff
+}
+
+```
+
 ## The Traverser Api
 
 The traverser will iterate over all the nodes and process them with the callbacks provided.
