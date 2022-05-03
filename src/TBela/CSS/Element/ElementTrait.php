@@ -14,7 +14,7 @@ trait ElementTrait  {
     /**
      * get css node name
      * @param bool $getVendor
-     * @return Set
+     * @return string
      * @throws Exception
      */
     public function getName(bool $getVendor = true): string {

@@ -15,7 +15,7 @@ class CssFunction extends Value {
      */
     protected static function validate($data): bool {
 
-        return isset($data->name) && isset($data->arguments) && (is_array($data->arguments) || $data->arguments instanceof Set);
+        return isset($data->name) && isset($data->arguments) && is_array($data->arguments);
     }
 
     /**

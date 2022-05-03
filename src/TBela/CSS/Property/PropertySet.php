@@ -4,7 +4,6 @@ namespace TBela\CSS\Property;
 
 use InvalidArgumentException;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Set;
 
 /**
  * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of the same type. example margin, margin-left, margin-top, margin-right, margin-bottom
@@ -66,7 +65,7 @@ class PropertySet
     /**
      * set property value
      * @param string $name
-     * @param Set $value
+     * @param array|string $value
      * @param array|null $leadingcomments
      * @param array|null $trailingcomments
      * @return PropertySet
@@ -177,7 +176,7 @@ class PropertySet
 
     /**
      * expand shorthand property
-     * @param Set|array|string $value
+     * @param array|string $value
      * @return array|bool
      * @ignore
      */

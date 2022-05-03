@@ -7,7 +7,6 @@ use TBela\CSS\ArrayTrait;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\RenderablePropertyInterface;
 use TBela\CSS\Value;
-use TBela\CSS\Value\Set;
 
 
 /**
@@ -47,7 +46,7 @@ class Property implements ArrayAccess, RenderableInterface, RenderablePropertyIn
 
     /**
      * Property constructor.
-     * @param Value\Set|string $name
+     * @param string $name
      */
     public function __construct($name)
     {
