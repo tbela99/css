@@ -7,7 +7,7 @@
 # to run all the tests with no argument
 ## ./runtest.sh
 ##
-set -x
+#set -x
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 cd "$DIR"
 
