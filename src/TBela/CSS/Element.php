@@ -35,7 +35,7 @@ abstract class Element implements ElementInterface  {
     /**
      * @var string|null
      */
-    protected ?string $valueAsString = null;
+    protected ?array $rawValue = null;
 
     /**
      * Element constructor.
@@ -173,17 +173,7 @@ abstract class Element implements ElementInterface  {
      */
     public function getValue() {
 
-        if (isset($this->ast->name) && isset($this->ast->value) && !is_array($this->ast->value)) {
-
-            $this->ast->value = Value::parse($this->ast->value ?? '', $this->ast->name, true, '', '', true);
-        }
-
-        if (isset($this->ast->name) && isset($this->ast->value) && is_null($this->valueAsString)) {
-
-            $this->valueAsString = Value::renderTokens($this->ast->value);
-        }
-
-        return $this->valueAsString;
+        return $this->ast->value ?? null;
     }
 
     /**
@@ -191,7 +181,7 @@ abstract class Element implements ElementInterface  {
      */
     public function getRawValue(): ?array {
 
-        return $this->ast->value;
+        return $this->rawValue;
     }
 
     /**
@@ -199,7 +189,17 @@ abstract class Element implements ElementInterface  {
      */
     public function setValue ($value) {
 
-        $this->ast->value = is_string($value) ? Value::escape($value) : $value;
+        if (!is_array($value)) {
+
+            $this->rawValue = Value::parse($value, $this->ast->name ?? null);
+        }
+
+        else {
+
+            $this->rawValue = $value;
+        }
+
+        $this->ast->value = Value::renderTokens($this->rawValue);
         return $this;
     }
 
@@ -249,6 +249,7 @@ abstract class Element implements ElementInterface  {
         $copy = $node = clone $this;
 
         while ($parent = $parent->parent) {
+
 
             $ast = clone $parent->ast;
 
@@ -591,11 +592,6 @@ abstract class Element implements ElementInterface  {
         $ast = clone $this->ast;
 
         unset($ast->parent);
-
-//        if (isset($ast->value)) {
-//
-//            $ast->value = trim($ast->value);
-//        }
 
         if (empty($ast->location)) {
 

@@ -1,27 +1,42 @@
 #!/usr/bin/php
 <?php
 
+use TBela\CSS\Element;
+
 require 'autoload.php';
-use \TBela\CSS\Element\Stylesheet;
+$css = '
 
-$stylesheet = new Stylesheet();
+@media print {
+  @font-face {
+    font-family: MaHelvetica;
+    src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
+      url(MgOpenModernaBold.ttf);
+    font-weight: bold;
+  }
+  body {
+    font-family: "Bitstream Vera Serif Bold", serif;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+    text-align: left;
+  }
 
-$rule = $stylesheet->addRule('div');
-
-$rule->addDeclaration('background-color', 'white');
-$rule->addDeclaration('color', 'black');
-
-$media = $stylesheet->addAtRule('media', 'print');
-$media->append($rule);
-
-$div = $stylesheet->addRule('div');
-
-$div->addDeclaration('max-width', '100%');
-$div->addDeclaration('border-width', '0px');
+  @font-face {
+    font-family: Arial, MaHelvetica;
+    src: url(MgOpenModernaBold.ttf), local("Helvetica Neue Bold"), local("HelveticaNeue-Bold")
+      ;
+    font-weight: bold;
+  }
+}';
 
 
-$media->append($div);
+$context = '// @font-face / src / ..';
 
-$stylesheet->insert($div, 0);
+$element = Element::fromUrl('https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css');
 
-echo $stylesheet;
+foreach ($element->query('[@name=background][@value*="url("]|[@name=background-image][@value*="url("]') as $p) {
+
+//    var_dump($p->getRawValue());
+    echo "$p\n";
+}

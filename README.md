@@ -2,7 +2,7 @@ CSS (A CSS parser and minifier written in PHP)
 
 ---
 
-[![PHP-Composer](https://github.com/tbela99/css/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/tbela99/css/actions/workflows/php.yml) ![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fpackage.json) [![Packagist](https://img.shields.io/packagist/v/tbela99/css.svg)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fcomposer.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
+[![CI](https://github.com/tbela99/css/actions/workflows/php.yml/badge.svg)](https://github.com/tbela99/css/actions/workflows/php.yml) ![Current version](https://img.shields.io/badge/dynamic/json?label=current%20version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fpackage.json) [![Packagist](https://poser.pugx.org/tbela99/css/downloads)](https://packagist.org/packages/tbela99/css) [![Documentation](https://img.shields.io/badge/dynamic/json?label=documentation&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ftbela99%2Fcss%2Fmaster%2Fpackage.json)](https://tbela99.github.io/css) [![Known Vulnerabilities](https://snyk.io/test/github/tbela99/gzip/badge.svg)](https://snyk.io/test/github/tbela99/css)
 
 A CSS parser, beautifier and minifier written in PHP. It supports the following features
 
@@ -168,6 +168,34 @@ $renderer->save($element, 'css/all.css');
 ```
 
 ## The CSS Query API
+
+Example: get all background and background-image declarations that contain an image url
+
+```php
+
+$element = Element::fromUrl('https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css');
+
+foreach ($element->query('[@name=background][@value*="url("]|[@name=background-image][@value*="url("]') as $p) {
+
+    echo "$p\n";
+}
+
+```
+
+result
+
+```css
+.form-select {
+ background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c
+/svg%3e")
+}
+.form-check-input:checked[type=checkbox] {
+ background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/s
+vg%3e")
+}
+
+...
+```
 
 Example: Extract Font-src declaration
 
@@ -388,7 +416,7 @@ $ast = $parser->getAst();
 // remove @media print
 $traverser->on('enter', function ($node) {
 
-    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+    if ($node->type == 'AtRule' && $node->name == 'media' && $node->value == 'print') {
 
         return Traverser::IGNORE_NODE;
     }
@@ -415,7 +443,7 @@ $element = $parser->parse();
 // remove @media print
 $traverser->on('enter', function ($node) {
 
-    if ($node->type == 'AtRule' && $node->name == 'media' && (string) $node->value == 'print') {
+    if ($node->type == 'AtRule' && $node->name == 'media' && $node->value == 'print') {
 
         return Traverser::IGNORE_NODE;
     }
