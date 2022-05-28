@@ -169,7 +169,7 @@ final class Path extends TestCase
 
         $data = [];
         $port = '9992';
-        $kill_server = sprintf('ps -ux |  awk \' $0 ~ %s {print $2;}\'  | xargs kill -9 >/dev/null 2>&1', $port);
+        $kill_server = sprintf('ps -ux | awk \' $0 ~ %s {print $2;}\'  | xargs kill -9 >/dev/null 2>&1', $port);
         shell_exec($kill_server);
         shell_exec(sprintf("cd %s && nohup php -S %s:%s -t . %s > /dev/null 2>&1 &", escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
 
