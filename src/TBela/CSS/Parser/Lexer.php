@@ -87,7 +87,7 @@ class Lexer
 
         if ($content === false) {
 
-            throw new IOException(sprintf('File Not Found "%s" => ' . $file, $file), 404);
+            throw new IOException(sprintf('File Not Found "%s" => \'%s:%s:%s\'', $file, $this->context->location->src, $this->context->location->end->line, $this->context->location->end->column), 404);
         }
 
         $this->css = $content;

@@ -253,6 +253,11 @@ class Helper
         $result = implode('/', array_merge(array_fill(0, count($ref), '..'), $file));
         $result = ($result === '' ? '' : $result . '/') . $basename;
 
+        if (php_sapi_name() != 'cli') {
+
+            $result = static::resolvePath($result, dirname($_SERVER['PHP_SELF']));
+        }
+
         return $isAbsolute && strlen($original) <= strlen($result) ? $original : $result;
     }
 
