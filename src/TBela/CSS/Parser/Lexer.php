@@ -448,11 +448,10 @@ class Lexer
                             ],
                             'isLeaf' => true,
                             'hasDeclarations' => $char == '{',
-                        ], $this->parseVendor($matches[1]),
-                            [
-                                'value' => Value::parse(trim($matches[2]), null, true, '', '', true)
-                            ]
+                        ], $this->parseVendor($matches[1])
                         );
+
+                        $rule->value = Value::parse(trim($matches[2]), null, true, '', '', $rule->name == 'charset');
 
                         if ($rule->hasDeclarations) {
 
