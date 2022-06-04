@@ -98,6 +98,6 @@ if [ $# -gt 0 ]; then
 else
     # no argument
     for file in $(ls src/*.php); do
-        php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+        $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
     done
 fi
