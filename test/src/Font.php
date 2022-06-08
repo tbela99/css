@@ -1,8 +1,6 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Element;
-use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Property\PropertyList;
 
@@ -112,7 +110,7 @@ final class Font extends TestCase
 
         $data = [];
 
-        $compiler = new Compiler(['compress' => true]);
+        $compiler = new \TBela\CSS\Renderer(['compress' => true]);
 
         $data[] = [$compiler->setContent('
 strong {
