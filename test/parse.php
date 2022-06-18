@@ -6,18 +6,22 @@ use \TBela\CSS\Renderer;
 
 require 'autoload.php';
 
-$css = 'table.colortable {
-  & td {
-    text-align:center;
-    &.c { text-transform:uppercase }
-    &:first-child, &:first-child + td { border:1px solid black }
-  }
-  & th {
-    text-align:center;
-    background:black;
-    color:white;
-  }
-}';
+//$proertyList = new \TBela\CSS\Property\PropertyList();
+//
+//$proertyList->set('margin', '2px !important');
+//$proertyList->set('margin-left', '3px !important');
+//
+//
+//echo $proertyList;
 
-$renderer = new Renderer( ['legacy_rendering' => true]);
-echo $renderer->renderAst(new Parser($css));
+$parser = new Parser('
+  .btnflexanimate:hover{
+      margin: 2px !important;
+      margin-left: 3px !important;
+  }');
+
+echo $parser;
+
+//var_dump($parser->getAst());
+
+//echo $parser;
