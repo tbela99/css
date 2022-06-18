@@ -6,96 +6,22 @@ use \TBela\CSS\Renderer;
 
 require 'autoload.php';
 
-<<<<<<< HEAD
-$css = '
-.el {
-  margin: 10px calc(2vw + 5px);
-  border-radius: 15px calc(15px/3) 4px 2px;
-  transition: transform calc(1s - 120ms);
-}
+//$proertyList = new \TBela\CSS\Property\PropertyList();
+//
+//$proertyList->set('margin', '2px !important');
+//$proertyList->set('margin-left', '3px !important');
+//
+//
+//echo $proertyList;
 
-.el {
-  /* Nope! */
-  counter-reset: calc("My " + "counter");
-}
-.el::before {
-  /* Nope! */
-  content: calc("Candyman " * 3);
-}
-.el {
-  width: calc(
-    100%     /   3
-  );
-}
+$parser = new Parser('
+  .btnflexanimate:hover{
+      margin: 2px !important;
+      margin-left: 3px !important;
+  }');
 
-.el {
-  width: calc(
-    calc(100% / 3)
-    -
-    calc(1rem * 2)
-  );
-}
-.el {
-  width: calc(
-   (100% / 3)
-    -
-   (1rem * 2)
-  );
-}
-.el {
-  width: calc(100% / 3 - 1rem * 2);
-}
-.el {
-  /* This */
-  width: calc(100% + 2rem / 2);
+echo $parser;
 
-  /* Is very different from this */
-  width: calc((100% + 2rem) / 2);
-}
-';
+//var_dump($parser->getAst());
 
-<<<<<<< HEAD
-$element = (new \TBela\CSS\Parser('
-p {
-
-}
-
-p {
-
-margin: 1px;
-'))->parse();
-
-$element->firstChild->setChildren([]);
-$element->appendCss('
-
-p {
-
-margin: 1px;
-');
-
-$element->deduplicate();
-
-echo $element;
-=======
-
-$parser = (new Parser($css, ['capture_errors' => false]))->parse();
-
-echo $parser->lastChild->lastChild;
->>>>>>> v.next
-=======
-$css = 'table.colortable {
-  & td {
-    text-align:center;
-    &.c { text-transform:uppercase }
-    &:first-child, &:first-child + td { border:1px solid black }
-  }
-  & th {
-    text-align:center;
-    background:black;
-    color:white;
-  }
-}';
-
-$renderer = new Renderer( ['legacy_rendering' => true]);
-echo $renderer->renderAst(new Parser($css));
->>>>>>> v.next
+//echo $parser;

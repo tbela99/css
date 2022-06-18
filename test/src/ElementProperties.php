@@ -84,6 +84,32 @@ h1 {
  font-weight: bold
 }'];
 
+        $data[] = [
+            (string) new Parser('
+  .btnflexanimate:hover{
+      background:transparent !important;
+      background-color:transparent !important;
+  }'),
+            '.btnflexanimate:hover {
+ background: #0000!important;
+ background-color: #0000!important
+}'
+        ];
+
+        $data[] = [
+            (string) new Parser('
+  .btnflexanimate:hover{
+      margin: 2px !important;
+      margin-left: 3px !important;
+  }'),
+            '.btnflexanimate:hover {
+ margin-top: 2px!important;
+ margin-right: 2px!important;
+ margin-bottom: 2px!important;
+ margin-left: 3px!important
+}'
+        ];
+
         return $data;
     }
 }
