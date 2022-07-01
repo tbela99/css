@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Event\Event as EventTest;
@@ -11,7 +10,7 @@ final class Number extends TestCase
      * @param string $actual
      * @dataProvider testNumberProvider
      */
-    public function testNumber(string $expected, string $actual): void
+    public function testNumber($expected, $actual)
     {
 
         $this->assertEquals(
