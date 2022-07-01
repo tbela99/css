@@ -168,10 +168,15 @@ class Parser implements ParsableInterface
             $parser->getAst();
         }
 
+        if (!isset($this->ast->children)) {
+
+            $this->ast->children = [];
+        }
+
         array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
         array_splice($this->errors, count($this->errors), 0, $parser->errors);
 
-        $this->deduplicate($this->ast);
+//        $this->deduplicate($this->ast);
         return $this;
     }
 
