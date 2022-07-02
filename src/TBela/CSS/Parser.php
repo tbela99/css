@@ -168,10 +168,19 @@ class Parser implements ParsableInterface
             $parser->getAst();
         }
 
-        array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+        if (!isset($this->ast->children)) {
+
+            $this->ast->children = [];
+        }
+
+        if (isset($parser->ast->children)) {
+
+            array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+        }
+
         array_splice($this->errors, count($this->errors), 0, $parser->errors);
 
-        $this->deduplicate($this->ast);
+//        $this->deduplicate($this->ast);
         return $this;
     }
 
@@ -705,7 +714,7 @@ class Parser implements ParsableInterface
     protected function getContext()
     {
 
-        return end($this->context) ?: $this->ast;
+        return end($this->context) ?: ($this->ast ?? $this->getAst());
     }
 
     /**

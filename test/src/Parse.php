@@ -205,6 +205,18 @@ final class Parse extends TestCase
 
 '))->parse())];
 
+        // preserver @charset
+        $parser =  (new \TBela\CSS\Parser("@charset \"utf-8\"; @font-face{font-family:'CenturyGothic';src:url('/CenturyGothic.woff') format('woff');font-weight:400;}", ['capture_errors' => false])) /* ->load('template.min.css') */;
+
+        $data[] = [
+            '@charset "utf-8";
+@font-face {
+ font-family: CenturyGothic;
+ font-weight: 400;
+ src: url(/CenturyGothic.woff) format("woff")
+}',
+            (new Renderer(['charset' => true]))->renderAst($parser)
+        ];
         return $data;
     }
 }
