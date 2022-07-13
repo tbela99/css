@@ -8,8 +8,8 @@ use TBela\CSS\Parser;
 final class Selector extends TestCase
 {
     /**
-     * @param array $expected
-     * @param array $actual
+     * @param string $expected
+     * @param string $actual
      * @dataProvider selectorRemoveProvider
      */
     public function testSelectorRemove(string $expected, string $actual): void
