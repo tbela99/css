@@ -14,14 +14,44 @@ require 'autoload.php';
 //
 //echo $proertyList;
 
-$parser = new Parser('
-  .btnflexanimate:hover{
-      margin: 2px !important;
-      margin-left: 3px !important;
-  }');
+$parser = new Parser('.widget-rss.red .title,
+.widget-recent .title {
+  color: red;
+}
+aside .widget-rss:hover {
+  background: #fff;
+}');
 
-echo $parser;
+$stylesheet = $parser->parse();
 
+
+foreach ($stylesheet->query("[value*='.widget-rss']") as $p) {
+    foreach($p->getSelector() as $selector) {
+        if(strpos($selector, '.widget-rss') !== false) {
+
+            try {
+
+                $p->removeSelector($selector);
+            }
+
+            catch (Exception $e) {
+
+                // empty selector
+                $p['parentNode']->remove($p);
+            }
+        }
+    }
+}
+
+//try {
+
+    echo $stylesheet;
+//}
+//
+//catch (Exception $e) {
+//
+//    echo $e->getMessage();
+//}
 //var_dump($parser->getAst());
 
 //echo $parser;
