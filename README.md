@@ -13,8 +13,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 - CSS Nesting module
 - partially implemented CSS Syntax module level 3
 - partial CSS validation
-- CSS colors module level 4
-- parse and render CSS
+- CSS colors module level 4- parse and render CSS
 - optimize css:
   - merge duplicate rules
   - remove duplicate declarations
@@ -59,7 +58,6 @@ PHP Code
 use \TBela\CSS\Parser;
 
 $parser = new Parser();
-
 $parser->setContent('
 h1 {
   color: green;
