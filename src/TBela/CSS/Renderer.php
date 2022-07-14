@@ -621,14 +621,14 @@ class Renderer
         if (is_array($selector)) {
 
             if (empty($selector)) {
-;
+                ;
                 // the selector is empty!
                 throw new \Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
             }
 
             if (is_string($selector[0])) {
 
-                $selector = implode(','.$this->options['indent'], $selector);
+                $selector = implode(',' . $this->options['indent'], $selector);
             }
         }
 
@@ -637,7 +637,7 @@ class Renderer
             $selector = Value::parse($selector, null, true, '', '');
         }
 
-        $result = $indent. Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
+        $result = $indent . Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
 
         if ($ast->type == 'NestingAtRule' && !$this->options['legacy_rendering']) {
 
@@ -683,7 +683,7 @@ class Renderer
      * @ignore
      */
 
-    protected function renderProperty($ast, ?int $level)
+    protected function renderProperty(object $ast, ?int $level)
     {
         if ($ast->type == 'Comment') {
 
@@ -695,10 +695,8 @@ class Renderer
         if (class_exists(Value::getClassName($ast->name)) || !is_string($ast->value)) {
 
             $property = is_string($ast->value) ? Value::parse($ast->value, $ast->name) : $ast->value;
-            $value = Value::renderTokens($property, $this->options);
-        }
-
-        else {
+            $value = Value::renderTokens($property, array_merge(['property' => $name], $this->options));
+        } else {
 
             $value = $ast->value;
         }
@@ -713,7 +711,7 @@ class Renderer
 
             $value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
 
-                if (strpos($matches[3], 'data:') !== false) {
+                if (str_contains($matches[3], 'data:')) {
 
                     return $matches[0];
                 }
@@ -724,15 +722,15 @@ class Renderer
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $comments = $ast->trailingcomments;
+//            $comments = $ast->trailingcomments;
 
-            if (!empty($comments)) {
+//            if (!empty($comments)) {
 
-                foreach ($comments as $comment) {
+            foreach ($ast->trailingcomments as $comment) {
 
-                    $value .= ' ' . $comment;
-                }
+                $value .= ' ' . $comment;
             }
+//            }
         }
 
         settype($level, 'int');
@@ -1007,7 +1005,7 @@ class Renderer
 
                                 $value = Value::renderTokens($node->value, $this->options);
 
-                                if($value !== '' && $value != 'all') {
+                                if ($value !== '' && $value != 'all') {
 
                                     $values[$value] = $value;
                                 }
@@ -1017,7 +1015,7 @@ class Renderer
 
                                 $value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value, null, true, '', '') : $child->value, $this->options);
 
-                                if($value !== '' && $value != 'all') {
+                                if ($value !== '' && $value != 'all') {
 
                                     $values[$value] = $value;
                                 }

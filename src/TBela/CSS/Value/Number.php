@@ -17,23 +17,24 @@ class Number extends Value
     {
         parent::__construct($data);
 
-        if (strpos($this->data->value, 'e') !== false) {
+        if (str_contains($this->data->value, 'e')) {
 
-            $value = (float) $this->data->value;
+            $value = (float)$this->data->value;
 
             if ($value == intval($value)) {
 
-                $value = (int) $value;
+                $value = (int)$value;
             }
 
-            $this->data->value = (string) $value;
+            $this->data->value = (string)$value;
         }
     }
 
     /**
      * @inheritDoc
      */
-    public static function match (object $data, string $type): bool {
+    public static function match(object $data, string $type): bool
+    {
 
         return ($data->value == '0' && $type == 'unit') || $data->type == $type;
     }
@@ -52,15 +53,10 @@ class Number extends Value
      * @return string
      * @ignore
      */
-    public static function compress(string $value): string
+    public static function compress(string $value, array $options = []): string
     {
 
-        if (is_null($value)) {
-
-            return '';
-        }
-
-        $value = explode('.', (float) $value);
+        $value = explode('.', (float)$value);
 
         if (isset($value[1]) && $value[1] == 0) {
 
@@ -77,7 +73,17 @@ class Number extends Value
                 $value[0] = rtrim($value[0], '0');
             }
 
-        } else {
+        } else if (!isset($options['property']) || !in_array($options['property'],
+                // @see https://developer.mozilla.org/en-US/docs/Web/CSS/integer
+                [
+                    'column-count',
+                    'counter-increment',
+                    'counter-reset',
+                    'grid-column',
+                    'grid-row',
+                    'z-index'
+                ]
+            )) {
 
             // convert 1000 to 1e3
             $value[0] = preg_replace_callback('#(0{3,})$#', function ($matches) {
@@ -97,12 +103,13 @@ class Number extends Value
         return static::doRender($this->data, $options);
     }
 
-    public static function doRender(object $data, array $options = []) {
+    public static function doRender(object $data, array $options = [])
+    {
 
 
         if (!empty($options['compress'])) {
 
-            return static::compress($data->value);
+            return static::compress($data->value, $options);
         }
 
         return $data->value;
