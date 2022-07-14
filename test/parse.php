@@ -14,14 +14,13 @@ require 'autoload.php';
 //
 //echo $proertyList;
 
-$parser = new Parser('
-  .btnflexanimate:hover{
-      margin: 2px !important;
-      margin-left: 3px !important;
-  }');
+//$parser = new Parser('
+//.wp-block-gallery.has-nested-images.columns-default figure.wp-block-image:not(#individual-image):first-child:nth-last-child(2),
+//.wp-block-gallery.has-nested-images.columns-default figure.wp-block-image:not(#individual-image):first-child:nth-last-child(2)~figure.wp-block-image:not(#individual-image) {
+//  width: calc(50% - var(--wp--style--unstable-gallery-gap, 16px)*0.5)
+//}
+//');
 
-echo $parser;
+$parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {dir:rtl;}');
 
-//var_dump($parser->getAst());
-
-//echo $parser;
+echo (new Renderer(['compress' => false]))->renderAst($parser);

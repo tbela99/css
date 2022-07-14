@@ -35,7 +35,7 @@
     }
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "axy/sourcemap": "^0.1.5",
     "ext-json": "*",
     "ext-curl": "*",
