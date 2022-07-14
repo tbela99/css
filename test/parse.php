@@ -14,44 +14,13 @@ require 'autoload.php';
 //
 //echo $proertyList;
 
-$parser = new Parser('.widget-rss.red .title,
-.widget-recent .title {
-  color: red;
-}
-aside .widget-rss:hover {
-  background: #fff;
-}');
-
-$stylesheet = $parser->parse();
-
-
-foreach ($stylesheet->query("[value*='.widget-rss']") as $p) {
-    foreach($p->getSelector() as $selector) {
-        if(strpos($selector, '.widget-rss') !== false) {
-
-            try {
-
-                $p->removeSelector($selector);
-            }
-
-            catch (Exception $e) {
-
-                // empty selector
-                $p['parentNode']->remove($p);
-            }
-        }
-    }
-}
-
-//try {
-
-    echo $stylesheet;
+//$parser = new Parser('
+//.wp-block-gallery.has-nested-images.columns-default figure.wp-block-image:not(#individual-image):first-child:nth-last-child(2),
+//.wp-block-gallery.has-nested-images.columns-default figure.wp-block-image:not(#individual-image):first-child:nth-last-child(2)~figure.wp-block-image:not(#individual-image) {
+//  width: calc(50% - var(--wp--style--unstable-gallery-gap, 16px)*0.5)
 //}
-//
-//catch (Exception $e) {
-//
-//    echo $e->getMessage();
-//}
-//var_dump($parser->getAst());
+//');
 
-//echo $parser;
+$parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {dir:rtl;}');
+
+echo (new Renderer(['compress' => false]))->renderAst($parser);
