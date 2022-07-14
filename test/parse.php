@@ -23,4 +23,4 @@ require 'autoload.php';
 
 $parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {dir:rtl;}');
 
-echo (new Renderer(['compress' => false]))->renderAst($parser);
+echo (new Renderer(['compress' => true]))->renderAst($parser);
