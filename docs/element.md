@@ -69,6 +69,20 @@ echo (new Renderer())->renderAst($ast);
 
 ## Properties
 
+### parentNode
+
+If the element can contain children, they can be accessed using the syntax \$element['childNodes']
+
+```php
+$parentNode = $element['parentNode'];
+
+// or
+$parentNode = $element->getParent();
+
+// or
+$childNodes = $element['parent'];
+```
+
 ### childNodes
 
 If the element can contain children, they can be accessed using the syntax \$element['childNodes']
