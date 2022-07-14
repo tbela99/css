@@ -60,5 +60,29 @@ aside .widget-rss:hover {
         ];
 
     }
+
+    public function selectorSiblingProvider()
+    {
+
+
+        $parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {dir:rtl;}
+        ');
+
+        return [
+            [
+
+                '.cb+.a~.b.cd[type~="ab cd"] {
+ dir: rtl
+}',
+                (string)$parser
+            ],
+            [
+
+            '.cb+.a~.b.cd[type~="ab cd"]{dir:rtl}',
+                (string)$parser
+            ]
+        ];
+
+    }
 }
 
