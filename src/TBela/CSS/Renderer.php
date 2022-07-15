@@ -78,13 +78,13 @@ class Renderer
     }
 
     /**
-     * @param \stdClass|ParsableInterface $ast
+     * @param object|ParsableInterface $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      */
 
-    public function renderAst($ast, ?int $level = null)
+    public function renderAst(object $ast, ?int $level = null)
     {
 
         $this->outFile = '';
@@ -120,14 +120,13 @@ class Renderer
     }
 
     /**
-     * @param ParsableInterface|\stdClass $ast
+     * @param object $ast
      * @param string $file
      * @return Renderer
      * @throws IOException
-     * @throws Exception
      */
 
-    public function save($ast, $file)
+    public function save(object $ast, $file)
     {
 
         if ($ast instanceof ParsableInterface) {
@@ -223,14 +222,14 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $tree
-     * @param \stdClass $position
-     * @param int $level
+     * @param array $tree
+     * @param object $position
+     * @param int|null $level
      * @return void
      * @throws Exception
      * @ignore
      */
-    protected function walk($tree, $position, $level = 0)
+    protected function walk(array $tree, object $position, ?int $level = 0)
     {
 
         $pos = clone $position;
@@ -301,13 +300,13 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
      */
 
-    protected function renderStylesheet($ast, $level)
+    protected function renderStylesheet(object $ast, ?int $level)
     {
 
         return $this->renderCollection($ast, $level);
@@ -315,14 +314,14 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
 
-    protected function renderRule($ast, $level)
+    protected function renderRule(object $ast, ?int $level)
     {
 
         settype($level, 'int');
@@ -343,14 +342,13 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
-    protected function renderAtRuleMedia($ast, $level)
+    protected function renderAtRuleMedia(object $ast, ?int $level)
     {
 
         $output = '@' . $this->renderName($ast);
@@ -386,14 +384,13 @@ class Renderer
 
     /**
      * render at-rule
-     * @param \stdClass $ast
-     * @param ?int $level
+     * @param object $ast
+     * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
-    protected function renderAtRule($ast, $level)
+    protected function renderAtRule(object $ast, ?int $level)
     {
 
         if ($ast->name == 'charset' && !$this->options['charset']) {
@@ -426,13 +423,13 @@ class Renderer
 
     /**
      * render a list
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
      */
 
-    protected function renderCollection($ast, ?int $level)
+    protected function renderCollection(object $ast, ?int $level)
     {
 
         $type = $ast->type;
@@ -520,14 +517,14 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
 
-    protected function renderNestingAtRule($ast, $level)
+    protected function renderNestingAtRule(object $ast, ?int $level)
     {
 
         return $this->renderRule($ast, $level);
@@ -535,14 +532,14 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
 
-    protected function renderNestingRule($ast, $level)
+    protected function renderNestingRule(object $ast, ?int $level)
     {
 
         return $this->renderRule($ast, $level);
@@ -550,31 +547,30 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
-    protected function renderNestingMediaRule($ast, $level)
+    protected function renderNestingMediaRule(object $ast, ?int $level)
     {
 
         return $this->renderAtRule($ast, $level);
     }
 
     /**
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
      */
-    protected function renderComment($ast, ?int $level)
+    protected function renderComment(object $ast, ?int $level)
     {
 
         if ($this->options['remove_comments']) {
 
-            if (!$this->options['preserve_license'] || substr($ast->value, 0, 3) != '/*!') {
+            if (!$this->options['preserve_license'] || !str_starts_with($ast->value, '/*!')) {
 
                 return '';
             }
@@ -592,14 +588,14 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
      * @ignore
      */
 
-    protected function renderSelector($ast, $level)
+    protected function renderSelector(object $ast, ?int $level)
     {
 
         $selector = $ast->selector;
@@ -677,9 +673,10 @@ class Renderer
 
     /**
      * render a property
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
+     * @throws Exception
      * @ignore
      */
 
@@ -745,12 +742,12 @@ class Renderer
 
     /**
      * render a name
-     * @param \stdClass $ast
+     * @param object $ast
      * @return string
      * @ignore
      */
 
-    protected function renderName($ast)
+    protected function renderName(object $ast)
     {
 
         $result = $ast->name;
@@ -778,11 +775,12 @@ class Renderer
 
     /**
      * render a value
-     * @param \stdClass $ast
+     * @param object $ast
      * @return string
+     * @throws Exception
      * @ignore
      */
-    protected function renderValue($ast)
+    protected function renderValue(object $ast)
     {
 
         $result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null, true, '', '') : $ast->value, $this->options);
@@ -875,11 +873,11 @@ class Renderer
     /**
      * add sourcemap entry
      * @param string $generated
-     * @param \stdClass $ast
+     * @param object $ast
      * @return Renderer
      * @ignore
      */
-    protected function addPosition($generated, $ast)
+    protected function addPosition($generated, object $ast)
     {
 
         if (empty($ast->src)) {
@@ -910,12 +908,12 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $position
+     * @param object $position
      * @param string $string
      * @return \stdClass
      * @ignore
      */
-    protected function update($position, string $string)
+    protected function update(object $position, string $string)
     {
 
         $j = strlen($string);
@@ -937,11 +935,11 @@ class Renderer
 
     /**
      * flatten nested css tree
-     * @param \stdClass $node
-     * @return \stdClass
+     * @param object $node
+     * @return object
      * @ignore
      */
-    protected function flattenChildren($node)
+    protected function flattenChildren(object $node)
     {
 
         $node = clone $node;
@@ -961,11 +959,12 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $node
-     * @return \stdClass
+     * @param object $node
+     * @return object
+     * @throws Exception
      * @ignore
      */
-    public function flatten($node)
+    public function flatten(object $node)
     {
 
         if (isset($node->children)) {
