@@ -78,7 +78,7 @@ class Renderer
     }
 
     /**
-     * @param \stdClass|ParsableInterface $ast
+     * @param object|ParsableInterface $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -120,7 +120,7 @@ class Renderer
     }
 
     /**
-     * @param ParsableInterface|\stdClass $ast
+     * @param object $ast
      * @param string $file
      * @return Renderer
      * @throws IOException
@@ -223,14 +223,14 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $tree
-     * @param \stdClass $position
-     * @param int $level
+     * @param array $tree
+     * @param object $position
+     * @param int|null $level
      * @return void
      * @throws Exception
      * @ignore
      */
-    protected function walk($tree, $position, $level = 0)
+    protected function walk(array $tree, $position, $level = 0)
     {
 
         $pos = clone $position;
@@ -301,7 +301,7 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
@@ -315,7 +315,7 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -343,10 +343,9 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
@@ -389,7 +388,6 @@ class Renderer
      * @param \stdClass $ast
      * @param $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
@@ -426,7 +424,7 @@ class Renderer
 
     /**
      * render a list
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
@@ -520,7 +518,7 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -535,7 +533,7 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -550,10 +548,9 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
-     * @throws Exception
      * @ignore
      */
 
@@ -564,7 +561,7 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @ignore
@@ -574,7 +571,7 @@ class Renderer
 
         if ($this->options['remove_comments']) {
 
-            if (!$this->options['preserve_license'] || substr($ast->value, 0, 3) != '/*!') {
+            if (!$this->options['preserve_license'] || strpos($ast->value, '/*!') !== 0) {
 
                 return '';
             }
@@ -592,7 +589,7 @@ class Renderer
 
     /**
      * render a rule
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
      * @throws Exception
@@ -621,14 +618,14 @@ class Renderer
         if (is_array($selector)) {
 
             if (empty($selector)) {
-;
+                ;
                 // the selector is empty!
                 throw new \Exception(sprintf('the selector is empty: %s:%s:%s', isset($ast->src) ? $ast->src : '', isset($ast->position->line) ? $ast->position->line :'', isset($ast->position->column) ? $ast->position->column : ''), 400);
             }
 
             if (is_string($selector[0])) {
 
-                $selector = implode(','.$this->options['indent'], $selector);
+                $selector = implode(',' . $this->options['indent'], $selector);
             }
         }
 
@@ -637,7 +634,7 @@ class Renderer
             $selector = Value::parse($selector, null, true, '', '');
         }
 
-        $result = $indent. Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
+        $result = $indent . Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
 
         if ($ast->type == 'NestingAtRule' && !$this->options['legacy_rendering']) {
 
@@ -677,9 +674,10 @@ class Renderer
 
     /**
      * render a property
-     * @param \stdClass $ast
+     * @param object $ast
      * @param int|null $level
      * @return string
+     * @throws Exception
      * @ignore
      */
 
@@ -695,10 +693,8 @@ class Renderer
         if (class_exists(Value::getClassName($ast->name)) || !is_string($ast->value)) {
 
             $property = is_string($ast->value) ? Value::parse($ast->value, $ast->name) : $ast->value;
-            $value = Value::renderTokens($property, $this->options);
-        }
-
-        else {
+            $value = Value::renderTokens($property, array_merge(['property' => $name], $this->options));
+        } else {
 
             $value = $ast->value;
         }
@@ -724,15 +720,15 @@ class Renderer
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-            $comments = $ast->trailingcomments;
+//            $comments = $ast->trailingcomments;
 
-            if (!empty($comments)) {
+//            if (!empty($comments)) {
 
-                foreach ($comments as $comment) {
+            foreach ($ast->trailingcomments as $comment) {
 
-                    $value .= ' ' . $comment;
-                }
+                $value .= ' ' . $comment;
             }
+//            }
         }
 
         settype($level, 'int');
@@ -747,7 +743,7 @@ class Renderer
 
     /**
      * render a name
-     * @param \stdClass $ast
+     * @param object $ast
      * @return string
      * @ignore
      */
@@ -780,8 +776,9 @@ class Renderer
 
     /**
      * render a value
-     * @param \stdClass $ast
+     * @param object $ast
      * @return string
+     * @throws Exception
      * @ignore
      */
     protected function renderValue($ast)
@@ -877,7 +874,7 @@ class Renderer
     /**
      * add sourcemap entry
      * @param string $generated
-     * @param \stdClass $ast
+     * @param object $ast
      * @return Renderer
      * @ignore
      */
@@ -912,7 +909,7 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $position
+     * @param object $position
      * @param string $string
      * @return \stdClass
      * @ignore
@@ -939,8 +936,8 @@ class Renderer
 
     /**
      * flatten nested css tree
-     * @param \stdClass $node
-     * @return \stdClass
+     * @param object $node
+     * @return object
      * @ignore
      */
     protected function flattenChildren($node)
@@ -963,8 +960,9 @@ class Renderer
     }
 
     /**
-     * @param \stdClass $node
-     * @return \stdClass
+     * @param object $node
+     * @return object
+     * @throws Exception
      * @ignore
      */
     public function flatten($node)
@@ -1007,7 +1005,7 @@ class Renderer
 
                                 $value = Value::renderTokens($node->value, $this->options);
 
-                                if($value !== '' && $value != 'all') {
+                                if ($value !== '' && $value != 'all') {
 
                                     $values[$value] = $value;
                                 }
@@ -1017,7 +1015,7 @@ class Renderer
 
                                 $value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value, null, true, '', '') : $child->value, $this->options);
 
-                                if($value !== '' && $value != 'all') {
+                                if ($value !== '' && $value != 'all') {
 
                                     $values[$value] = $value;
                                 }

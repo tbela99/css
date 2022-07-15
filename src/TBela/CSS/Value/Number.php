@@ -19,14 +19,14 @@ class Number extends Value
 
         if (strpos($this->data->value, 'e') !== false) {
 
-            $value = (float) $this->data->value;
+            $value = (float)$this->data->value;
 
             if ($value == intval($value)) {
 
-                $value = (int) $value;
+                $value = (int)$value;
             }
 
-            $this->data->value = (string) $value;
+            $this->data->value = (string)$value;
         }
     }
 
@@ -52,15 +52,10 @@ class Number extends Value
      * @return string
      * @ignore
      */
-    public static function compress($value)
+    public static function compress($value, array $options = [])
     {
 
-        if (is_null($value)) {
-
-            return '';
-        }
-
-        $value = explode('.', (float) $value);
+        $value = explode('.', (float)$value);
 
         if (isset($value[1]) && $value[1] == 0) {
 
@@ -77,7 +72,17 @@ class Number extends Value
                 $value[0] = rtrim($value[0], '0');
             }
 
-        } else {
+        } else if (!isset($options['property']) || !in_array($options['property'],
+                // @see https://developer.mozilla.org/en-US/docs/Web/CSS/integer
+                [
+                    'column-count',
+                    'counter-increment',
+                    'counter-reset',
+                    'grid-column',
+                    'grid-row',
+                    'z-index'
+                ]
+            )) {
 
             // convert 1000 to 1e3
             $value[0] = preg_replace_callback('#(0{3,})$#', function ($matches) {
@@ -102,7 +107,7 @@ class Number extends Value
 
         if (!empty($options['compress'])) {
 
-            return static::compress($data->value);
+            return static::compress($data->value, $options);
         }
 
         return $data->value;

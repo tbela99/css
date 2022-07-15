@@ -21,6 +21,15 @@ require 'autoload.php';
 //}
 //');
 
-$parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {dir:rtl;}');
+$parser = new Parser('.cb + .a~.b.cd[type~="ab cd"] {
+
+column-count: 1000;
+counter-increment: 2000;
+counter-reset: 1000;
+grid-column: 1000; 
+grid-row: 1000;
+ z-index: 10000;
+ line-height: 1000;
+}');
 
 echo (new Renderer(['compress' => true]))->renderAst($parser);

@@ -65,10 +65,11 @@ abstract class Value implements JsonSerializable, ObjectInterface
         $this->data = $data;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function renderTokens(array $tokens, array $options = [], $join = null)
     {
-
-//        echo new \Exception('no reason');
 
         $result = '';
 
