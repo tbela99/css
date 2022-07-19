@@ -66,7 +66,7 @@ class Args
     /**
      * @throws Exceptions\DuplicateArgumentException
      */
-    public function add(string $name, string $description, string $type, array|string $alias = null, $multiple = true, $required = false, $defaultValue = null, $group = 'default', array $options = [], string $extended_description = null): static
+    public function add(string $name, string $description, string $type, array|string $alias = null, $multiple = true, $required = false, $defaultValue = null, ?array $options = [], $group = 'default'): static
     {
 
         if (isset($this->flags[$name])) {
@@ -78,11 +78,6 @@ class Args
         $this->flags[$name] = new Option($type, $multiple, $required, $defaultValue, $options);
 
         $this->groups[$group]['arguments'][$name]['description'] = $description;
-
-        if (!is_null($extended_description)) {
-
-            $this->groups[$group]['arguments'][$name]['extended_description'] = $extended_description;
-        }
 
         if (!is_null($alias) && $alias !== '' && $alias != []) {
 
