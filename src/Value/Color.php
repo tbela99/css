@@ -16,16 +16,6 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    protected function __construct($data)
-    {
-
-        parent::__construct($data);
-
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected static function validate($data):bool
     {
 
@@ -60,7 +50,7 @@ class Color extends Value
      */
     public static function doRender(object $data, array $options = []) {
 
-        if (!isset($data->rgba) && isset($data->value)) {
+        if (!isset($data->rgba)) {
 
             static::computeRGBA($data);
         }
