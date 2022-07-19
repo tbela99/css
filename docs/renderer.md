@@ -1,4 +1,4 @@
- Renderer
+# Renderer
 
 Compile an Element or an AST into CSS.
 

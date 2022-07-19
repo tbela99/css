@@ -31,7 +31,7 @@
   },
   "autoload": {
     "psr-4": {
-      "TBela\\CSS\\": "src/TBela/CSS"
+      "TBela\\CSS\\": "src"
     }
   },
   "require": {
@@ -39,7 +39,8 @@
     "axy/sourcemap": "^0.1.5",
     "ext-json": "*",
     "ext-curl": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "ext-posix": "*"
   },
   "scripts": {
     "test": "./bin/runtest.sh"

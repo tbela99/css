@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, php56-backport ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, php56-backport ]
 
 jobs:
   build:

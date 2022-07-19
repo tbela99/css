@@ -1019,8 +1019,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                             foreach ($token->arguments as $arg) {
 
-                                if (($arg->name ?? '') == 'var') {
-
+                                if ($arg->type == 'css-function') {
 
                                     $token->type = 'css-function';
                                     break;
@@ -1419,7 +1418,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
     }
 
     /**
-     * @param Value $value
+     * @param object $value
      * @return string
      */
     public static function getRGBValue(object $value): string
@@ -1429,9 +1428,9 @@ abstract class Value implements JsonSerializable, ObjectInterface
     }
 
     /**
-     * @param Value|null $value
+     * @param object|null $value
      * @param array $options
-     * @return string
+     * @return string|null
      */
     public static function getAngleValue(?object $value, array $options = []): ?string
     {
