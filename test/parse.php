@@ -7,6 +7,7 @@ use \TBela\CSS\Renderer;
 require 'autoload.php';
 
 echo (string) new Parser('.a {
-    color:rgba(255,0,153.6,1)
+    --theme-primary-350:rgb(calc(51 + var(--theme-primary-color-r) * .8), calc(51 + var(--theme-primary-color-g) * .8), calc(51 + var(--theme-primary-color-b) * .8));
 }
 ');
+
