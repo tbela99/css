@@ -89,7 +89,10 @@ class Option
 
                 if (!is_string($value)) {
 
-                    throw new \InvalidArgumentException(sprintf("expected string value\nfound: %s", is_null($value) ? '(bool)' : gettype($value)));
+                    if ($this->type != 'auto') {
+
+                        throw new \InvalidArgumentException(sprintf("expected string value\nfound: %s", is_null($value) ? '(bool)' : gettype($value)));
+                    }
                 }
 
                 break;

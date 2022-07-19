@@ -55,9 +55,12 @@ class Color extends Value
         return static::doRender($this->data, $options);
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function doRender(object $data, array $options = []) {
 
-        if (!isset($data->rgba)) {
+        if (!isset($data->rgba) && isset($data->value)) {
 
             static::computeRGBA($data);
         }
