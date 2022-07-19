@@ -185,8 +185,6 @@ class Parser implements ParsableInterface
         }
 
         array_splice($this->errors, count($this->errors), 0, $parser->errors);
-
-//        $this->deduplicate($this->ast);
         return $this;
     }
 
@@ -195,7 +193,7 @@ class Parser implements ParsableInterface
      * @param string $css
      * @param string $media
      * @return Parser
-     * @throws SyntaxError
+     * @throws SyntaxError|IOException
      */
     public function appendContent($css, $media = '')
     {

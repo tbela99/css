@@ -23,6 +23,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
   - remove @charset directive
 - query api with xpath like or class name syntax
 - traverser api to transform the css and ast
+- command line utility
 
 ## Installation
 
@@ -34,7 +35,10 @@ $ composer require "tbela99/css:dev-php56-backport"
 
 ## Requirements
 
-This library requires PHP version >= 5.6
+This library requires:
+- PHP version >= 5.6
+- mbstring extension
+- 
 
 ## Usage:
 
@@ -318,8 +322,7 @@ table.colortable {
   }
 
 
-& th {
-text-align:center;
+& th {text-align:center;
 background:black;
 color:white;
 }
@@ -612,6 +615,86 @@ echo $renderer->render($parser->parse());
 - css_level: produce CSS color level 3 or 4. default to _4_
 - allow_duplicate_declarations: allow duplicate declarations.
 - legacy_rendering: convert nesting css. default false
+
+## Command line utility
+
+the command line utility is located at './cli/css-parser'
+
+```bash
+
+$ ./cli/css-parser -h
+
+Usage: 
+$ css-parser [OPTIONS] [PARAMETERS]
+
+-h	print help
+--help	print extended help
+
+parse options:
+
+-e, --capture-errors                    	ignore parse error
+
+-f, --file                              	css file or url
+
+-m, --flatten-import                    	process @import
+
+-d, --parse-allow-duplicate-declarations	allow duplicate declaration
+
+-p, --parse-allow-duplicate-rules       	allow duplicate rule
+
+render options:
+
+-a, --ast                          	dump ast as JSON
+
+-S, --charset                      	remove @charset
+
+-c, --compress                     	minify output
+
+-u, --compute-shorthand            	compute shorthand properties
+
+-l, --css-level                    	css color module
+
+-G, --legacy-rendering             	legacy rendering
+
+-o, --output                       	output file name
+
+-L, --preserve-license             	preserve license comments
+
+-C, --remove-comments              	remove comments
+
+-E, --remove-empty-nodes           	remove empty nodes
+
+-r, --render-duplicate-declarations	render duplicate declarations
+
+-s, --sourcemap                    	generate sourcemap, require -o
+
+```
+
+### Minify inline css
+
+```bash
+$ ./cli/css-parser 'a, div {display:none} b {}' -c
+#
+$ echo 'a, div {display:none} b {}' | ./cli/css-parser -c
+```
+
+### Minify css file
+
+```bash
+$ ./cli/css-parser -f nested.css -c
+#
+$ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css' -c
+```
+
+### Dump ast
+
+```bash
+$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c -a
+#
+$ ./cli/css-parser 'a, div {display:none} b {}' -c -a
+#
+$ echo 'a, div {display:none} b {}' | ./cli/css-parser -c -a
+```
 
 The full [documentation](https://tbela99.github.io/css) can be found [here](https://tbela99.github.io/css)
 

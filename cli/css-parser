@@ -1,0 +1,184 @@
+#!/bin/php
+<?php
+
+use TBela\CSS\Cli\Exceptions\MissingParameterException;
+use TBela\CSS\Parser;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// only use from the cli
+if (php_sapi_name() != 'cli') {
+
+    fwrite(STDERR, 'this program must be run from the cli');
+    exit(1);
+}
+
+spl_autoload_register(function ($name) {
+
+    $parts = explode('\\', $name);
+
+    if ($parts[0] == 'TBela' && isset($parts[1]) && $parts[1] == 'CSS') {
+
+        array_splice($parts, 0, 2);
+        array_unshift($parts, 'src');
+    }
+
+    $path = __DIR__ . '/../' . implode('/', $parts) . '.php';
+
+    if (is_file($path)) {
+
+        require($path);
+    }
+});
+
+$exe = basename($argv[0]);
+$cli = new TBela\CSS\Cli\Args($argv);
+
+try {
+
+    $cli->
+    setStrict(true);
+
+    $cli->addGroup('parse', "parse options:\n");
+    $cli->add('capture-errors', 'ignore parse error', 'bool', 'e', false, false, null, null, 'parse');
+    $cli->add('flatten-import', 'process @import', 'bool', 'm', false, false, null, null, 'parse');
+    $cli->add('parse-allow-duplicate-rules', 'allow duplicate rule', 'bool', 'p',false, false, null, null, 'parse');
+    $cli->add('parse-allow-duplicate-declarations', 'allow duplicate declaration',  'auto',  'd',false, false, null, null,'parse');
+    $cli->add('file', 'css file or url', 'string', 'f', true, false, null,  null, 'parse');
+
+    $cli->addGroup('render', "render options:\n");
+    $cli->add('css-level', 'css color module', 'int', 'l', false, false, 4, [3, 4], 'render');
+    $cli->add('charset', 'remove @charset', 'bool', 'S',false, false, true, null, 'render');
+    $cli->add('compress', 'minify output', 'bool', 'c',false, false, null, null, 'render');
+    $cli->add('sourcemap', 'generate sourcemap, require -o', 'bool', 's',false, false, null, null, 'render');
+    $cli->add('remove-comments', 'remove comments', 'bool', 'C',false, false, null, null, 'render');
+    $cli->add('preserve-license', 'preserve license comments', 'bool', 'L',false, false, null, null, 'render');
+    $cli->add('legacy-rendering', 'legacy rendering', 'bool', 'G',false, false, null, null, 'render');
+    $cli->add('compute-shorthand', 'compute shorthand properties', 'bool', 'u',false, false, null, null, 'render');
+    $cli->add('remove-empty-nodes', 'remove empty nodes', 'bool', 'E',false, false, null, null, 'render');
+    $cli->add('render-duplicate-declarations', 'render duplicate declarations', 'bool', 'r',false, false, null, null, 'render');
+    $cli->add('output', 'output file name', 'string', 'o',false, false, null, null, 'render');
+    $cli->add('ast', 'dump ast as JSON', 'bool', 'a',false, false, null, null, 'render');
+
+    $cli->parse();
+
+    $parseOptions = [];
+    $renderOptions = [];
+
+    $groups = $cli->getGroups();
+    $args = $cli->getArguments();
+
+    $pipeIn = !posix_isatty(STDIN);
+    $pipeOut = !posix_isatty(STDOUT);
+
+    $inFile = $pipeIn ? STDIN : (isset($args['file']) ? $args['file'] : null);
+    $outFile = $pipeOut ? STDOUT : (isset($args['output']) ? $args['output'] : STDOUT);
+
+    if ($inFile == STDIN) {
+
+        if (!empty($args['file'])) {
+
+            fwrite(STDERR, "> notice: ignoring parameter --file\n");
+        }
+
+        if (!empty($args['_'])) {
+
+            fwrite(STDERR, "> notice: ignoring inline css\n");
+        }
+    }
+
+    if ($outFile == STDOUT && !empty($args['output'])) {
+
+        fwrite(STDERR, "> notice: ignoring parameter --output\n");
+    }
+
+    if (isset($args['sourcemap']) && $outFile == STDOUT) {
+
+        throw new InvalidArgumentException(sprintf("%s: --sourcemap requires --file parameter\nTry '%s --help'", $exe, $exe));
+    }
+
+    foreach (array_keys($groups['parse']['arguments']) as $key) {
+
+        if (isset($args[$key])) {
+
+            $parseOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
+        }
+    }
+
+    foreach (array_keys($groups['render']['arguments']) as $key) {
+
+        if (isset($args[$key])) {
+
+            $renderOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
+        }
+    }
+
+    $parser = new Parser('', $parseOptions);
+
+    if ($inFile) {
+
+        if ($inFile == STDIN) {
+
+            $parser->appendContent(file_get_contents('php://stdin'));
+        } else {
+
+            foreach ((array)$inFile as $file) {
+
+                $parser->load($file);
+            }
+        }
+    } else if (!empty($args['_'])) {
+
+        $parser->appendContent(implode('', $args['_']));
+    } else {
+
+        // no input
+        exit(0);
+    }
+
+    if ($outFile) {
+
+        if (!empty($args['ast'])) {
+
+            if ($outFile == STDOUT) {
+
+                fwrite($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+            } else {
+
+                file_put_contents($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+            }
+
+        } else {
+
+            $renderer = new \TBela\CSS\Renderer($renderOptions);
+
+            if ($outFile == STDOUT) {
+
+                fwrite($outFile, $renderer->renderAst($parser));
+            } else {
+
+                $renderer->save($parser, $outFile);
+            }
+        }
+    }
+} catch (ValueError $e) {
+
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit($e->getCode());
+} catch (UnexpectedValueException $e) {
+
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit($e->getCode());
+} catch (InvalidArgumentException $e) {
+
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit($e->getCode());
+} catch (MissingParameterException $e) {
+
+    fwrite(STDERR, sprintf("%s: %s\nTry '%s --help'\n", $exe, $e->getMessage(), $exe));
+    exit($e->getCode());
+} catch (Exception $e) {
+
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+}
