@@ -1019,8 +1019,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
 
                             foreach ($token->arguments as $arg) {
 
-                                if (($arg->name ?? '') == 'var') {
-
+                                if ($arg->type == 'css-function') {
 
                                     $token->type = 'css-function';
                                     break;
