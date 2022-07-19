@@ -8,6 +8,7 @@ spl_autoload_register(function  ($name) {
 
 	if ($parts[0] == 'TBela' && isset($parts[1]) && $parts[1] == 'CSS') {
 
+        array_splice($parts, 0, 2);
 		array_unshift($parts, 'src');
 	}
 

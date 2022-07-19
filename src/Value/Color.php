@@ -16,16 +16,6 @@ class Color extends Value
     /**
      * @inheritDoc
      */
-    protected function __construct($data)
-    {
-
-        parent::__construct($data);
-
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected static function validate($data)
     {
 
