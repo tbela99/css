@@ -1,5 +1,5 @@
 {
-  "version": "0.3.6",
+  "version": "0.3.8-alpa0",
   "devDependencies": {
     "docsify-cli": "^4.4.3"
   }
