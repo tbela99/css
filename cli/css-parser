@@ -1,6 +1,7 @@
 #!/bin/php
 <?php
 
+use TBela\CSS\Cli\Args;
 use TBela\CSS\Cli\Exceptions\MissingParameterException;
 use TBela\CSS\Parser;
 
@@ -32,7 +33,7 @@ spl_autoload_register(function ($name) {
 });
 
 $exe = basename($argv[0]);
-$cli = new TBela\CSS\Cli\Args($argv);
+$cli = new Args($argv);
 
 try {
 

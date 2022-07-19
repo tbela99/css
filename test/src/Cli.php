@@ -129,19 +129,19 @@ final class Cli extends TestCase
             ],
             [
 
-            (new Args([__FILE__, '-r1']))->add('req', 'required parameter', 'auto',  'r', true, true, null, 'default', [2, 5])->
+            (new Args([__FILE__, '-r1']))->add('req', 'required parameter', 'auto',  'r', true, true, null, [2, 5])->
             setStrict(false),
                 \ValueError::class
             ],
             [
 
-                (new Args([__FILE__, '--req=1']))->add('req', 'required parameter', 'auto', 'r', true, true, null, 'default', [2, 5])->
+                (new Args([__FILE__, '--req=1']))->add('req', 'required parameter', 'auto', 'r', true, true, null, [2, 5])->
                 setStrict(false),
                 \ValueError::class
             ],
             [
 
-                (new Args([__FILE__, '--req=c']))->add('req', 'required parameter', 'int', 'r', true, true, null, 'default', [2, 5])->
+                (new Args([__FILE__, '--req=c']))->add('req', 'required parameter', 'int', 'r', true, true, null, [2, 5])->
                 setStrict(false),
                 \UnexpectedValueException::class
             ]
