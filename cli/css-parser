@@ -74,19 +74,27 @@ try {
     $inFile = $pipeIn ? STDIN : ($args['file'] ?? null);
     $outFile = $pipeOut ? STDOUT : ($args['output'] ?? STDOUT);
 
-    if (isset($args['sourcemap']) && $outFile == STDOUT) {
+    if ($inFile == STDIN) {
 
-        throw new InvalidArgumentException(sprintf("%s: --sourcemap requires --file parameter\nTry '%s --help'", $exe, $exe));
-    }
+        if (!empty($args['file'])) {
 
-    if ($inFile == STDIN && !empty($args['file'])) {
+            fwrite(STDERR, "> notice: ignoring parameter --file\n");
+        }
 
-        fwrite(STDERR, "> notice: ignoring parameter --file\n");
+        if (!empty($args['_'])) {
+
+            fwrite(STDERR, "> notice: ignoring inline css\n");
+        }
     }
 
     if ($outFile == STDOUT && !empty($args['output'])) {
 
         fwrite(STDERR, "> notice: ignoring parameter --output\n");
+    }
+
+    if (isset($args['sourcemap']) && $outFile == STDOUT) {
+
+        throw new InvalidArgumentException(sprintf("%s: --sourcemap requires --file parameter\nTry '%s --help'", $exe, $exe));
     }
 
     foreach (array_keys($groups['parse']['arguments']) as $key) {
@@ -109,11 +117,6 @@ try {
 
     if ($inFile) {
 
-        if (!empty($args['_'])) {
-
-            fwrite(STDERR, "> notice: ignoring inline css\n");
-        }
-
         if ($inFile == STDIN) {
 
             $parser->appendContent(file_get_contents('php://stdin'));
@@ -126,7 +129,7 @@ try {
         }
     } else if (!empty($args['_'])) {
 
-            $parser->appendContent(implode('', $args['_']));
+        $parser->appendContent(implode('', $args['_']));
     } else {
 
         // no input
@@ -137,18 +140,12 @@ try {
 
         if (!empty($args['ast'])) {
 
-            if ($outFile == STDIN) {
+            if ($outFile == STDOUT) {
 
-                fwrite($outFile, json_encode($parser->getAst()));
+                fwrite($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
             } else {
 
-                if ($outFile == STDOUT) {
-
-                    fwrite($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
-                } else {
-
-                    file_put_contents($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
-                }
+                file_put_contents($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
             }
 
         } else {

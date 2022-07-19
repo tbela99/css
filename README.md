@@ -691,7 +691,7 @@ $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.
 ### Dump ast
 
 ```bash
-$ ./cli/css-parser -f nested.css -c -a
+$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c -a
 #
 $ ./cli/css-parser 'a, div {display:none} b {}' -c -a
 #

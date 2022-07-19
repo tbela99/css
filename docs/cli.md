@@ -64,7 +64,7 @@ $ echo 'a, div {display:none} b {}' | ./cli/css-parser -c
 ### Minify css file
 
 ```bash
-$ ./cli/css-parser -f nested.css -c
+$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c
 #
 $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css' -c
 ```
