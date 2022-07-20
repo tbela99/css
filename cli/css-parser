@@ -38,7 +38,8 @@ $cli = new Args($argv);
 try {
 
     $cli->
-    setStrict(true);
+    setStrict(true)->
+    add('version', 'print version number', 'bool', 'v');
 
     $cli->addGroup('parse', "parse options:\n");
     $cli->add('capture-errors', 'ignore parse error', 'bool', 'e', multiple: false, group: 'parse');
@@ -68,6 +69,20 @@ try {
 
     $groups = $cli->getGroups();
     $args = $cli->getArguments();
+
+    if (isset($args['version'])) {
+
+        $data = json_decode(file_get_contents(__DIR__.'/../package.json'), JSON_OBJECT_AS_ARRAY);
+        $metadata = json_decode(file_get_contents(__DIR__.'/../composer.json'), JSON_OBJECT_AS_ARRAY);
+
+        echo sprintf("%s (version %s)
+Copyright (C) %s %s.
+Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implode(', ', array_map(function ($author) {
+
+        return $author['name'];
+        }, $metadata['authors'])));
+        exit (0);
+    }
 
     $pipeIn = !posix_isatty(STDIN);
     $pipeOut = !posix_isatty(STDOUT);
@@ -110,7 +125,7 @@ try {
 
         if (isset($args[$key])) {
 
-            $renderOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
+            $renderOptions[str_replace(['render-', '-'], ['', '_'], $key)] = $args[$key];
         }
     }
 
