@@ -39,21 +39,26 @@ class Parser implements ParsableInterface
 
     protected ?stdClass $ast = null;
 
+    // 65kb
+//    protected int $css_max_size = 66560;
+
     /**
      * @var array
      * @ignore
      */
     protected array $options = [
+//        'threads' => 10,
         'capture_errors' => true,
         'flatten_import' => false,
         'allow_duplicate_rules' => ['font-face'], // set to true for speed
         'allow_duplicate_declarations' => true
     ];
 
+    protected ?int $lastDedupIndex = null;
     /**
      * @var array<string, callable>
      */
-    protected array $event_handlers = [];
+
 
     /**
      * @var object[]
@@ -88,7 +93,7 @@ class Parser implements ParsableInterface
     {
 
         $this->lexer->on($event, $callable);
-        $this->event_handlers[$event][] = $callable;
+
 
         return $this;
     }
@@ -101,19 +106,9 @@ class Parser implements ParsableInterface
     public function off($event, callable $callable)
     {
 
-        if (isset($this->event_handlers[$event])) {
 
-            $this->lexer->off($event, $callable);
+        $this->lexer->off($event, $callable);
 
-            foreach ($this->event_handlers as $key => $handler) {
-
-                if ($handler == $callable) {
-
-                    array_splice($this->event_handlers[$event], $key, 1);
-                    break;
-                }
-            }
-        }
 
         return $this;
     }
@@ -125,13 +120,9 @@ class Parser implements ParsableInterface
      */
     protected function emit(Exception $error): void
     {
-        if (!empty($this->event_handlers['error'])) {
 
-            foreach ($this->event_handlers['error'] as $handler) {
 
-                call_user_func($handler, $error);
-            }
-        }
+        $this->lexer->emit($error);
     }
 
     /**
@@ -139,34 +130,87 @@ class Parser implements ParsableInterface
      * @param string $file
      * @param string $media
      * @return Parser
-     * @throws SyntaxError
      * @throws Exception
      */
-    public function append($file, $media = '')
+    public function append(string $file, string $media = ''): static
     {
 
-        return $this->merge((new self('', $this->options))->load($file, $media));
+
+        $file = Helper::absolutePath($file, Helper::getCurrentDirectory());
+
+        if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
+
+            $content = file_get_contents($file);
+
+        } else {
+
+            $content = Helper::fetchContent($file);
+        }
+
+        if ($content === false) {
+
+            throw new IOException(sprintf('File Not Found "%s" => \'%s:%s:%s\'', $file, $context->location->src ?? null, $context->location->end->line ?? null, $context->location->end->column ?? null), 404);
+        }
+
+        $rule = null;
+
+        $newContext = $this->lexer->createContext();
+        $newContext->src = $file;
+
+        if (is_null($this->ast)) {
+
+            $this->ast = $newContext;
+        }
+
+        if ($media !== '' && $media != 'all') {
+
+            $rule = (object)[
+
+                'type' => 'AtRule',
+                'name' => 'media',
+                'value' => Value::parse($media, null, true, '', '', true)
+            ];
+
+            $rule->location = (object)[
+                'start' => (object)[
+                    'line' => 1,
+                    'column' => 1,
+                    'index' => 0
+                ],
+                'end' => (object)[
+                    'line' => 1,
+                    'column' => 1,
+                    'index' => 0
+                ]
+            ];
+            $rule->src = $file;
+
+            $this->ast->children[] = $rule;
+            $this->pushContext($rule);
+        }
+
+        $this->lexer->setContent($content)->setContext($newContext)->tokenize();
+
+        if ($rule) {
+
+            $this->popContext();
+        }
+
+        return $this;
     }
 
     /**
      * @param Parser $parser
      * @return Parser
-     * @throws SyntaxError|IOException
+     * @throws SyntaxError
      */
-    public function merge($parser)
+    public function merge(Parser $parser)
     {
 
         assert($parser instanceof self);
 
-        if (!isset($this->ast)) {
-
-            $this->getAst();
-        }
-
-        if (!isset($parser->ast)) {
-
-            $parser->getAst();
-        }
+        $this->getAst();
+        $parser->getAst();
 
         if (!isset($this->ast->children)) {
 
@@ -187,16 +231,29 @@ class Parser implements ParsableInterface
      * @param string $css
      * @param string $media
      * @return Parser
-     * @throws SyntaxError|IOException
+     * @throws SyntaxError|IOException|Exception
      */
-    public function appendContent($css, $media = '')
+    public function appendContent(string $css, string $media = '')
     {
         if ($media !== '' && $media != 'all') {
 
             $css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
         }
 
-        return $this->merge(new self($css, $this->options));
+        if (!$this->ast) {
+
+            $this->ast = $this->lexer->createContext();
+            $this->lexer->setContext($this->ast);
+        } else {
+
+            $this->lexer->setContext($this->lexer->createContext());
+        }
+
+        $this->lexer->
+        setContent($css)->
+        tokenize();
+
+        return $this;
     }
 
     /**
@@ -204,6 +261,8 @@ class Parser implements ParsableInterface
      * @param string $css
      * @param string $media
      * @return Parser
+     * @throws IOException
+     * @throws SyntaxError
      */
     public function setContent(string $css, string $media = '')
     {
@@ -213,10 +272,18 @@ class Parser implements ParsableInterface
             $css = '@media ' . $media . '{ ' . rtrim($css) . ' }';
         }
 
+        $this->reset()->appendContent($css);
+
+        return $this;
+    }
+
+    protected function reset(): static
+    {
+
         $this->ast = null;
         $this->errors = [];
         $this->context = [];
-        $this->lexer->setContent($css);
+        $this->lastDedupIndex = null;
 
         return $this;
     }
@@ -226,17 +293,13 @@ class Parser implements ParsableInterface
      * @param string $file
      * @param string $media
      * @return Parser
-     * @throws Exceptions\IOException
+     * @throws Exceptions\IOException|Exception
      */
 
-    public function load($file, $media = '')
+    public function load(string $file, string $media = '')
     {
 
-        $this->lexer->load($file, $media);
-
-        $this->ast = null;
-        $this->errors = [];
-        $this->context = [];
+        $this->reset()->append($file, $media);
 
         return $this;
     }
@@ -294,10 +357,9 @@ class Parser implements ParsableInterface
     public function parse()
     {
 
-        if (is_null($this->ast)) {
 
-            $this->getAst();
-        }
+        $this->getAst();
+
 
         return Element::getInstance($this->ast);
     }
@@ -305,7 +367,6 @@ class Parser implements ParsableInterface
     /**
      * @inheritDoc
      * @throws SyntaxError
-     * @throws Exceptions\IOException
      */
     public function getAst()
     {
@@ -315,105 +376,79 @@ class Parser implements ParsableInterface
             $this->ast = $this->lexer->createContext();
             $this->lexer->setContext($this->ast)->tokenize();
 
-            if ($this->options['flatten_import'] && !empty($this->ast->children)) {
+
+        }
+
+
+        if (!empty($this->ast->children)) {
+
+            $min = min($this->lastDedupIndex, count($this->ast->children) - 1);
+
+
+            if ($this->options['flatten_import']) {
 
                 $i = count($this->ast->children);
 
-                while ($i--) {
+                while ($min < $i--) {
 
-                    try {
 
-                        if ($this->ast->children[$i]->type != 'AtRule' || $this->ast->children[$i]->name != 'import') {
+                    if ($this->ast->children[$i]->type != 'AtRule' || $this->ast->children[$i]->name != 'import') {
 
-                            continue;
-                        }
-
-                        $token = $this->ast->children[$i];
-
-                        preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
-
-                        $media = trim($matches[4] ?? '');
-
-                        if ($media == 'all') {
-
-                            $media = '';
-                        }
-
-                        $file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
-
-                        $parser = (new static)->load($file);
-                        $parser->event_handlers = $this->event_handlers;
-                        $parser->options = $this->options;
-
-                        foreach ($this->event_handlers as $event => $handlers) {
-
-                            foreach ($handlers as $handler) {
-
-                                $parser->lexer->on($event, $handler);
-                            }
-                        }
-
-                        $parser->getAst();
-
-                        if (!empty($parser->errors)) {
-
-                            array_splice($this->errors, count($this->errors), $parser->errors);
-                        }
-
-                        $token->name = 'media';
-
-                        if ($media === '') {
-
-                            unset($token->value);
-                        } else {
-
-                            $token->value = $media;
-                        }
-
-                        $token->children = $parser->ast->children ?? [];
-                        $token->hasDeclaration = true;
-
-                        unset($token->isLeaf);
-                        array_shift($this->imports);
-                    } catch (IOException $e) {
-
-                        if (empty($this->options['capture_errors'])) {
-
-                            throw $e;
-                        }
-
-                        $this->emit($e);
-                        $this->errors[] = $e;
+                        continue;
                     }
+
+                    $token = $this->ast->children[$i];
+
+                    preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
+
+                    $media = trim($matches[4] ?? '');
+
+                    if ($media == 'all') {
+
+                        $media = '';
+                    }
+
+                    $file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
+
+
+                    if ($media === '') {
+
+
+                    } else {
+
+                        $token->value = $media;
+                    }
+
+                    $this->pushContext($token);
+                    $this->append($file, $media);
+
+
+                    $this->popContext();
+
+                    if ($media === '') {
+
+                        array_splice($this->ast->children, $i, 1, $token->children ?? []);
+                    }
+
+
                 }
 
-                if (isset($this->ast->children)) {
 
-                    $i = count($this->ast->children);
-
-                    while ($i--) {
-
-                        if ($this->ast->children[$i]->type == 'AtRule' &&
-                            $this->ast->children[$i]->name == 'media' &&
-                            !isset($this->ast->children[$i]->value)) {
-
-                            array_splice($this->ast->children, $i, 1, $this->ast->children[$i]->children ?? []);
-                        }
-                    }
-                }
             }
 
-            $this->deduplicate($this->ast);
+            $this->deduplicate($this->ast, $this->lastDedupIndex);
+
+            $this->lastDedupIndex = max(0, count($this->ast->children) - 2);
         }
 
         return $this->ast;
     }
 
     /**
-     * @param stdClass $ast
+     * @param object $ast
      * @return stdClass
      */
-    public function deduplicate($ast)
+    public function deduplicate(object $ast, ?int $index = null)
     {
 
         if ($this->options['allow_duplicate_rules'] !== true ||
@@ -423,7 +458,7 @@ class Parser implements ParsableInterface
 
                 case 'Stylesheet':
 
-                    return $this->deduplicateRules($ast);
+                    return $this->deduplicateRules($ast, $index);
 
                 case 'AtRule':
 
@@ -456,12 +491,6 @@ class Parser implements ParsableInterface
             $signature .= ':name:' . $name;
         }
 
-//        $value = $ast->value ?? null;
-
-//        if (isset($value)) {
-//
-//            $signature .= ':value:' .Value::renderTokens($value);
-//        }
 
         $selector = $ast->selector ?? null;
 
@@ -482,9 +511,10 @@ class Parser implements ParsableInterface
 
     /**
      * @param object $ast
+     * @param int $level
      * @return object
      */
-    protected function deduplicateRules(object $ast)
+    protected function deduplicateRules(object $ast, ?int $index = null)
     {
         if (isset($ast->children)) {
 
@@ -496,7 +526,9 @@ class Parser implements ParsableInterface
 
                 $allowed = is_array($this->options['allow_duplicate_rules']) ? $this->options['allow_duplicate_rules'] : [];
 
-                while ($total--) {
+                $min = (int)$index;
+
+                while ($total-- > $min) {
 
                     if ($total > 0) {
 
@@ -750,7 +782,7 @@ class Parser implements ParsableInterface
     protected function enterNode(object $token, object $parentRule, object $parentStylesheet)
     {
 
-        if ($token->type != 'Comment' && strpos($token->type, 'Invalid') !== 0) {
+        if ($token->type != 'Comment' && !str_starts_with($token->type, 'Invalid')) {
 
             $hasCdoCdc = false;
 
@@ -760,7 +792,7 @@ class Parser implements ParsableInterface
 
                 while ($i--) {
 
-                    if (substr($token->leadingcomments[$i], 0, 4) == '<!--') {
+                    if (str_starts_with($token->leadingcomments[$i], '<!--')) {
 
                         $hasCdoCdc = true;
                         array_splice($token->leadingcomments, $i, 1);
@@ -774,7 +806,7 @@ class Parser implements ParsableInterface
 
                 while ($i--) {
 
-                    if (substr($token->trailingcomments[$i], 0, 4) == '<!--') {
+                    if (str_starts_with($token->trailingcomments[$i], '<!--')) {
 
                         $hasCdoCdc = true;
                         array_splice($token->trailingcomments, $i, 1);
@@ -869,10 +901,9 @@ class Parser implements ParsableInterface
 
         try {
 
-            if (!isset($this->ast)) {
 
-                $this->getAst();
-            }
+            $this->getAst();
+
 
             if (isset($this->ast)) {
 
@@ -880,6 +911,7 @@ class Parser implements ParsableInterface
             }
         } catch (Exception $ex) {
 
+            fwrite(STDERR, $ex);
             error_log($ex);
         }
 

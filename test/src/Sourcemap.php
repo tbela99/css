@@ -70,7 +70,7 @@ final class Sourcemap extends TestCase
 
         $element = (new Parser())->load(__DIR__ . '/../sourcemap/sourcemap.css')->
         append(__DIR__ . '/../sourcemap/sourcemap.2.css')->
-        append(__DIR__ . '/../sourcemap/sourcemap.media.css')->parse();
+        append(__DIR__ . '/../sourcemap/sourcemap.media.css');
 
         $renderer = new Renderer([
             'sourcemap' => true
@@ -145,7 +145,7 @@ body {
         $element = (new Parser('', [
             'flatten_import' => true,
             'capture_errors' => false
-        ]))->load(__DIR__ . '/../sourcemap/sourcemap.import.css')->parse();
+        ]))->load(__DIR__ . '/../sourcemap/sourcemap.import.css');
 
         $renderer = new Renderer([
             'sourcemap' => true

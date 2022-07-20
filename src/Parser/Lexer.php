@@ -59,6 +59,7 @@ class Lexer
     public function setContext(object $context): Lexer
     {
 
+        $this->src = $context->src ?? '';
         $this->context = $context;
         $this->parentStylesheet = $context;
 
@@ -137,38 +138,45 @@ class Lexer
 
     /**
      * @return Lexer
-     * @throws SyntaxError
      * @throws Exception
      */
-    public function tokenize(): Lexer
+
+
+    public function tokenize() {
+
+        return $this->doTokenize($this->css, $this->src, $this->recover, $this->context, $this->parentStylesheet, $this->parentMediaRule);
+    }
+
+        // $css, $context
+    public function doTokenize($css, $src, $recover, $context, $parentStylesheet, $parentMediaRule): Lexer
     {
 
-        $position = $this->context->location->end;
+        $position = $context->location->end;
 
         $i = $position->index - 1;
-        $j = strlen($this->css) - 1;
-        $recover = false;
+        $j = strlen($css) - 1;
+//        $recover = false;
 
-        $this->emit('start', $this->context);
+        $this->emit('start', $context);
 
         while ($i++ < $j) {
 
-            while ($i < $j && static::is_whitespace($this->css[$i])) {
+            while ($i < $j && static::is_whitespace($css[$i])) {
 
-                $this->update($position, $this->css[$i]);
-                $position->index += strlen($this->css[$i++]);
+                $this->update($position, $css[$i]);
+                $position->index += strlen($css[$i++]);
             }
 
             $comment = false;
             $token = null;
 
-            if ($this->css[$i] == '/' && substr($this->css, $i + 1, 1) == '*') {
+            if ($css[$i] == '/' && substr($css, $i + 1, 1) == '*') {
 
-                $comment = static::match_comment($this->css, $i, $j);
+                $comment = static::match_comment($css, $i, $j);
 
                 if ($comment === false) {
 
-                    $comment = substr($this->css, $i);
+                    $comment = substr($css, $i);
 
                     $token = (object)[
                         'type' => 'InvalidComment',
@@ -189,16 +197,16 @@ class Lexer
                         'value' => Value::escape($comment)
                     ];
                 }
-            } else if ($this->css[$i] == '<' && substr($this->css, $i, 4) == '<!--') {
+            } else if ($css[$i] == '<' && substr($css, $i, 4) == '<!--') {
 
                 $k = $i + 3;
                 $comment = '<!--';
 
                 while ($k++ < $j) {
 
-                    $comment .= $this->css[$k];
+                    $comment .= $css[$k];
 
-                    if ($this->css[$k] == '-' && substr($this->css, $k, 3) == '-->') {
+                    if ($css[$k] == '-' && substr($css, $k, 3) == '-->') {
 
                         $comment .= '->';
 
@@ -234,12 +242,12 @@ class Lexer
                 $token->location->end->index += strlen($comment) - 1;
                 $token->location->end->column = max($token->location->end->column - 1, 1);
 
-                if ($this->src !== '') {
+                if ($src !== '') {
 
-                    $token->src = $this->src;
+                    $token->src = $src;
                 }
 
-                $this->emit('enter', $token, $this->context, $this->parentStylesheet);
+                $this->emit('enter', $token, $context, $parentStylesheet);
 
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
@@ -248,11 +256,11 @@ class Lexer
                 continue;
             }
 
-            $name = static::substr($this->css, $i, $j, ['{', ';', '}']);
+            $name = static::substr($css, $i, $j, ['{', ';', '}']);
 
             if ($name === false) {
 
-                $name = substr($this->css, $i);
+                $name = substr($css, $i);
             }
 
             if (trim($name) === '') {
@@ -264,7 +272,7 @@ class Lexer
 
             $char = substr(trim($name), -1);
 
-            if (substr($name, 0, 1) != '@' &&
+            if (!str_starts_with($name, '@') &&
                 $char != '{') {
 
                 // $char === ''
@@ -282,7 +290,7 @@ class Lexer
 
                     $parts = Value::split($declaration, ':', 2);
 
-                    if (count($parts) < 2 || $this->context->type == 'Stylesheet') {
+                    if (count($parts) < 2 || $context->type == 'Stylesheet') {
 
                         $token = (object)[
                             'type' => 'InvalidDeclaration',
@@ -293,7 +301,7 @@ class Lexer
                             'value' => rtrim($declaration, "\n\r\t ")
                         ];
 
-                        $this->emit('enter', $token, $this->context, $this->parentStylesheet);
+                        $this->emit('enter', $token, $context, $parentStylesheet);
 
                     } else {
 
@@ -316,9 +324,9 @@ class Lexer
                                 'value' => Value::escape(rtrim($parts[1], "\n\r\t "))
                             ]);
 
-                        if ($this->src !== '') {
+                        if ($src !== '') {
 
-                            $declaration->src = $this->src;
+                            $declaration->src = $src;
                         }
 
                         if (in_array($declaration->name, ['src', 'background', 'background-image'])) {
@@ -422,7 +430,7 @@ class Lexer
                         $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
                         $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
 
-                        $this->emit('enter', $declaration, $this->context, $this->parentStylesheet);
+                        $this->emit('enter', $declaration, $context, $parentStylesheet);
                     }
                 }
 
@@ -465,9 +473,9 @@ class Lexer
                             ]);
                         }
 
-                        if ($this->src !== '') {
+                        if ($src !== '') {
 
-                            $rule->src = $this->src;
+                            $rule->src = $src;
                         }
 
                         if ($rule->name == 'import') {
@@ -516,7 +524,7 @@ class Lexer
 
                     } else {
 
-                        $body = static::_close($this->css, '}', '{', $i + strlen($name), $j);
+                        $body = static::_close($css, '}', '{', $i + strlen($name), $j);
 
                         if ($body === false) {
 
@@ -544,7 +552,7 @@ class Lexer
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                        $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
+                        $this->emit('enter', $rule, $context, $parentStylesheet);
 
                         $this->update($position, $name);
                         $position->index += strlen($name);
@@ -561,7 +569,7 @@ class Lexer
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
 
                         $this->parseComments($rule);
-                        $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
+                        $this->emit('enter', $rule, $context, $parentStylesheet);
 
                         $i += strlen($name) - 1;
                         continue;
@@ -581,9 +589,9 @@ class Lexer
                         'selector' => Value::escape($selector)
                     ];
 
-                    if ($this->src !== '') {
+                    if ($src !== '') {
 
-                        $rule->src = $this->src;
+                        $rule->src = $src;
                     }
                 }
 
@@ -602,18 +610,19 @@ class Lexer
 
                 $this->update($rule->location->end, $name);
 
-                $body = static::_close($this->css, '}', '{', $i + strlen($name), $j);
+                $body = static::_close($css, '}', '{', $i + strlen($name), $j);
 
                 $validRule = true;
+                $eof = false;
 
-                if (substr($body, -1) != '}') {
+                if (!str_ends_with($body, '}')) {
 
                     // if EOF then we must recover this rule #102
-                    $recover = $this->context->type == 'Stylesheet' || $this->recover;
+                    $recover = $context->type == 'Stylesheet' || $recover;
 
-                    if ($recover) {
+                   if ($recover) {
 
-                        $body = substr($this->css, $i + strlen($name));
+                        $body = substr($css, $i + strlen($name));
                     } else {
 
                         $validRule = false;
@@ -621,7 +630,7 @@ class Lexer
                         $rule->value = $body;
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
-                        $this->emit('enter', $rule, $this->context, $this->parentStylesheet);
+                        $this->emit('enter', $rule, $context, $parentStylesheet);
                     }
                 }
 
@@ -631,7 +640,7 @@ class Lexer
 
                     if (!$ignoreRule) {
 
-                        $validRule = $this->getStatus('enter', $rule) == ValidatorInterface::VALID;
+                        $validRule = $this->getStatus('enter', $rule, $context, $parentStylesheet) == ValidatorInterface::VALID;
                     }
                 }
 
@@ -639,53 +648,42 @@ class Lexer
 
                     $rule->location->end->index += strlen($name);
 
-                    $parser = new self($recover ? $body : substr($body, 0, -1), $rule);
-                    $parser->src = $this->src;
-                    $parser->events = $this->events;
-                    $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
-                    $parser->recover = $recover;
+                    $newContext = $rule;
+                    $newParentMediaRule = $parentMediaRule;
 
-                    $parser->off('start')->off('end');
+                    if (isset($parentMediaRule) && $rule->type == 'NestingRule') {
 
-                    $parser->parentMediaRule = $this->parentMediaRule;
-
-                    if (isset($this->parentMediaRule) && $rule->type == 'NestingRule') {
-
-                        $this->parentMediaRule->type = 'NestingMediaRule';
+                        $parentMediaRule->type = 'NestingMediaRule';
                     } else if ($rule->type == 'AtRule' && $rule->name == 'media' &&
                         isset($rule->value) && $rule->value != '' && $rule->value != 'all') {
 
                         // top level media rule
-                        if (isset($parser->parentMediaRule)) {
+                        if (isset($newParentMediaRule)) {
 
-                            $parser->parentMediaRule->type = 'NestingMediaRule';
+                            $newParentMediaRule->type = 'NestingMediaRule';
                         }
 
-                        if ($this->context->type == 'NestingRule' || $this->context->type == 'NestingAtRule') {
+                        if ($context->type == 'NestingRule' || $context->type == 'NestingAtRule') {
 
                             $rule->type = 'NestingMediaRule';
                         }
 
                         // change the current mediaRule
-                        $parser->parentMediaRule = $rule;
+                        $newParentMediaRule = $rule;
                     }
 
-                    $parser->parentStylesheet = !in_array($rule->type, ['AtRule', 'NestingMediaRule']) ? $rule : $this->parentStylesheet;
+                    $newParentStyleSheet = !in_array($rule->type, ['AtRule', 'NestingMediaRule']) ? $rule : $parentStylesheet;
 
-                    $parser->parentOffset = $rule->location->end->index + $this->parentOffset;
-                    $parser->recover = $recover;
+                    if (($parentStylesheet->type ?? null) == 'Rule') {
 
-                    if (($this->parentStylesheet->type ?? null) == 'Rule') {
-
-                        $this->parentStylesheet->type = 'NestingRule';
+                        $parentStylesheet->type = 'NestingRule';
                     }
 
                     $rule->location->end->index = 0;
                     $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                    $parser->tokenize();
+                    $this->doTokenize($recover ? $body : substr($body, 0, -1), $src, $recover, $newContext, $newParentStyleSheet, $newParentMediaRule);
 
-                    $this->update($rule->location->end, substr($body, strlen($parser->css)));
                     $rule->location->end->index += 1;
 
                     $rule->location->end->index = max(1, $rule->location->end->index - 1);
@@ -694,7 +692,7 @@ class Lexer
                     if (!$ignoreRule) {
 
                         $this->parseComments($rule);
-                        $this->emit('exit', $rule, $this->context, $this->parentStylesheet);
+                        $this->emit('exit', $rule, $context, $parentStylesheet);
                     }
                 }
 
@@ -705,19 +703,20 @@ class Lexer
             }
         }
 
-        $this->context->location->end->index = max(1, $this->context->location->end->index - 1);
-        $this->context->location->end->column = max($this->context->location->end->column - 1, 1);
+        $context->location->end->index = max(1, $context->location->end->index - 1);
+        $context->location->end->column = max($context->location->end->column - 1, 1);
 
-        $this->emit('end', $this->context);
+        $this->emit('end', $context);
         return $this;
     }
+
 
     /**
      *
      * @return object
      * @ignore
      */
-    public function createContext()
+    public function createContext(): object
     {
 
         $context = (object)[
@@ -742,32 +741,6 @@ class Lexer
         }
 
         return $context;
-    }
-
-    /**
-     * @param object $position
-     * @param string $string
-     * @return object
-     * @ignore
-     */
-    protected function update(object $position, string $string)
-    {
-
-        $j = strlen($string);
-
-        for ($i = 0; $i < $j; $i++) {
-
-            if ($string[$i] == PHP_EOL) {
-
-                $position->line++;
-                $position->column = 1;
-            } else {
-
-                $position->column++;
-            }
-        }
-
-        return $position;
     }
 
     protected function parseComments(object $token)
@@ -901,9 +874,9 @@ class Lexer
      * @param object $rule
      * @return void
      */
-    protected function getStatus($event, object $rule): int
+    protected function getStatus($event, object $rule, $context, $parentStylesheet): int
     {
-        foreach ($this->emit($event, $rule, $this->context, $this->parentStylesheet) as $status) {
+        foreach ($this->emit($event, $rule, $context, $parentStylesheet) as $status) {
 
             if (is_int($status)) {
 
