@@ -4,15 +4,9 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Property\PropertyList;
 
-// because git changes \n to \r\n at some point, this causes test failure
-function get_content($file)
-{
+require_once __DIR__.'/../bootstrap.php';
 
-    return str_replace("\r\n", "\n", file_get_contents($file));
-}
-
-
-final class Properties extends TestCase
+final class PropertiesTest extends TestCase
 {
     /**
      * @param PropertyList $propertylist

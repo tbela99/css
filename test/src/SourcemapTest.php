@@ -6,12 +6,14 @@ use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Sourcemap extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class SourcemapTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testSourcemapProvider
+     * @dataProvider sourcemapProvider
      */
     public function testSourcemap($expected, $actual): void
     {
@@ -25,7 +27,7 @@ final class Sourcemap extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testSourcemapImportProvider
+     * @dataProvider sourcemapImportProvider
      */
     public function testSourcemapImport($expected, $actual): void
     {
@@ -39,7 +41,7 @@ final class Sourcemap extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testSourcemapUrlProvider
+     * @dataProvider sourcemapUrlProvider
      */
     public function testSourcemapUrl($expected, $actual): void
     {
@@ -53,7 +55,7 @@ final class Sourcemap extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testSourcemapNestedProvider
+     * @dataProvider sourcemapNestedProvider
      */
     public function testSourcemapNested($expected, $actual): void
     {
@@ -64,7 +66,7 @@ final class Sourcemap extends TestCase
         );
     }
 
-    public function testSourcemapProvider() {
+    public function sourcemapProvider() {
 
         $data = [];
 
@@ -138,7 +140,7 @@ body {
      * @throws IOException
      * @throws Parser\SyntaxError
      */
-    public function testSourcemapImportProvider() {
+    public function sourcemapImportProvider() {
 
         $data = [];
 
@@ -215,7 +217,7 @@ body {
      * @throws IOException
      * @throws Parser\SyntaxError
      */
-    public function testSourcemapUrlProvider() {
+    public function sourcemapUrlProvider() {
 
         $data = [];
 
@@ -263,9 +265,9 @@ $parser = (new Parser('', [
     }
 
     /**
-     * @throws IOException;;;;AAIA;;;;;;;AAAgb
+     * @throws IOException|Parser\SyntaxError
      */
-    public function testSourcemapNestedProvider() {
+    public function sourcemapNestedProvider() {
 
         $data = [];
 

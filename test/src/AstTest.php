@@ -5,12 +5,16 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Ast extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class AstTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
      * @dataProvider identifierProvider
+     * @covers \TBela\CSS\Parser
+     * @covers \TBela\CSS\Renderer
      */
     public function testIdentifier($expected, $actual): void
     {

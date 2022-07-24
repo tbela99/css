@@ -6,14 +6,9 @@ use TBela\CSS\Element;
 use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 
-// because git changes \n to \r\n at some point, this causes test failure
-function get_content($file) {
+require_once __DIR__.'/../bootstrap.php';
 
-    return file_get_contents($file);
-}
-
-
-final class Query extends TestCase
+final class QueryTest extends TestCase
 {
     /**
      * @param array $expected

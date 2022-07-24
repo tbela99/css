@@ -6,10 +6,10 @@ use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Color extends TestCase
+final class ColorTest extends TestCase
 {
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param string $content
      * @param string $expected
      * @throws Exception
@@ -24,7 +24,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param $content
      * @param string $expected
      * @throws Exception
@@ -39,7 +39,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param $content
      * @param string $expected
      * @throws Exception
@@ -53,7 +53,7 @@ final class Color extends TestCase
         );
     }
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param $content
      * @param string $expected
      * @throws Exception
@@ -68,7 +68,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param string $content
      * @param string $expected
      * @throws Exception
@@ -83,7 +83,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param string $content
      * @param string $expected
      * @throws Exception
@@ -98,7 +98,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param string $content
      * @param string $expected
      * @throws Exception
@@ -113,7 +113,7 @@ final class Color extends TestCase
     }
 
     /**
-     * @param Renderer $renderer
+     * @param RendererTest $renderer
      * @param string $content
      * @param string $expected
      * @throws Exception

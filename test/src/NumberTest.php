@@ -5,12 +5,14 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Event\Event as EventTest;
 use TBela\CSS\Parser;
 
-final class Number extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class NumberTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testNumberProvider
+     * @dataProvider numberProvider
      */
     public function testNumber(string $expected, string $actual): void
     {
@@ -23,7 +25,7 @@ final class Number extends TestCase
 
 /*
 */
-    public function testNumberProvider () {
+    public function numberProvider () {
 
         $parser = new TBela\CSS\Parser('.row {
  --bs-gutter-x: 1.5rem;

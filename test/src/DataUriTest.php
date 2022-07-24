@@ -9,7 +9,7 @@ use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class DataUri extends TestCase
+final class DataUriTest extends TestCase
 {
     /**
      * @param string $parsed

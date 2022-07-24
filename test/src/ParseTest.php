@@ -5,7 +5,9 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Parse extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class ParseTest extends TestCase
 {
     /**
      * @param string $expected

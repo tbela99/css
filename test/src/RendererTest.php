@@ -12,12 +12,14 @@ use TBela\CSS\Interfaces\ObjectInterface;
 use TBela\CSS\Value;
 use TBela\CSS\Value\CSSFunction;
 
-final class Renderer extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class RendererTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testProvider
+     * @dataProvider provider
      */
     public function test($expected, $actual): void
     {
@@ -30,7 +32,7 @@ final class Renderer extends TestCase
 
     /*
     */
-    public function testProvider () {
+    public function provider () {
 
         $element = (new \TBela\CSS\Parser())->setContent('@font-face {
   font-family: "Bitstream Vera Serif Bold", "Arial", "Helvetica";

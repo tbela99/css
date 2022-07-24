@@ -9,15 +9,9 @@ use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-// because git changes \n to \r\n at some point, this causes test failure
+require_once __DIR__.'/../bootstrap.php';
 
-function get_content($file) {
-
-    return file_get_contents($file);
-}
-
-
-final class Duplicate extends TestCase
+final class DuplicateTest extends TestCase
 {
 
     /**

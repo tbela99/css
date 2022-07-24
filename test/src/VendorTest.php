@@ -5,12 +5,14 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Vendor extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class VendorTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testVendorProvider
+     * @dataProvider vendorProvider
      */
     public function testVendor($expected, $actual): void
     {
@@ -21,7 +23,7 @@ final class Vendor extends TestCase
         );
     }
 
-    public function testVendorProvider() {
+    public function vendorProvider() {
 
         $data = [];
 

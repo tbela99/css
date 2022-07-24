@@ -6,7 +6,7 @@ use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class AstTraverser extends TestCase
+final class AstTraverserTest extends TestCase
 {
     /**
      * @param string $expected

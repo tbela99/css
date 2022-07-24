@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Cli\Args;
 
 
-final class Cli extends TestCase
+final class CliTest extends TestCase
 {
     /**
      * @param array $expected

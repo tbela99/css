@@ -5,12 +5,12 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class EscapeString extends TestCase
+final class EscapeStringTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testEscapeStringProvider
+     * @dataProvider escapeStringProvider
      */
     public function testEscapeString($expected, $actual): void
     {
@@ -21,7 +21,7 @@ final class EscapeString extends TestCase
         );
     }
 
-    public function testEscapeStringProvider() {
+    public function escapeStringProvider() {
 
         $data = [];
 

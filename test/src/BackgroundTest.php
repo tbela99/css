@@ -6,7 +6,7 @@ use TBela\CSS\Parser;
 use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Value;
 
-final class Background extends TestCase
+final class BackgroundTest extends TestCase
 {
     /**
      * @param string $expected

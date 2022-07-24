@@ -4,12 +4,12 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Event\Event as EventTest;
 
-final class Event extends TestCase
+final class EventsTest extends TestCase
 {
     /**
      * @param array $expected
      * @param array $actual
-     * @dataProvider testEventProvider
+     * @dataProvider eventProvider
      */
     public function testEvent(array $expected, array $actual): void
     {
@@ -22,7 +22,7 @@ final class Event extends TestCase
 
 /*
 */
-    public function testEventProvider () {
+    public function eventProvider () {
 
         $emitter = new EventTest();
 

@@ -6,16 +6,17 @@ use TBela\CSS\Parser;
 use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Renderer;
 
-final class Comment extends TestCase
+final class CommentTest extends TestCase
 {
     /**
      * @param string $content
      * @param string $expected
      * @throws Exception
-     * @dataProvider testLicenseCommentsProvider
+     * @dataProvider licenseCommentsProvider
      */
     public function testLicenseComments($content, $expected): void
     {
+
         $this->assertEquals(
             $expected,
             $content
@@ -25,8 +26,9 @@ final class Comment extends TestCase
     /**
      * @param $content
      * @return void
-     * @dataProvider testCdoCdeExceptionsProvider
+     * @dataProvider cdoCdeExceptionsProvider
      *
+     * @throws \TBela\CSS\Exceptions\IOException
      */
     public function testCdoCdeExceptions($content): void
     {
@@ -37,7 +39,7 @@ final class Comment extends TestCase
         ]))->getAst();
     }
 
-    public function testLicenseCommentsProvider () {
+    public function licenseCommentsProvider () {
 
         $renderer = new Renderer([
             'preserve_license' => true,
@@ -187,7 +189,7 @@ body {
         return $data;
     }
 
-    public function testCdoCdeExceptionsProvider() {
+    public function cdoCdeExceptionsProvider() {
 
         $data = [];
 
@@ -199,7 +201,8 @@ body {
 <!-- test 2 -->
  body {
 <!-- test 3 -->
-  grid-template: "aside main" auto/1fr 3fr'];
+  grid-template: "aside main" auto/1fr 3fr'
+        ];
 
         return $data;
     }

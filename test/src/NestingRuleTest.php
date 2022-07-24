@@ -5,12 +5,12 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class NestingRule extends TestCase
+final class NestingRuleTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testNestingRuleProvider
+     * @dataProvider nestingRuleProvider
      */
     public function testNestingRule($expected, $actual): void
     {
@@ -24,7 +24,7 @@ final class NestingRule extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testNestingAtRuleProvider
+     * @dataProvider nestingAtRuleProvider
      */
     public function testNestingAtRule($expected, $actual): void
     {
@@ -38,7 +38,7 @@ final class NestingRule extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testAtRuleProvider
+     * @dataProvider atRuleProvider
      */
     public function testAtRule($expected, $actual): void
     {
@@ -52,7 +52,7 @@ final class NestingRule extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testNestingMediaRuleProvider
+     * @dataProvider nestingMediaRuleProvider
      */
     public function testNestingMediaRule($expected, $actual): void
     {
@@ -66,7 +66,7 @@ final class NestingRule extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testNestingInvalidProvider
+     * @dataProvider nestingInvalidProvider
      */
     public function testNestingInvalid($expected, $actual): void
     {
@@ -80,7 +80,7 @@ final class NestingRule extends TestCase
     /**
      * @param string/ $expected
      * @param string $actual
-     * @dataProvider testNestingRulesProvider
+     * @dataProvider nestingRulesProvider
      */
     public function testNestingRules($expected, $actual): void
     {
@@ -91,7 +91,7 @@ final class NestingRule extends TestCase
         );
     }
 
-    public function testNestingRuleProvider()
+    public function nestingRuleProvider()
     {
 
         $data = [];
@@ -193,7 +193,7 @@ table.colortable {
         return $data;
     }
 
-    public function testNestingAtRuleProvider()
+    public function nestingAtRuleProvider()
     {
 
         $data = [];
@@ -238,7 +238,7 @@ p .foo {
         return $data;
     }
 
-    public function testAtRuleProvider()
+    public function atRuleProvider()
     {
 
         $data = [];
@@ -283,7 +283,7 @@ p .foo {
         return $data;
     }
 
-    public function testNestingMediaRuleProvider()
+    public function nestingMediaRuleProvider()
     {
 
         $data = [];
@@ -332,7 +332,7 @@ p .foo {
         return $data;
     }
 
-    public function testNestingInvalidProvider()
+    public function nestingInvalidProvider()
     {
 
         $data = [];
@@ -453,7 +453,7 @@ p {
         return $data;
     }
 
-    public function testNestingRulesProvider()    {
+    public function nestingRulesProvider()    {
 
         $css = 'table.colortable {
   & td {

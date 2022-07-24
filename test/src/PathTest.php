@@ -5,12 +5,14 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Path extends TestCase
+require_once __DIR__.'/../bootstrap.php';
+
+final class PathTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testRelativeProvider
+     * @dataProvider relativeProvider
      */
     public function testRelative($expected, $actual): void
     {
@@ -24,7 +26,7 @@ final class Path extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testAbsoluteProvider
+     * @dataProvider absoluteProvider
      */
     public function testAbsolute($expected, $actual): void
     {
@@ -38,7 +40,7 @@ final class Path extends TestCase
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testHttpPathProvider
+     * @dataProvider httpPathProvider
      */
     public function testHttpPath($expected, $actual): void
     {
@@ -49,7 +51,7 @@ final class Path extends TestCase
         );
     }
 
-    public function testRelativeProvider() {
+    public function relativeProvider() {
 
         $data = [];
 
@@ -116,7 +118,7 @@ final class Path extends TestCase
         return $data;
     }
 
-    public function testAbsoluteProvider() {
+    public function absoluteProvider() {
 
         $data = [];
 
@@ -165,7 +167,7 @@ final class Path extends TestCase
         return $data;
     }
 
-    public function testHttpPathProvider() {
+    public function httpPathProvider() {
 
         $data = [];
         $port = '9992';

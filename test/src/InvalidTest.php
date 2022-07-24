@@ -5,12 +5,12 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class Invalid extends TestCase
+final class InvalidTest extends TestCase
 {
     /**
      * @param string $expected
      * @param string $actual
-     * @dataProvider testRecoverProvider
+     * @dataProvider recoverProvider
      */
     public function testRecover($expected, $actual): void
     {
@@ -26,7 +26,7 @@ final class Invalid extends TestCase
      * @param Parser $parser
      * @return void
      * @throws Parser\SyntaxError
-     * @dataProvider testExceptionProvider
+     * @dataProvider exceptionProvider
      */
     public function testException($actual, Parser $parser): void
     {
@@ -35,7 +35,7 @@ final class Invalid extends TestCase
         $parser->setContent($actual)->getAst();
     }
 
-    public function testRecoverProvider() {
+    public function recoverProvider() {
 
         $data = [];
 
@@ -149,7 +149,7 @@ content: "bar bar;
     }
 
 
-    public function testExceptionProvider() {
+    public function exceptionProvider() {
 
         $data = [];
 

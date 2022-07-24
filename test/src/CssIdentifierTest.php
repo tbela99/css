@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class CssIdentifier extends TestCase
+final class CssIdentifierTest extends TestCase
 {
     /**
      * @param string $expected

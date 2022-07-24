@@ -9,7 +9,7 @@ use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
-final class ElementProperties extends TestCase
+final class ElementPropertiesTest extends TestCase
 {
     /**
      * @param $content

@@ -1,15 +1,16 @@
 #!/bin/sh
 ##!/bin/sh -x
 # # to run run a particular test, give the file name without extension as a parameter
-##  ./runtest.sh Render
-# to run all tests but a specific test, prepend '-' in front of the test name
-## ./runtest.sh -Minify
+##  ./runtest.sh Render Ast Sourcemap
+# to run all but specific tests, prepend '-' in front of the test name
+## ./runtest.sh -Minify -Ast -Sourcemap
 # to run all the tests with no argument
 ## ./runtest.sh
 ##
 #set -x
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 cd "$DIR"
+unset DIR
 
 [ ! -f "../phpunit.phar" ] &&
   wget -O ../phpunit.phar https://phar.phpunit.de/phpunit-9.5.11.phar  &&
@@ -26,6 +27,20 @@ fail() {
   exit 1
 }
 
+run() {
+
+  #
+  php -dmemory_limit=256M ../phpunit.phar -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+}
+
+testName() {
+
+      fname=$(basename "$1" | awk -F . '{print $1}')
+
+      # strip the Test suffix
+      echo ""${fname%Test}
+}
+
 #
 #
 cd ../test
@@ -40,9 +55,12 @@ if [ $# -gt 0 ]; then
     for file in $(ls src/*.php); do
       fname=$(basename "$file" | awk -F . '{print $1}')
 
+      # strip the Test suffix
+      fname=""${fname%Test}
+
       case "$@" in
       *-$fname*) continue ;;
-      *) php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file" ;;
+      *) run "$file" || fail "$file" ;;
       esac
     done
     ;;
@@ -50,10 +68,14 @@ if [ $# -gt 0 ]; then
     for file in $(ls src/*.php); do
 
       fname=$(basename "$file" | awk -F . '{print $1}')
+      # strip the Test suffix
+      fname=""${fname%Test}
 
       case "$@" in
       *$fname*)
-        php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+
+
+        run "$file" || fail "$file"
         ;;
       esac
     done
@@ -62,6 +84,6 @@ if [ $# -gt 0 ]; then
 else
     # no argument
     for file in $(ls src/*.php); do
-        php -dmemory_limit=256M ../phpunit.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+        run "$file" || fail "$file"
     done
 fi

@@ -7,7 +7,7 @@ use TBela\CSS\Compiler;
 use TBela\CSS\Parser;
 use TBela\CSS\Property\PropertyList;
 
-final class Font extends TestCase
+final class FontTest extends TestCase
 {
     /**
      * @param string $css

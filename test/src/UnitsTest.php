@@ -4,8 +4,9 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use TBela\CSS\Parser;
 
+require_once __DIR__.'/../bootstrap.php';
 
-final class Unit extends TestCase
+final class UnitsTest extends TestCase
 {
     /**
      * @param string $expected
