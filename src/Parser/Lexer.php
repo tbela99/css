@@ -14,7 +14,9 @@ class Lexer
     use ParserTrait;
     use EventTrait;
 
-    protected int $parentOffset = 0;
+    // parent location index
+    protected ?object $parentOffset = null;
+
     protected ?object $parentStylesheet = null;
     protected ?object $parentMediaRule = null;
 
@@ -38,6 +40,12 @@ class Lexer
 
         $this->css = rtrim($css);
         $this->context = $context;
+        $this->setParentOffset((object)[
+            'line' => 1,
+            'column' => 1,
+            'index' => 0,
+            'src' => ''
+        ]);
     }
 
     /**
@@ -48,7 +56,7 @@ class Lexer
     {
 
         $this->css = $css;
-        $this->src = '';
+        $this->src = $this->parentOffset->src;
         return $this;
     }
 
@@ -59,7 +67,7 @@ class Lexer
     public function setContext(object $context): Lexer
     {
 
-        $this->src = $context->src ?? '';
+        $this->src = $context->src ?? $this->parentOffset->src;
         $this->context = $context;
         $this->parentStylesheet = $context;
 
@@ -153,11 +161,8 @@ class Lexer
 
         $position = $context->location->end;
 
-        $i = $position->index - 1;
+        $i = -1; // $position->index - 1;
         $j = strlen($css) - 1;
-//        $recover = false;
-
-        $this->emit('start', $context);
 
         while ($i++ < $j) {
 
@@ -424,8 +429,8 @@ class Lexer
                             }
                         }
 
-                        $declaration->location->start->index += $this->parentOffset;
-                        $declaration->location->end->index += $this->parentOffset;
+                        $declaration->location->start->index += $this->parentOffset->index;
+                        $declaration->location->end->index += $this->parentOffset->index;
 
                         $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
                         $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
@@ -438,7 +443,7 @@ class Lexer
                 $position->index += strlen($name);
 
                 $i += strlen($name) - 1;
-                continue;
+               continue;
             }
 
             if ($name[0] == '@' || $char == '{') {
@@ -546,10 +551,10 @@ class Lexer
                             'value' => Value::escape($name)
                         ];
 
-                        $rule->location->start->index += $this->parentOffset;
-                        $rule->location->end->index += $this->parentOffset;
+                        $rule->location->start->index += $this->parentOffset->index;
+                        $rule->location->end->index += $this->parentOffset->index;
 
-                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
+                        $rule->location->end->line = max(1, $rule->location->end->line - 1);
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                         $this->emit('enter', $rule, $context, $parentStylesheet);
@@ -628,8 +633,8 @@ class Lexer
                         $validRule = false;
                         $rule->type = 'InvalidRule';
                         $rule->value = $body;
-                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
-                        $rule->location->end->column = max($rule->location->end->column - 1, 1);
+//                        $rule->location->end->index = max(1, $rule->location->end->index - 1);
+//                        $rule->location->end->column = max($rule->location->end->column - 1, 1);
                         $this->emit('enter', $rule, $context, $parentStylesheet);
                     }
                 }
@@ -679,14 +684,15 @@ class Lexer
                         $parentStylesheet->type = 'NestingRule';
                     }
 
-                    $rule->location->end->index = 0;
+//                    $rule->location->end->index = 0;
                     $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                     $this->doTokenize($recover ? $body : substr($body, 0, -1), $src, $recover, $newContext, $newParentStyleSheet, $newParentMediaRule);
 
                     $rule->location->end->index += 1;
 
-                    $rule->location->end->index = max(1, $rule->location->end->index - 1);
+                    $rule->location->start->index = max(1, $rule->location->start->index - 1) + $this->parentOffset->index;
+                    $rule->location->end->index = max(1, $rule->location->end->index - 1) + $this->parentOffset->index;
                     $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                     if (!$ignoreRule) {
@@ -700,16 +706,31 @@ class Lexer
                 $this->update($position, $string);
                 $position->index += strlen($string);
                 $i += strlen($string) - 1;
+
+                $rule->location->end = clone $position;
+//                $rule->location->start->index += $this->parentOffset->index;
+                $rule->location->end->index += $this->parentOffset->index;
+//
+//                $rule->location->end->line = max(1, $rule->location->end->line - 1);
+//                $rule->location->end->column = max($rule->location->end->column - 1, 1);
+
             }
         }
 
         $context->location->end->index = max(1, $context->location->end->index - 1);
         $context->location->end->column = max($context->location->end->column - 1, 1);
 
-        $this->emit('end', $context);
+//        $this->emit('end', $context);
         return $this;
     }
 
+    public function setParentOffset(object $parentOffset): static
+    {
+
+        $this->parentOffset = clone $parentOffset;
+        $this->src = $parentOffset->src ?? '';
+        return $this;
+    }
 
     /**
      *
@@ -722,18 +743,12 @@ class Lexer
         $context = (object)[
             'type' => 'Stylesheet',
             'location' => (object)[
-                'start' => (object)[
-                    'line' => 1,
-                    'column' => 1,
-                    'index' => 0
-                ],
-                'end' => (object)[
-                    'line' => 1,
-                    'column' => 1,
-                    'index' => 0
-                ]
+                'start' => clone $this->parentOffset,
+                'end' => clone $this->parentOffset
             ]
         ];
+
+        $context->location->start->index = $context->location->end->index = 0;
 
         if ($this->src !== '') {
 

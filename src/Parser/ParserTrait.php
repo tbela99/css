@@ -89,7 +89,7 @@ trait ParserTrait
     public static function substr(string $string, int $startPosition, int $endPosition, array $char_stop)
     {
 
-        if ($startPosition < 0 || substr($string, $startPosition, 1) === false) {
+        if ($startPosition < 0) {
 
             return false;
         }

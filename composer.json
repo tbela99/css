@@ -40,7 +40,8 @@
     "ext-json": "*",
     "ext-curl": "*",
     "ext-mbstring": "*",
-    "ext-posix": "*"
+    "ext-posix": "*",
+    "symfony/process": "^6.1"
   },
   "scripts": {
     "test": "./bin/runtest.sh"

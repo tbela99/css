@@ -129,7 +129,7 @@ class Option
         return $this;
     }
 
-    public function isSet(): bool
+    public function isValueSet(): bool
     {
 
         return $this->isset || isset($this->defaultValue);

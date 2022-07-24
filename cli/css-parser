@@ -39,20 +39,28 @@ try {
 
     $cli->
     setStrict(true)->
-    add('version', 'print version number', 'bool', 'v');
+    add('version', 'print version number', 'bool', 'v', multiple: false);
+    // --data-src="%s" --data-position-index=%s --data-position-line=%s --data-position-column=%s
+    $cli->addGroup('internal', "internal commands are used by the multithreading feature:\n", true);
+    $cli->add('parse-ast-src', 'src value of the ast nodes', 'string', group: 'internal');
+    $cli->add('parse-ast-position-index', 'initial index position of the ast nodes', 'int', group: 'internal');
+    $cli->add('parse-ast-position-line', 'initial line number of the ast nodes', 'int', group: 'internal');
+    $cli->add('parse-ast-position-column', 'initial column number of the ast nodes', 'int', group: 'internal');
 
     $cli->addGroup('parse', "parse options:\n");
     $cli->add('capture-errors', 'ignore parse error', 'bool', 'e', multiple: false, group: 'parse');
     $cli->add('flatten-import', 'process @import', 'bool', 'm', multiple: false, group: 'parse');
     $cli->add('parse-allow-duplicate-rules', 'allow duplicate rule', 'bool', 'p', multiple: false, group: 'parse');
     $cli->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: 'auto', alias: 'd', multiple: false, group: 'parse');
-    $cli->add('file', 'css file or url', 'string', 'f', multiple: true, group: 'parse');
+    $cli->add('file', 'input css file or url', 'string', 'f', multiple: true, group: 'parse');
+    $cli->add('parse-multi-processing', 'enable multi-process parser', 'bool', 'M', multiple: false, defaultValue: true, group: 'parse');
+    $cli->add('parse-children-process', 'maximum children process', 'int', 'P', multiple: false, defaultValue: 20, group: 'parse');
 
     $cli->addGroup('render', "render options:\n");
     $cli->add('css-level', 'css color module', 'int', 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render');
     $cli->add('charset', 'remove @charset', 'bool', 'S', multiple: false, defaultValue: true, group: 'render');
     $cli->add('compress', 'minify output', 'bool', 'c', multiple: false, group: 'render');
-    $cli->add('sourcemap', 'generate sourcemap, require -o', 'bool', 's', multiple: false, group: 'render');
+    $cli->add('sourcemap', 'generate sourcemap', 'bool', 's', multiple: false, dependsOn: 'file', group: 'render');
     $cli->add('remove-comments', 'remove comments', 'bool', 'C', multiple: false, group: 'render');
     $cli->add('preserve-license', 'preserve license comments', 'bool', 'L', multiple: false, group: 'render');
     $cli->add('legacy-rendering', 'legacy rendering', 'bool', 'G', multiple: false, group: 'render');
@@ -61,6 +69,7 @@ try {
     $cli->add('render-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render');
     $cli->add('output', 'output file name', 'string', 'o', multiple: false, group: 'render');
     $cli->add('ast', 'dump ast as JSON', 'bool', 'a', multiple: false, group: 'render');
+    $cli->add('format', 'ast export format', 'string', 'F', multiple: false, options: ['json', 'serialize'], dependsOn: 'ast', group: 'render');
 
     $cli->parse();
 
@@ -129,7 +138,23 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
     }
 
-    $parser = new Parser('', $parseOptions);
+    foreach (array_keys($groups['internal']['arguments']) as $key) {
+
+        if (isset($args[$key])) {
+
+            if (str_starts_with($key, 'parse-')) {
+
+                $parseOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
+            }
+
+            else if (str_starts_with($key, 'render-')) {
+
+                $renderOptions[str_replace(['render-', '-'], ['', '_'], $key)] = $args[$key];
+            }
+        }
+    }
+
+    $parser = new Parser(options: $parseOptions);
 
     if ($inFile) {
 
@@ -156,12 +181,24 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
         if (!empty($args['ast'])) {
 
+            $ast = $parser->getAst();
+
+            if (($args['format'] ?? 'json') == 'serialize') {
+
+                $ast = serialize($ast);
+            }
+
+            else {
+
+                $ast = json_encode($ast, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0);
+            }
+
             if ($outFile == STDOUT) {
 
-                fwrite($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+                fwrite($outFile, $ast);
             } else {
 
-                file_put_contents($outFile, json_encode($parser->getAst(), empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+                file_put_contents($outFile, $ast);
             }
 
         } else {
