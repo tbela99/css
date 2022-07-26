@@ -52,6 +52,11 @@ class Helper
     public static function getCurrentDirectory()
     {
 
+        if (php_sapi_name() == 'cli') {
+
+            return getcwd();
+        }
+
         if (isset($_SERVER['PWD'])) {
 
             // when executing via the cli

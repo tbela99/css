@@ -44,7 +44,7 @@ testName() {
 #
 #
 cd ../test
-pwd
+#pwd
 #
 #
 if [ $# -gt 0 ]; then

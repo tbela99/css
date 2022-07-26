@@ -1,16 +1,17 @@
-#!/bin/php
+#!/usr/bin/env php
 <?php
 
 use TBela\CSS\Cli\Args;
 use TBela\CSS\Cli\Exceptions\MissingParameterException;
 use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 // only use from the cli
 if (php_sapi_name() != 'cli') {
 
-    fwrite(STDERR, 'this program must be run from the cli');
+    fwrite(STDERR, 'this program must be executed from the cli');
     exit(1);
 }
 
@@ -69,7 +70,7 @@ try {
     $cli->add('render-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render');
     $cli->add('output', 'output file name', 'string', 'o', multiple: false, group: 'render');
     $cli->add('ast', 'dump ast as JSON', 'bool', 'a', multiple: false, group: 'render');
-    $cli->add('format', 'ast export format', 'string', 'F', multiple: false, options: ['json', 'serialize'], dependsOn: 'ast', group: 'render');
+    $cli->add('output-format', 'ast export format', 'string', 'F', multiple: false, options: ['json', 'serialize'], dependsOn: 'ast', group: 'render');
 
     $cli->parse();
 
@@ -183,7 +184,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
             $ast = $parser->getAst();
 
-            if (($args['format'] ?? 'json') == 'serialize') {
+            if (($args['output-format'] ?? 'json') == 'serialize') {
 
                 $ast = serialize($ast);
             }
@@ -203,7 +204,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
         } else {
 
-            $renderer = new \TBela\CSS\Renderer($renderOptions);
+            $renderer = new Renderer($renderOptions);
 
             if ($outFile == STDOUT) {
 

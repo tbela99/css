@@ -432,8 +432,8 @@ class Lexer
                         $declaration->location->start->index += $this->parentOffset->index;
                         $declaration->location->end->index += $this->parentOffset->index;
 
-                        $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
-                        $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
+//                        $declaration->location->end->index = max(1, $declaration->location->end->index - 1);
+//                        $declaration->location->end->column = max($declaration->location->end->column - 1, 1);
 
                         $this->emit('enter', $declaration, $context, $parentStylesheet);
                     }
@@ -618,7 +618,7 @@ class Lexer
                 $body = static::_close($css, '}', '{', $i + strlen($name), $j);
 
                 $validRule = true;
-                $eof = false;
+//                $eof = false;
 
                 if (!str_ends_with($body, '}')) {
 
@@ -684,22 +684,17 @@ class Lexer
                         $parentStylesheet->type = 'NestingRule';
                     }
 
-//                    $rule->location->end->index = 0;
-                    $rule->location->end->column = max($rule->location->end->column - 1, 1);
+                    $rule->location->end->index = 0;
+//                    $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
                     $this->doTokenize($recover ? $body : substr($body, 0, -1), $src, $recover, $newContext, $newParentStyleSheet, $newParentMediaRule);
 
-                    $rule->location->end->index += 1;
+//                    $rule->location->end->index += 1;
+//
+//                    $rule->location->start->index = max(1, $rule->location->start->index - 1) + $this->parentOffset->index;
+//                    $rule->location->end->index = max(1, $rule->location->end->index - 1) + $this->parentOffset->index;
+//                    $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                    $rule->location->start->index = max(1, $rule->location->start->index - 1) + $this->parentOffset->index;
-                    $rule->location->end->index = max(1, $rule->location->end->index - 1) + $this->parentOffset->index;
-                    $rule->location->end->column = max($rule->location->end->column - 1, 1);
-
-                    if (!$ignoreRule) {
-
-                        $this->parseComments($rule);
-                        $this->emit('exit', $rule, $context, $parentStylesheet);
-                    }
                 }
 
                 $string = $name . $body;
@@ -708,12 +703,17 @@ class Lexer
                 $i += strlen($string) - 1;
 
                 $rule->location->end = clone $position;
-//                $rule->location->start->index += $this->parentOffset->index;
+                $rule->location->start->index += $this->parentOffset->index;
                 $rule->location->end->index += $this->parentOffset->index;
 //
 //                $rule->location->end->line = max(1, $rule->location->end->line - 1);
-//                $rule->location->end->column = max($rule->location->end->column - 1, 1);
+                $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
+                if (!$ignoreRule) {
+
+                    $this->parseComments($rule);
+                    $this->emit('exit', $rule, $context, $parentStylesheet);
+                }
             }
         }
 
