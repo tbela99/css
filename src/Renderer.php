@@ -448,7 +448,14 @@ class Renderer
                     $children[] = $child;
                 } else if ($child->type == 'Declaration' || $child->type == 'Comment') {
 
-                    $properties->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
+                    $name = $child->name ?? null;
+
+                    if (isset($name) && !$this->options['allow_duplicate_declarations'] && $properties->has($name)) {
+
+                        $properties->remove($name);
+                    }
+
+                    $properties->set($name, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
                 } else {
 
                     $children[] = $child;
@@ -719,15 +726,10 @@ class Renderer
 
         if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-//            $comments = $ast->trailingcomments;
-
-//            if (!empty($comments)) {
-
             foreach ($ast->trailingcomments as $comment) {
 
                 $value .= ' ' . $comment;
             }
-//            }
         }
 
         settype($level, 'int');

@@ -22,7 +22,6 @@ for the JavaScript code in this file
 */
 var menudata={children:[
 {text:"Main Page",url:"index.html"},
-{text:"Related Pages",url:"pages.html"},
 {text:"Namespaces",url:"namespaces.html",children:[
 {text:"Namespace List",url:"namespaces.html"}]},
 {text:"Classes",url:"annotated.html",children:[
@@ -45,7 +44,7 @@ var menudata={children:[
 {text:"k",url:"functions_k.html#index_k"},
 {text:"l",url:"functions_l.html#index_l"},
 {text:"m",url:"functions_m.html#index_m"},
-{text:"n",url:"functions_n.html#index_n"},
+{text:"o",url:"functions_o.html#index_o"},
 {text:"p",url:"functions_p.html#index_p"},
 {text:"q",url:"functions_q.html#index_q"},
 {text:"r",url:"functions_r.html#index_r"},
@@ -68,7 +67,7 @@ var menudata={children:[
 {text:"k",url:"functions_func_k.html#index_k"},
 {text:"l",url:"functions_func_l.html#index_l"},
 {text:"m",url:"functions_func_m.html#index_m"},
-{text:"n",url:"functions_func_n.html#index_n"},
+{text:"o",url:"functions_func_o.html#index_o"},
 {text:"p",url:"functions_func_p.html#index_p"},
 {text:"q",url:"functions_func_q.html#index_q"},
 {text:"r",url:"functions_func_r.html#index_r"},

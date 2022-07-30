@@ -102,10 +102,13 @@ $(document).ready(function(){initNavTree('d2/dc7/interfaceTBela_1_1CSS_1_1Interf
 <area href="../../d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html" alt="TBela\CSS\Interfaces\ParsableInterface" shape="rect" coords="0,0,252,24"/>
 <area href="../../d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface.html" alt="TBela\CSS\Interfaces\ObjectInterface" shape="rect" coords="262,0,514,24"/>
 <area href="../../d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html" alt="TBela\CSS\Element\RuleList" shape="rect" coords="524,280,776,304"/>
-<area href="../../df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html" alt="TBela\CSS\Element\Rule" shape="rect" coords="393,336,645,360"/>
-<area href="../../d9/d56/classTBela_1_1CSS_1_1Element_1_1RuleSet.html" alt="TBela\CSS\Element\RuleSet" shape="rect" coords="655,336,907,360"/>
-<area href="../../d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html" alt="TBela\CSS\Element\AtRule" shape="rect" coords="524,392,776,416"/>
-<area href="../../d2/d6b/classTBela_1_1CSS_1_1Element_1_1Stylesheet.html" alt="TBela\CSS\Element\Stylesheet" shape="rect" coords="786,392,1038,416"/>
+<area href="../../df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html" alt="TBela\CSS\Element\Rule" shape="rect" coords="327,336,579,360"/>
+<area href="../../d9/d56/classTBela_1_1CSS_1_1Element_1_1RuleSet.html" alt="TBela\CSS\Element\RuleSet" shape="rect" coords="720,336,972,360"/>
+<area href="../../d2/de2/classTBela_1_1CSS_1_1Element_1_1NestingRule.html" alt="TBela\CSS\Element\NestingRule" shape="rect" coords="327,392,579,416"/>
+<area href="../../d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html" alt="TBela\CSS\Element\AtRule" shape="rect" coords="589,392,841,416"/>
+<area href="../../d2/d6b/classTBela_1_1CSS_1_1Element_1_1Stylesheet.html" alt="TBela\CSS\Element\Stylesheet" shape="rect" coords="851,392,1103,416"/>
+<area href="../../db/d88/classTBela_1_1CSS_1_1Element_1_1NestingAtRule.html" alt="TBela\CSS\Element\NestingAtRule" shape="rect" coords="327,448,579,472"/>
+<area href="../../d9/d7d/classTBela_1_1CSS_1_1Element_1_1NestingMediaRule.html" alt="TBela\CSS\Element\NestingMediaRule" shape="rect" coords="589,448,841,472"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -144,6 +147,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3e5941fb90c0567cba1808bc231482b5 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3483da3bec8cf5096d964d196df0e8f9 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html#a3483da3bec8cf5096d964d196df0e8f9">getValue</a> ()</td></tr>
 <tr class="separator:a3483da3bec8cf5096d964d196df0e8f9 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d8afbca32b79daf982ea8fe4bf4a982 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html#a2d8afbca32b79daf982ea8fe4bf4a982">getRawValue</a> ()</td></tr>
+<tr class="separator:a2d8afbca32b79daf982ea8fe4bf4a982 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6e9049723837635ebfb8c50fdcaae01 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html#ac6e9049723837635ebfb8c50fdcaae01">setValue</a> ($value)</td></tr>
 <tr class="separator:ac6e9049723837635ebfb8c50fdcaae01 inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a645804ef36d64fa749519afbba591d3f inherit pub_methods_interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html#a645804ef36d64fa749519afbba591d3f">getParent</a> ()</td></tr>
@@ -498,12 +503,12 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
 
-<p>Implemented in <a class="el" href="../../d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html#a7f343f92698833d9aeeb50ee62e03fac">TBela\CSS\Element\RuleList</a>, <a class="el" href="../../df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html#a9add714608b877ea3bf74d0d6382540a">TBela\CSS\Element\Rule</a>, and <a class="el" href="../../d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html#a2ada80987564211ccf11fa5fe40d3a2e">TBela\CSS\Element\AtRule</a>.</p>
+<p>Implemented in <a class="el" href="../../df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html#a9add714608b877ea3bf74d0d6382540a">TBela\CSS\Element\Rule</a>, <a class="el" href="../../d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html#a7f343f92698833d9aeeb50ee62e03fac">TBela\CSS\Element\RuleList</a>, <a class="el" href="../../d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html#a2ada80987564211ccf11fa5fe40d3a2e">TBela\CSS\Element\AtRule</a>, <a class="el" href="../../d9/d7d/classTBela_1_1CSS_1_1Element_1_1NestingMediaRule.html#aee90bf112a223c8a05c524264c7ebcf2">TBela\CSS\Element\NestingMediaRule</a>, and <a class="el" href="../../d2/de2/classTBela_1_1CSS_1_1Element_1_1NestingRule.html#a81ca6e35c73ebf145354ebf5886af277">TBela\CSS\Element\NestingRule</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this interface was generated from the following file:<ul>
-<li>src/TBela/CSS/Interfaces/RuleListInterface.php</li>
+<li>src/Interfaces/RuleListInterface.php</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

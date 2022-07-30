@@ -10,6 +10,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 - multibyte characters encoding
 - sourcemap
+- multiprocessing: process large CSS input very fast
 - CSS Nesting module
 - partially implemented CSS Syntax module level 3
 - partial CSS validation
@@ -599,7 +600,7 @@ echo $renderer->render($parser->parse());
 ## Parser Options
 
 - flatten_import: process @import directive and import the content into the css document. default to false.
-- allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
+- allow_duplicate_rules: allow duplicated rules. By default, duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 
@@ -683,7 +684,7 @@ $ echo 'a, div {display:none} b {}' | ./cli/css-parser -c
 ### Minify css file
 
 ```bash
-$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c
+$ ./cli/css-parser -f nested.css -c
 #
 $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css' -c
 ```
@@ -691,7 +692,7 @@ $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.
 ### Dump ast
 
 ```bash
-$ ./cli/css-parser -f nested.css -c -a
+$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c -a
 #
 $ ./cli/css-parser 'a, div {display:none} b {}' -c -a
 #

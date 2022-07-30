@@ -68,6 +68,22 @@ class PropertyMap
         $this->config = $config;
     }
 
+    // @todo vendor prefix support
+    public function has($property): bool
+    {
+
+        return isset($this->properties[$property]);
+    }
+
+    // @todo vendor prefix support
+    public function remove($property): static
+    {
+
+        unset($this->properties[$property]);
+
+        return $this;
+    }
+
     /**
      * set property value
      * @param string $name

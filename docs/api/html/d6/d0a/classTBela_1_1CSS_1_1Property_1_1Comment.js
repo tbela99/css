@@ -1,9 +1,8 @@
 var classTBela_1_1CSS_1_1Property_1_1Comment =
 [
     [ "__construct", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adb2fe1b9e16a2bf23eb4dcdeea99c7f3", null ],
-    [ "getHash", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#aae64815155b9fc730a40196a85db2c65", null ],
     [ "getLeadingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#aa28f2473108078963f00e14c17ea328a", null ],
-    [ "getName", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#ab96c223cc8ac10f463846dc5f4e2b10b", null ],
+    [ "getName", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a75554aaec8017cdb87e331741f8b0f72", null ],
     [ "getTrailingComments", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#a680059b4e96b87d2c42568fcbf652f91", null ],
     [ "getValue", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adae7628585309924722549165b2797f8", null ],
     [ "render", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html#adf81e62b6301bd22a2d30ddf74535251", null ],
