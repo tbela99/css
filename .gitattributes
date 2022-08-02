@@ -23,5 +23,6 @@
 #
 # do not replace lf by crlf
 *.css text
+*.php text
 text eol=lf
 

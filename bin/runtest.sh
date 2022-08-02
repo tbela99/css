@@ -12,9 +12,9 @@ DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 cd "$DIR"
 unset DIR
 
-[ ! -f "../phpunit.phar" ] &&
-  wget -O ../phpunit.phar https://phar.phpunit.de/phpunit-9.5.11.phar  &&
-  chmod +x ../phpunit.phar
+#[ ! -f "../phpunit.phar" ] &&
+#  wget -O ../phpunit.phar https://phar.phpunit.de/phpunit-9.5.11.phar  &&
+#  chmod +x ../phpunit.phar
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -30,7 +30,7 @@ fail() {
 run() {
 
   #
-  php -dmemory_limit=256M ../phpunit.phar -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+  php -dmemory_limit=256M ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
 }
 
 testName() {
