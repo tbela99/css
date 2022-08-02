@@ -5,6 +5,7 @@
 /tool/ export-ignore
 /composer.lock export-ignore
 /composer.phar export-ignore
+/.editorconfig export-ignore
 /.gitignore export-ignore
 /.gitattributes export-ignore
 /.phpunit.result.cache export-ignore
@@ -24,5 +25,6 @@
 # do not replace lf by crlf
 *.css text
 *.php text
+*.json text
 text eol=lf
 
