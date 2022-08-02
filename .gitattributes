@@ -22,5 +22,6 @@
 /benchmark/** linguist-vendored
 #
 # do not replace lf by crlf
-*.css binary
+*.css text
+text eol=lf
 
