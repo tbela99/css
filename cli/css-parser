@@ -39,8 +39,8 @@ $cli = new Args($argv);
 try {
 
     $cli->
-    setStrict(true)->
-    add('version', 'print version number', 'bool', 'v', multiple: false)
+        setStrict(true)->
+        add('version', 'print version number', 'bool', 'v', multiple: false)
         ->addGroup('internal', "internal commands are used by the multithreading feature:\n", true)
         ->add('parse-ast-src', 'src value of the ast nodes', 'string', group: 'internal')
         ->add('parse-ast-position-index', 'initial index position of the ast nodes', 'int', group: 'internal')
@@ -55,6 +55,7 @@ try {
         ->add('file', 'input css file or url', 'string', 'f', multiple: true, group: 'parse')
         ->add('parse-multi-processing', 'enable multi-process parser', 'bool', 'M', multiple: false, defaultValue: true, group: 'parse')
         ->add('parse-children-process', 'maximum children process', 'int', 'P', multiple: false, defaultValue: 20, group: 'parse')
+        ->add('input-format', 'input format: json (ast), serialize (serialized ast), string (css)', 'string', 'I', multiple: false, defaultValue: 'string', options: ['json', 'string', 'serialize'], group: 'parse')
 
         ->addGroup('render', "render options:\n")
         ->add('css-level', 'css color module', 'int', 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
@@ -69,7 +70,7 @@ try {
         ->add('render-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render')
         ->add('output', 'output file name', 'string', 'o', multiple: false, group: 'render')
         ->add('ast', 'dump ast as JSON', 'bool', 'a', multiple: false, group: 'render')
-        ->add('output-format', 'ast export format', 'string', 'F', multiple: false, options: ['json', 'serialize'], dependsOn: 'ast', group: 'render')
+        ->add('output-format', "ast export format. json (ast), serialize (serialized ast), array (array of css)", 'string', 'F', multiple: false, options: ['json', 'serialize', 'array'], dependsOn: 'ast', group: 'render')
 
         ->parse();
 
@@ -93,8 +94,8 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         exit (0);
     }
 
-    $pipeIn = !posix_isatty(STDIN);
-    $pipeOut = !posix_isatty(STDOUT);
+    $pipeIn = !stream_isatty(STDIN);
+    $pipeOut = !stream_isatty(STDOUT);
 
     $inFile = $pipeIn ? STDIN : ($args['file'] ?? null);
     $outFile = $pipeOut ? STDOUT : ($args['output'] ?? STDOUT);
@@ -154,66 +155,94 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
     }
 
+    function read_input(array $parseOptions, $inFile) {
+
+            if ($inFile == STDIN) {
+
+                $data = file_get_contents('php://stdin');
+
+                yield match ($parseOptions['input_format']) {
+                    'serialize' => unserialize($data),
+                    'json' => json_decode($data),
+                    default => $data,
+                };
+            }
+
+            foreach ((array) $inFile as $file) {
+
+                $data = Parser\Helper::fetchContent($file);
+            }
+
+    }
+
     $parser = new Parser(options: $parseOptions);
 
-    if ($inFile) {
+    if ($parseOptions['input_format'] == 'string') {
+        if ($inFile) {
 
-        if ($inFile == STDIN) {
+            if ($inFile == STDIN) {
 
-            $parser->appendContent(file_get_contents('php://stdin'));
-        } else {
-
-            foreach ((array)$inFile as $file) {
-
-                $parser->load($file);
-            }
-        }
-    } else if (!empty($args['_'])) {
-
-        $parser->appendContent(implode('', $args['_']));
-    } else {
-
-        // no input
-        exit(0);
-    }
-
-    if ($outFile) {
-
-        if (!empty($args['ast'])) {
-
-            $ast = $parser->getAst();
-
-            if (($args['output-format'] ?? 'json') == 'serialize') {
-
-                $ast = serialize($ast);
-            }
-
-            else {
-
-                $ast = json_encode($ast, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0);
-            }
-
-            if ($outFile == STDOUT) {
-
-                fwrite($outFile, $ast);
+                $parser->appendContent(file_get_contents('php://stdin'));
             } else {
 
-                file_put_contents($outFile, $ast);
-            }
+                foreach ((array)$inFile as $file) {
 
+                    $parser->load($file);
+                }
+            }
+        } else if (!empty($args['_'])) {
+
+            $parser->appendContent(implode('', $args['_']));
         } else {
 
-            $renderer = new Renderer($renderOptions);
+            // no input
+            exit(0);
+        }
 
-            if ($outFile == STDOUT) {
+        if ($outFile) {
 
-                fwrite($outFile, $renderer->renderAst($parser));
+            if (!empty($args['ast'])) {
+
+                $ast = $parser->getAst();
+
+                if (($args['output-format'] ?? 'json') == 'serialize') {
+
+                    $ast = serialize($ast);
+                }
+
+                else {
+
+                    $ast = json_encode($ast, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0);
+                }
+
+                if ($outFile == STDOUT) {
+
+                    fwrite($outFile, $ast);
+                } else {
+
+                    file_put_contents($outFile, $ast);
+                }
+
             } else {
 
-                $renderer->save($parser, $outFile);
+                $renderer = new Renderer($renderOptions);
+
+                if ($outFile == STDOUT) {
+
+                    fwrite($outFile, $renderer->renderAst($parser));
+                } else {
+
+                    $renderer->save($parser, $outFile);
+                }
             }
         }
     }
+
+    else {
+
+
+    }
+
 } catch (ValueError|UnexpectedValueException|InvalidArgumentException $e) {
 
     fwrite(STDERR, $e->getMessage() . "\n");

@@ -7,6 +7,8 @@ use TBela\CSS\Event\EventInterface;
 use TBela\CSS\Event\EventTrait;
 
 /**
+ * A simple Pool manager around symphony Process component.
+ *
  * Usage:
  * <code>
  *
@@ -18,7 +20,9 @@ use TBela\CSS\Event\EventTrait;
  * });
  *
  * $pool->add(new Process(...));
+ *
  * $pool->add(new Process(...));
+ *
  * $pool->add(new Process(...));
  *
  * $pool->wait();

@@ -19,6 +19,7 @@
       "role": "Developer"
     }
   ],
+  "bin": ["cli/css-parser"],
   "archive": {
     "exclude": [
       "*.sh",
@@ -40,8 +41,7 @@
     "ext-json": "*",
     "ext-curl": "*",
     "ext-mbstring": "*",
-    "ext-posix": "*",
-    "symfony/process": "^6.1"
+    "symfony/process": "^6.0"
   },
   "scripts": {
     "test": "./vendor/phpunit/phpunit/phpunit"

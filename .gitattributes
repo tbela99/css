@@ -20,5 +20,7 @@
 /docs/** linguist-vendored
 /tool/** linguist-vendored
 /benchmark/** linguist-vendored
-
+#
+# do not replace lf by crlf
+*.css binary
 

@@ -624,7 +624,7 @@ class Renderer
         if (is_array($selector)) {
 
             if (empty($selector)) {
-                ;
+
                 // the selector is empty!
                 throw new \Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
             }

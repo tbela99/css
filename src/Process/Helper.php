@@ -9,7 +9,7 @@ class Helper {
         if ('WIN' == strtoupper(substr(PHP_OS, 0, 3)))
         {
 
-            return (int) getenv('%NUMBER_OF_PROCESSORS%');
+            return (int) getenv('NUMBER_OF_PROCESSORS');
         }
 
         if (!is_callable('\\exec')) {
