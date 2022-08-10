@@ -184,7 +184,7 @@ final class PathTest extends TestCase
             file_get_contents('http://127.0.0.1:'.$port.'/sourcemap/sourcemap.import.css')
         ];
 
-//        shell_exec($kill_server);
+        shell_exec($kill_server);
 
         return $data;
     }

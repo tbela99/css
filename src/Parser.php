@@ -12,10 +12,10 @@ use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\Lexer;
+use TBela\CSS\Parser\MultiprocessingTrait;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Process\Pool;
-use function substr;
 
 /**
  * Css Parser
@@ -24,7 +24,7 @@ use function substr;
 class Parser implements ParsableInterface
 {
 
-    use ParserTrait;
+    use ParserTrait, MultiprocessingTrait;
 
     /**
      * @var ValidatorInterface[]
@@ -55,16 +55,12 @@ class Parser implements ParsableInterface
         'multi_processing' => true,
         // 65k
         'multi_processing_threshold' => 66560,
-        'children_process' => 20,
+//        'children_process' => 20,
         'ast_src' => '',
         'ast_position_line' => 1,
         'ast_position_column' => 1,
         'ast_position_index' => 0
     ];
-
-    protected Pool $pool;
-
-    protected array $output = [];
 
     /**
      * last deduplicated rule index
@@ -88,12 +84,6 @@ class Parser implements ParsableInterface
      */
     public function __construct(string $css = '', array $options = [])
     {
-
-        if (!isset($options['children_process'])) {
-
-            $options['children_process'] = \TBela\CSS\Process\Helper::getCPUCount() * 2.5;
-        }
-
         $this->setOptions($options);
         $this->lexer = (new Lexer())->
         setParentOffset((object)[
@@ -110,148 +100,6 @@ class Parser implements ParsableInterface
 
             $this->setContent($css);
         }
-    }
-
-    protected function enQueue($src, $buffer, $position)
-    {
-
-        if (!isset($this->pool)) {
-
-            $this->pool = (new Pool())->
-                setConcurrency($this->options['children_process'])->
-//                setSleepTime($this->sle)->
-                on('finish', function (Process $process, $key) {
-
-                $payload = $process->getOutput();
-//                $errorOutput = $process->getErrorOutput();
-
-                $token = $this->format == 'serialize' ? unserialize($payload) : json_decode($payload);
-
-                if (empty($token)) {
-
-                    // @todo throw new exception? log error? is is an error? maybe no
-//                    fwrite(STDERR, sprintf("terminated: %s\ncmd: %s\ninput:\n%s\nexit code: %s\n\nerror: '%s'\n\n", $process->isTerminated() ? 'yes' : 'no', $process->getCommandLine(), $process->getInput(), $process->getExitCode(), $errorOutput));
-                }
-
-                else {
-
-                    $this->output[$key] = $token;
-                }
-            });
-        }
-
-        $phpPath = (new PhpExecutableFinder())->find();
-
-        $cmd = [
-            $phpPath,
-            '-f',
-            __DIR__ . '/../cli/css-parser',
-            '--',
-            '-ac',
-            '--parse-multi-processing=off',
-            sprintf('--parse-ast-src=%s', $src),
-            sprintf('--parse-ast-position-index=%s', max(0, $position->index - 1)),
-            sprintf('--parse-ast-position-line=%s', $position->line),
-            sprintf('--parse-ast-position-column=%s', $position->column),
-            sprintf('--capture-errors=%s', $this->options['capture_errors'] ? 'on' : 'off'),
-            sprintf('--flatten-import=%s', $this->options['flatten_import'] ? 'on' : 'off'),
-            sprintf('--parse-allow-duplicate-declarations=%s', (int)$this->options['allow_duplicate_declarations']),
-            sprintf('--output-format=%s', $this->format)
-        ];
-
-        $process = new Process($cmd);
-
-        $process->setInput($buffer);
-        $this->pool->add($process);
-    }
-
-    public function slice($css, $position, $size): \Generator
-    {
-
-        $i = $position->index - 1;
-        $j = strlen($css) - 1;
-
-        $buffer = '';
-
-        while ($i++ < $j) {
-
-            $string = Parser::substr($css, $i, $j, ['{']);
-
-            if ($string === false) {
-
-                $buffer = substr($css, $i);
-
-                $pos = clone $position;
-                $pos->index++;
-
-                yield [$buffer, $pos];
-
-                $this->update($position, $buffer);
-                $position->index += strlen($buffer);
-                $buffer = '';
-                break;
-            }
-
-            $string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
-            $buffer .= $string;
-
-            if (strlen($buffer) >= $size) {
-
-                $k = 0;
-                while (static::is_whitespace($buffer[$k])) {
-
-                    $k++;
-                }
-
-                if ($k > 0) {
-
-                    $this->update($position, substr($buffer, 0, $k));
-                    $position->index += $k;
-                    $buffer = substr($buffer, $k);
-                }
-
-                $pos = clone $position;
-                $pos->index++;
-
-                yield [$buffer, $pos];
-
-                $this->update($position, $buffer);
-                $position->index += strlen($buffer);
-                $buffer = '';
-            }
-
-            $i += strlen($string) - 1;
-        }
-
-        if ($buffer) {
-
-            $k = 0;
-            $l = strlen($buffer);
-            while ($k < $l && static::is_whitespace($buffer[$k])) {
-
-                $k++;
-            }
-
-            if ($k > 0) {
-
-                $this->update($position, substr($buffer, 0, $k));
-                $position->index += $k;
-                $buffer = substr($buffer, $k);
-            }
-        }
-
-        if (trim($buffer) !== '') {
-
-            $pos = clone $position;
-            $pos->index++;
-
-            yield [$buffer, $pos];
-            $this->update($position, $buffer);
-            $position->index += strlen($buffer) - 1;
-        }
-
-        $position->index = max(0, $position->index - 1);
-        $position->column = max(1, $position->column - 1);
     }
 
     /**
@@ -278,6 +126,87 @@ class Parser implements ParsableInterface
         return $this;
     }
 
+	public function getCliArgs (array $options, $src, $position): array
+	{
+
+		$args = [
+			'-ac',
+			'--parse-multi-processing=off',
+			sprintf('--parse-ast-src=%s', $src)
+			];
+
+		if (!empty($position)) {
+
+			array_push($args,
+				sprintf('--parse-ast-position-index=%s', max(0, $position->index - 1)),
+				sprintf('--parse-ast-position-line=%s', $position->line),
+				sprintf('--parse-ast-position-column=%s', $position->column));
+		}
+
+		if (!$options['capture_errors']) {
+			// default is on
+			$args[] ='--capture-errors=off';
+		}
+
+		foreach ([
+					 'capture_errors' => true,
+					 'flatten_import' => false,
+					 'allow_duplicate_rules' => ['font-face'], // set to true for speed
+					 'allow_duplicate_declarations' => true,
+					 'multi_processing' => true,
+					 // 65k
+					 'multi_processing_threshold' => 66560,
+//        'children_process' => 20,
+					 'ast_src' => '',
+					 'ast_position_line' => 1,
+					 'ast_position_column' => 1,
+					 'ast_position_index' => 0
+				 ] as $key => $value) {
+
+			if (in_array($key, ['multi_processing', 'multi_processing_threshold', 'ast_src', 'ast_position_line', 'ast_position_column', 'ast_position_index'])) {
+
+				continue;
+			}
+
+			if ($key == 'allow_duplicate_rules') {
+
+				if (!$options['allow_duplicate_rules']) {
+					// default is on
+					$args[] ='--parse-allow-duplicate-rules==off';
+				}
+			}
+
+			else if ($key == 'allow_duplicate_declarations') {
+
+				if (!$options['allow_duplicate_declarations']) {
+					// default is on
+					$args[] ='--parse-allow-duplicate-declarations==off';
+				}
+			}
+
+			else if (isset($options[$key]) && $options[$key] !== $value) {
+
+				$args[] = sprintf('--%s=%s', str_replace('_', '-', $key), is_bool($options[$key]) ? ($options[$key] ? 'on' : 'off') : $options[$key]);
+			}
+		}
+
+
+
+//		if ($options['flatten_import']) {
+//			// default is off
+//			$args[] ='--flatten-import=on';
+//		}
+//
+//		if (!$options['allow_duplicate_declarations']) {
+//			// default is on
+//			$args[] ='--parse-allow-duplicate-declarations==off';
+//		}
+
+		$args[] = sprintf('--output-format=%s', $this->format);
+
+		return $args;
+	}
+
     /**     * @param string $content
      * @param object $root
      * @param string $file
@@ -287,15 +216,16 @@ class Parser implements ParsableInterface
     {
 
         $file = Helper::absolutePath($file, Helper::getCurrentDirectory());
+		$size = min($this->options['multi_processing_threshold'], strlen($content) / 2);
 
-        foreach ($this->slice($content, $root->location->end, $this->options['multi_processing_threshold']) as $index => $data) {
+        foreach ($this->slice($content, max($size, 10), $root->location->end) as $index => $data) {
 
-            $this->enQueue($file, $data[0], $data[1]);
+            $this->enQueue($file, $data[0], $data[1], $this->getCliArgs($this->options, $file, $data[1]));
         }
 
         $this->pool->wait();
 
-        ksort($this->output);
+//        ksort($this->output);
 
         if (!empty($this->output)) {
 
@@ -304,9 +234,13 @@ class Parser implements ParsableInterface
                 $root->children = [];
             }
 
+//			var_dump($this->output);
             foreach ($this->output as $token) {
 
-                array_splice($root->children, count($root->children), 0, $token->children);
+				if (isset($token->children)) {
+
+					array_splice($root->children, count($root->children), 0, $token->children);
+				}
             }
 
             $this->output = [];
@@ -404,6 +338,13 @@ class Parser implements ParsableInterface
             $this->popContext();
         }
 
+		if (!empty($this->ast->children)) {
+
+			$this->parseImport();
+			$this->deduplicate($this->ast, $this->lastDedupIndex);
+			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
+		}
+
         return $this;
     }
 
@@ -440,6 +381,12 @@ class Parser implements ParsableInterface
             tokenize();
         }
 
+		if (!empty($this->ast->children)) {
+
+			$this->parseImport();
+			$this->deduplicate($this->ast, $this->lastDedupIndex);
+			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
+		}
 
         return $this;
     }
@@ -567,6 +514,11 @@ class Parser implements ParsableInterface
         return $this;
     }
 
+	public function getOptions($name = null) {
+
+		return is_null($name) ? $this->options : ($this->options[$name] ?? null);
+	}
+
     /**
      * parse Css
      * @return RuleListInterface|null
@@ -597,66 +549,154 @@ class Parser implements ParsableInterface
 
         if (!empty($this->ast->children)) {
 
-            $min = min($this->lastDedupIndex, count($this->ast->children) - 1);
-
-
-            if ($this->options['flatten_import']) {
-
-                $i = count($this->ast->children);
-
-                while ($min < $i--) {
-
-                    if ($this->ast->children[$i]->type != 'AtRule' || $this->ast->children[$i]->name != 'import') {
-
-                        continue;
-                    }
-
-                    $token = $this->ast->children[$i];
-
-                    preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
-
-                    $media = trim($matches[4] ?? '');
-
-                    if ($media == 'all') {
-
-                        $media = '';
-                    }
-
-                    $file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
-
-
-                    if ($media === '') {
-
-
-                    } else {
-
-                        $token->value = $media;
-                    }
-
-                    $this->pushContext($token);
-                    $this->append($file, $media);
-
-
-                    $this->popContext();
-
-                    if ($media === '') {
-
-                        array_splice($this->ast->children, $i, 1, $token->children ?? []);
-                    }
-
-
-                }
-
-
-            }
-
             $this->deduplicate($this->ast, $this->lastDedupIndex);
-
             $this->lastDedupIndex = max(0, count($this->ast->children) - 2);
         }
 
         return $this->ast;
     }
+
+	protected function parseImport() {
+
+		if ($this->options['flatten_import']) {
+
+			$imports = [];
+
+			$j = count($this->ast->children);
+
+			for ($i = 0; $i < $j; $i++) {
+
+				$child = $this->ast->children[$i];
+
+				if ($child->type == 'AtRule' && in_array($child->name, ['import', 'charset'])) {
+
+					if ($child->name == 'import') {
+
+						$imports[$i] = clone $child;
+					}
+
+					continue;
+				}
+
+				if ($child->type != 'Comment') {
+
+					break;
+				}
+			}
+
+//			var_dump(array_keys($imports));
+
+			if ($imports) {
+
+				$pool = null;
+
+//				$phpFinder = new PhpExecutableFinder();
+				$phpExe = (new PhpExecutableFinder())->find();
+
+				foreach (array_reverse($imports , true) as $token) {
+
+//					$token = $this->ast->children[$i];
+
+					preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
+
+					$media = trim($matches[4] ?? '');
+
+					if ($media == 'all') {
+
+						$media = '';
+					}
+
+					$file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
+
+//					if ($media === '') {
+
+
+//					} else {
+
+						$token->value = $media;
+//					}
+					unset($token->isLeaf);
+
+					$token->name = 'media';
+
+					if (count($imports) > 2 && function_exists('\\proc_open')) {
+
+						$args = $this->getCliArgs($this->options, $file, null);
+
+						array_unshift($args, $phpExe, '-f', __DIR__.'/../cli/css-parser', '--');
+
+						$args[] = '--file='.$file;
+						$args[] = '--output-format=json';
+
+//						var_dump(implode(' ', $args)."\n");
+
+						$process = new Process($args);
+						$process->setPty(true);
+
+						if (!isset($pool)) {
+
+							$pool = (new Pool());
+						}
+
+						$pool->on('finish', function ($proc) use($process, $token, $file) {
+
+								if ($process == $proc) {
+
+									if ($process->getExitCode() != 0) {
+
+										throw new \RuntimeException(sprintf("cannot resolve @import#%s\n%s", $file, $process->getErrorOutput()));
+									}
+
+									$errorOutput = $process->getErrorOutput();
+
+									if ($errorOutput !== '') {
+
+										fwrite(STDERR, $errorOutput);
+									}
+
+									$payload = $process->getOutput();
+
+									if (!empty($payload)) {
+
+										$ast = /* $this->format == 'serialize' ? unserialize($payload) : */ json_decode($payload);
+
+										$token->children = $ast->children ?? [];
+									}
+								}
+							});
+
+						$pool->add($process);
+					}
+
+					else {
+
+						$parser = new static(options: $this->options);
+
+						$parser->ast = $token;
+						$parser->append($file);
+					}
+				}
+
+				if (isset($pool)) {
+
+					$pool->wait();
+				}
+
+				foreach (array_reverse($imports, true) as $key => $token) {
+
+					if (empty($token->value)) {
+
+						array_splice($this->ast->children, $key, 1, $token->children ?? []);
+					}
+
+					else {
+
+						$this->ast->children[$key] = $token;
+					}
+				}
+			}
+		}
+	}
 
     /**
      * @param object $ast
@@ -706,7 +746,6 @@ class Parser implements ParsableInterface
             $signature .= ':name:' . $name;
         }
 
-
         $selector = $ast->selector ?? null;
 
         if (isset($selector)) {
@@ -720,6 +759,11 @@ class Parser implements ParsableInterface
 
             $signature .= ':vendor:' . $vendor;
         }
+
+		if (in_array($ast->type, ['AtRule', 'NestingAtRule', 'NestingMediaRule'])) {
+
+			$signature .= ':value:'. (is_array($ast->value) ? Value::renderTokens($ast->value) : $ast->value);
+		}
 
         return $signature;
     }
@@ -741,22 +785,23 @@ class Parser implements ParsableInterface
 
                 $allowed = is_array($this->options['allow_duplicate_rules']) ? $this->options['allow_duplicate_rules'] : [];
 
-                $min = (int)$index;
+                $min = (int) $index;
 
                 while ($total-- > $min) {
 
                     if ($total > 0) {
 
                         $el = $ast->children[$total];
-                        if ($el->type == 'Comment') {
+                        if ($el->type == 'Comment' || $el->type == 'Declaration') {
 
                             continue;
                         }
 
-                        if ($el->type != 'Rule') {
+                        if (!in_array($el->type, ['Rule', 'AtRule'])) {
 
-                            break;
+                            continue;
                         }
+
 
                         $next = $ast->children[$total - 1];
 
@@ -1072,7 +1117,12 @@ class Parser implements ParsableInterface
             $token->name == 'media' &&
             (
                 empty($token->value) ||
+				(
+					is_string($token->value) &&
+					$token->value == 'all'
+				) ||
                 (
+					is_array($token->value) &&
                     count($token->value) == 1 &&
                     ($token->value[0]->value ?? '') == 'all'
                 )

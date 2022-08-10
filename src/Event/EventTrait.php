@@ -59,7 +59,6 @@ trait EventTrait {
             }
         }
 
-
         return $this;
     }
 
@@ -79,7 +78,9 @@ trait EventTrait {
             return $result;
         }
 
-        foreach ($this->events[$event] as $callable) {
+		$events = $this->events[$event];
+
+        foreach ($events as $callable) {
 
             $result[] = call_user_func_array($callable, $args);
         }

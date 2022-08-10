@@ -79,6 +79,7 @@ class Pool implements EventInterface {
 
             if ($process->isTerminated()) {
 
+				$running = max(0, $running - 1);
                 $this->emit('finish', $process, $key);
                 unset($this->queue[$key]);
             }

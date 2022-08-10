@@ -36,9 +36,10 @@ class Color extends Value
         return $type == 'color';
     }
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
     public function render(array $options = []): string
     {
 
@@ -76,7 +77,7 @@ class Color extends Value
 
         if (empty($options['convert_color'])) {
 
-            $options['convert_color'] = isset($data->colorType) ? $data->colorType : $data->name;
+            $options['convert_color'] = $data->colorType ?? $data->name;
         }
 
         if (isset(ColorUtil::NAMES_COLORS[$hex])) {

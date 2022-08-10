@@ -138,10 +138,15 @@ class Helper
      * @param string $ref
      * @return string
      */
-    public static function absolutePath($file, $ref)
-    {
+    public static function absolutePath(string $file, string $ref): string
+	{
 
-        $file = static::format($file);
+		if (php_sapi_name() != 'cli' && preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
+
+			$file = preg_replace('#'.preg_quote(getcwd()).'#', '', $file);
+		}
+
+		$file = static::format($file);
         $ref = static::format($ref);
 
         // web server environment
@@ -187,6 +192,13 @@ class Helper
      */
     public static function relativePath(string $file, string $ref)
     {
+
+		if (preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
+
+			$regex = '#'.preg_quote(getcwd()).'/?#';
+			$file = preg_replace($regex, '', $file);
+			$ref = preg_replace($regex, '', $ref);
+		}
 
         $file = static::format($file);
         $ref = static::format($ref);
@@ -286,10 +298,11 @@ class Helper
      * @param string $path
      * @return bool
      */
-    public static function isAbsolute($path): bool
+    public static function isAbsolute(string $path): bool
     {
 
         $path = static::format($path);
+
         return (bool)preg_match('#^((([a-zA-Z]:)?/)|(https?:)?//)#', $path);
     }
 

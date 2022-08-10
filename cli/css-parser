@@ -39,27 +39,25 @@ $cli = new Args($argv);
 try {
 
     $cli->
-        setStrict(true)->
-        add('version', 'print version number', 'bool', 'v', multiple: false)
+    setStrict(true)->
+    add('version', 'print version number', 'bool', 'v', multiple: false)
         ->addGroup('internal', "internal commands are used by the multithreading feature:\n", true)
-        ->add('parse-ast-src', 'src value of the ast nodes', 'string', group: 'internal')
-        ->add('parse-ast-position-index', 'initial index position of the ast nodes', 'int', group: 'internal')
-        ->add('parse-ast-position-line', 'initial line number of the ast nodes', 'int', group: 'internal')
-        ->add('parse-ast-position-column', 'initial column number of the ast nodes', 'int', group: 'internal')
-
-        ->addGroup('parse', "parse options:\n")
+        ->add('parse-ast-src', 'src value of the ast nodes', 'string', multiple: false, group: 'internal')
+        ->add('parse-ast-position-index', 'initial index position of the ast nodes', 'int', multiple: false, group: 'internal')
+        ->add('parse-ast-position-line', 'initial line number of the ast nodes', 'int', multiple: false, group: 'internal')
+        ->add('parse-ast-position-column', 'initial column number of the ast nodes', 'int', multiple: false, group: 'internal')
+        ->addGroup('parse', "Parse options:\n")
         ->add('capture-errors', 'ignore parse error', 'bool', 'e', multiple: false, group: 'parse')
         ->add('flatten-import', 'process @import', 'bool', 'm', multiple: false, group: 'parse')
         ->add('parse-allow-duplicate-rules', 'allow duplicate rule', 'bool', 'p', multiple: false, group: 'parse')
         ->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: 'auto', alias: 'd', multiple: false, group: 'parse')
         ->add('file', 'input css file or url', 'string', 'f', multiple: true, group: 'parse')
-        ->add('parse-multi-processing', 'enable multi-process parser', 'bool', 'M', multiple: false, defaultValue: true, group: 'parse')
+        ->add('parse-multi-processing', 'enable multi-processing parsing', 'bool', 'M', multiple: false, defaultValue: true, group: 'parse')
         ->add('parse-children-process', 'maximum children process', 'int', 'P', multiple: false, defaultValue: 20, group: 'parse')
-        ->add('input-format', 'input format: json (ast), serialize (serialized ast), string (css)', 'string', 'I', multiple: false, defaultValue: 'string', options: ['json', 'string', 'serialize'], group: 'parse')
-
-        ->addGroup('render', "render options:\n")
+        ->add('input-format', 'input format: json (ast), serialize (PHP serialized ast)', 'string', 'I', multiple: false, defaultValue: 'string', options: ['string', 'json', 'serialize'], group: 'parse')
+        ->addGroup('render', "Render options:\n")
         ->add('css-level', 'css color module', 'int', 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
-        ->add('charset', 'remove @charset', 'bool', 'S', multiple: false, defaultValue: true, group: 'render')
+        ->add('charset', 'remove @charset', 'bool', 'S', multiple: false, defaultValue: false, group: 'render')
         ->add('compress', 'minify output', 'bool', 'c', multiple: false, group: 'render')
         ->add('sourcemap', 'generate sourcemap', 'bool', 's', multiple: false, dependsOn: 'file', group: 'render')
         ->add('remove-comments', 'remove comments', 'bool', 'C', multiple: false, group: 'render')
@@ -67,11 +65,12 @@ try {
         ->add('legacy-rendering', 'legacy rendering', 'bool', 'G', multiple: false, group: 'render')
         ->add('compute-shorthand', 'compute shorthand properties', 'bool', 'u', multiple: false, group: 'render')
         ->add('remove-empty-nodes', 'remove empty nodes', 'bool', 'E', multiple: false, group: 'render')
-        ->add('render-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render')
+        ->add('render-allow-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render')
+        ->add('convert-color', 'render duplicate declarations', \TBela\CSS\Cli\Option::AUTO, 't', multiple: false, options: [true, false, 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'], group: 'render')
         ->add('output', 'output file name', 'string', 'o', multiple: false, group: 'render')
         ->add('ast', 'dump ast as JSON', 'bool', 'a', multiple: false, group: 'render')
-        ->add('output-format', "ast export format. json (ast), serialize (serialized ast), array (array of css)", 'string', 'F', multiple: false, options: ['json', 'serialize', 'array'], dependsOn: 'ast', group: 'render')
-
+        ->add('output-format', "output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array", 'string', 'F', multiple: false, defaultValue: 'string', options: ['string', 'json', 'serialize', 'json-array', 'serialize-array'], dependsOn: 'input-format', group: 'render')
+        ->add('render-multi-processing', "enable multi-processing rendering", 'bool', 'R', multiple: false, defaultValue: true, group: 'render')
         ->parse();
 
     $parseOptions = [];
@@ -82,14 +81,14 @@ try {
 
     if (isset($args['version'])) {
 
-        $data = json_decode(file_get_contents(__DIR__.'/../package.json'), JSON_OBJECT_AS_ARRAY);
-        $metadata = json_decode(file_get_contents(__DIR__.'/../composer.json'), JSON_OBJECT_AS_ARRAY);
+        $data = json_decode(file_get_contents(__DIR__ . '/../package.json'), JSON_OBJECT_AS_ARRAY);
+        $metadata = json_decode(file_get_contents(__DIR__ . '/../composer.json'), JSON_OBJECT_AS_ARRAY);
 
         echo sprintf("%s (version %s)
 Copyright (C) %s %s.
 Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implode(', ', array_map(function ($author) {
 
-        return $author['name'];
+            return $author['name'];
         }, $metadata['authors'])));
         exit (0);
     }
@@ -109,18 +108,13 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
         if (!empty($args['_'])) {
 
-            fwrite(STDERR, "> notice: ignoring inline css\n");
+            fwrite(STDERR, "> notice: ignoring inline css\n".json_encode($args['_'], JSON_PRETTY_PRINT)."\n");
         }
     }
 
     if ($outFile == STDOUT && !empty($args['output'])) {
 
         fwrite(STDERR, "> notice: ignoring parameter --output\n");
-    }
-
-    if (isset($args['sourcemap']) && $outFile == STDOUT) {
-
-        throw new InvalidArgumentException(sprintf("%s: --sourcemap requires --file parameter\nTry '%s --help'", $exe, $exe));
     }
 
     foreach (array_keys($groups['parse']['arguments']) as $key) {
@@ -146,38 +140,55 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
             if (str_starts_with($key, 'parse-')) {
 
                 $parseOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
-            }
-
-            else if (str_starts_with($key, 'render-')) {
+            } else if (str_starts_with($key, 'render-')) {
 
                 $renderOptions[str_replace(['render-', '-'], ['', '_'], $key)] = $args[$key];
             }
         }
     }
 
-    function read_input(array $parseOptions, $inFile) {
+    function read_input(array $parseOptions, $inFile): Generator
+    {
 
-            if ($inFile == STDIN) {
+        if ($inFile == STDIN) {
 
-                $data = file_get_contents('php://stdin');
+            $data = file_get_contents('php://stdin');
 
-                yield match ($parseOptions['input_format']) {
+            yield match ($parseOptions['input_format']) {
+                'serialize' => unserialize($data),
+                'json' => json_decode($data),
+                default => $data,
+            };
+        }
+
+        else {
+
+            foreach ((array)$inFile as $file) {
+
+                if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
+
+                    $data = file_get_contents($file);
+
+                }
+                else {
+
+                    $data = Parser\Helper::fetchContent($file);
+                }
+
+                yield $file => match ($parseOptions['input_format']) {
                     'serialize' => unserialize($data),
                     'json' => json_decode($data),
                     default => $data,
                 };
             }
-
-            foreach ((array) $inFile as $file) {
-
-                $data = Parser\Helper::fetchContent($file);
-            }
-
+        }
     }
 
+    $ast = [];
     $parser = new Parser(options: $parseOptions);
 
     if ($parseOptions['input_format'] == 'string') {
+
         if ($inFile) {
 
             if ($inFile == STDIN) {
@@ -199,49 +210,69 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
             exit(0);
         }
 
-        if ($outFile) {
-
-            if (!empty($args['ast'])) {
-
-                $ast = $parser->getAst();
-
-                if (($args['output-format'] ?? 'json') == 'serialize') {
-
-                    $ast = serialize($ast);
-                }
-
-                else {
-
-                    $ast = json_encode($ast, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0);
-                }
-
-                if ($outFile == STDOUT) {
-
-                    fwrite($outFile, $ast);
-                } else {
-
-                    file_put_contents($outFile, $ast);
-                }
-
-            } else {
-
-                $renderer = new Renderer($renderOptions);
-
-                if ($outFile == STDOUT) {
-
-                    fwrite($outFile, $renderer->renderAst($parser));
-                } else {
-
-                    $renderer->save($parser, $outFile);
-                }
-            }
-        }
+        $ast = [$parser->getAst()];
     }
 
     else {
 
+        // ast
+        foreach (read_input($parseOptions, $inFile) as $data) {
 
+            $ast[] = $data; // $renderer->renderAst($data);
+        }
     }
+
+    if (empty($ast)) {
+
+        exit(0);
+    }
+
+    $parser->setContent('');
+
+    $root = (new Parser())->getAst();
+
+    $root->children = $ast;
+
+//    $output = [];
+    $renderer = new Renderer($renderOptions);
+
+    if ($outFile != STDOUT) {
+
+        $renderer->save($root, $outFile);
+    }
+
+    else if (in_array($renderOptions['output_format'], ['json-array', 'serialize-array'])) {
+
+        $output = [];
+
+        foreach ($root->children as $node) {
+
+            $nodes = $node->type == 'Stylesheet' ? $node->children : [$node];
+
+            foreach ($nodes as $nod) {
+
+                $css = $renderer->renderAst($nod);
+
+                if (isset($output[$css])) {
+
+                    unset($output[$css]);
+                }
+
+                $output[$css] = $css;
+            }
+        }
+
+        fwrite($outFile, $renderOptions['output_format'] == 'serialize-array' ? serialize($output) : json_encode($output, !empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+    }
+
+    else {
+
+        fwrite($outFile, match ($renderOptions['output_format']) {
+            'json' => json_encode(count($ast) == 1 ? $ast[0] : $root, !empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0),
+            'serialize' => serialize(count($ast) == 1 ? $ast[0] : $root),
+            default => $renderer->renderAst($root)});
+    }
+
 
 } catch (ValueError|UnexpectedValueException|InvalidArgumentException $e) {
 

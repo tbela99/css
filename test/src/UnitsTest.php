@@ -12,6 +12,7 @@ final class UnitsTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider zeroProvider
+	 * @small
      */
     public function testZero(string $expected, string $actual): void
     {

@@ -457,7 +457,12 @@ class Lexer
                         ], $this->parseVendor($matches[1])
                         );
 
-                        $rule->value = Value::parse(trim($matches[2]), null, true, '', '', $rule->name == 'charset');
+                        $rule->value = trim($matches[2]);
+
+						if (str_contains($rule->value, '/*') || $rule->name == 'charset') {
+
+							$rule->value = Value::parse($rule->value, null, true, '', '', $rule->name == 'charset');
+						}
 
                         if ($rule->hasDeclarations) {
 

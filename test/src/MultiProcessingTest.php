@@ -60,11 +60,11 @@ final class MultiProcessingTest extends TestCase
 
         $json = [];
 
-        foreach ($parser->slice(file_get_contents($file.'.css'), (object) [
+        foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
             'line' => 1,
             'column' => 1,
             'index' => 0
-        ], $size) as $line) {
+        ]) as $line) {
 
             $json[] = $line;
         }
@@ -77,11 +77,11 @@ final class MultiProcessingTest extends TestCase
 
         $json = [];
 
-        foreach ($parser->slice(file_get_contents($file.'.min.css'), (object) [
+        foreach ($parser->slice(css: file_get_contents($file.'.min.css'), size: $size, position: (object) [
             'line' => 1,
             'column' => 1,
             'index' => 0
-        ], $size) as $line) {
+        ]) as $line) {
 
             $json[] = $line;
         }
@@ -106,10 +106,19 @@ final class MultiProcessingTest extends TestCase
             __DIR__.'/../nested/nested.css',
             __DIR__.'/../nested/nested.min.css',
             __DIR__.'/../sourcemap/sourcemap.import.css',
-            __DIR__.'/../perf_files/row.css',
-            __DIR__.'/../perf_files/row.min.css',
-            __DIR__.'/../perf_files/main.min.css',
-            __DIR__.'/../perf_files/uncut.css',
+            __DIR__.'/../perf_files/bs-mtrl.css',
+            __DIR__.'/../perf_files/bs-reboot.css',
+            __DIR__.'/../perf_files/bs.3.css',
+			__DIR__.'/../perf_files/bs.4.css',
+			__DIR__.'/../perf_files/none.css',
+			__DIR__.'/../perf_files/row.css',
+			__DIR__.'/../perf_files/row.min.css',
+			__DIR__.'/../perf_files/main.min.css',
+			__DIR__.'/../perf_files/perf.css',
+			__DIR__.'/../perf_files/php-net.css',
+			__DIR__.'/../perf_files/main.min.css',
+			__DIR__.'/../perf_files/uncut.css',
+			__DIR__.'/../perf_files/uncut.css',
             __DIR__.'/../perf_files/uncut.min.css'
         ];
 

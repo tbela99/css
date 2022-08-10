@@ -12,6 +12,7 @@ final class SelectorTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider selectorRemoveProvider
+	 * @medium
      */
     public function testSelectorRemove(string $expected, string $actual): void
     {
@@ -21,6 +22,21 @@ final class SelectorTest extends TestCase
             $actual
         );
     }
+
+	/**
+	 * @param string $expected
+	 * @param string $actual
+	 * @dataProvider selectorSiblingProvider
+	 * @medium
+	 */
+	public function testSelectorSibling(string $expected, string $actual): void
+	{
+
+		$this->assertEquals(
+			$expected,
+			$actual
+		);
+	}
 
     public function selectorRemoveProvider()
     {
@@ -77,11 +93,6 @@ aside .widget-rss:hover {
                 '.cb+.a~.b.cd[type~="ab cd"] {
  dir: rtl
 }',
-                (string)$parser
-            ],
-            [
-
-            '.cb+.a~.b.cd[type~="ab cd"]{dir:rtl}',
                 (string)$parser
             ]
         ];
