@@ -19,12 +19,7 @@ class Helper {
 
         $result = exec(is_file('/proc/cpuinfo') ? 'cat /proc/cpuinfo | grep -c processor' : 'sysctl -a | awk \'$0 ~ "hw.ncpu" {print $2}\'');
 
-        if ($result === false) {
-
-            return 1;
-        }
-
-        return (int) $result;
+        return $result === false ? 1 : (int) $result;
     }
 }
 

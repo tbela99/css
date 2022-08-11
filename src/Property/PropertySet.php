@@ -77,6 +77,7 @@ class PropertySet
 
         return $this;
     }
+
     /**
      * set property value
      * @param string $name
@@ -523,6 +524,12 @@ class PropertySet
 
         return rtrim($value, $glue . $join);
     }
+
+	public function isEmpty()
+	{
+
+		return empty($this->properties);
+	}
 
     /**
      * convert this object to string

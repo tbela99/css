@@ -26,7 +26,7 @@ final class CliTest extends TestCase
      * @param array $actual
      * @dataProvider longFlagsProvider
      */
-    public function testLongtFlags(array $expected, array $actual): void
+    public function testLongFlags(array $expected, array $actual): void
     {
 
         $this->assertEquals(

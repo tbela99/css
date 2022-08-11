@@ -2,7 +2,7 @@
 ##!/bin/sh -x
 # # to run run a particular test, give the file name without extension as a parameter
 ##  ./runtest.sh Render Ast Sourcemap
-# to run all but specific tests, prepend '-' in front of the test name
+# to run all specific tests, prepend '-' in front of the test name to exclude
 ## ./runtest.sh -Minify -Ast -Sourcemap
 # to run all the tests with no argument
 ## ./runtest.sh
@@ -10,10 +10,8 @@
 #set -x
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
 cd "$DIR"
-unset DIR
 
-if [ ! -f "../vendor/bin/phpunit" ]
-then
+if [ ! -f "../vendor/bin/phpunit" ]; then
   echo "please go to "$(dirname "$DIR")" and run 'composer install'"
   exit 1
 fi
@@ -34,17 +32,17 @@ fail() {
 run() {
 
   #
-#  set -x
-  php -dmemory_limit=256M ../vendor/bin/phpunit -v --enforce-time-limit --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
-#  set +x
+  #  set -x
+  php -dmemory_limit=512M ../vendor/bin/phpunit -v --enforce-time-limit --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+  #  set +x
 }
 
 testName() {
 
-      fname=$(basename "$1" | awk -F . '{print $1}')
+  fname=$(basename "$1" | awk -F . '{print $1}')
 
-      # strip the Test suffix
-      echo ""${fname%Test}
+  # strip the Test suffix
+  echo ""${fname%Test}
 }
 
 #
@@ -80,7 +78,6 @@ if [ $# -gt 0 ]; then
       case "$@" in
       *$fname*)
 
-
         run "$file" || fail "$file"
         ;;
       esac
@@ -88,8 +85,8 @@ if [ $# -gt 0 ]; then
     ;;
   esac
 else
-    # no argument
-    for file in $(ls src/*.php); do
-        run "$file" || fail "$file"
-    done
+  # no argument
+  for file in $(ls src/*.php); do
+    run "$file" || fail "$file"
+  done
 fi

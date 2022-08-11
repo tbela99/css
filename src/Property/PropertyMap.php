@@ -108,6 +108,7 @@ class PropertyMap
 
                 $this->properties = [];
             }
+
             if (!isset($this->properties[$name])) {
 
                 $this->properties[$name] = new Property($name);
@@ -416,10 +417,11 @@ class PropertyMap
     /**
      * @return bool
      */
+
     public function isEmpty()
     {
 
-        return !empty($this->properties);
+        return empty($this->properties);
     }
 
     /**

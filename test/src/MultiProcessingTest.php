@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use TBela\CSS\Event\Event as EventTest;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
+use TBela\CSS\Renderer;
 
 final class MultiProcessingTest extends TestCase
 {
@@ -21,6 +22,7 @@ final class MultiProcessingTest extends TestCase
           $actual
         );
     }
+
     /**
      * @param string $expected
      * @param string $actual
@@ -34,6 +36,20 @@ final class MultiProcessingTest extends TestCase
             $actual
         );
     }
+
+	/**
+	 * @param string $expected
+	 * @param string $actual
+	 * @dataProvider fromProvider
+	 */
+	public function testFromProvider(string $expected, string $actual): void
+	{
+
+		$this->assertEquals(
+			$expected,
+			$actual
+		);
+	}
 
     /**
      * @param string $expected
@@ -144,6 +160,53 @@ final class MultiProcessingTest extends TestCase
 
         return $data;
     }
+
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws IOException
+	 */
+	public function fromProvider (): array
+	{
+
+		$files = [
+			__DIR__.'/../nested/nested.css',
+			__DIR__.'/../nested/nested.min.css',
+			__DIR__.'/../sourcemap/sourcemap.import.css',
+			__DIR__.'/../perf_files/bs-mtrl.css',
+			__DIR__.'/../perf_files/bs-reboot.css',
+			__DIR__.'/../perf_files/bs.3.css',
+			__DIR__.'/../perf_files/bs.4.css',
+			__DIR__.'/../perf_files/none.css',
+			__DIR__.'/../perf_files/row.css',
+			__DIR__.'/../perf_files/row.min.css',
+			__DIR__.'/../perf_files/main.min.css',
+			__DIR__.'/../perf_files/perf.css',
+			__DIR__.'/../perf_files/php-net.css',
+			__DIR__.'/../perf_files/main.min.css',
+			__DIR__.'/../perf_files/uncut.css',
+			__DIR__.'/../perf_files/uncut.css',
+			__DIR__.'/../perf_files/uncut.min.css'
+		];
+
+
+		$data = [];
+
+		foreach ($files as $file) {
+
+//			$content = file_get_contents($file);
+
+			$data[] = [
+				Renderer::fromFile($file, parseOptions: [
+					'flatten_import' => true
+				]),
+				(string) (new Parser(options: [
+					'flatten_import' => true
+				]))->load($file)
+			];
+		}
+
+		return $data;
+	}
 
     /**
      * @throws Parser\SyntaxError

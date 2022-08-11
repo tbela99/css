@@ -5,7 +5,6 @@ namespace TBela\CSS\Parser;
 use Exception;
 
 use TBela\CSS\Event\EventTrait;
-use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Value;
 class Lexer
@@ -75,88 +74,21 @@ class Lexer
     }
 
     /**
-     * @param string $file
-     * @param string $media
-     * @return Lexer
-     * @throws IOException
-     */
-    public function load($file, $media = ''): Lexer
-    {
-
-        $file = Helper::absolutePath($file, Helper::getCurrentDirectory());
-
-        if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
-
-            $content = file_get_contents($file);
-
-        } else {
-
-            $content = Helper::fetchContent($file);
-        }
-
-        if ($content === false) {
-
-            throw new IOException(sprintf('File Not Found "%s" => \'%s:%s:%s\'', $file, $this->context->location->src ?? null, $this->context->location->end->line ?? null, $this->context->location->end->column ?? null), 404);
-        }
-
-        $this->css = $content;
-        $this->src = $file;
-
-        if ($media !== '' && $media != 'all') {
-
-            $root = (object)[
-
-                'type' => 'AtRule',
-                'name' => 'media',
-                'value' => Value::parse($media, null, true, '', '', true)
-            ];
-
-            $this->parentMediaRule = $root;
-
-            $this->on('start', function ($context) use ($root, $file) {
-
-                $root->location = clone $context->location;
-                $root->location->start = clone $context->location->start;
-                $root->location->end = clone $context->location->end;
-                $root->src = $file;
-                $this->emit('enter', $root, $this->context, $this->parentStylesheet);
-            })->on('end', function ($context) use ($root) {
-
-                if (isset($root->children)) {
-
-                    $i = count($root->children);
-
-                    while ($i--) {
-
-                        $token = $root->children[$i];
-
-                        if (in_array($token->type, ['NestingRule', 'NestingAtRule', 'NestingMediaRule'])) {
-
-                            $root->type = 'NestingMediaRule';
-                        }
-                    }
-                }
-
-                $this->emit('exit', $root, $this->context, $this->parentStylesheet);
-            });
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Lexer
      * @throws Exception
      */
 
-
-    public function tokenize() {
+    public function tokenize(): static
+	{
 
         return $this->doTokenize($this->css, $this->src, $this->recover, $this->context, $this->parentStylesheet, $this->parentMediaRule);
     }
 
-    public function doTokenize($css, $src, $recover, $context, $parentStylesheet, $parentMediaRule): Lexer
-    {
+	/**
+	 * @throws Exception
+	 */
+	public function doTokenize($css, $src, $recover, $context, $parentStylesheet, $parentMediaRule): static
+	{
 
         $position = $context->location->end;
 
@@ -736,8 +668,11 @@ class Lexer
         return $context;
     }
 
-    protected function parseComments(object $token)
-    {
+	/**
+	 * @throws Exception
+	 */
+	protected function parseComments(object $token): void
+	{
 
         $property = property_exists($token, 'name') ? 'name' : (property_exists($token, 'selector') ? 'selector' : null);
 
@@ -821,7 +756,7 @@ class Lexer
                         array_splice($token->value, $k, 1);
                     } else if ($token->value[$k]->type == 'Comment') {
 
-                        if (substr($token->value[$k]->value, 0, 4) == '<!--') {
+                        if (str_starts_with($token->value[$k]->value, '<!--')) {
 
                             array_splice($token->value, $k, 1);
                             continue;
@@ -847,7 +782,7 @@ class Lexer
      * @return array
      * @ignore
      */
-    protected function parseVendor($str): array
+    protected function parseVendor(string $str): array
     {
 
         if (preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($str), $match)) {
@@ -862,12 +797,14 @@ class Lexer
         return ['name' => $str];
     }
 
-    /**
-     * @param string $event
-     * @param object $rule
-     * @return void
-     */
-    protected function getStatus($event, object $rule, $context, $parentStylesheet): int
+	/**
+	 * @param string $event
+	 * @param object $rule
+	 * @param $context
+	 * @param $parentStylesheet
+	 * @return int
+	 */
+    protected function getStatus(string $event, object $rule, $context, $parentStylesheet): int
     {
         foreach ($this->emit($event, $rule, $context, $parentStylesheet) as $status) {
 

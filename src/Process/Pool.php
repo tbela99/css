@@ -15,7 +15,6 @@ use TBela\CSS\Event\EventTrait;
  * $pool = new Pool();
  *
  * $pool->on('finish', function (Process $process, $position) {
-
  *      echo "process #$position completed!";
  * });
  *
@@ -28,99 +27,157 @@ use TBela\CSS\Event\EventTrait;
  * $pool->wait();
  * </code>
  */
-class Pool implements EventInterface {
+class Pool implements EventInterface
+{
 
-    use EventTrait;
+	use EventTrait;
 
-    /**
-     * @var Process[]
-     */
-    protected array $queue = [];
+	/**
+	 * @var Process[]
+	 */
+//    protected array $queue = [];
 
-    protected int $concurrency = 20;
+	protected int $concurrency = 20;
 
     protected int $count = 0;
 
-    protected int $sleepTime = 30;
+	protected int $sleepTime = 33;
 
-    public function __construct() {
+	protected \SplObjectStorage $storage;
 
-        $this->concurrency = ceil(Helper::getCPUCount() * 2.5);
-    }
+	protected ?Process $current = null;
 
-    public function add(Process $process): static
-    {
+	public function __construct()
+	{
 
-        $this->queue[$this->count++] = $process;
+		$this->concurrency = max(20, ceil(Helper::getCPUCount() * 2.5));
+		$this->storage = new \SplObjectStorage();
+	}
 
-        return $this->check();
-    }
+	public function add(Process $process): static
+	{
 
-    public function setConcurrency(int $concurrency): static
-    {
+//        $this->count++;
+		$this->current = $process;
+		$this->storage[$process] = (object) ['data' => (object) ['index' => $this->count++, 'stdout' => '', 'stderr' => ''], 'next' => []];
 
-        $this->concurrency = $concurrency;
-        return $this;
-    }
+		$this->check();
+		return $this;
+	}
 
-    public function setSleepTime(int $sleepTime): static
-    {
+	public function then(\Closure $callable): static
+	{
 
-        $this->sleepTime = $sleepTime;
-        return $this;
-    }
+		$process = $this->current;
 
-    protected function check(): static
-    {
+//		if ($process && $this->storage->contains($process)) {
+//
+//			$callables = $this->storage[$process];
+//		}
 
-        $running = 0;
+//		if (!isset($callables)) {
+//
+//			$callables = [];
+//		}
 
-        foreach ($this->queue as $key => $process) {
+//		$callables[] = $callable;
+		$data = $this->storage[$process];
+		$data->next[] = $callable;
+		$this->storage[$process] = $data;
+		return $this;
+	}
 
-            if ($process->isTerminated()) {
+	public function setConcurrency(int $concurrency): static
+	{
 
-				$running = max(0, $running - 1);
-                $this->emit('finish', $process, $key);
-                unset($this->queue[$key]);
-            }
+		$this->concurrency = $concurrency;
+		return $this;
+	}
 
-            if ($process->isRunning()) {
+	public function setSleepTime(int $sleepTime): static
+	{
 
-                $running++;
-            }
+		$this->sleepTime = $sleepTime;
+		return $this;
+	}
 
-            else if ($running >= $this->concurrency) {
+	protected function check(): bool
+	{
 
-                break;
-            }
+		$running = 0;
 
-            else if (!$process->isStarted()) {
+		/**
+		 * @var Process $process
+		 */
+		foreach ($this->storage as $process) {
 
-                $process->start();
-                $running++;
-            }
-        }
+			$data = $this->storage[$process]->data;
 
-        return $this;
-    }
+			if ($process->isTerminated()) {
 
-    public function wait(): static
-    {
+				$running = max(0, $running--);
 
-        while ($this->queue) {
+//				if ($this->storage->contains($process)) {
 
-            $this->check();
+//					$callables = $this->storage[$process]['then'];
+//
+//					if ($callables) {
 
-            if ($this->queue) {
+						foreach ($this->storage[$process]->next as $callable) {
 
-                usleep($this->sleepTime);
-            }
-        }
+							call_user_func($callable, $process, $data->stdout, $data->stderr, $data->index);
+						}
+//					}
+//				}
 
-        $this->count = 0;
+				$this->emit('finish', $process, $data->stdout, $data->stderr, $data->index);
+				$this->storage->detach($process);
+				continue;
+			}
 
-        return $this;
-    }
+			if ($process->isRunning()) {
+
+				$running++;
+			} else if ($running >= $this->concurrency) {
+
+				break;
+			} else if (!$process->isStarted()) {
+
+				$process->start(function ($type, $buffer) use($data) {
+
+					$data->{'std'.$type} .= $buffer;
+				});
+				$running++;
+			}
+		}
+
+		return $this->storage->count() > 0;
+	}
+
+	public function wait(): static
+	{
+
+		while ($this->check()) {
+
+			usleep($this->sleepTime);
+		}
+
+		$this->count = 0;
+		$this->current = null;
+		$this->storage = new \SplObjectStorage();
+
+//		if (ob_get_level() > 0) {
+//
+//			$output = ob_get_clean();
+//
+//			ob_flush();
+//
+//			ob_start();
+//			echo $output;
+//		}
+
+		return $this;
+	}
 }
 
 

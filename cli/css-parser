@@ -3,6 +3,7 @@
 
 use TBela\CSS\Cli\Args;
 use TBela\CSS\Cli\Exceptions\MissingParameterException;
+use TBela\CSS\Cli\Option;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
@@ -40,37 +41,37 @@ try {
 
     $cli->
     setStrict(true)->
-    add('version', 'print version number', 'bool', 'v', multiple: false)
+    add('version', 'print version number', Option::BOOL, 'v', multiple: false)
         ->addGroup('internal', "internal commands are used by the multithreading feature:\n", true)
-        ->add('parse-ast-src', 'src value of the ast nodes', 'string', multiple: false, group: 'internal')
-        ->add('parse-ast-position-index', 'initial index position of the ast nodes', 'int', multiple: false, group: 'internal')
-        ->add('parse-ast-position-line', 'initial line number of the ast nodes', 'int', multiple: false, group: 'internal')
-        ->add('parse-ast-position-column', 'initial column number of the ast nodes', 'int', multiple: false, group: 'internal')
+        ->add('parse-ast-src', 'src value of the ast nodes', Option::STRING, multiple: false, group: 'internal')
+        ->add('parse-ast-position-index', 'initial index position of the ast nodes', Option::INT, multiple: false, group: 'internal')
+        ->add('parse-ast-position-line', 'initial line number of the ast nodes', Option::INT, multiple: false, group: 'internal')
+        ->add('parse-ast-position-column', 'initial column number of the ast nodes', Option::INT, multiple: false, group: 'internal')
         ->addGroup('parse', "Parse options:\n")
-        ->add('capture-errors', 'ignore parse error', 'bool', 'e', multiple: false, group: 'parse')
-        ->add('flatten-import', 'process @import', 'bool', 'm', multiple: false, group: 'parse')
-        ->add('parse-allow-duplicate-rules', 'allow duplicate rule', 'bool', 'p', multiple: false, group: 'parse')
-        ->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: 'auto', alias: 'd', multiple: false, group: 'parse')
-        ->add('file', 'input css file or url', 'string', 'f', multiple: true, group: 'parse')
-        ->add('parse-multi-processing', 'enable multi-processing parsing', 'bool', 'M', multiple: false, defaultValue: true, group: 'parse')
-        ->add('parse-children-process', 'maximum children process', 'int', 'P', multiple: false, defaultValue: 20, group: 'parse')
-        ->add('input-format', 'input format: json (ast), serialize (PHP serialized ast)', 'string', 'I', multiple: false, defaultValue: 'string', options: ['string', 'json', 'serialize'], group: 'parse')
+        ->add('capture-errors', 'ignore parse error', Option::BOOL, 'e', multiple: false, group: 'parse')
+        ->add('flatten-import', 'process @import', Option::BOOL, 'm', multiple: false, group: 'parse')
+        ->add('parse-allow-duplicate-rules', 'allow duplicate rule', Option::BOOL, 'p', multiple: false, group: 'parse')
+        ->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: Option::AUTO, alias: 'd', multiple: false, group: 'parse')
+        ->add('file', 'input css file or url', Option::STRING, 'f', multiple: true, group: 'parse')
+        ->add('parse-multi-processing', 'enable multi-processing parser', Option::BOOL, 'M', multiple: false, defaultValue: true, group: 'parse')
+        ->add('parse-children-process', 'maximum children process', Option::INT, 'P', multiple: false, defaultValue: 20, group: 'parse')
+        ->add('input-format', 'input format: json (ast), serialize (PHP serialized ast)', Option::STRING, 'I', multiple: false, defaultValue: Option::STRING, options: [Option::STRING, 'json', 'serialize'], group: 'parse')
         ->addGroup('render', "Render options:\n")
-        ->add('css-level', 'css color module', 'int', 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
-        ->add('charset', 'remove @charset', 'bool', 'S', multiple: false, defaultValue: false, group: 'render')
-        ->add('compress', 'minify output', 'bool', 'c', multiple: false, group: 'render')
-        ->add('sourcemap', 'generate sourcemap', 'bool', 's', multiple: false, dependsOn: 'file', group: 'render')
-        ->add('remove-comments', 'remove comments', 'bool', 'C', multiple: false, group: 'render')
-        ->add('preserve-license', 'preserve license comments', 'bool', 'L', multiple: false, group: 'render')
-        ->add('legacy-rendering', 'legacy rendering', 'bool', 'G', multiple: false, group: 'render')
-        ->add('compute-shorthand', 'compute shorthand properties', 'bool', 'u', multiple: false, group: 'render')
-        ->add('remove-empty-nodes', 'remove empty nodes', 'bool', 'E', multiple: false, group: 'render')
-        ->add('render-allow-duplicate-declarations', 'render duplicate declarations', 'bool', 'r', multiple: false, group: 'render')
-        ->add('convert-color', 'render duplicate declarations', \TBela\CSS\Cli\Option::AUTO, 't', multiple: false, options: [true, false, 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'], group: 'render')
-        ->add('output', 'output file name', 'string', 'o', multiple: false, group: 'render')
-        ->add('ast', 'dump ast as JSON', 'bool', 'a', multiple: false, group: 'render')
-        ->add('output-format', "output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array", 'string', 'F', multiple: false, defaultValue: 'string', options: ['string', 'json', 'serialize', 'json-array', 'serialize-array'], dependsOn: 'input-format', group: 'render')
-        ->add('render-multi-processing', "enable multi-processing rendering", 'bool', 'R', multiple: false, defaultValue: true, group: 'render')
+        ->add('css-level', 'css color module', Option::INT, 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
+        ->add('charset', 'remove @charset', Option::BOOL, 'S', multiple: false, defaultValue: false, group: 'render')
+        ->add('compress', 'minify output', Option::BOOL, 'c', multiple: false, group: 'render')
+        ->add('sourcemap', 'generate sourcemap', Option::BOOL, 's', multiple: false, dependsOn: 'file', group: 'render')
+        ->add('remove-comments', 'remove comments', Option::BOOL, 'C', multiple: false, group: 'render')
+        ->add('preserve-license', 'preserve license comments', Option::BOOL, 'L', multiple: false, group: 'render')
+        ->add('legacy-rendering', 'convert nested css syntax', Option::BOOL, 'G', multiple: false, group: 'render')
+        ->add('compute-shorthand', 'compute shorthand properties', Option::BOOL, 'u', multiple: false, group: 'render')
+        ->add('remove-empty-nodes', 'remove empty nodes', Option::BOOL, 'E', multiple: false, group: 'render')
+        ->add('render-allow-duplicate-declarations', 'render duplicate declarations', Option::BOOL, 'r', multiple: false, group: 'render')
+        ->add('convert-color', 'convert colors', Option::AUTO, 't', multiple: false, options: [true, false, 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'], group: 'render')
+        ->add('output', 'output file name', Option::STRING, 'o', multiple: false, group: 'render')
+        ->add('ast', 'dump ast as JSON', Option::BOOL, 'a', multiple: false, group: 'render')
+        ->add('output-format', "output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array", Option::STRING, 'F', multiple: false, defaultValue: Option::STRING, options: [Option::STRING, 'json', 'serialize', 'json-array', 'serialize-array'], dependsOn: 'input-format', group: 'render')
+        ->add('render-multi-processing', "enable multi-processing renderer", Option::BOOL, 'R', multiple: false, defaultValue: true, group: 'render')
         ->parse();
 
     $parseOptions = [];
@@ -187,7 +188,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     $ast = [];
     $parser = new Parser(options: $parseOptions);
 
-    if ($parseOptions['input_format'] == 'string') {
+    if ($parseOptions['input_format'] == Option::STRING) {
 
         if ($inFile) {
 
@@ -232,8 +233,6 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     $root = (new Parser())->getAst();
 
     $root->children = $ast;
-
-//    $output = [];
     $renderer = new Renderer($renderOptions);
 
     if ($outFile != STDOUT) {
@@ -262,13 +261,13 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
             }
         }
 
-        fwrite($outFile, $renderOptions['output_format'] == 'serialize-array' ? serialize($output) : json_encode($output, !empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
+        fwrite($outFile, $renderOptions['output_format'] == 'serialize-array' ? serialize($output) : json_encode($output, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
     }
 
     else {
 
         fwrite($outFile, match ($renderOptions['output_format']) {
-            'json' => json_encode(count($ast) == 1 ? $ast[0] : $root, !empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0),
+            'json' => json_encode(count($ast) == 1 ? $ast[0] : $root, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0),
             'serialize' => serialize(count($ast) == 1 ? $ast[0] : $root),
             default => $renderer->renderAst($root)});
     }
@@ -277,11 +276,13 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 } catch (ValueError|UnexpectedValueException|InvalidArgumentException $e) {
 
     fwrite(STDERR, $e->getMessage() . "\n");
-    exit($e->getCode());
+    $code = $e->getCode();
+    exit($code == 0 ? 1 : $code);
 } catch (MissingParameterException $e) {
 
     fwrite(STDERR, sprintf("%s: %s\nTry '%s --help'\n", $exe, $e->getMessage(), $exe));
-    exit($e->getCode());
+    $code = $e->getCode();
+    exit($code == 0 ? 1 : $code);
 } catch (Exception $e) {
 
     fwrite(STDERR, $e->getMessage() . "\n");

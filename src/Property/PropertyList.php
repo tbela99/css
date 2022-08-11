@@ -94,6 +94,11 @@ class PropertyList implements IteratorAggregate
             if (isset($shorthand) && isset($this->properties[$shorthand])) {
 
                 $this->properties[$shorthand]->remove($property);
+
+				if ($this->properties[$shorthand]->isEmpty()) {
+
+					unset($this->properties[$shorthand]);
+				}
             }
         }
 
@@ -171,6 +176,8 @@ class PropertyList implements IteratorAggregate
 
             $propertyName = '-'.$vendor.'-'.$name;
         }
+
+		unset($this->properties[$propertyName]);
 
         if (empty($this->options['compute_shorthand'])) {
 
