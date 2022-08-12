@@ -46,7 +46,7 @@ interface RuleListInterface extends ElementInterface, IteratorAggregate {
      * @param ElementInterface $child
      * @return bool
      */
-    public function support(ElementInterface $child);
+    public function support(ElementInterface $child): bool;
 
     /**
      * append child nodes

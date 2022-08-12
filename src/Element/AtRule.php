@@ -39,7 +39,8 @@ class AtRule extends RuleSet {
      * test if this at-rule node contains declaration
      * @return bool
      */
-    public function hasDeclarations () {
+    public function hasDeclarations (): bool
+	{
 
         return !empty($this->ast->hasDeclarations);
     }
@@ -47,7 +48,7 @@ class AtRule extends RuleSet {
     /**
      * @inheritDoc
      */
-    public function support (ElementInterface $child) {
+    public function support (ElementInterface $child): bool {
 
         if (!empty($this->ast->isLeaf)) {
 
