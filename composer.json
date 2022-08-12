@@ -45,7 +45,7 @@
     "symfony/process": "^3.4"
   },
   "scripts": {
-    "test": "php5.6 ./vendor/phpunit/phpunit/phpunit"
+    "test": "./vendor/phpunit/phpunit/phpunit"
   },
   "require-dev": {
     "phpunit/phpunit": "^5"
