@@ -45,7 +45,7 @@
     "symfony/process": "^3.4"
   },
   "scripts": {
-    "test": "./vendor/phpunit/phpunit/phpunit"
+    "test": "./bin/runtest.sh"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.7"
