@@ -19,7 +19,7 @@ jobs:
         with:
           php-version: '5.6'
           extensions: mbstring, xml
-          tools: php-cs-fixer, phpunit, composer
+          tools: phpunit, composer
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
