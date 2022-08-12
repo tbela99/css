@@ -74,17 +74,17 @@ class Renderer
 			'--parse-multi-processing=off'
 		];
 
-		if (($parseOptions['capture_errors'] ?? true) === false) {
+		if (empty($parseOptions['capture_errors'])) {
 			// default is on
 			$args[] = '--capture-errors=off';
 		}
 
-		if (($parseOptions['ast_src'] ?? '') !== '') {
+		if (!empty($parseOptions['ast_src'])) {
 			// default is on
 			$args[] = sprintf('--parse-ast-src=%s', $parseOptions['ast_src']);
 		}
 
-		if (($parseOptions['flatten_import'] ?? false)) {
+		if (!empty($parseOptions['flatten_import'])) {
 			// default is off
 			$args[] = '--flatten-import=on';
 		}
@@ -94,7 +94,7 @@ class Renderer
 			$args[] = '--parse-ast-src=' . $parseOptions['ast_src'];
 		}
 
-		if ($parseOptions['allow_duplicate_declarations'] ?? true) {
+		if (empty($parseOptions['allow_duplicate_declarations'])) {
 			// default is on
 			$args[] = '--parse-allow-duplicate-declarations==off';
 		}

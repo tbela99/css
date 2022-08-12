@@ -155,7 +155,7 @@ class Parser implements ParsableInterface
 					 'allow_duplicate_declarations' => true,
 					 'multi_processing' => true,
 					 // 65k
-					 'multi_processing_threshold' => 66560,
+					 'multi_processing_threshold' => 32768,
 //        'children_process' => 20,
 					 'ast_src' => '',
 					 'ast_position_line' => 1,
@@ -185,17 +185,6 @@ class Parser implements ParsableInterface
 				$args[] = sprintf('--%s=%s', str_replace('_', '-', $key), is_bool($options[$key]) ? ($options[$key] ? 'on' : 'off') : $options[$key]);
 			}
 		}
-
-
-//		if ($options['flatten_import']) {
-//			// default is off
-//			$args[] ='--flatten-import=on';
-//		}
-//
-//		if (!$options['allow_duplicate_declarations']) {
-//			// default is on
-//			$args[] ='--parse-allow-duplicate-declarations==off';
-//		}
 
 		$args[] = sprintf('--output-format=%s', $this->format);
 
