@@ -39,7 +39,8 @@ class AtRule extends RuleSet {
      * test if this at-rule node contains declaration
      * @return bool
      */
-    public function hasDeclarations () {
+    public function hasDeclarations ()
+	{
 
         return !empty($this->ast->hasDeclarations);
     }

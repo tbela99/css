@@ -7,7 +7,7 @@
     "parser",
     "minifier",
     "beautifier",
-    "AstTest",
+    "Ast",
     "PHP"
   ],
   "homepage": "https://github.com/tbela99/css",

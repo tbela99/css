@@ -74,17 +74,15 @@ class Renderer
 			'--parse-multi-processing=off'
 		];
 
-		if ((isset($parseOptions['capture_errors']) ? $parseOptions['capture_errors'] : true) === false) {
-			// default is on
+		if (empty($parseOptions['capture_errors'])) {
 			$args[] = '--capture-errors=off';
 		}
-
-		if ((isset($parseOptions['ast_src']) ? $parseOptions['ast_src'] : '') !== '') {
+		if (!empty($parseOptions['ast_src'])) {
 			// default is on
 			$args[] = sprintf('--parse-ast-src=%s', $parseOptions['ast_src']);
 		}
 
-		if ((isset($parseOptions['flatten_import']) && $parseOptions['flatten_import'])) {
+		if (!empty($parseOptions['flatten_import'])) {
 			// default is off
 			$args[] = '--flatten-import=on';
 		}

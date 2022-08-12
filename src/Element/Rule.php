@@ -32,23 +32,6 @@ class Rule extends RuleList
             $selectors = Value::parse($selectors, null, true, '', '');
         }
 
-//        $comments = [];
-//        $k = count($selectors);
-
-//        while ($k--) {
-//
-//            if ($selectors[$k]->type == 'Comment') {
-//
-//                $comments[] = $selectors[$k]->value;
-//                array_splice($selectors, $k, 1);
-//            }
-//        }
-//
-//        if (!empty($comments)) {
-//
-//            $this->setLeadingComments(array_reverse($comments));
-//        }
-
         $selectors = Value::split(Value::renderTokens($selectors, ['omit_unit' => false]), ',');
 
         $result = [];
@@ -68,7 +51,7 @@ class Rule extends RuleList
      * @return $this
      */
     public function setSelector($selectors)
-    {
+	{
 
         $this->ast->selector = $this->parseSelector($selectors);
         return $this;
@@ -80,7 +63,7 @@ class Rule extends RuleList
      * @return $this
      */
     public function addSelector($selector)
-    {
+	{
 
         $result = [];
 
@@ -105,7 +88,7 @@ class Rule extends RuleList
      * @throws Exception
      */
     public function removeSelector($selector)
-    {
+	{
 
         if (!is_array($selector)) {
 
@@ -131,8 +114,8 @@ class Rule extends RuleList
      * @return Declaration
      * @throws Exception
      */
-    public function addDeclaration($name, $value)
-    {
+    public function addDeclaration(string $name, string $value)
+	{
 
         $declaration = new Declaration();
 
@@ -149,7 +132,7 @@ class Rule extends RuleList
      * @throws Exception
      */
     public function merge(Rule $rule)
-    {
+	{
 
         $this->addSelector($rule->getSelector());
 
@@ -165,7 +148,7 @@ class Rule extends RuleList
      * @inheritDoc
      */
     public function support(ElementInterface $child)
-    {
+	{
 
         if ($child instanceof Comment) {
 

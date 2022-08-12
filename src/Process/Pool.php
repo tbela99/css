@@ -57,9 +57,8 @@ class Pool implements EventInterface
 	public function add(Process $process)
 	{
 
-//        $this->count++;
 		$this->current = $process;
-		$this->storage[$process] = (object) ['data' => (object) ['index' => $this->count++, 'stdout' => '', 'stderr' => ''], 'next' => []];
+		$this->storage[$process] = (object)['data' => (object)['index' => $this->count++, 'stdout' => '', 'stderr' => ''], 'next' => []];
 
 		$this->check();
 		return $this;
@@ -70,20 +69,10 @@ class Pool implements EventInterface
 
 		$process = $this->current;
 
-//		if ($process && $this->storage->contains($process)) {
-//
-//			$callables = $this->storage[$process];
-//		}
-
-//		if (!isset($callables)) {
-//
-//			$callables = [];
-//		}
-
-//		$callables[] = $callable;
 		$data = $this->storage[$process];
 		$data->next[] = $callable;
 		$this->storage[$process] = $data;
+
 		return $this;
 	}
 
@@ -117,18 +106,10 @@ class Pool implements EventInterface
 
 				$running = max(0, $running--);
 
-//				if ($this->storage->contains($process)) {
+				foreach ($this->storage[$process]->next as $callable) {
 
-//					$callables = $this->storage[$process]['then'];
-//
-//					if ($callables) {
-
-						foreach ($this->storage[$process]->next as $callable) {
-
-							call_user_func($callable, $process, $data->stdout, $data->stderr, $data->index);
-						}
-//					}
-//				}
+					call_user_func($callable, $process, $data->stdout, $data->stderr, $data->index);
+				}
 
 				$this->emit('finish', $process, $data->stdout, $data->stderr, $data->index);
 				$this->storage->detach($process);
@@ -143,9 +124,9 @@ class Pool implements EventInterface
 				break;
 			} else if (!$process->isStarted()) {
 
-				$process->start(function ($type, $buffer) use($data) {
+				$process->start(function ($type, $buffer) use ($data) {
 
-					$data->{'std'.$type} .= $buffer;
+					$data->{'std' . $type} .= $buffer;
 				});
 				$running++;
 			}
@@ -165,16 +146,6 @@ class Pool implements EventInterface
 		$this->count = 0;
 		$this->current = null;
 		$this->storage = new \SplObjectStorage();
-
-//		if (ob_get_level() > 0) {
-//
-//			$output = ob_get_clean();
-//
-//			ob_flush();
-//
-//			ob_start();
-//			echo $output;
-//		}
 
 		return $this;
 	}

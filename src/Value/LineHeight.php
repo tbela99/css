@@ -23,6 +23,7 @@ class LineHeight extends Value
      * @inheritDoc
      */
     public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, $index = null, array $tokens = [])
+
     {
 
         if (!is_null($previousToken) && $previousToken->type != 'separator' && (!isset($previousToken->value) || $previousToken->value != '/')) {
@@ -73,11 +74,6 @@ class LineHeight extends Value
         }
 
         if (!empty($options['compress'])) {
-
-//            if ($prefix !== '') {
-//
-//                $prefix = '/';
-//            }
 
             if(is_numeric($value)) {
 
