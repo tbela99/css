@@ -36,9 +36,10 @@ class Color extends Value
         return $type == 'color';
     }
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
     public function render(array $options = [])
     {
 

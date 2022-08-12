@@ -23,7 +23,6 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "CSS", "index.html", [
-    [ "Deprecated List", "da/d58/deprecated.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Features", "index.html#autotoc_md1", null ],
       [ "Installation", "index.html#autotoc_md2", null ],
@@ -31,11 +30,17 @@ var NAVTREE =
       [ "Usage:", "index.html#autotoc_md4", null ],
       [ "Sourcemap generation", "index.html#autotoc_md5", null ],
       [ "The CSS Query API", "index.html#autotoc_md6", null ],
-      [ "The Traverser Api", "index.html#autotoc_md7", null ],
-      [ "Build a CSS Document", "index.html#autotoc_md8", null ],
-      [ "Performance", "index.html#autotoc_md9", null ],
-      [ "Parser Options", "index.html#autotoc_md10", null ],
-      [ "Renderer Options", "index.html#autotoc_md11", null ],
+      [ "CSS Nesting", "index.html#autotoc_md7", null ],
+      [ "The Traverser Api", "index.html#autotoc_md8", null ],
+      [ "Build a CSS Document", "index.html#autotoc_md9", null ],
+      [ "Performance", "index.html#autotoc_md10", null ],
+      [ "Parser Options", "index.html#autotoc_md11", null ],
+      [ "Renderer Options", "index.html#autotoc_md12", null ],
+      [ "Command line utility", "index.html#autotoc_md13", [
+        [ "Minify inline css", "index.html#autotoc_md14", null ],
+        [ "Minify css file", "index.html#autotoc_md15", null ],
+        [ "Dump ast", "index.html#autotoc_md16", null ]
+      ] ],
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -54,8 +59,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"d8/d23/classTBela_1_1CSS_1_1Element.html#a05cac710db9aeb8363904badd286cca6",
-"dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html#a2649a9b9a651adfc358b7308fb149a55"
+"d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html#a79ad1784df6d32e3dec2b0cf60a015a6",
+"db/d38/classTBela_1_1CSS_1_1Process_1_1Helper.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

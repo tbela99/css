@@ -10,6 +10,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 - multibyte characters encoding
 - sourcemap
+- multiprocessing: process large CSS input very fast
 - CSS Nesting module
 - partially implemented CSS Syntax module level 3
 - partial CSS validation
@@ -31,13 +32,13 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 install using [Composer](https://getcomposer.org/)
 
 ```bash
-$ composer require tbela99/css
+$ composer require "tbela99/css:dev-php56-backport"
 ```
 
 ## Requirements
 
-- PHP version >= 8.0 on master branch.
-- PHP version >= 5.6 supported in [this branch](https://github.com/tbela99/css/tree/php56-backport)
+This library requires:
+- PHP version >= 5.6
 - mbstring extension
 
 ## Usage:
@@ -188,15 +189,15 @@ result
 
 ```css
 .form-select {
- background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c
-/svg%3e")
-}
-.form-check-input:checked[type=checkbox] {
- background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/s
-vg%3e")
-}
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c
+  /svg%3e")
+  }
+  .form-check-input:checked[type=checkbox] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/s
+  vg%3e")
+  }
 
-...
+  ...
 ```
 
 Example: Extract Font-src declaration
@@ -225,7 +226,7 @@ h1 {
   @font-face {
     font-family: MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
   body {
@@ -240,7 +241,7 @@ h1 {
   @font-face {
     font-family: Arial, MaHelvetica;
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
     font-weight: bold;
   }
 }
@@ -278,13 +279,13 @@ result
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 @media print {
   @font-face {
     src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"),
-      url(MgOpenModernaBold.ttf);
+    url(MgOpenModernaBold.ttf);
   }
 }
 ```
@@ -306,9 +307,9 @@ result
   src: url(/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff)
 }
 @media print {
- @font-face {
-   src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
- }
+  @font-face {
+    src: local("Helvetica Neue Bold"), local(HelveticaNeue-Bold), url(MgOpenModernaBold.ttf)
+  }
 }
 ```
 
@@ -316,18 +317,18 @@ result
 
 ```css
 table.colortable {
-  & td {
+& td {
     text-align:center;
-    &.c { text-transform:uppercase }
-    &:first-child, &:first-child + td { border:1px solid black }
-  }
+&.c { text-transform:uppercase }
+&:first-child, &:first-child + td { border:1px solid black }
+}
 
 
 & th {
-text-align:center;
-background:black;
-color:white;
-}
+    text-align:center;
+    background:black;
+    color:white;
+  }
 }
 ```
 
@@ -344,21 +345,21 @@ result
 
 ```css
 table.colortable {
- & td {
-  text-align: center;
-  &.c {
+& td {
+    text-align: center;
+&.c {
    text-transform: uppercase
-  }
-  &:first-child,
-  &:first-child+td {
+ }
+&:first-child,
+&:first-child+td {
    border: 1px solid #000
+ }
+}
+& th {
+    text-align: center;
+    background: #000;
+    color: #fff
   }
- }
- & th {
-  text-align: center;
-  background: #000;
-  color: #fff
- }
 }
 
 ```
@@ -380,19 +381,19 @@ result
 ```css
 
 table.colortable td {
- text-align: center
+  text-align: center
 }
 table.colortable td.c {
- text-transform: uppercase
+  text-transform: uppercase
 }
 table.colortable td:first-child,
 table.colortable td:first-child+td {
- border: 1px solid #000
+  border: 1px solid #000
 }
 table.colortable th {
- text-align: center;
- background: #000;
- color: #fff
+  text-align: center;
+  background: #000;
+  color: #fff
 }
 
 ```
@@ -599,7 +600,7 @@ echo $renderer->render($parser->parse());
 ## Parser Options
 
 - flatten_import: process @import directive and import the content into the css document. default to false.
-- allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
+- allow_duplicate_rules: allow duplicated rules. By default, duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 
@@ -623,53 +624,64 @@ echo $renderer->render($parser->parse());
 the command line utility is located at './cli/css-parser'
 
 ```bash
-
 $ ./cli/css-parser -h
 
 Usage: 
 $ css-parser [OPTIONS] [PARAMETERS]
 
+-v, --version	print version number
 -h	print help
 --help	print extended help
 
-parse options:
+Parse options:
 
 -e, --capture-errors                    	ignore parse error
 
--f, --file                              	css file or url
+-f, --file                              	input css file or url
 
 -m, --flatten-import                    	process @import
+
+-I, --input-format                      	input format: json (ast), serialize (PHP serialized ast)
 
 -d, --parse-allow-duplicate-declarations	allow duplicate declaration
 
 -p, --parse-allow-duplicate-rules       	allow duplicate rule
 
-render options:
+-P, --parse-children-process            	maximum children process
 
--a, --ast                          	dump ast as JSON
+-M, --parse-multi-processing            	enable multi-processing parser
 
--S, --charset                      	remove @charset
+Render options:
 
--c, --compress                     	minify output
+-a, --ast                                	dump ast as JSON
 
--u, --compute-shorthand            	compute shorthand properties
+-S, --charset                            	remove @charset
 
--l, --css-level                    	css color module
+-c, --compress                           	minify output
 
--G, --legacy-rendering             	legacy rendering
+-u, --compute-shorthand                  	compute shorthand properties
 
--o, --output                       	output file name
+-t, --convert-color                      	convert colors
 
--L, --preserve-license             	preserve license comments
+-l, --css-level                          	css color module
 
--C, --remove-comments              	remove comments
+-G, --legacy-rendering                   	convert nested css syntax
 
--E, --remove-empty-nodes           	remove empty nodes
+-o, --output                             	output file name
 
--r, --render-duplicate-declarations	render duplicate declarations
+-F, --output-format                      	output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array, requires --input-format
 
--s, --sourcemap                    	generate sourcemap, require -o
+-L, --preserve-license                   	preserve license comments
 
+-C, --remove-comments                    	remove comments
+
+-E, --remove-empty-nodes                 	remove empty nodes
+
+-r, --render-allow-duplicate-declarations	render duplicate declarations
+
+-R, --render-multi-processing            	enable multi-processing renderer
+
+-s, --sourcemap                          	generate sourcemap, requires --file
 ```
 
 ### Minify inline css
@@ -683,7 +695,7 @@ $ echo 'a, div {display:none} b {}' | ./cli/css-parser -c
 ### Minify css file
 
 ```bash
-$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c
+$ ./cli/css-parser -f nested.css -c
 #
 $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css' -c
 ```
@@ -691,7 +703,7 @@ $ ./cli/css-parser -f 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.
 ### Dump ast
 
 ```bash
-$ ./cli/css-parser -f nested.css -c -a
+$ ./cli/css-parser -f nested.css -f 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' -c -a
 #
 $ ./cli/css-parser 'a, div {display:none} b {}' -c -a
 #

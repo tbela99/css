@@ -8,6 +8,8 @@ use TBela\CSS\Value;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\RuleList;
 
+require_once __DIR__.'/../compat.php';
+
 /**
  * Property list
  * @package CSS
@@ -16,7 +18,7 @@ class PropertyList implements IteratorAggregate
 {
 
     /**
-     * @var Property[]
+     * @var Property[]|PropertySet[]|PropertyMap[]
      * @ignore
      */
     protected $properties = [];
@@ -48,6 +50,61 @@ class PropertyList implements IteratorAggregate
                 $this->set($element['name'], $element['value'], $element['type'], $element['leadingcomments'], $element['trailingcomments']);
             }
         }
+    }
+
+    // @todo vendor prefix support
+    public function has($property) {
+
+        if (isset($this->properties[$property])) {
+
+            return true;
+        }
+
+        $shorthand = Config::getProperty($property.'.shorthand');
+
+        if (!isset($shorthand)) {
+
+            $shorthand = Config::getPath('map.'.$property.'.shorthand');
+        }
+
+        if (isset($shorthand) && isset($this->properties[$shorthand])) {
+
+
+            return $this->properties[$shorthand]->has($property);
+        }
+
+        return false;
+    }
+
+    // @todo vendor prefix support
+    public function remove($property)
+    {
+        if (isset($this->properties[$property])) {
+
+            unset($this->properties[$property]);
+        }
+
+        else {
+
+            $shorthand = Config::getProperty($property.'.shorthand');
+
+            if (!isset($shorthand)) {
+
+                $shorthand = Config::getPath('map.'.$property.'.shorthand');
+            }
+
+            if (isset($shorthand) && isset($this->properties[$shorthand])) {
+
+                $this->properties[$shorthand]->remove($property);
+
+				if ($this->properties[$shorthand]->isEmpty()) {
+
+					unset($this->properties[$shorthand]);
+				}
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -107,7 +164,7 @@ class PropertyList implements IteratorAggregate
 
         $propertyName = $name;
 
-        if (substr($name, 0, 1) == '-' && preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
+        if (\str_starts_with($name, '-') && preg_match('/^(-([a-zA-Z]+)-(\S+))/', trim($name), $match)) {
 
             $name = $match[3];
 
@@ -117,11 +174,12 @@ class PropertyList implements IteratorAggregate
             }
         }
 
-
         if (!is_null($vendor)) {
 
             $propertyName = '-'.$vendor.'-'.$name;
         }
+
+		unset($this->properties[$propertyName]);
 
         if (empty($this->options['compute_shorthand'])) {
 
@@ -147,13 +205,15 @@ class PropertyList implements IteratorAggregate
                 $property->setTrailingComments($trailingcomments);
             }
 
-            $this->properties[$property->getName(true)] = $property;
+            $name = $property->getName(true);
+
+            $this->properties[$name] = $property;
             return $this;
         }
 
         $shorthand = Config::getProperty($propertyName.'.shorthand');
 
-        // is is an shorthand property?
+        // is is a shorthand property?
         if (!is_null($shorthand) && !is_null(Config::getProperty($shorthand))) {
 
            $config = Config::getProperty($shorthand);
@@ -169,12 +229,6 @@ class PropertyList implements IteratorAggregate
             }
 
             $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments, $vendor);
-
-//            else {
-
-//                throw new \Exception('Invalid shorthand '.$shorthand);
-//            }
-
         }
 
         else {

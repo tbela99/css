@@ -1,17 +1,15 @@
 #!/bin/sh
 # # to run run a particular test, give the file name without extension as a parameter
-## $ ./runtest.sh Render Path Ast
-# to exclude specific tests, prepend '-' in front of the test name
-## $ ./runtest.sh -Minify -Ast
+##  ./runtest.sh Render Ast Sourcemap
+# to run all specific tests, prepend '-' in front of the test name to exclude
+## ./runtest.sh -Minify -Ast -Sourcemap
 # to run all the tests with no argument
 ## ./runtest.sh
 #set -x
 ##
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$DIR/../test/"
-[ ! -f "../phpunit-5.phar" ] &&
-  wget -O ../phpunit-5.phar https://phar.phpunit.de/phpunit-5.phar &&
-  chmod +x ../phpunit-5.phar
+
 php56=`command -v php5.6 2>/dev/null`
 
 if [ -z "$php56" ]; then
@@ -29,7 +27,7 @@ if [ -z "$php56" ]; then
     sudo apt-get install -y python-software-properties
     sudo add-apt-repository -y ppa:ondrej/php
     sudo apt-get update -y
-    sudo apt-get install -y php5.6 php7.4
+    sudo apt-get install -y php5.6
 
   fi
 
@@ -48,6 +46,12 @@ fi
 #    ;;
 #  esac
 fi
+if [ ! -f "../vendor/bin/phpunit" ]; then
+  echo "please go to "$(dirname "$DIR")" and run 'composer install'"
+  exit 1
+fi
+
+unset DIR
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -60,10 +64,26 @@ fail() {
   exit 1
 }
 
+run() {
+
+  #
+  #  set -x
+  $php56 -dmemory_limit=512M ../vendor/bin/phpunit -v --enforce-time-limit --colors=always --bootstrap autoload.php --testdox --fail-on-risky "$@"
+  #  set +x
+}
+
+testName() {
+
+  fname=$(basename "$1" | awk -F . '{print $1}')
+
+  # strip the Test suffix
+  echo ""${fname%Test}
+}
+
 #
 #
 cd ../test
-pwd
+#pwd
 #
 #
 if [ $# -gt 0 ]; then
@@ -74,9 +94,12 @@ if [ $# -gt 0 ]; then
     for file in $(ls src/*.php); do
       fname=$(basename "$file" | awk -F . '{print $1}')
 
+      # strip the Test suffix
+      fname=""${fname%Test}
+
       case "$@" in
       *-$fname*) continue ;;
-      *) $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file" ;;
+      *) run "$file" || fail "$file" ;;
       esac
     done
     ;;
@@ -84,20 +107,21 @@ if [ $# -gt 0 ]; then
     for file in $(ls src/*.php); do
 
       fname=$(basename "$file" | awk -F . '{print $1}')
+      # strip the Test suffix
+      fname=""${fname%Test}
 
       case "$@" in
-        *$fname*)
-        echo "$fname"
+      *$fname*)
 
-        $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
+        run "$file" || fail "$file"
         ;;
       esac
     done
     ;;
   esac
 else
-    # no argument
-    for file in $(ls src/*.php); do
-        $php56 -dmemory_limit=256M ../phpunit-5.phar --colors=always --bootstrap autoload.php --testdox "$file" || fail "$file"
-    done
+  # no argument
+  for file in $(ls src/*.php); do
+    run "$file" || fail "$file"
+  done
 fi

@@ -103,8 +103,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a10d4a514c68ba3e7878103fcd62eec1d"><td class="memItemLeft" align="right" valign="top"><a id="a10d4a514c68ba3e7878103fcd62eec1d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>__construct</b> (<a class="el" href="../../d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html">RuleList</a> $list=null, array $options=[])</td></tr>
 <tr class="separator:a10d4a514c68ba3e7878103fcd62eec1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61211ab53a1a6da628c240ccaeaed301"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a61211ab53a1a6da628c240ccaeaed301">set</a> (?string $name, $value, $propertyType=null, ?array $leadingcomments=null, ?array $trailingcomments=null, $src=null)</td></tr>
-<tr class="separator:a61211ab53a1a6da628c240ccaeaed301"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0413b2f6e29c0a5c86220e15db3834fb"><td class="memItemLeft" align="right" valign="top"><a id="a0413b2f6e29c0a5c86220e15db3834fb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>has</b> ($property)</td></tr>
+<tr class="separator:a0413b2f6e29c0a5c86220e15db3834fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a091d16a9369ca8e27e194e0f82cf0899"><td class="memItemLeft" align="right" valign="top"><a id="a091d16a9369ca8e27e194e0f82cf0899"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>remove</b> ($property)</td></tr>
+<tr class="separator:a091d16a9369ca8e27e194e0f82cf0899"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e8fe141bafcef3b1bed2451e2c20542"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a8e8fe141bafcef3b1bed2451e2c20542">set</a> (?string $name, $value, ?string $propertyType=null, ?array $leadingcomments=null, ?array $trailingcomments=null, ?string $src='', ?string $vendor=null)</td></tr>
+<tr class="separator:a8e8fe141bafcef3b1bed2451e2c20542"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfd913ca5bcbf5bd7e9dcd35e383efcf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#adfd913ca5bcbf5bd7e9dcd35e383efcf">render</a> ($glue=';', $join=&quot;\n&quot;)</td></tr>
 <tr class="separator:adfd913ca5bcbf5bd7e9dcd35e383efcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a1d2049a827502785183572b16ef49d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dd3/classTBela_1_1CSS_1_1Property_1_1PropertyList.html#a3a1d2049a827502785183572b16ef49d">__toString</a> ()</td></tr>
@@ -217,8 +223,8 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []
 
 </div>
 </div>
-<a id="a61211ab53a1a6da628c240ccaeaed301"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61211ab53a1a6da628c240ccaeaed301">&#9670;&nbsp;</a></span>set()</h2>
+<a id="a8e8fe141bafcef3b1bed2451e2c20542"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e8fe141bafcef3b1bed2451e2c20542">&#9670;&nbsp;</a></span>set()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,7 +244,7 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&#160;</td>
+          <td class="paramtype">?string&#160;</td>
           <td class="paramname"><em>$propertyType</em> = <code>null</code>, </td>
         </tr>
         <tr>
@@ -256,8 +262,14 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$src</em> = <code>null</code>&#160;</td>
+          <td class="paramtype">?string&#160;</td>
+          <td class="paramname"><em>$src</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">?string&#160;</td>
+          <td class="paramname"><em>$vendor</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -273,6 +285,8 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []
     <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$propertyType</td><td></td></tr>
     <tr><td class="paramtype">array&#160;|&#160;null</td><td class="paramname">$leadingcomments</td><td></td></tr>
     <tr><td class="paramtype">array&#160;|&#160;null</td><td class="paramname">$trailingcomments</td><td></td></tr>
+    <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$src</td><td></td></tr>
+    <tr><td class="paramtype">string&#160;|&#160;null</td><td class="paramname">$vendor</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -327,7 +341,7 @@ array&#160;</td><td class="memItemRight" valign="bottom"><b>$properties</b> = []
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/TBela/CSS/Property/PropertyList.php</li>
+<li>src/Property/PropertyList.php</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

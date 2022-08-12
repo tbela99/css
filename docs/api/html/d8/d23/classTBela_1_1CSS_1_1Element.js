@@ -11,6 +11,7 @@ var classTBela_1_1CSS_1_1Element =
     [ "getLeadingComments", "d8/d23/classTBela_1_1CSS_1_1Element.html#afa55b3665c687808ad92369c7311adb0", null ],
     [ "getParent", "d8/d23/classTBela_1_1CSS_1_1Element.html#aa47c87c7479d427c45ed45738fb48766", null ],
     [ "getPosition", "d8/d23/classTBela_1_1CSS_1_1Element.html#a61312052afc50b30aa7533848ee21e01", null ],
+    [ "getRawValue", "d8/d23/classTBela_1_1CSS_1_1Element.html#a06db2526019b511483edb2d027dd3a1a", null ],
     [ "getRoot", "d8/d23/classTBela_1_1CSS_1_1Element.html#a172ea34154ff74c5217a0399c57bb4ed", null ],
     [ "getSrc", "d8/d23/classTBela_1_1CSS_1_1Element.html#a1e27d2e2e98a30866f796bf191f60b6f", null ],
     [ "getTrailingComments", "d8/d23/classTBela_1_1CSS_1_1Element.html#a97da545e200c37d033ebbe4c777bfce7", null ],
@@ -26,6 +27,7 @@ var classTBela_1_1CSS_1_1Element =
     [ "setValue", "d8/d23/classTBela_1_1CSS_1_1Element.html#ae84388e1d380a2dc637a1283fa147c32", null ],
     [ "toObject", "d8/d23/classTBela_1_1CSS_1_1Element.html#abc639149fa95c4910baae07265bef72e", null ],
     [ "traverse", "d8/d23/classTBela_1_1CSS_1_1Element.html#a190be9599d7e2c5f2f8d2b46dd7adc1c", null ],
-    [ "$ast", "d8/d23/classTBela_1_1CSS_1_1Element.html#a8830510a70a67443dd449f7a793c4572", null ],
-    [ "$parent", "d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc", null ]
+    [ "$ast", "d8/d23/classTBela_1_1CSS_1_1Element.html#ab6840e88b49a6ceea38f4460f136178b", null ],
+    [ "$parent", "d8/d23/classTBela_1_1CSS_1_1Element.html#a99b1bbe92769f89d324ac274c05bcdfc", null ],
+    [ "$rawValue", "d8/d23/classTBela_1_1CSS_1_1Element.html#a8f633c97a941888a93a3a68cc6a015b0", null ]
 ];

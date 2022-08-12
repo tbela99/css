@@ -4,10 +4,22 @@ var namespaceTBela =
       [ "Ast", null, [
         [ "Traverser", "dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser.html", "dd/df5/classTBela_1_1CSS_1_1Ast_1_1Traverser" ]
       ] ],
+      [ "Cli", null, [
+        [ "Exceptions", null, [
+          [ "DuplicateArgumentException", "d3/dd5/classTBela_1_1CSS_1_1Cli_1_1Exceptions_1_1DuplicateArgumentException.html", null ],
+          [ "MissingParameterException", "da/db8/classTBela_1_1CSS_1_1Cli_1_1Exceptions_1_1MissingParameterException.html", null ],
+          [ "UnknownParameterException", "d9/d4a/classTBela_1_1CSS_1_1Cli_1_1Exceptions_1_1UnknownParameterException.html", null ]
+        ] ],
+        [ "Args", "d8/df3/classTBela_1_1CSS_1_1Cli_1_1Args.html", "d8/df3/classTBela_1_1CSS_1_1Cli_1_1Args" ],
+        [ "Option", "d8/da4/classTBela_1_1CSS_1_1Cli_1_1Option.html", "d8/da4/classTBela_1_1CSS_1_1Cli_1_1Option" ]
+      ] ],
       [ "Element", null, [
         [ "AtRule", "d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule.html", "d7/d0d/classTBela_1_1CSS_1_1Element_1_1AtRule" ],
         [ "Comment", "d6/dfd/classTBela_1_1CSS_1_1Element_1_1Comment.html", null ],
         [ "Declaration", "d8/da7/classTBela_1_1CSS_1_1Element_1_1Declaration.html", null ],
+        [ "NestingAtRule", "db/d88/classTBela_1_1CSS_1_1Element_1_1NestingAtRule.html", null ],
+        [ "NestingMediaRule", "d9/d7d/classTBela_1_1CSS_1_1Element_1_1NestingMediaRule.html", "d9/d7d/classTBela_1_1CSS_1_1Element_1_1NestingMediaRule" ],
+        [ "NestingRule", "d2/de2/classTBela_1_1CSS_1_1Element_1_1NestingRule.html", "d2/de2/classTBela_1_1CSS_1_1Element_1_1NestingRule" ],
         [ "Rule", "df/d73/classTBela_1_1CSS_1_1Element_1_1Rule.html", "df/d73/classTBela_1_1CSS_1_1Element_1_1Rule" ],
         [ "RuleList", "d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList.html", "d7/d52/classTBela_1_1CSS_1_1Element_1_1RuleList" ],
         [ "RuleSet", "d9/d56/classTBela_1_1CSS_1_1Element_1_1RuleSet.html", "d9/d56/classTBela_1_1CSS_1_1Element_1_1RuleSet" ],
@@ -22,17 +34,37 @@ var namespaceTBela =
       ] ],
       [ "Interfaces", null, [
         [ "ElementInterface", "d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface.html", "d5/d9e/interfaceTBela_1_1CSS_1_1Interfaces_1_1ElementInterface" ],
+        [ "InvalidTokenInterface", "d0/da5/interfaceTBela_1_1CSS_1_1Interfaces_1_1InvalidTokenInterface.html", null ],
         [ "ObjectInterface", "d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface.html", "d6/ddb/interfaceTBela_1_1CSS_1_1Interfaces_1_1ObjectInterface" ],
         [ "ParsableInterface", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface.html", "d6/d13/interfaceTBela_1_1CSS_1_1Interfaces_1_1ParsableInterface" ],
         [ "RenderableInterface", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface.html", "d1/d43/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderableInterface" ],
         [ "RenderablePropertyInterface", "d1/d3e/interfaceTBela_1_1CSS_1_1Interfaces_1_1RenderablePropertyInterface.html", null ],
-        [ "RuleListInterface", "d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html", "d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface" ]
+        [ "RuleListInterface", "d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface.html", "d2/dc7/interfaceTBela_1_1CSS_1_1Interfaces_1_1RuleListInterface" ],
+        [ "ValidatorInterface", "db/d67/interfaceTBela_1_1CSS_1_1Interfaces_1_1ValidatorInterface.html", "db/d67/interfaceTBela_1_1CSS_1_1Interfaces_1_1ValidatorInterface" ]
       ] ],
       [ "Parser", null, [
+        [ "Validator", null, [
+          [ "AtRule", "d6/d26/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1AtRule.html", "d6/d26/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1AtRule" ],
+          [ "Comment", "dd/de3/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Comment.html", "dd/de3/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Comment" ],
+          [ "Declaration", "de/dc5/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Declaration.html", "de/dc5/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Declaration" ],
+          [ "InvalidAtRule", "de/d3e/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidAtRule.html", "de/d3e/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidAtRule" ],
+          [ "InvalidComment", "d1/dcb/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidComment.html", "d1/dcb/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidComment" ],
+          [ "InvalidDeclaration", "df/d86/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidDeclaration.html", "df/d86/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidDeclaration" ],
+          [ "InvalidRule", "d5/d41/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidRule.html", "d5/d41/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1InvalidRule" ],
+          [ "NestingAtRule", "da/d79/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingAtRule.html", "da/d79/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingAtRule" ],
+          [ "NestingMedialRule", "db/daf/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingMedialRule.html", "db/daf/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingMedialRule" ],
+          [ "NestingRule", "de/d4c/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingRule.html", "de/d4c/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1NestingRule" ],
+          [ "Rule", "db/d83/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Rule.html", "db/d83/classTBela_1_1CSS_1_1Parser_1_1Validator_1_1Rule" ]
+        ] ],
         [ "Helper", "d3/db4/classTBela_1_1CSS_1_1Parser_1_1Helper.html", null ],
+        [ "Lexer", "d6/d42/classTBela_1_1CSS_1_1Parser_1_1Lexer.html", "d6/d42/classTBela_1_1CSS_1_1Parser_1_1Lexer" ],
         [ "Position", "d1/dd8/classTBela_1_1CSS_1_1Parser_1_1Position.html", "d1/dd8/classTBela_1_1CSS_1_1Parser_1_1Position" ],
         [ "SourceLocation", "d2/d99/classTBela_1_1CSS_1_1Parser_1_1SourceLocation.html", "d2/d99/classTBela_1_1CSS_1_1Parser_1_1SourceLocation" ],
         [ "SyntaxError", "da/dc4/classTBela_1_1CSS_1_1Parser_1_1SyntaxError.html", null ]
+      ] ],
+      [ "Process", null, [
+        [ "Helper", "db/d38/classTBela_1_1CSS_1_1Process_1_1Helper.html", null ],
+        [ "Pool", "d4/db8/classTBela_1_1CSS_1_1Process_1_1Pool.html", "d4/db8/classTBela_1_1CSS_1_1Process_1_1Pool" ]
       ] ],
       [ "Property", null, [
         [ "Comment", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment.html", "d6/d0a/classTBela_1_1CSS_1_1Property_1_1Comment" ],
@@ -89,7 +121,7 @@ var namespaceTBela =
         [ "Color", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color.html", "d0/d18/classTBela_1_1CSS_1_1Value_1_1Color" ],
         [ "Comment", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment.html", "d8/d66/classTBela_1_1CSS_1_1Value_1_1Comment" ],
         [ "CssAttribute", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute.html", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CssAttribute" ],
-        [ "CSSFunction", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CSSFunction.html", "d1/d80/classTBela_1_1CSS_1_1Value_1_1CSSFunction" ],
+        [ "CssFunction", "d9/d5b/classTBela_1_1CSS_1_1Value_1_1CssFunction.html", "d9/d5b/classTBela_1_1CSS_1_1Value_1_1CssFunction" ],
         [ "CssParenthesisExpression", "db/de0/classTBela_1_1CSS_1_1Value_1_1CssParenthesisExpression.html", "db/de0/classTBela_1_1CSS_1_1Value_1_1CssParenthesisExpression" ],
         [ "CssSrcFormat", "d9/d40/classTBela_1_1CSS_1_1Value_1_1CssSrcFormat.html", "d9/d40/classTBela_1_1CSS_1_1Value_1_1CssSrcFormat" ],
         [ "CssString", "d3/d54/classTBela_1_1CSS_1_1Value_1_1CssString.html", "d3/d54/classTBela_1_1CSS_1_1Value_1_1CssString" ],
@@ -98,24 +130,25 @@ var namespaceTBela =
         [ "FontFamily", "d2/da5/classTBela_1_1CSS_1_1Value_1_1FontFamily.html", null ],
         [ "FontSize", "d5/d56/classTBela_1_1CSS_1_1Value_1_1FontSize.html", "d5/d56/classTBela_1_1CSS_1_1Value_1_1FontSize" ],
         [ "FontStretch", "d1/de4/classTBela_1_1CSS_1_1Value_1_1FontStretch.html", "d1/de4/classTBela_1_1CSS_1_1Value_1_1FontStretch" ],
-        [ "FontStyle", "d8/db9/classTBela_1_1CSS_1_1Value_1_1FontStyle.html", "d8/db9/classTBela_1_1CSS_1_1Value_1_1FontStyle" ],
-        [ "FontVariant", "df/d1e/classTBela_1_1CSS_1_1Value_1_1FontVariant.html", "df/d1e/classTBela_1_1CSS_1_1Value_1_1FontVariant" ],
+        [ "FontStyle", "d8/db9/classTBela_1_1CSS_1_1Value_1_1FontStyle.html", null ],
+        [ "FontVariant", "df/d1e/classTBela_1_1CSS_1_1Value_1_1FontVariant.html", null ],
         [ "FontWeight", "d8/d56/classTBela_1_1CSS_1_1Value_1_1FontWeight.html", "d8/d56/classTBela_1_1CSS_1_1Value_1_1FontWeight" ],
+        [ "InvalidComment", "d8/dab/classTBela_1_1CSS_1_1Value_1_1InvalidComment.html", "d8/dab/classTBela_1_1CSS_1_1Value_1_1InvalidComment" ],
+        [ "InvalidCssFunction", "d4/d84/classTBela_1_1CSS_1_1Value_1_1InvalidCssFunction.html", "d4/d84/classTBela_1_1CSS_1_1Value_1_1InvalidCssFunction" ],
+        [ "InvalidCssString", "db/df6/classTBela_1_1CSS_1_1Value_1_1InvalidCssString.html", "db/df6/classTBela_1_1CSS_1_1Value_1_1InvalidCssString" ],
         [ "LineHeight", "dd/dfa/classTBela_1_1CSS_1_1Value_1_1LineHeight.html", "dd/dfa/classTBela_1_1CSS_1_1Value_1_1LineHeight" ],
         [ "Number", "da/d44/classTBela_1_1CSS_1_1Value_1_1Number.html", "da/d44/classTBela_1_1CSS_1_1Value_1_1Number" ],
         [ "Operator", "db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator.html", "db/d5f/classTBela_1_1CSS_1_1Value_1_1Operator" ],
         [ "Outline", "da/db6/classTBela_1_1CSS_1_1Value_1_1Outline.html", null ],
         [ "OutlineColor", "d6/ddc/classTBela_1_1CSS_1_1Value_1_1OutlineColor.html", null ],
         [ "OutlineStyle", "df/d55/classTBela_1_1CSS_1_1Value_1_1OutlineStyle.html", null ],
-        [ "OutlineWidth", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth" ],
+        [ "OutlineWidth", "d5/df3/classTBela_1_1CSS_1_1Value_1_1OutlineWidth.html", null ],
         [ "Separator", "d1/d60/classTBela_1_1CSS_1_1Value_1_1Separator.html", "d1/d60/classTBela_1_1CSS_1_1Value_1_1Separator" ],
-        [ "Set", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set.html", "dd/d96/classTBela_1_1CSS_1_1Value_1_1Set" ],
-        [ "ShortHand", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand" ],
+        [ "ShortHand", "d8/d5c/classTBela_1_1CSS_1_1Value_1_1ShortHand.html", null ],
         [ "Unit", "dd/dcf/classTBela_1_1CSS_1_1Value_1_1Unit.html", "dd/dcf/classTBela_1_1CSS_1_1Value_1_1Unit" ],
         [ "Whitespace", "d6/d86/classTBela_1_1CSS_1_1Value_1_1Whitespace.html", "d6/d86/classTBela_1_1CSS_1_1Value_1_1Whitespace" ]
       ] ],
       [ "Color", "dd/d5a/classTBela_1_1CSS_1_1Color.html", "dd/d5a/classTBela_1_1CSS_1_1Color" ],
-      [ "Compiler", "d1/d8f/classTBela_1_1CSS_1_1Compiler.html", "d1/d8f/classTBela_1_1CSS_1_1Compiler" ],
       [ "Element", "d8/d23/classTBela_1_1CSS_1_1Element.html", "d8/d23/classTBela_1_1CSS_1_1Element" ],
       [ "Parser", "d8/d8b/classTBela_1_1CSS_1_1Parser.html", "d8/d8b/classTBela_1_1CSS_1_1Parser" ],
       [ "Renderer", "df/d08/classTBela_1_1CSS_1_1Renderer.html", "df/d08/classTBela_1_1CSS_1_1Renderer" ],

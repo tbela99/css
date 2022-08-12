@@ -10,13 +10,13 @@ trait EventTrait {
      */
     protected $events = [];
 
-    /**
-     * register event handlers
-     * @param string $event event name
-     * @param callable $callable
-     * @return $this
-     */
-    public function on($event, callable $callable) {
+	/**
+	 * register event handlers
+	 * @param string $event event name
+	 * @param \Closure $callable $callable
+	 * @return $this
+	 */
+    public function on($event,callable $callable) {
 
         $this->events[strtolower($event)][] = $callable;
         return $this;
@@ -59,7 +59,6 @@ trait EventTrait {
             }
         }
 
-
         return $this;
     }
 
@@ -79,7 +78,9 @@ trait EventTrait {
             return $result;
         }
 
-        foreach ($this->events[$event] as $callable) {
+		$events = $this->events[$event];
+
+        foreach ($events as $callable) {
 
             $result[] = call_user_func_array($callable, $args);
         }

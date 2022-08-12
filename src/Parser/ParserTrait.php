@@ -7,6 +7,32 @@ use TBela\CSS\Property\Config;
 trait ParserTrait
 {
 
+	/**
+	 * @param \stdClass $position
+	 * @param string $string
+	 * @return object
+	 * @ignore
+	 */
+    protected function update(\stdClass $position, $string)
+    {
+
+        $j = strlen($string);
+
+        for ($i = 0; $i < $j; $i++) {
+
+            if ($string[$i] == PHP_EOL) {
+
+                $position->line++;
+                $position->column = 1;
+            } else {
+
+                $position->column++;
+            }
+        }
+
+        return $position;
+    }
+
     /**
      * @param string $string
      * @param bool $force
@@ -28,24 +54,19 @@ trait ParserTrait
         return $string;
     }
 
-    protected static function match_comment($string, $start, $end)
+    public static function match_comment($string, $start, $end)
     {
 
         $i = $start + 1;
 
         while ($i++ < $end) {
 
-            switch ($string[$i]) {
+			if ($string[$i] == '*') {
+				if ($string[$i + 1] == '/') {
 
-                case '*':
-
-                    if ($string[$i + 1] == '/') {
-
-                        return is_array($string) ? implode('', array_slice($string, $start, $i + 2 - $start)) : substr($string, $start, $i + 2 - $start);
-                    }
-
-                    break;
-            }
+					return is_array($string) ? implode('', array_slice($string, $start, $i + 2 - $start)) : substr($string, $start, $i + 2 - $start);
+				}
+			}
         }
 
         // unterminated comment is still a valid comment
@@ -60,10 +81,10 @@ trait ParserTrait
      * @param array $char_stop
      * @return false|string
      */
-    protected static function substr($string, $startPosition, $endPosition, $char_stop)
+    public static function substr($string, $startPosition, $endPosition, array $char_stop)
     {
 
-        if ($startPosition < 0 || substr($string, $startPosition, 1) === false) {
+        if ($startPosition < 0) {
 
             return false;
         }
@@ -163,7 +184,7 @@ trait ParserTrait
         return $buffer;
     }
 
-    protected static function _close($string, $search, $reset, $start, $end)
+    public static function _close($string, $search, $reset, $start, $end)
     {
 
         $count = 1;
@@ -393,7 +414,7 @@ trait ParserTrait
         return $result;
     }
 
-    protected static function is_whitespace($char)
+    public static function is_whitespace($char)
     {
 
         return preg_match("#^\s$#", $char);
