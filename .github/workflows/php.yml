@@ -14,16 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          path: vendor
-          version: 1
-          php_version: "5.6"
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          php-version: '5.6'
+          extensions: mbstring, xml
+          tools: php-cs-fixer, phpunit, composer
 
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
