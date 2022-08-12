@@ -22,6 +22,7 @@ $parser = new Parser();
 fwrite(STDERR, sprintf("curl dir %s >>>\n", getcwd()));
 
 echo $parser->setOptions([
+	'multi_processing' => false,
     'flatten_import' => true,
     'capture_errors' => false
 ])->

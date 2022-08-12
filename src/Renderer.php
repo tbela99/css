@@ -1036,7 +1036,11 @@ class Renderer
 
 	/**
 	 * render a value
+<<<<<<< HEAD
 	 * @param \stdClass $ast
+=======
+	 * @param object $ast
+>>>>>>> v.next
 	 * @return string
 	 * @throws Exception
 	 * @ignore

@@ -647,6 +647,10 @@ class Parser implements ParsableInterface
 	}
 
 	/**
+<<<<<<< HEAD
+=======
+	 * @throws IOException
+>>>>>>> v.next
 	 * @throws SyntaxError
 	 * @throws Exception
 	 */

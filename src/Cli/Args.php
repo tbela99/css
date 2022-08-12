@@ -7,7 +7,6 @@ if (!class_exists('\ValueError')) {
     require_once __DIR__.'/Exceptions/ValueError.php';
 }
 
-
 use TBela\CSS\Cli\Exceptions\MissingParameterException;
 
 class Args
