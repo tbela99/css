@@ -14,13 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        uses: php-actions/composer@v6
-        with:
-          dev: no
-          php_version: "5.6"
-          version: 1
-
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
 
@@ -30,6 +23,7 @@ jobs:
         with:
           path: vendor
           version: 1
+          php_version: "5.6"
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
