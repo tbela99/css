@@ -4,17 +4,18 @@ namespace TBela\CSS;
 
 use Closure;
 use Exception;
-use stdClass;
-
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\Lexer;
+use TBela\CSS\Parser\MultiprocessingTrait;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
-use function substr;
+use TBela\CSS\Process\Pool;
 
 /**
  * Css Parser
@@ -23,866 +24,1212 @@ use function substr;
 class Parser implements ParsableInterface
 {
 
-    use ParserTrait;
-
-    /**
-     * @var ValidatorInterface[]
-     */
-    protected static array $validators = [];
-
-    protected array $context = [];
-    protected Lexer $lexer;
-
-    protected array $errors = [];
-    protected array $imports = [];
-    protected ?string $error;
-
-    protected ?stdClass $ast = null;
-
-    /**
-     * @var array
-     * @ignore
-     */
-    protected array $options = [
-        'capture_errors' => true,
-        'flatten_import' => false,
-        'allow_duplicate_rules' => ['font-face'], // set to true for speed
-        'allow_duplicate_declarations' => true
-    ];
-
-    /**
-     * @var array<string, callable>
-     */
-    protected array $event_handlers = [];
-
-    /**
-     * @var object[]
-     */
-    protected array $import = [];
-
-    /**
-     * Parser constructor.
-     * @param string $css
-     * @param array $options
-     */
-    public function __construct($css = '', array $options = [])
-    {
-
-        $this->setOptions($options);
-        $this->lexer = (new Lexer())->
-        on('enter', Closure::fromCallable([$this, 'enterNode']))->
-        on('exit', Closure::fromCallable([$this, 'exitNode']));
-
-        if ($css !== '') {
-
-            $this->setContent($css);
-        }
-    }
-
-    /**
-     * @param string $event parse event name in ['enter', 'exit'', 'start', 'end']
-     * @param callable $callable
-     * @return $this
-     */
-    public function on($event, callable $callable)
-    {
-
-        $this->lexer->on($event, $callable);
-        $this->event_handlers[$event][] = $callable;
-
-        return $this;
-    }
-
-    /**
-     * @param string $event parse event name in ['enter', 'exit', 'start', 'end']
-     * @param callable $callable
-     * @return $this
-     */
-    public function off($event, callable $callable)
-    {
-
-        if (isset($this->event_handlers[$event])) {
-
-            $this->lexer->off($event, $callable);
-
-            foreach ($this->event_handlers as $key => $handler) {
-
-                if ($handler == $callable) {
-
-                    array_splice($this->event_handlers[$event], $key, 1);
-                    break;
-                }
-            }
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * @param Exception $error
-     * @return void
-     */
-    protected function emit(Exception $error): void
-    {
-        if (!empty($this->event_handlers['error'])) {
-
-            foreach ($this->event_handlers['error'] as $handler) {
-
-                call_user_func($handler, $error);
-            }
-        }
-    }
-
-    /**
-     * parse css file and append to the existing AST
-     * @param string $file
-     * @param string $media
-     * @return Parser
-     * @throws SyntaxError
-     * @throws Exception
-     */
-    public function append($file, $media = '')
-    {
-
-        return $this->merge((new self('', $this->options))->load($file, $media));
-    }
-
-    /**
-     * @param Parser $parser
-     * @return Parser
-     * @throws SyntaxError|IOException
-     */
-    public function merge($parser)
-    {
+	use ParserTrait, MultiprocessingTrait;
+
+	/**
+	 * @var ValidatorInterface[]
+	 */
+	protected static array $validators = [];
+
+	protected array $context = [];
+	protected Lexer $lexer;
+
+	protected array $errors = [];
+	protected ?string $error;
+
+	protected ?object $ast = null;
+
+	/**
+	 * enable multiprocessing if the css is larger than CSS_MAX_SIZE
+	 */
+
+	/**
+	 * @var array
+	 * @ignore
+	 */
+	protected array $options = [
+		'capture_errors' => true,
+		'flatten_import' => false,
+		'allow_duplicate_rules' => ['font-face'], // set to true for speed
+		'allow_duplicate_declarations' => true,
+		'multi_processing' => true,
+		// buffer size 32k. higher values may break the execution
+		'multi_processing_threshold' => 32768,
+//        'children_process' => 20,
+		'ast_src' => '',
+		'ast_position_line' => 1,
+		'ast_position_column' => 1,
+		'ast_position_index' => 0
+	];
+
+	/**
+	 * last deduplicated rule index
+	 * @ignore
+	 * @var int|null
+	 */
+	protected ?int $lastDedupIndex = null;
+
+	/**
+	 * @var string serialize | json
+	 */
+	// TODO: remove serialize as it seams to produce warning
+	protected string $format = 'serialize';
+
+	/**
+	 * Parser constructor.
+	 * @param string $css
+	 * @param array $options
+	 * @throws IOException
+	 * @throws SyntaxError
+	 */
+	public function __construct(string $css = '', array $options = [])
+	{
+		$this->setOptions($options);
+		$this->lexer = (new Lexer())->
+		setParentOffset((object)[
+
+			'line' => $this->options['ast_position_line'],
+			'column' => $this->options['ast_position_column'],
+			'index' => $this->options['ast_position_index'],
+			'src' => $this->options['ast_src']
+		])->
+		on('enter', Closure::fromCallable([$this, 'enterNode']))->
+		on('exit', Closure::fromCallable([$this, 'exitNode']));
+
+		if ($css !== '') {
+
+			$this->setContent($css);
+		}
+	}
+
+	/**
+	 * @param string $event parse event name in ['enter', 'exit']
+	 * @param callable $callable
+	 * @return Parser
+	 */
+	public function on(string $event, callable $callable): static
+	{
+
+		$this->lexer->on($event, $callable);
+		return $this;
+	}
+
+	/**
+	 * @param string $event parse event name in ['enter', 'exit', 'start', 'end']
+	 * @param callable $callable
+	 * @return Parser
+	 */
+	public function off(string $event, callable $callable): static
+	{
+
+		$this->lexer->off($event, $callable);
+		return $this;
+	}
 
-        assert($parser instanceof self);
+	public function getCliArgs(array $options, $src, $position): array
+	{
 
-        if (!isset($this->ast)) {
+		$args = [
+			'-ac',
+			'--parse-multi-processing=off',
+			sprintf('--parse-ast-src=%s', $src)
+		];
+
+		if (!empty($position)) {
+
+			array_push($args,
+				sprintf('--parse-ast-position-index=%s', max(0, $position->index - 1)),
+				sprintf('--parse-ast-position-line=%s', $position->line),
+				sprintf('--parse-ast-position-column=%s', $position->column));
+		}
+
+		if (!$options['capture_errors']) {
+			// default is on
+			$args[] = '--capture-errors=off';
+		}
+
+		foreach ([
+					 'capture_errors' => true,
+					 'flatten_import' => false,
+					 'allow_duplicate_rules' => ['font-face'], // set to true for speed
+					 'allow_duplicate_declarations' => true,
+					 'multi_processing' => true,
+					 // 65k
+					 'multi_processing_threshold' => 32768,
+//        'children_process' => 20,
+					 'ast_src' => '',
+					 'ast_position_line' => 1,
+					 'ast_position_column' => 1,
+					 'ast_position_index' => 0
+				 ] as $key => $value) {
 
-            $this->getAst();
-        }
+			if (in_array($key, ['multi_processing', 'multi_processing_threshold', 'ast_src', 'ast_position_line', 'ast_position_column', 'ast_position_index'])) {
 
-        if (!isset($parser->ast)) {
+				continue;
+			}
 
-            $parser->getAst();
-        }
+			if ($key == 'allow_duplicate_rules') {
 
-        if (!isset($this->ast->children)) {
+				if (!$options['allow_duplicate_rules']) {
+					// default is on
+					$args[] = '--parse-allow-duplicate-rules==off';
+				}
+			} else if ($key == 'allow_duplicate_declarations') {
 
-            $this->ast->children = [];
-        }
+				if (!$options['allow_duplicate_declarations']) {
+					// default is on
+					$args[] = '--parse-allow-duplicate-declarations==off';
+				}
+			} else if (isset($options[$key]) && $options[$key] !== $value) {
 
-        if (isset($parser->ast->children)) {
+				$args[] = sprintf('--%s=%s', str_replace('_', '-', $key), is_bool($options[$key]) ? ($options[$key] ? 'on' : 'off') : $options[$key]);
+			}
+		}
 
-            array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
-        }
+		$args[] = sprintf('--output-format=%s', $this->format);
 
-        array_splice($this->errors, count($this->errors), 0, $parser->errors);
-        return $this;
-    }
+		return $args;
+	}
 
-    /**
-     * parse css and append to the existing AST
-     * @param string $css
-     * @param string $media
-     * @return Parser
-     * @throws SyntaxError|IOException
-     */
-    public function appendContent($css, $media = '')
-    {
-        if ($media !== '' && $media != 'all') {
+	/**     * @param string $content
+	 * @param object $root
+	 * @param string $file
+	 * @return void
+	 */
+	protected function stream(string $content, object $root, string $file): void
+	{
+
+		$file = Helper::absolutePath($file, Helper::getCurrentDirectory());
+		$size = max(min($this->options['multi_processing_threshold'], strlen($content) / 2), 1);
 
-            $css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
-        }
+		foreach ($this->slice($content, $size, $root->location->end) as $index => $data) {
 
-        return $this->merge(new self($css, $this->options));
-    }
+			$this->enQueue($data[0], $this->getCliArgs($this->options, $file, $data[1]));
+		}
 
-    /**
-     * set css content
-     * @param string $css
-     * @param string $media
-     * @return Parser
-     */
-    public function setContent(string $css, string $media = '')
-    {
+		$this->pool->wait();
 
-        if ($media !== '' && $media != 'all') {
+		if (!empty($this->output)) {
 
-            $css = '@media ' . $media . '{ ' . rtrim($css) . ' }';
-        }
+			if (!isset($root->children)) {
 
-        $this->ast = null;
-        $this->errors = [];
-        $this->context = [];
-        $this->lexer->setContent($css);
+				$root->children = [];
+			}
 
-        return $this;
-    }
+			foreach ($this->output as $token) {
 
-    /**
-     * load css content from a file
-     * @param string $file
-     * @param string $media
-     * @return Parser
-     * @throws Exceptions\IOException
-     */
+				if (isset($token->children)) {
 
-    public function load($file, $media = '')
-    {
+					array_splice($root->children, count($root->children), 0, $token->children);
+				}
+			}
 
-        $this->lexer->load($file, $media);
+			$this->output = [];
+		}
+	}
 
-        $this->ast = null;
-        $this->errors = [];
-        $this->context = [];
+	/**
+	 * @param Exception $error
+	 * @return void
+	 */
+	protected function emit(Exception $error): void
+	{
+		$this->lexer->emit('error', $error);
+	}
 
-        return $this;
-    }
+	/**
+	 * parse css file and append to the existing AST
+	 * @param string $file
+	 * @param string $media
+	 * @return Parser
+	 * @throws Exception
+	 */
+	public function append(string $file, string $media = ''): static
+	{
 
-    /**
-     * set the parser options
-     * @param array $options
-     * @return Parser
-     */
-    public function setOptions(array $options)
-    {
+		$file = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
-        foreach ($this->options as $key => $v) {
+		if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
 
-            if (isset($options[$key])) {
+			$content = file_get_contents($file);
 
-                if ($key == 'allow_duplicate_declarations') {
+		} else {
 
-                    if (is_string($options[$key])) {
+			$content = Helper::fetchContent($file);
+		}
 
-                        $this->options[$key] = [$options[$key]];
-                    } else if (is_array($options[$key])) {
+		if ($content === false) {
 
-                        $this->options[$key] = array_flip($options[$key]);
-                    } else {
+			throw new IOException(sprintf('File Not Found "%s" => \'%s:%s:%s\'', $file, $context->location->src ?? null, $context->location->end->line ?? null, $context->location->end->column ?? null), 404);
+		}
 
-                        $this->options[$key] = $options[$key];
-                    }
+		$rule = null;
 
-                } else if ($key == 'allow_duplicate_rules' && is_string($options[$key])) {
+		$newContext = $this->lexer->setParentOffset((object)[
+			'line' => 1,
+			'column' => 1,
+			'index' => 0,
+			'src' => $file
+		])->createContext();
 
-                    $this->options[$key] = [$options[$key]];
-                } else {
+		if (is_null($this->ast)) {
 
-                    $this->options[$key] = $options[$key];
-                }
+			$this->ast = $newContext;
+		}
 
-                if ($key == 'allow_duplicate_rules' && is_array($options[$key]) && !in_array('font-face', $options[$key])) {
+		if ($media !== '' && $media != 'all') {
 
-                    $this->options[$key] = $options[$key];
-                    $this->options[$key][] = 'font-face';
-                }
-            }
-        }
+			$rule = (object)[
 
-        return $this;
-    }
+				'type' => 'AtRule',
+				'name' => 'media',
+				'value' => Value::parse($media, null, true, '', '', true)
+			];
 
-    /**
-     * parse Css
-     * @return RuleListInterface|null
-     * @throws SyntaxError
-     * @throws Exceptions\IOException
-     */
-    public function parse()
-    {
+			$rule->location = (object)[
+				'start' => (object)[
+					'line' => 1,
+					'column' => 1,
+					'index' => 0
+				],
+				'end' => (object)[
+					'line' => 1,
+					'column' => 1,
+					'index' => 0
+				]
+			];
 
-        if (is_null($this->ast)) {
+			$rule->src = $file;
 
-            $this->getAst();
-        }
+			$this->ast->children[] = $rule;
+			$this->pushContext($rule);
+		}
 
-        return Element::getInstance($this->ast);
-    }
+		if (function_exists('\\proc_open') && $this->options['multi_processing'] && strlen($content) > $this->options['multi_processing_threshold']) {
 
-    /**
-     * @inheritDoc
-     * @throws SyntaxError
-     * @throws Exceptions\IOException
-     */
-    public function getAst()
-    {
+			$root = $this->getContext();
+			$this->stream($content, $root, $file);
+		} else {
 
-        if (is_null($this->ast)) {
+			$this->lexer->setContent($content)->setContext($newContext)->tokenize();
+		}
 
-            $this->ast = $this->lexer->createContext();
-            $this->lexer->setContext($this->ast)->tokenize();
+		if ($rule) {
 
-            if ($this->options['flatten_import'] && !empty($this->ast->children)) {
+			$this->popContext();
+		}
 
-                $i = count($this->ast->children);
+		if (!empty($this->ast->children)) {
 
-                while ($i--) {
+			$this->parseImport();
+			$this->deduplicate($this->ast, $this->lastDedupIndex);
+			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
+		}
 
-                    try {
+		return $this;
+	}
 
-                        if ($this->ast->children[$i]->type != 'AtRule' || $this->ast->children[$i]->name != 'import') {
+	/**
+	 * parse css and append to the existing AST
+	 * @param string $css
+	 * @param string $media
+	 * @return Parser
+	 * @throws SyntaxError|Exception
+	 */
+	public function appendContent(string $css, string $media = ''): static
+	{
+		if ($media !== '' && $media != 'all') {
 
-                            continue;
-                        }
+			$css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
+		}
 
-                        $token = $this->ast->children[$i];
+		if (!$this->ast) {
 
-                        preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
+			$this->ast = $this->lexer->createContext();
+			$this->lexer->setContext($this->ast);
+		} else {
 
-                        $media = trim($matches[4] ?? '');
+			$this->lexer->setContext($this->lexer->createContext());
+		}
 
-                        if ($media == 'all') {
+		if (function_exists('\\proc_open') && $this->options['multi_processing'] && strlen($css) > $this->options['multi_processing_threshold']) {
 
-                            $media = '';
-                        }
+			$this->stream($css, $this->getContext(), $this->options['ast_src']);
+		} else {
 
-                        $file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
+			$this->lexer->
+			setContent($css)->
+			tokenize();
+		}
 
-                        $parser = (new static)->load($file);
-                        $parser->event_handlers = $this->event_handlers;
-                        $parser->options = $this->options;
+		if (!empty($this->ast->children)) {
 
-                        foreach ($this->event_handlers as $event => $handlers) {
+			$this->parseImport();
+			$this->deduplicate($this->ast, $this->lastDedupIndex);
+			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
+		}
 
-                            foreach ($handlers as $handler) {
+		return $this;
+	}
 
-                                $parser->lexer->on($event, $handler);
-                            }
-                        }
+	/**
+	 * @param Parser $parser
+	 * @return Parser
+	 * @throws SyntaxError
+	 */
+	public function merge(Parser $parser): static
+	{
 
-                        $parser->getAst();
+		assert($parser instanceof self);
 
-                        if (!empty($parser->errors)) {
+		$this->getAst();
+		$parser->getAst();
 
-                            array_splice($this->errors, count($this->errors), $parser->errors);
-                        }
+		if (!isset($this->ast->children)) {
 
-                        $token->name = 'media';
+			$this->ast->children = [];
+		}
 
-                        if ($media === '') {
+		if (isset($parser->ast->children)) {
 
-                            unset($token->value);
-                        } else {
+			array_splice($this->ast->children, count($this->ast->children), 0, $parser->ast->children);
+		}
 
-                            $token->value = $media;
-                        }
+		array_splice($this->errors, count($this->errors), 0, $parser->errors);
+		return $this;
+	}
 
-                        $token->children = $parser->ast->children ?? [];
-                        $token->hasDeclaration = true;
+	/**
+	 * set css content
+	 * @param string $css
+	 * @param string $media
+	 * @return Parser
+	 * @throws SyntaxError
+	 */
+	public function setContent(string $css, string $media = ''): static
+	{
 
-                        unset($token->isLeaf);
-                        array_shift($this->imports);
-                    } catch (IOException $e) {
+		if ($media !== '' && $media != 'all') {
 
-                        if (empty($this->options['capture_errors'])) {
+			$css = '@media ' . $media . '{ ' . rtrim($css) . ' }';
+		}
 
-                            throw $e;
-                        }
+		$this->reset()->appendContent($css);
 
-                        $this->emit($e);
-                        $this->errors[] = $e;
-                    }
-                }
+		return $this;
+	}
 
-                if (isset($this->ast->children)) {
+	protected function reset(): static
+	{
 
-                    $i = count($this->ast->children);
+		$this->ast = null;
+		$this->errors = [];
+		$this->context = [];
+		$this->lastDedupIndex = null;
 
-                    while ($i--) {
+		return $this;
+	}
 
-                        if ($this->ast->children[$i]->type == 'AtRule' &&
-                            $this->ast->children[$i]->name == 'media' &&
-                            !isset($this->ast->children[$i]->value)) {
+	/**
+	 * load css content from a file
+	 * @param string $file
+	 * @param string $media
+	 * @return Parser
+	 * @throws Exceptions\IOException|Exception
+	 */
 
-                            array_splice($this->ast->children, $i, 1, $this->ast->children[$i]->children ?? []);
-                        }
-                    }
-                }
-            }
+	public function load(string $file, string $media = ''): static
+	{
 
-            $this->deduplicate($this->ast);
-        }
+		return $this->reset()->append($file, $media);
+	}
 
-        return $this->ast;
-    }
+	/**
+	 * set the parser options
+	 * @param array $options
+	 * @return Parser
+	 */
+	public function setOptions(array $options): static
+	{
 
-    /**
-     * @param stdClass $ast
-     * @return stdClass
-     */
-    public function deduplicate($ast)
-    {
+		foreach ($this->options as $key => $v) {
 
-        if ($this->options['allow_duplicate_rules'] !== true ||
-            $this->options['allow_duplicate_declarations'] !== true) {
+			if (isset($options[$key])) {
 
-            switch ($ast->type) {
+				if ($key == 'ast_src') {
 
-                case 'Stylesheet':
+					$this->options['ast_src'] = empty($options[$key]) ? '' : Helper::absolutePath($options[$key], Helper::getCurrentDirectory());
+					continue;
+				}
 
-                    return $this->deduplicateRules($ast);
+				if ($key == 'allow_duplicate_declarations') {
 
-                case 'AtRule':
+					if (is_string($options[$key])) {
 
-                    return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
+						$this->options[$key] = [$options[$key]];
+					} else if (is_array($options[$key])) {
 
-                case 'Rule':
+						$this->options[$key] = array_flip($options[$key]);
+					} else {
 
-                    return $this->deduplicateDeclarations($ast);
-            }
-        }
+						$this->options[$key] = $options[$key];
+					}
 
-        return $ast;
-    }
+				} else if ($key == 'allow_duplicate_rules' && is_string($options[$key])) {
 
-    /**
-     * compute signature
-     * @param stdClass $ast
-     * @return string
-     * @ignore
-     */
-    protected function computeSignature($ast)
-    {
+					$this->options[$key] = [$options[$key]];
+				} else {
 
-        $signature = 'type:' . $ast->type;
+					$this->options[$key] = $options[$key];
+				}
 
-        $name = $ast->name ?? null;
+				if ($key == 'allow_duplicate_rules' && is_array($options[$key]) && !in_array('font-face', $options[$key])) {
 
-        if (isset($name)) {
+					$this->options[$key] = $options[$key];
+					$this->options[$key][] = 'font-face';
+				}
+			}
+		}
 
-            $signature .= ':name:' . $name;
-        }
+		return $this;
+	}
 
-//        $value = $ast->value ?? null;
+	public function getOptions($name = null)
+	{
 
-//        if (isset($value)) {
-//
-//            $signature .= ':value:' .Value::renderTokens($value);
-//        }
+		return is_null($name) ? $this->options : ($this->options[$name] ?? null);
+	}
 
-        $selector = $ast->selector ?? null;
+	/**
+	 * parse Css
+	 * @return RuleListInterface|null
+	 * @throws SyntaxError
+	 */
+	public function parse(): ?RuleListInterface
+	{
 
-        if (isset($selector)) {
 
-            $signature .= ':selector:' . (is_array($selector) ? implode(',', $selector) : $selector);
-        }
+		$this->getAst();
 
-        $vendor = $ast->vendor ?? null;
 
-        if (isset($vendor)) {
+		return Element::getInstance($this->ast);
+	}
 
-            $signature .= ':vendor:' . $vendor;
-        }
+	/**
+	 * @inheritDoc
+	 * @throws SyntaxError|Exception
+	 */
+	public function getAst(): ?object
+	{
 
-        return $signature;
-    }
+		if (is_null($this->ast)) {
 
-    /**
-     * @param object $ast
-     * @return object
-     */
-    protected function deduplicateRules(object $ast)
-    {
-        if (isset($ast->children)) {
+			$this->ast = $this->lexer->createContext();
+			$this->lexer->setContext($this->ast)->tokenize();
+		}
 
-            if (empty($this->options['allow_duplicate_rules']) ||
-                is_array($this->options['allow_duplicate_rules'])) {
+		if (!empty($this->ast->children)) {
 
-                $signature = '';
-                $total = count($ast->children);
+			$this->deduplicate($this->ast, $this->lastDedupIndex);
+			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
+		}
 
-                $allowed = is_array($this->options['allow_duplicate_rules']) ? $this->options['allow_duplicate_rules'] : [];
+		return $this->ast;
+	}
 
-                while ($total--) {
 
-                    if ($total > 0) {
+	public function slice($css, $size, $position): \Generator
+	{
 
-                        $el = $ast->children[$total];
-                        if ($el->type == 'Comment') {
+		$i = ($position->index ?? 0) - 1;
+		$j = strlen($css) - 1;
 
-                            continue;
-                        }
+		$buffer = '';
 
-                        if ($el->type != 'Rule') {
+		while ($i++ < $j) {
 
-                            break;
-                        }
+			$string = Parser::substr($css, $i, $j, ['{']);
 
-                        $next = $ast->children[$total - 1];
+			if ($string === false) {
 
-                        while ($total > 1 && $next->type == 'Comment') {
+				$buffer = substr($css, $i);
 
-                            $next = $ast->children[--$total - 1];
-                        }
+				$pos = clone $position;
+				$pos->index++;
 
-                        if (!empty($allowed) &&
-                            (
-                                ($next->type == 'AtRule' && in_array($next->name, $allowed)) ||
-                                ($next->type == 'Rule' &&
-                                    array_intersect(is_array($next->selector) ? $next->selector : [$next->selector], $allowed))
-                            )
-                        ) {
+				yield [$buffer, $pos];
 
-                            continue;
-                        }
+				$this->update($position, $buffer);
+				$position->index += strlen($buffer);
 
-                        if ($signature === '') {
+				$buffer = '';
+				break;
+			}
 
-                            $signature = $this->computeSignature($el);
-                        }
+			$string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
+			$buffer .= $string;
 
-                        $nextSignature = $this->computeSignature($next);
+			if (strlen($buffer) >= $size) {
 
-                        while ($next != $el && $signature == $nextSignature) {
+				$k = 0;
+				while (static::is_whitespace($buffer[$k])) {
 
-                            array_splice($ast->children, $total - 1, 1);
+					$k++;
+				}
 
-                            if ($el->type != 'Declaration') {
+				if ($k > 0) {
 
-                                $next->parent = null;
+					$this->update($position, substr($buffer, 0, $k));
+					$position->index += $k;
 
-                                if (isset($next->children)) {
+					$buffer = substr($buffer, $k);
+				}
 
-                                    if (!isset($el->children)) {
+				$pos = clone $position;
+				$pos->index++;
 
-                                        $el->children = [];
-                                    }
+				yield [$buffer, $pos];
 
-                                    array_splice($el->children, 0, 0, $next->children);
-                                }
+				$this->update($position, $buffer);
+				$position->index += strlen($buffer);
 
-                                if (isset($next->location) && isset($el->location)) {
+				$buffer = '';
+			}
 
-                                    $el->location->start = $next->location->start;
-                                }
-                            }
+			$i += strlen($string) - 1;
+		}
 
-                            if ($total == 1) {
+		if ($buffer) {
 
-                                break;
-                            }
+			$k = 0;
+			$l = strlen($buffer);
+			while ($k < $l && Parser::is_whitespace($buffer[$k])) {
 
-                            $next = $ast->children[--$total - 1];
+				$k++;
+			}
 
-                            while ($total > 1 && $next->type == 'Comment') {
+			if ($k > 0) {
 
-                                $next = $ast->children[--$total - 1];
-                            }
+				$this->update($position, substr($buffer, 0, $k));
+				$position->index += $k;
 
-                            $nextSignature = $this->computeSignature($next);
-                        }
+				$buffer = substr($buffer, $k);
+			}
+		}
 
-                        $signature = $nextSignature;
-                    }
-                }
-            }
+		if (trim($buffer) !== '') {
 
-            foreach ($ast->children as $key => $element) {
+			$pos = clone $position;
+			$pos->index++;
 
-                $ast->children[$key] = $this->deduplicate($element);
-            }
-        }
+			yield [$buffer, $pos];
+			$this->update($position, $buffer);
+			$position->index += strlen($buffer) - 1;
+		}
 
-        return $ast;
-    }
+		$position->index = max(0, $position->index - 1);
+		$position->column = max(1, $position->column - 1);
+	}
 
-    /**
-     * @param object $ast
-     * @return object
-     */
-    protected function deduplicateDeclarations(object $ast)
-    {
+	/**
+	 * @throws IOException
+	 * @throws SyntaxError
+	 * @throws Exception
+	 */
+	protected function parseImport()
+	{
 
-        if ($this->options['allow_duplicate_declarations'] !== true && !empty($ast->children)) {
+		if ($this->options['flatten_import']) {
 
-            $elements = $ast->children;
-            $total = count($elements);
+			$imports = [];
 
-            $hash = [];
-            $exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : !empty($this->options['allow_duplicate_declarations']);
+			$j = count($this->ast->children);
 
-            while ($total--) {
+			for ($i = 0; $i < $j; $i++) {
 
-                $declaration = $ast->children[$total];
+				$child = $this->ast->children[$i];
 
-                if ($declaration->type == 'Comment') {
+				if ($child->type == 'AtRule' && in_array($child->name, ['import', 'charset'])) {
 
-                    continue;
-                }
+					if ($child->name == 'import') {
 
-                $signature = $this->computeSignature($declaration);
+						$imports[$i] = clone $child;
+					}
 
-                if ($exceptions === true || isset($exceptions[$signature])) {
+					continue;
+				}
 
-                    continue;
-                }
+				if ($child->type != 'Comment') {
 
-                if (isset($hash[$signature])) {
+					break;
+				}
+			}
 
-                    if (isset($declaration->parent)) {
+			if ($imports) {
 
-                        $declaration->parent = null;
-                    }
+				$pool = null;
 
-                    array_splice($ast->children, $total, 1);
-                    continue;
-                }
+				$phpExe = (new PhpExecutableFinder())->find();
 
-                $hash[$signature] = 1;
-            }
-        }
+				foreach (array_reverse($imports, true) as $key => $token) {
 
-        return $ast;
-    }
+					preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
 
-    /**
-     * return parse errors
-     * @return Exception[]
-     */
-    public function getErrors()
-    {
+					$media = trim($matches[4] ?? '');
 
-        return $this->errors;
-    }
+					if ($media == 'all') {
 
-    /**
-     * @param string $message
-     * @param int $error_code
-     * @return SyntaxError
-     * @throws SyntaxError
-     */
-    protected function handleError(string $message, int $error_code = 400)
-    {
+						$media = '';
+					}
 
-        $error = new SyntaxError($message, $error_code);
+					$file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
 
-        if (!$this->options['capture_errors']) {
+					$token->value = $media;
 
-            throw $error;
-        }
+					unset($token->isLeaf);
 
-        $this->emit($error);
+					$token->name = 'media';
 
-        $this->errors[] = $error;
+					if (count($imports) > 2 && function_exists('\\proc_open')) {
 
-        return $error;
-    }
+						$args = $this->getCliArgs($this->options, $file, null);
 
-    /**
-     * syntax validation
-     * @param object $token
-     * @param object $parentRule
-     * @param object $parentStylesheet
-     * @return int
-     * @ignore
-     */
-    protected function validate(object $token, object $parentRule, object $parentStylesheet)
-    {
+						array_unshift($args, $phpExe, '-f', __DIR__ . '/../cli/css-parser', '--');
 
-        if (!isset(static::$validators[$token->type])) {
+						$args[] = '--file=' . $file;
+						$args[] = '--output-format=json';
+						$args[] = '-c';
 
-            $type = static::class . '\\Validator\\' . $token->type;
+						$process = new Process($args);
+						$process->setPty(true);
 
-            if (class_exists($type)) {
+						if (!isset($pool)) {
 
-                static::$validators[$token->type] = new $type;
-            }
-        }
+							$pool = (new Pool());
+						}
 
-        $this->error = null;
+						$pool->add($process)->then(function (Process $process, $stdout, $stderr) use ($token, $file) {
 
-        if (isset(static::$validators[$token->type])) {
+							if ($process->getExitCode() != 0) {
 
-            $result = static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
-            $this->error = static::$validators[$token->type]->getError();
-            return $result;
-        }
+								throw new \RuntimeException(sprintf("cannot resolve @import#%s\n%s", $file, $stderr));
+							}
 
-        return ValidatorInterface::VALID;
-    }
+							if (!empty($stdout)) {
 
-    /**
-     * get the current parent node
-     * @return object|null
-     * @ignore
-     */
-    protected function getContext()
-    {
+								$ast = /* $this->format == 'serialize' ? unserialize($payload) : */
+									json_decode($stdout);
 
-        return end($this->context) ?: ($this->ast ?? $this->getAst());
-    }
+								$token->children = $ast->children ?? [];
+							}
+						});
+					} else {
 
-    /**
-     * push the current parent node
-     * @param object $context
-     * @return void
-     * @ignore
-     */
-    protected function pushContext(object $context)
-    {
+						$parser = new static(options: $this->options);
 
-        $this->context[] = $context;
-    }
+						$parser->ast = $token;
+						$parser->append($file);
+					}
+				}
 
-    /**
-     * pop the current parent node
-     * @return void
-     * @ignore
-     */
-    protected function popContext()
-    {
+				$pool?->wait();
 
-        array_pop($this->context);;
-    }
+				foreach (array_reverse($imports, true) as $key => $token) {
 
-    /**
-     * parse event handler
-     * @param object $token
-     * @param object $parentRule
-     * @param object $parentStylesheet
-     * @return int
-     * @throws SyntaxError
-     * @ignore
-     */
-    protected function enterNode(object $token, object $parentRule, object $parentStylesheet)
-    {
+					if (empty($token->value)) {
 
-        if ($token->type != 'Comment' && strpos($token->type, 'Invalid') !== 0) {
+						array_splice($this->ast->children, $key, 1, $token->children ?? []);
+					} else {
 
-            $hasCdoCdc = false;
+						$this->ast->children[$key] = $token;
+					}
+				}
+			}
+		}
+	}
 
-            if (!empty($token->leadingcomments)) {
+	/**
+	 * @param object $ast
+	 * @param int|null $index
+	 * @return object
+	 * @throws Exception
+	 */
+	public function deduplicate(object $ast, ?int $index = null): object
+	{
 
-                $i = count($token->leadingcomments);
+		if ($this->options['allow_duplicate_rules'] !== true ||
+			$this->options['allow_duplicate_declarations'] !== true) {
 
-                while ($i--) {
+			switch ($ast->type) {
 
-                    if (substr($token->leadingcomments[$i], 0, 4) == '<!--') {
+				case 'Stylesheet':
 
-                        $hasCdoCdc = true;
-                        array_splice($token->leadingcomments, $i, 1);
-                    }
-                }
-            }
+					return $this->deduplicateRules($ast, $index);
 
-            if (!empty($token->trailingcomments)) {
+				case 'AtRule':
 
-                $i = count($token->trailingcomments);
+					return !empty($ast->hasDeclarations) ? $this->deduplicateDeclarations($ast) : $this->deduplicateRules($ast);
 
-                while ($i--) {
+				case 'Rule':
 
-                    if (substr($token->trailingcomments[$i], 0, 4) == '<!--') {
+					return $this->deduplicateDeclarations($ast);
+			}
+		}
 
-                        $hasCdoCdc = true;
-                        array_splice($token->trailingcomments, $i, 1);
-                    }
-                }
-            }
+		return $ast;
+	}
 
-            if ($hasCdoCdc) {
+	/**
+	 * compute signature
+	 * @param object $ast
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
+	protected function computeSignature(object $ast): string
+	{
 
-                $this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-            }
-        }
+		$signature = 'type:' . $ast->type;
 
-        $context = $this->getContext();
-        $status = $this->doValidate($token, $context, $parentStylesheet);
+		$name = $ast->name ?? null;
 
-        if ($status == ValidatorInterface::VALID) {
+		if (isset($name)) {
 
-            $context->children[] = $token;
+			$signature .= ':name:' . $name;
+		}
 
-            if ($token->type == 'AtRule' && $token->name == 'import') {
+		$selector = $ast->selector ?? null;
 
-                $this->imports[] = $token;
-            }
+		if (isset($selector)) {
 
-            if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+			$signature .= ':selector:' . (is_array($selector) ? implode(',', $selector) : $selector);
+		}
 
-                $this->pushContext($token);
-            }
-        }
+		$vendor = $ast->vendor ?? null;
 
-        return $status;
-    }
+		if (isset($vendor)) {
 
-    /**
-     * parse event handler
-     * @param object $token
-     * @return void
-     * @ignore
-     */
-    protected function exitNode(object $token)
-    {
+			$signature .= ':vendor:' . $vendor;
+		}
 
-        if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+		if (in_array($ast->type, ['AtRule', 'NestingAtRule', 'NestingMediaRule'])) {
 
-            $this->popContext();
-        }
+			$signature .= ':value:' . (is_array($ast->value) ? Value::renderTokens($ast->value) : $ast->value);
+		}
 
-        if (
-            in_array($token->type, ['AtRule', 'NestingMediaRule']) &&
-            $token->name == 'media' &&
-            (
-                empty($token->value) ||
-                (
-                    count($token->value) == 1 &&
-                    ($token->value[0]->value ?? '') == 'all'
-                )
-            )
-        ) {
+		return $signature;
+	}
 
-            $context = $this->getContext();
+	/**
+	 * @param object $ast
+	 * @param int|null $index
+	 * @return object
+	 * @throws Exception
+	 */
+	protected function deduplicateRules(object $ast, ?int $index = null): object
+	{
+		if (isset($ast->children)) {
 
-            array_pop($context->children);
-            array_splice($context->children, count($context->children), 0, $token->children);
+			if (empty($this->options['allow_duplicate_rules']) ||
+				is_array($this->options['allow_duplicate_rules'])) {
 
-        }
-    }
+				$signature = '';
+				$total = count($ast->children);
 
-    /**
-     * perform the syntax validation
-     * @param object $token
-     * @param object $context
-     * @param object $parentStylesheet
-     * @return int
-     * @throws SyntaxError
-     * @ignore
-     */
-    protected function doValidate(object $token, object $context, object $parentStylesheet): int
-    {
-        $status = $this->validate($token, $context, $parentStylesheet);
+				$allowed = is_array($this->options['allow_duplicate_rules']) ? $this->options['allow_duplicate_rules'] : [];
 
-        if ($status == ValidatorInterface::REJECT) {
+				$min = (int)$index;
 
-            $this->handleError(sprintf("%s: %s at %s:%s:%s\n", $token->type, $this->error, $token->src ?? '', $token->location->start->line, $token->location->start->column));
-        }
+				while ($total-- > $min) {
 
-        return $status;
-    }
+					if ($total > 0) {
 
-    public function __toString()
-    {
+						$el = $ast->children[$total];
+						if ($el->type == 'Comment' || $el->type == 'Declaration') {
 
-        try {
+							continue;
+						}
 
-            if (!isset($this->ast)) {
+						if (!in_array($el->type, ['Rule', 'AtRule'])) {
 
-                $this->getAst();
-            }
+							continue;
+						}
 
-            if (isset($this->ast)) {
 
-                return (new Renderer())->renderAst($this->ast);
-            }
-        } catch (Exception $ex) {
+						$next = $ast->children[$total - 1];
 
-            error_log($ex);
-        }
+						while ($total > 1 && $next->type == 'Comment') {
 
-        return '';
-    }
+							$next = $ast->children[--$total - 1];
+						}
+
+						if (!empty($allowed) &&
+							(
+								($next->type == 'AtRule' && in_array($next->name, $allowed)) ||
+								($next->type == 'Rule' &&
+									array_intersect(is_array($next->selector) ? $next->selector : [$next->selector], $allowed))
+							)
+						) {
+
+							continue;
+						}
+
+						if ($signature === '') {
+
+							$signature = $this->computeSignature($el);
+						}
+
+						$nextSignature = $this->computeSignature($next);
+
+						while ($next != $el && $signature == $nextSignature) {
+
+							array_splice($ast->children, $total - 1, 1);
+
+							if ($el->type != 'Declaration') {
+
+								$next->parent = null;
+
+								if (isset($next->children)) {
+
+									if (!isset($el->children)) {
+
+										$el->children = [];
+									}
+
+									array_splice($el->children, 0, 0, $next->children);
+								}
+
+								if (isset($next->location) && isset($el->location)) {
+
+									$el->location->start = $next->location->start;
+								}
+							}
+
+							if ($total == 1) {
+
+								break;
+							}
+
+							$next = $ast->children[--$total - 1];
+
+							while ($total > 1 && $next->type == 'Comment') {
+
+								$next = $ast->children[--$total - 1];
+							}
+
+							$nextSignature = $this->computeSignature($next);
+						}
+
+						$signature = $nextSignature;
+					}
+				}
+			}
+
+			foreach ($ast->children as $key => $element) {
+
+				$ast->children[$key] = $this->deduplicate($element);
+			}
+		}
+
+		return $ast;
+	}
+
+	/**
+	 * @param object $ast
+	 * @return object
+	 * @throws Exception
+	 */
+	protected function deduplicateDeclarations(object $ast): object
+	{
+
+		if ($this->options['allow_duplicate_declarations'] !== true && !empty($ast->children)) {
+
+			$elements = $ast->children;
+			$total = count($elements);
+
+			$hash = [];
+			$exceptions = is_array($this->options['allow_duplicate_declarations']) ? $this->options['allow_duplicate_declarations'] : !empty($this->options['allow_duplicate_declarations']);
+
+			while ($total--) {
+
+				$declaration = $ast->children[$total];
+
+				if ($declaration->type == 'Comment') {
+
+					continue;
+				}
+
+				$signature = $this->computeSignature($declaration);
+
+				if ($exceptions === true || isset($exceptions[$signature])) {
+
+					continue;
+				}
+
+				if (isset($hash[$signature])) {
+
+					if (isset($declaration->parent)) {
+
+						$declaration->parent = null;
+					}
+
+					array_splice($ast->children, $total, 1);
+					continue;
+				}
+
+				$hash[$signature] = 1;
+			}
+		}
+
+		return $ast;
+	}
+
+	/**
+	 * return parse errors
+	 * @return Exception[]
+	 */
+	public function getErrors(): array
+	{
+
+		return $this->errors;
+	}
+
+	/**
+	 * @param string $message
+	 * @param int $error_code
+	 * @return SyntaxError
+	 * @throws SyntaxError
+	 */
+	protected function handleError(string $message, int $error_code = 400): SyntaxError
+	{
+
+		$error = new SyntaxError($message, $error_code);
+
+		if (!$this->options['capture_errors']) {
+
+			throw $error;
+		}
+
+		$this->emit($error);
+
+		$this->errors[] = $error;
+
+		return $error;
+	}
+
+	/**
+	 * syntax validation
+	 * @param object $token
+	 * @param object $parentRule
+	 * @param object $parentStylesheet
+	 * @return int
+	 * @ignore
+	 */
+	protected function validate(object $token, object $parentRule, object $parentStylesheet): int
+	{
+
+		if (!isset(static::$validators[$token->type])) {
+
+			$type = static::class . '\\Validator\\' . $token->type;
+
+			if (class_exists($type)) {
+
+				static::$validators[$token->type] = new $type;
+			}
+		}
+
+		$this->error = null;
+
+		if (isset(static::$validators[$token->type])) {
+
+			$result = static::$validators[$token->type]->validate($token, $parentRule, $parentStylesheet);
+			$this->error = static::$validators[$token->type]->getError();
+			return $result;
+		}
+
+		return ValidatorInterface::VALID;
+	}
+
+	/**
+	 * get the current parent node
+	 * @return object|null
+	 * @throws SyntaxError
+	 * @ignore
+	 */
+	protected function getContext(): ?object
+	{
+
+		return end($this->context) ?: ($this->ast ?? $this->getAst());
+	}
+
+	/**
+	 * push the current parent node
+	 * @param object $context
+	 * @return void
+	 * @ignore
+	 */
+	protected function pushContext(object $context): void
+	{
+
+		$this->context[] = $context;
+	}
+
+	/**
+	 * pop the current parent node
+	 * @return void
+	 * @ignore
+	 */
+	protected function popContext(): void
+	{
+
+		array_pop($this->context);;
+	}
+
+	/**
+	 * parse event handler
+	 * @param object $token
+	 * @param object $parentRule
+	 * @param object $parentStylesheet
+	 * @return int
+	 * @throws SyntaxError
+	 * @ignore
+	 */
+	protected function enterNode(object $token, object $parentRule, object $parentStylesheet): int
+	{
+
+		if ($token->type != 'Comment' && !str_starts_with($token->type, 'Invalid')) {
+
+			$hasCdoCdc = false;
+
+			if (!empty($token->leadingcomments)) {
+
+				$i = count($token->leadingcomments);
+
+				while ($i--) {
+
+					if (str_starts_with($token->leadingcomments[$i], '<!--')) {
+
+						$hasCdoCdc = true;
+						array_splice($token->leadingcomments, $i, 1);
+					}
+				}
+			}
+
+			if (!empty($token->trailingcomments)) {
+
+				$i = count($token->trailingcomments);
+
+				while ($i--) {
+
+					if (str_starts_with($token->trailingcomments[$i], '<!--')) {
+
+						$hasCdoCdc = true;
+						array_splice($token->trailingcomments, $i, 1);
+					}
+				}
+			}
+
+			if ($hasCdoCdc) {
+
+				$this->handleError(sprintf('CDO token not allowed here %s %s:%s:%s', $token->type, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+			}
+		}
+
+		$context = $this->getContext();
+		$status = $this->doValidate($token, $context, $parentStylesheet);
+
+		if ($status == ValidatorInterface::VALID) {
+
+			$context->children[] = $token;
+
+			if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+
+				$this->pushContext($token);
+			}
+		}
+
+		return $status;
+	}
+
+	/**
+	 * parse event handler
+	 * @param object $token
+	 * @return void
+	 * @throws SyntaxError
+	 * @ignore
+	 */
+	protected function exitNode(object $token): void
+	{
+
+		if (in_array($token->type, ['Rule', 'NestingRule', 'NestingAtRule', 'NestingMediaRule']) || ($token->type == 'AtRule' && empty($token->isLeaf))) {
+
+			$this->popContext();
+		}
+
+		if (
+			in_array($token->type, ['AtRule', 'NestingMediaRule']) &&
+			$token->name == 'media' &&
+			(
+				empty($token->value) ||
+				(
+					is_string($token->value) &&
+					$token->value == 'all'
+				) ||
+				(
+					is_array($token->value) &&
+					count($token->value) == 1 &&
+					($token->value[0]->value ?? '') == 'all'
+				)
+			)
+		) {
+
+			$context = $this->getContext();
+
+			array_pop($context->children);
+			array_splice($context->children, count($context->children), 0, $token->children);
+
+		}
+	}
+
+	/**
+	 * perform the syntax validation
+	 * @param object $token
+	 * @param object $context
+	 * @param object $parentStylesheet
+	 * @return int
+	 * @throws SyntaxError
+	 * @ignore
+	 */
+	protected function doValidate(object $token, object $context, object $parentStylesheet): int
+	{
+		$status = $this->validate($token, $context, $parentStylesheet);
+
+		if ($status == ValidatorInterface::REJECT) {
+
+			$this->handleError(sprintf("%s: %s at %s:%s:%s\n", $token->type, $this->error, $token->src ?? '', $token->location->start->line, $token->location->start->column));
+		}
+
+		return $status;
+	}
+
+	public function __toString()
+	{
+
+		try {
+
+			$this->getAst();
+
+			if (isset($this->ast)) {
+
+				return (new Renderer())->renderAst($this->ast);
+			}
+
+		} catch (Exception $ex) {
+
+			fwrite(STDERR, $ex);
+			error_log($ex);
+		}
+
+		return '';
+	}
 }

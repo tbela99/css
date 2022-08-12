@@ -7,11 +7,11 @@
     "parser",
     "minifier",
     "beautifier",
-    "AST",
+    "Ast",
     "PHP"
   ],
   "homepage": "https://github.com/tbela99/css",
-  "license": "MIT",
+  "license": ["MIT", "LGPL-3.0-or-later"],
   "authors": [
     {
       "name": "Thierry Bela",
@@ -19,6 +19,7 @@
       "role": "Developer"
     }
   ],
+  "bin": ["cli/css-parser"],
   "archive": {
     "exclude": [
       "*.sh",
@@ -34,15 +35,20 @@
       "TBela\\CSS\\": "src"
     }
   },
+  "suggest": {
+    "ext-curl": "*"
+  },
   "require": {
     "php": ">=8.0",
     "axy/sourcemap": "^0.1.5",
     "ext-json": "*",
-    "ext-curl": "*",
     "ext-mbstring": "*",
-    "ext-posix": "*"
+    "symfony/process": "^6.0"
   },
   "scripts": {
     "test": "./bin/runtest.sh"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
   }
 }

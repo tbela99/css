@@ -17,13 +17,18 @@ class Helper
      */
     protected static bool $fixParseUrl;
 
+    protected static function format($path) {
+
+        return DIRECTORY_SEPARATOR == '\\' ? str_replace('\\', '/', $path) : $path;
+    }
+
     /**
      * fix parsing bug in parse_url for php < 8 : parse_url('/?#iefix') will not return the query string
      * @param string $url
      * @return array
      * @ignore
      */
-    protected static function doParseUrl($url)
+    protected static function doParseUrl($url): array
     {
 
         $data = parse_url($url);
@@ -52,6 +57,11 @@ class Helper
     public static function getCurrentDirectory()
     {
 
+        if (php_sapi_name() == 'cli') {
+
+            return static::format(getcwd());
+        }
+
         if (isset($_SERVER['PWD'])) {
 
             // when executing via the cli
@@ -69,6 +79,13 @@ class Helper
      */
     public static function resolvePath(string $file, string $path = '')
     {
+
+        $file = static::format($file);
+
+        if ($path !== '') {
+
+            $path = static::format($path);
+        }
 
         if ($path !== '') {
 
@@ -121,13 +138,21 @@ class Helper
      * @param string $ref
      * @return string
      */
-    public static function absolutePath($file, $ref)
-    {
+    public static function absolutePath(string $file, string $ref): string
+	{
+
+		if (php_sapi_name() != 'cli' && preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
+
+			$file = preg_replace('#'.preg_quote(getcwd()).'#', '', $file);
+		}
+
+		$file = static::format($file);
+        $ref = static::format($ref);
 
         // web server environment
-        if (substr($ref, 0, 1) == '/' && php_sapi_name() != 'cli') {
+        if (str_starts_with($ref, '/') && php_sapi_name() != 'cli') {
 
-            if (substr($file, 0, 1) == '/' &&
+            if (str_starts_with($file, '/') &&
                 substr($file, 1, 1) != '/') {
 
                 return substr($file, 1);
@@ -167,6 +192,16 @@ class Helper
      */
     public static function relativePath(string $file, string $ref)
     {
+
+		if (preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
+
+			$regex = '#'.preg_quote(getcwd()).'/?#';
+			$file = preg_replace($regex, '', $file);
+			$ref = preg_replace($regex, '', $ref);
+		}
+
+        $file = static::format($file);
+        $ref = static::format($ref);
 
         $isAbsolute = static::isAbsolute($file);
 
@@ -263,10 +298,12 @@ class Helper
      * @param string $path
      * @return bool
      */
-    public static function isAbsolute($path)
+    public static function isAbsolute(string $path): bool
     {
 
-        return (bool)preg_match('#^(/|(https?:)?//)#', $path);
+        $path = static::format($path);
+
+        return (bool)preg_match('#^((([a-zA-Z]:)?/)|(https?:)?//)#', $path);
     }
 
     /**
@@ -325,13 +362,15 @@ class Helper
      */
     public static function fetchContent(string $url, array $options = [], array $curlOptions = [])
     {
+        $url = static::format($url);
+
         $userAgent = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/93.0';
 
-        $proto = strpos($url, 'https:') === 0 ? 'https' : 'http';
+        $proto = str_starts_with($url, 'https:') ? 'https' : 'http';
 
         if (extension_loaded('curl')) {
 
-            if (strpos($url, '//') === 0) {
+            if (str_starts_with($url, '//')) {
 
                 $url = $proto . ':' . $url;
             }

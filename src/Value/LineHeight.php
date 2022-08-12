@@ -19,9 +19,10 @@ class LineHeight extends Value
 
     protected static array $defaults = ['normal'];
 
-    /**
-     * @inheritDoc
-     */
+	/**
+	 * @inheritDoc
+	 * @throws Exception
+	 */
     public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
     {
 
@@ -61,10 +62,8 @@ class LineHeight extends Value
         return static::doRender($this->data, $options);
     }
 
-    public static function doRender(object $data, array $options = [])
-    {
-//        $prefix = func_num_args() > 1 && func_get_arg(1) == 'font' ? '/ ' : '';
-
+    public static function doRender(object $data, array $options = []): string
+	{
         $value = $data->value;
 
         if ($value == '0') {
@@ -73,11 +72,6 @@ class LineHeight extends Value
         }
 
         if (!empty($options['compress'])) {
-
-//            if ($prefix !== '') {
-//
-//                $prefix = '/';
-//            }
 
             if(is_numeric($value)) {
 

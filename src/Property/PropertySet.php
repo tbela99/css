@@ -62,6 +62,22 @@ class PropertySet
         }
     }
 
+    // @todo vendor prefix support
+    public function has($property): bool
+    {
+
+        return isset($this->properties[$property]);
+    }
+
+    // @todo vendor prefix support
+    public function remove($property): static
+    {
+
+        unset($this->properties[$property]);
+
+        return $this;
+    }
+
     /**
      * set property value
      * @param string $name
@@ -508,6 +524,12 @@ class PropertySet
 
         return rtrim($value, $glue . $join);
     }
+
+	public function isEmpty()
+	{
+
+		return empty($this->properties);
+	}
 
     /**
      * convert this object to string

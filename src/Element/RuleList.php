@@ -164,7 +164,7 @@ abstract class RuleList extends Element implements RuleListInterface
     /**
      * @inheritDoc
      */
-    public function support(ElementInterface $child)
+    public function support(ElementInterface $child): bool
     {
 
         $element = $this;

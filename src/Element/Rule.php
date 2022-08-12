@@ -32,23 +32,6 @@ class Rule extends RuleList
             $selectors = Value::parse($selectors, null, true, '', '');
         }
 
-//        $comments = [];
-//        $k = count($selectors);
-
-//        while ($k--) {
-//
-//            if ($selectors[$k]->type == 'Comment') {
-//
-//                $comments[] = $selectors[$k]->value;
-//                array_splice($selectors, $k, 1);
-//            }
-//        }
-//
-//        if (!empty($comments)) {
-//
-//            $this->setLeadingComments(array_reverse($comments));
-//        }
-
         $selectors = Value::split(Value::renderTokens($selectors, ['omit_unit' => false]), ',');
 
         $result = [];
@@ -67,8 +50,8 @@ class Rule extends RuleList
      * @param string|array $selectors
      * @return $this
      */
-    public function setSelector($selectors)
-    {
+    public function setSelector($selectors): static
+	{
 
         $this->ast->selector = $this->parseSelector($selectors);
         return $this;
@@ -79,8 +62,8 @@ class Rule extends RuleList
      * @param array|string $selector
      * @return $this
      */
-    public function addSelector($selector)
-    {
+    public function addSelector($selector): static
+	{
 
         $result = [];
 
@@ -104,8 +87,8 @@ class Rule extends RuleList
      * @return Rule
      * @throws Exception
      */
-    public function removeSelector($selector)
-    {
+    public function removeSelector($selector): static
+	{
 
         if (!is_array($selector)) {
 
@@ -131,8 +114,8 @@ class Rule extends RuleList
      * @return Declaration
      * @throws Exception
      */
-    public function addDeclaration($name, $value)
-    {
+    public function addDeclaration(string $name, string $value): Declaration
+	{
 
         $declaration = new Declaration();
 
@@ -148,8 +131,8 @@ class Rule extends RuleList
      * @return Rule $this
      * @throws Exception
      */
-    public function merge(Rule $rule)
-    {
+    public function merge(Rule $rule): static
+	{
 
         $this->addSelector($rule->getSelector());
 
@@ -164,8 +147,8 @@ class Rule extends RuleList
     /**
      * @inheritDoc
      */
-    public function support(ElementInterface $child)
-    {
+    public function support(ElementInterface $child): bool
+	{
 
         if ($child instanceof Comment) {
 

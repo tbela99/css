@@ -4,12 +4,15 @@ namespace TBela\CSS;
 
 use axy\sourcemap\SourceMap;
 use Exception;
+use Generator;
 use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
+use TBela\CSS\Parser\MultiprocessingTrait;
+use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Property\PropertyList;
 use function is_string;
 
@@ -20,1114 +23,1372 @@ use function is_string;
 class Renderer
 {
 
-    protected array $options = [
-        'glue' => "\n",
-        'indent' => ' ',
-        'css_level' => 4,
-        'separator' => ' ',
-        'charset' => false,
-        'compress' => false,
-        'sourcemap' => false,
-        'convert_color' => false,
-        'remove_comments' => false,
-        'preserve_license' => false,
-        'legacy_rendering' => false,
-        'compute_shorthand' => true,
-        'remove_empty_nodes' => false,
-        'allow_duplicate_declarations' => false
-    ];
-
-    /**
-     * @var string
-     * @ignore
-     */
-
-    protected string $outFile = '';
-    protected array $indents = [];
-    protected ?SourceMap $sourcemap;
-
-    /**
-     * Identity constructor.
-     * @param array $options
-     */
-
-    public function __construct(array $options = [])
-    {
-
-        $this->setOptions($options);
-    }
+	use MultiprocessingTrait;
+
+	protected array $options = [
+		'glue' => "\n",
+		'indent' => ' ',
+		'css_level' => 4,
+		'separator' => ' ',
+		'charset' => false,
+		'compress' => false,
+		'sourcemap' => false,
+		'convert_color' => false,
+		'remove_comments' => false,
+		'preserve_license' => false,
+		'legacy_rendering' => false,
+		'compute_shorthand' => true,
+		'remove_empty_nodes' => false,
+		'allow_duplicate_declarations' => false,
+		'multi_processing' => false,
+		'multi_processing_threshold' => 400
+	];
+
+	/**
+	 * @var string
+	 * @ignore
+	 */
+
+	protected string $outFile = '';
+	protected array $indents = [];
+	protected ?SourceMap $sourcemap;
+
+	// 'serialize-array' or 'json-array'
+	protected string $format = 'serialize-array';
+
+	/**
+	 * Identity constructor.
+	 * @param array $options
+	 */
+
+	public function __construct(array $options = [])
+	{
+
+		$this->setOptions($options);
+	}
+
+	public function getCliArgs(array $parseOptions, array $renderOptions): array
+	{
+
+		$args = [
+			'--parse-multi-processing=off'
+		];
+
+		if (empty($parseOptions['capture_errors'])) {
+			// default is on
+			$args[] = '--capture-errors=off';
+		}
 
-    /**
-     * render an ElementInterface or a Property
-     * @param RenderableInterface $element the element to render
-     * @param null|int $level indention level
-     * @param bool $parent render parent
-     * @return string
-     * @throws Exception
-     */
+		if (!empty($parseOptions['ast_src'])) {
+			// default is on
+			$args[] = sprintf('--parse-ast-src=%s', $parseOptions['ast_src']);
+		}
 
-    public function render(RenderableInterface $element, ?int $level = null, bool $parent = false)
-    {
+		if (!empty($parseOptions['flatten_import'])) {
+			// default is off
+			$args[] = '--flatten-import=on';
+		}
 
-        if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
+		if ($parseOptions['ast_src'] ?? '') {
+			// default is off
+			$args[] = '--parse-ast-src=' . $parseOptions['ast_src'];
+		}
 
-            $element = $element->copy()->getRoot();
-        }
+		if (empty($parseOptions['allow_duplicate_declarations'])) {
+			// default is on
+			$args[] = '--parse-allow-duplicate-declarations==off';
+		}
 
-        return $this->renderAst($element->getAst(), $level);
-    }
+		$args[] = '--render-multi-processing=off';
 
-    /**
-     * @param object|ParsableInterface $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     */
+		foreach ([
+//					 'glue' => "\n",
+//					 'indent' => ' ',
+//					 'css_level' => 4,
+//					 'separator' => ' ',
+					 'charset' => false,
+					 'compress' => false,
+//					 'sourcemap' => false,
+					 'convert_color' => false,
+					 'remove_comments' => false,
+					 'preserve_license' => false,
+					 'legacy_rendering' => false,
+					 'compute_shorthand' => true,
+					 'remove_empty_nodes' => false,
+					 'allow_duplicate_declarations' => false,
+					 'multi_processing' => true
+				 ] as $key => $value) {
 
-    public function renderAst(object $ast, ?int $level = null)
-    {
+			if (!isset($renderOptions[$key]) || $renderOptions[$key] === $value) {
 
-        $this->outFile = '';
+				continue;
+			}
 
-        if ($ast instanceof ParsableInterface) {
+			$args[] = sprintf('--%s%s=%s', $key == 'allow_duplicate_declarations' ? 'render-' : '', str_replace('_', '-', $key), is_bool($renderOptions[$key]) ? ($renderOptions[$key] ? 'on' : 'off') : $renderOptions[$key]);
+		}
 
-            $ast = $ast->getAst();
-        }
+		$args[] = '--output-format=' . $this->format;
 
-        if ($this->options['legacy_rendering']) {
+		return $args;
+	}
 
-            $ast = $this->flatten($ast);
-        }
+	public function slice($css, $size): Generator
+	{
 
-        switch ($ast->type) {
+		$i = -1;
+		$j = strlen($css) - 1;
 
-            case 'Stylesheet':
-                return $this->renderCollection($ast, $level, null);
+		$buffer = '';
 
-            case 'Rule':
-            case 'AtRule':
-            case 'Comment':
-            case 'Property':
-            case 'NestingRule':
-            case 'Declaration':
-            case 'NestingAtRule':
-            case 'NestingMediaRule':
+		while ($i++ < $j) {
 
-                return $this->{'render' . $ast->type}($ast, $level, null);
-        }
+			$string = Parser::substr($css, $i, $j, ['{']);
 
-        throw new Exception('Type not supported ' . $ast->type);
-    }
+			if ($string === false) {
 
-    /**
-     * @param object $ast
-     * @param string $file
-     * @return Renderer
-     * @throws IOException
-     */
+				$buffer = substr($css, $i);
 
-    public function save(object $ast, $file)
-    {
+				yield $buffer;
 
-        if ($ast instanceof ParsableInterface) {
+				$buffer = '';
+				break;
+			}
 
-            $ast = $ast->getAst();
-        }
+			$string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
+			$buffer .= $string;
 
-        if ($this->options['legacy_rendering']) {
+			if (strlen($buffer) >= $size) {
 
-            $ast = $this->flatten($ast);
-        }
+				$k = 0;
+				while (Parser::is_whitespace($buffer[$k])) {
 
-        $this->outFile = Helper::absolutePath($file, Helper::getCurrentDirectory());
+					$k++;
+				}
 
-        if ($this->options['sourcemap']) {
+				if ($k > 0) {
 
-            $this->sourcemap = new SourceMap();
-            $position = (object)[
-                'line' => 0,
-                'column' => 0
-            ];
-            $map = $file . '.map';
+					$buffer = substr($buffer, $k);
+				}
 
-            $result = (new Traverser())->
-            on('exit', function ($node, $level) {
+				yield $buffer;
+				$buffer = '';
+			}
 
-                if (isset($node->children)) {
+			$i += strlen($string) - 1;
+		}
 
-                    $node = clone $node;
+		if ($buffer) {
 
-                    $renderTree = [];
+			$k = 0;
+			$l = strlen($buffer);
+			while ($k < $l && Parser::is_whitespace($buffer[$k])) {
 
-                    $i = count($node->children);
+				$k++;
+			}
 
-                    while ($i--) {
+			if ($k > 0) {
 
-                        $child = $node->children[$i];
-                        $css = $this->{'render' . $child->type}($child, $level);
+				$buffer = substr($buffer, $k);
+			}
+		}
 
-                        if ($child->type == 'Comment') {
+		if (trim($buffer) !== '') {
 
-                            $child->css = $css;
-                            $renderTree[] = $child;
-                        } else if ($css !== '' && !isset($renderTree[$css])) {
+			yield $buffer;
+		}
+	}
 
-                            $child->css = $css;
-                            $renderTree[$css] = $child;
-                        } else {
+	/**
+	 * @param string $css
+	 * @param array $renderOptions
+	 * @param array $parseOptions
+	 * @return string
+	 * @throws IOException
+	 * @throws SyntaxError
+	 * @throws Exception
+	 */
+	public static function fromString(string $css, array $renderOptions = [], array $parseOptions = []): string
+	{
 
-                            array_splice($node->children, $i, 1);
-                        }
-                    }
+		$parser = new Parser(options: $parseOptions);
+		$renderer = new static($renderOptions);
+		$size = max(1, min($parser->getOptions('multi_processing_threshold'), strlen($css) / 2));
 
-                    $node->renderTree = array_reverse($renderTree);
-                }
+		if (function_exists('\\proc_open') && $renderer->options['multi_processing'] && empty($renderer->options['sourcemap']) && strlen($css) > $size) {
 
-                return $node;
+			$args = $renderer->getCliArgs($parser->getOptions(), $renderer->options);
 
-            })->traverse($ast);
+			foreach ($renderer->slice($css, $size) as $buffer) {
 
-            $css = '';
-            foreach ($result->renderTree as $child) {
+				$renderer->enQueue($buffer, $args);
+			}
 
-                $css .= $child->css . $this->options['glue'];
-            }
+			$renderer->pool->wait();
 
-            $this->walk($result->renderTree, $position);
-            $json = $this->sourcemap->getData();
+			$result = [];
 
-            $this->sourcemap = null;
+			foreach ($renderer->output as $sets) {
 
-            if (file_put_contents($map, json_encode($json)) === false) {
+				foreach ($sets as $key => $value) {
 
-                throw new IOException("cannot write map into $map", 500);
-            }
+					if (isset($result[$key])) {
 
-            if ($css !== '') {
+						unset($result[$key]);
+					}
 
-                $css = rtrim($css) . "\n/*# sourceMappingURL=" . Helper::relativePath($map, dirname($file)) . " */";
-            }
+					$result[$key] = $value;
+				}
+			}
 
-        } else {
+			$renderer->output = [];
 
-            $css = $this->{'render' . $ast->type}($ast, null);
-        }
+			return implode($renderer->options['glue'], $result);
+		}
 
-        if (file_put_contents($file, $css) === false) {
+		return $renderer->renderAst($parser->setContent($css));
+	}
 
-            throw new IOException("cannot write output into $file", 500);
-        }
+	/**
+	 * @param string $file
+	 * @param array $renderOptions
+	 * @param array $parseOptions
+	 * @return string
+	 * @throws IOException
+	 * @throws SyntaxError
+	 */
+	public static function fromFile(string $file, array $renderOptions = [], array $parseOptions = []): string
+	{
 
-        return $this;
-    }
+		$file = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
-    /**
-     * @param array $tree
-     * @param object $position
-     * @param int|null $level
-     * @return void
-     * @throws Exception
-     * @ignore
-     */
-    protected function walk(array $tree, object $position, ?int $level = 0)
-    {
+		if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
 
-        $pos = clone $position;
+			$content = file_get_contents($file);
 
-        foreach ($tree as $node) {
+		} else {
 
-            if ($level) {
+			$content = Helper::fetchContent($file);
+		}
 
-                $this->update($pos, $this->indents[$level]);
-            }
+		if ($content === false) {
 
-            switch ($node->type) {
+			throw new IOException(sprintf('File Not Found "%s"', $file), 404);
+		}
 
-                case 'Comment':
+		return static::fromString($content, $renderOptions, array_merge($parseOptions, ['ast_src' => $file]));
+	}
 
-                    $this->update($pos, $node->css . $this->options['glue']);
-                    break;
+	/**
+	 * render an ElementInterface or a Property
+	 * @param RenderableInterface $element the element to render
+	 * @param null|int $level indention level
+	 * @param bool $parent render parent
+	 * @return string
+	 * @throws Exception
+	 */
 
-                case 'Property':
-                case 'Declaration':
+	public function render(RenderableInterface $element, ?int $level = null, bool $parent = false): string
+	{
 
-                    if (!$this->options['legacy_rendering']) {
+		if ($parent && ($element instanceof ElementInterface) && !is_null($element['parent'])) {
 
-                        $this->update($pos, $node->css . ';' . $this->options['glue']);
-                    }
+			$element = $element->copy()->getRoot();
+		}
 
-                    break;
+		return $this->renderAst($element->getAst(), $level);
+	}
 
-                case 'AtRule':
-                case 'NestedMediaRule':
+	/**
+	 * @param \stdClass|ParsableInterface $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 */
 
-                    if ($node->name == 'media' && (!isset($node->value) || $node->value == '' || $node->value == 'all')) {
+	public function renderAst(\stdClass|ParsableInterface $ast, ?int $level = null): string
+	{
 
-                        $this->walk($node->renderTree, clone $pos, $level);
-                        break;
-                    }
+		$this->outFile = '';
 
-                    $this->addPosition($pos, $node);
+		if ($ast instanceof ParsableInterface) {
 
-                    if (isset($node->children) || !empty($node->isLeaf)) {
+			$ast = $ast->getAst();
+		}
 
-                        $this->update($pos, substr($node->css . $this->options['glue'], $level + 1));
-                    } else {
+		if ($this->options['legacy_rendering']) {
 
-                        $clone = clone $pos;
-                        $this->update($clone, $this->renderAtRuleMedia($node, $level) . $this->options['indent'] . '{' . $this->options['glue']);
-                        $this->walk($node, $clone, $level + 1);
-                        $this->update($pos, substr($node->css . $this->options['glue'], $level));
-                    }
+			$ast = $this->flatten($ast);
+		}
 
-                    break;
+		$block_size = 1500;
 
-                case 'Rule':
-                case 'NestingRule':
-                case 'NestingAtRule':
+		if (function_exists('\\proc_open') && $this->options['multi_processing'] && empty($this->options['sourcemap']) && $ast->type == 'Stylesheet' && isset($ast->children) && count($ast->children) > $block_size) {
 
-                    $this->addPosition($pos, $node);
+			$args = $this->getCliArgs([], $this->options);
 
-                    $clone = clone $pos;
-                    $this->update($clone, $this->renderSelector($node, $level) . $this->options['indent'] . '{' . $this->options['glue']);
-                    $this->walk($node->renderTree, $clone, is_null($level) ? 0 : $level + 1);
-                    $this->update($pos, substr($node->css . $this->options['glue'], $level));
-                    break;
-            }
+			$args[] = '--input-format=serialize';
 
-            $this->update($position, substr($node->css . $this->options['glue'], $level));
-        }
-    }
+			$j = count($ast->children);
+			$i = 0;
 
-    /**
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+			while ($i < $j) {
 
-    protected function renderStylesheet(object $ast, ?int $level)
-    {
+				$this->enQueue(serialize((object)['type' => 'Stylesheet', 'children' => array_slice($ast->children, $i, $block_size)]), $args);
+				$i += $block_size;
+			}
 
-        return $this->renderCollection($ast, $level);
-    }
+			$this->pool->wait();
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
+			$result = [];
 
-    protected function renderRule(object $ast, ?int $level)
-    {
+			foreach ($this->output as $sets) {
 
-        settype($level, 'int');
-        $result = $this->renderSelector($ast, $level);
-        $output = $this->renderCollection($ast, $level + 1);
+				foreach ($sets as $key => $value) {
 
-        if ($output === '' && $this->options['remove_empty_nodes']) {
+					if (isset($result[$key])) {
 
-            return '';
-        }
+						unset($result[$key]);
+					}
 
-        return $result . $this->options['indent'] . '{' .
-            $this->options['glue'] .
-            $output . $this->options['glue'] .
-            $this->indents[$level] .
-            '}';
-    }
+					$result[$key] = $value;
+				}
+			}
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+			$this->output = [];
 
-    protected function renderAtRuleMedia(object $ast, ?int $level)
-    {
+			return implode($this->options['glue'], $result);
+		}
 
-        $output = '@' . $this->renderName($ast);
-        $value = isset($ast->value) && $ast->value != 'all' ? $this->renderValue($ast) : '';
+		switch ($ast->type) {
 
-        if ($value !== '') {
+			case 'Stylesheet':
+				return $this->renderCollection($ast, $level, null);
 
-            if ($this->options['compress'] && $value[0] == '(') {
+			case 'Rule':
+			case 'AtRule':
+			case 'Comment':
+			case 'Property':
+			case 'NestingRule':
+			case 'Declaration':
+			case 'NestingAtRule':
+			case 'NestingMediaRule':
 
-                $output .= $value;
-            } else {
+				return $this->{'render' . $ast->type}($ast, $level, null);
+		}
 
-                $output .= rtrim($this->options['separator'] . $value);
-            }
-        }
+		throw new Exception('Type not supported ' . $ast->type);
+	}
 
-        settype($level, 'int');
+	/**
+	 * @param object $ast
+	 * @param string $file
+	 * @return Renderer
+	 * @throws IOException
+	 * @throws Exception
+	 */
 
-        if (!isset($this->indents[$level])) {
+	public function save(object $ast, string $file): static
+	{
 
-            $this->indents[$level] = str_repeat($this->options['indent'], $level);
-        }
+		if ($ast instanceof ParsableInterface) {
 
-        $indent = $this->indents[$level];
+			$ast = $ast->getAst();
+		}
 
-        if (!empty($ast->isLeaf)) {
+		if ($this->options['legacy_rendering']) {
 
-            return $indent . $output . ';';
-        }
+			$ast = $this->flatten($ast);
+		}
 
-        return $indent . $output;
-    }
+		$this->outFile = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
-    /**
-     * render at-rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+		if ($this->options['sourcemap']) {
 
-    protected function renderAtRule(object $ast, ?int $level)
-    {
+			$this->sourcemap = new SourceMap();
+			$position = (object)[
+				'line' => 0,
+				'column' => 0
+			];
+			$map = $file . '.map';
 
-        if ($ast->name == 'charset' && !$this->options['charset']) {
+			$result = (new Traverser())->
+			on('exit', function ($node, $level) {
 
-            return '';
-        }
+				if (isset($node->children)) {
 
-        settype($level, 'int');
-        $media = $this->renderAtRuleMedia($ast, $level);
+					$node = clone $node;
 
-        if ($media === '' || !empty($ast->isLeaf)) {
+					$renderTree = [];
 
-            return $media;
-        }
+					$i = count($node->children);
 
-        if ($ast->name == 'media' && (!isset($ast->value) || $ast->value == 'all')) {
+					while ($i--) {
 
-            return $this->renderCollection($ast, $level);
-        }
+						$child = $node->children[$i];
+						$css = $this->{'render' . $child->type}($child, $level);
 
-        $elements = $this->renderCollection($ast, $level + 1);
+						if ($child->type == 'Comment') {
 
-        if ($elements === '' && !empty($this->options['remove_empty_nodes'])) {
+							$child->css = $css;
+							$renderTree[] = $child;
+						} else if ($css !== '' && !isset($renderTree[$css])) {
 
-            return '';
-        }
+							$child->css = $css;
+							$renderTree[$css] = $child;
+						} else {
 
-        return $media . $this->options['indent'] . '{' . $this->options['glue'] . $elements . $this->options['glue'] . $this->indents[$level] . '}';
-    }
+							array_splice($node->children, $i, 1);
+						}
+					}
 
-    /**
-     * render a list
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+					$node->renderTree = array_reverse($renderTree);
+				}
 
-    protected function renderCollection(object $ast, ?int $level)
-    {
+				return $node;
 
-        $type = $ast->type;
-        $glue = ($type == 'Rule' || ($type == 'AtRule' && !empty($ast->hasDeclarations))) ? ';' : '';
-        $count = 0;
+			})->traverse($ast);
 
-        if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && $glue == ';') {
+			$css = '';
+			foreach ($result->renderTree as $child) {
 
-            $children = [];
-            $properties = new PropertyList(null, $this->options);
+				$css .= $child->css . $this->options['glue'];
+			}
 
-            foreach ($ast->children ?? [] as $child) {
+			$this->walk($result->renderTree, $position);
+			$json = $this->sourcemap->getData();
 
-                if (!empty($children)) {
+			$this->sourcemap = null;
 
-                    $children[] = $child;
-                } else if ($child->type == 'Declaration' || $child->type == 'Comment') {
+			if (file_put_contents($map, json_encode($json)) === false) {
 
-                    $properties->set($child->name ?? null, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
-                } else {
+				throw new IOException("cannot write map into $map", 500);
+			}
 
-                    $children[] = $child;
-                }
-            }
+			if ($css !== '') {
 
-            if (!$properties->isEmpty()) {
+				$css = rtrim($css) . "\n/*# sourceMappingURL=" . Helper::relativePath($map, dirname($file)) . " */";
+			}
 
-                array_splice($children, 0, 0, iterator_to_array($properties->getProperties()));
-            }
+		} else {
 
-        } else {
+			$css = $this->{'render' . $ast->type}($ast, null);
+		}
 
-            $children = $ast->children ?? [];
-        }
+		if (file_put_contents($file, $css) === false) {
 
-        $result = [];
-        settype($level, 'int');
+			throw new IOException("cannot write output into $file", 500);
+		}
 
-        foreach ($children as $el) {
+		return $this;
+	}
 
-            if ($el instanceof RenderableInterface) {
+	/**
+	 * @param array $tree
+	 * @param object $position
+	 * @param int|null $level
+	 * @return void
+	 * @throws Exception
+	 * @ignore
+	 */
+	protected function walk(array $tree, object $position, ?int $level = 0): void
+	{
 
-                $el = $el->getAst();
-            }
+		$pos = clone $position;
 
-            $output = $this->{'render' . $el->type}($el, $level);
+		foreach ($tree as $node) {
 
-            if (trim($output) === '') {
+			if ($level) {
 
-                continue;
+				$this->update($pos, $this->indents[$level]);
+			}
 
-            } else if ($el->type != 'Comment') {
+			switch ($node->type) {
 
-                if ($count == 0) {
+				case 'Comment':
 
-                    $count++;
-                }
-            }
+					$this->update($pos, $node->css . $this->options['glue']);
+					break;
 
-            $output .= in_array($el->type, ['Declaration', 'Property']) ? ';' : '';
+				case 'Property':
+				case 'Declaration':
 
-            if (isset($result[$output])) {
+					if (!$this->options['legacy_rendering']) {
 
-                unset($result[$output]);
-            }
+						$this->update($pos, $node->css . ';' . $this->options['glue']);
+					}
 
-            $result[$output] = [$output, $el];
-        }
+					break;
 
-        if ($this->options['remove_empty_nodes'] && $count == 0) {
+				case 'AtRule':
+				case 'NestedMediaRule':
 
-            return '';
-        }
+					if ($node->name == 'media' && (!isset($node->value) || $node->value == '' || $node->value == 'all')) {
 
-        $join = $this->options['glue'];
-        $output = '';
+						$this->walk($node->renderTree, clone $pos, $level);
+						break;
+					}
 
-        foreach ($result as $res) {
+					$this->addPosition($pos, $node);
 
-            $output .= $res[0] . $join;
-        }
+					if (isset($node->children) || !empty($node->isLeaf)) {
 
-        return rtrim($output, ';' . $this->options['glue']);
-    }
+						$this->update($pos, substr($node->css . $this->options['glue'], $level + 1));
+					} else {
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
+						$clone = clone $pos;
+						$this->update($clone, $this->renderAtRuleMedia($node, $level) . $this->options['indent'] . '{' . $this->options['glue']);
+						$this->walk($node, $clone, $level + 1);
+						$this->update($pos, substr($node->css . $this->options['glue'], $level));
+					}
 
-    protected function renderNestingAtRule(object $ast, ?int $level)
-    {
+					break;
 
-        return $this->renderRule($ast, $level);
-    }
+				case 'Rule':
+				case 'NestingRule':
+				case 'NestingAtRule':
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
+					$this->addPosition($pos, $node);
 
-    protected function renderNestingRule(object $ast, ?int $level)
-    {
+					$clone = clone $pos;
+					$this->update($clone, $this->renderSelector($node, $level) . $this->options['indent'] . '{' . $this->options['glue']);
+					$this->walk($node->renderTree, $clone, is_null($level) ? 0 : $level + 1);
+					$this->update($pos, substr($node->css . $this->options['glue'], $level));
+					break;
+			}
 
-        return $this->renderRule($ast, $level);
-    }
+			$this->update($position, substr($node->css . $this->options['glue'], $level));
+		}
+	}
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+	/**
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @ignore
+	 */
 
-    protected function renderNestingMediaRule(object $ast, ?int $level)
-    {
+	protected function renderStylesheet(object $ast, ?int $level): string
+	{
 
-        return $this->renderAtRule($ast, $level);
-    }
+		return $this->renderCollection($ast, $level);
+	}
 
-    /**
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
-    protected function renderComment(object $ast, ?int $level)
-    {
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        if ($this->options['remove_comments']) {
+	protected function renderRule(object $ast, ?int $level): string
+	{
 
-            if (!$this->options['preserve_license'] || !str_starts_with($ast->value, '/*!')) {
+		settype($level, 'int');
+		$result = $this->renderSelector($ast, $level);
+		$output = $this->renderCollection($ast, $level + 1);
 
-                return '';
-            }
-        }
+		if ($output === '' && $this->options['remove_empty_nodes']) {
 
-        settype($level, 'int');
+			return '';
+		}
 
-        if (!isset($this->indents[$level])) {
+		return $result . $this->options['indent'] . '{' .
+			$this->options['glue'] .
+			$output . $this->options['glue'] .
+			$this->indents[$level] .
+			'}';
+	}
 
-            $this->indents[$level] = str_repeat($this->options['indent'], $level);
-        }
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        return $this->indents[$level] . $ast->value;
-    }
+	protected function renderAtRuleMedia(object $ast, ?int $level): string
+	{
 
-    /**
-     * render a rule
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
+		$output = '@' . $this->renderName($ast);
+		$value = isset($ast->value) && $ast->value != 'all' ? $this->renderValue($ast) : '';
 
-    protected function renderSelector(object $ast, ?int $level)
-    {
+		if ($value !== '') {
 
-        $selector = $ast->selector;
+			if ($this->options['compress'] && $value[0] == '(') {
 
-        if (!isset($selector)) {
+				$output .= $value;
+			} else {
 
-            throw new Exception('The selector cannot be empty', 400);
-        }
+				$output .= rtrim($this->options['separator'] . $value);
+			}
+		}
 
-        settype($level, 'int');
+		settype($level, 'int');
 
-        if (!isset($this->indents[$level])) {
+		if (!isset($this->indents[$level])) {
 
-            $this->indents[$level] = str_repeat($this->options['indent'], $level);
-        }
+			$this->indents[$level] = str_repeat($this->options['indent'], $level);
+		}
 
-        $indent = $this->indents[$level];
+		$indent = $this->indents[$level];
 
-        if (is_array($selector)) {
+		if (!empty($ast->isLeaf)) {
 
-            if (empty($selector)) {
-                ;
-                // the selector is empty!
-                throw new \Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
-            }
+			return $indent . $output . ';';
+		}
 
-            if (is_string($selector[0])) {
+		return $indent . $output;
+	}
 
-                $selector = implode(',' . $this->options['indent'], $selector);
-            }
-        }
+	/**
+	 * render at-rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        if (is_string($selector)) {
+	protected function renderAtRule(object $ast, ?int $level): string
+	{
 
-            $selector = Value::parse($selector, null, true, '', '');
-        }
+		if ($ast->name == 'charset' && !$this->options['charset']) {
 
-        $result = $indent . Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
+			return '';
+		}
 
-        if ($ast->type == 'NestingAtRule' && !$this->options['legacy_rendering']) {
+		settype($level, 'int');
+		$media = $this->renderAtRuleMedia($ast, $level);
 
-            $result = $indent . '@nest' . $this->options['indent'] . ltrim($result);
-        }
+		if ($media === '' || !empty($ast->isLeaf)) {
 
-        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
+			return $media;
+		}
 
-            $comments = $ast->leadingcomments;
+		if ($ast->name == 'media' && (!isset($ast->value) || $ast->value == 'all')) {
 
-            if (!empty($comments)) {
+			return $this->renderCollection($ast, $level);
+		}
 
-                $join = $this->options['compress'] ? '' : ' ';
+		$elements = $this->renderCollection($ast, $level + 1);
 
-                foreach ($comments as $comment) {
+		if ($elements === '' && !empty($this->options['remove_empty_nodes'])) {
 
-                    $result .= $join . $comment;
-                }
-            }
-        }
+			return '';
+		}
 
-        return $result;
-    }
+		return $media . $this->options['indent'] . '{' . $this->options['glue'] . $elements . $this->options['glue'] . $this->indents[$level] . '}';
+	}
 
-    /**
-     * @param \stdClass $ast
-     * @param int|null $level
-     * @return string
-     * @ignore
-     */
+	/**
+	 * render a list
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @ignore
+	 */
 
-    protected function renderDeclaration($ast, ?int $level)
-    {
+	protected function renderCollection(object $ast, ?int $level): string
+	{
 
-        return $this->renderProperty($ast, $level);
-    }
+		$type = $ast->type;
+		$glue = ($type == 'Rule' || ($type == 'AtRule' && !empty($ast->hasDeclarations))) ? ';' : '';
+		$count = 0;
 
-    /**
-     * render a property
-     * @param object $ast
-     * @param int|null $level
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
+		if (($this->options['compute_shorthand'] || !$this->options['allow_duplicate_declarations']) && $glue == ';') {
 
-    protected function renderProperty(object $ast, ?int $level)
-    {
-        if ($ast->type == 'Comment') {
+			$children = [];
+			$properties = new PropertyList(null, $this->options);
 
-            return empty($this->options['compress']) ? '' : $ast->value;
-        }
+			foreach ($ast->children ?? [] as $child) {
 
-        $name = $this->renderName($ast);
+				if (!empty($children)) {
 
-        if (class_exists(Value::getClassName($ast->name)) || !is_string($ast->value)) {
+					$children[] = $child;
+				} else if ($child->type == 'Declaration' || $child->type == 'Comment') {
 
-            $property = is_string($ast->value) ? Value::parse($ast->value, $ast->name) : $ast->value;
-            $value = Value::renderTokens($property, array_merge(['property' => $name], $this->options));
-        } else {
+					$name = $child->name ?? null;
 
-            $value = $ast->value;
-        }
+					if (isset($name) && !$this->options['allow_duplicate_declarations'] && $properties->has($name)) {
 
-        if ($value == 'none') {
+						$properties->remove($name);
+					}
 
-            if (in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
+					$properties->set($name, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
+				} else {
 
-                $value = 0;
-            }
-        } else if (in_array($name, ['background', 'background-image', 'src'])) {
+					$children[] = $child;
+				}
+			}
 
-            $value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+			if (!$properties->isEmpty()) {
 
-                if (str_contains($matches[3], 'data:')) {
+				array_splice($children, 0, 0, iterator_to_array($properties->getProperties()));
+			}
 
-                    return $matches[0];
-                }
+		} else {
 
-                return $matches[1] . 'url(' . Helper::relativePath($matches[3], $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)) . ')';
-            }, $value);
-        }
+			$children = $ast->children ?? [];
+		}
 
-        if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
+		$result = [];
+		settype($level, 'int');
 
-//            $comments = $ast->trailingcomments;
+		foreach ($children as $el) {
 
-//            if (!empty($comments)) {
+			if ($el instanceof RenderableInterface) {
 
-            foreach ($ast->trailingcomments as $comment) {
+				$el = $el->getAst();
+			}
 
-                $value .= ' ' . $comment;
-            }
-//            }
-        }
+			$output = $this->{'render' . $el->type}($el, $level);
 
-        settype($level, 'int');
+			if (trim($output) === '') {
 
-        if (!isset($this->indents[$level])) {
+				continue;
 
-            $this->indents[$level] = str_repeat($this->options['indent'], $level);
-        }
+			} else if ($el->type != 'Comment') {
 
-        return $this->indents[$level] . trim($name) . ':' . $this->options['indent'] . trim($value);
-    }
+				if ($count == 0) {
 
-    /**
-     * render a name
-     * @param object $ast
-     * @return string
-     * @ignore
-     */
+					$count++;
+				}
+			}
 
-    protected function renderName(object $ast)
-    {
+			$output .= in_array($el->type, ['Declaration', 'Property']) ? ';' : '';
 
-        $result = $ast->name;
+			if (isset($result[$output])) {
 
-        if (!empty($ast->vendor)) {
+				unset($result[$output]);
+			}
 
-            $result = '-' . $ast->vendor . '-' . $result;
-        }
+			$result[$output] = [$output, $el];
+		}
 
-        if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
+		if ($this->options['remove_empty_nodes'] && $count == 0) {
 
-            $comments = $ast->leadingcomments;
+			return '';
+		}
 
-            if (!empty($comments)) {
+		$join = $this->options['glue'];
+		$output = '';
 
-                foreach ($comments as $comment) {
+		foreach ($result as $res) {
 
-                    $result .= ' ' . $comment;
-                }
-            }
-        }
+			$output .= $res[0] . $join;
+		}
 
-        return $result;
-    }
+		return rtrim($output, ';' . $this->options['glue']);
+	}
 
-    /**
-     * render a value
-     * @param object $ast
-     * @return string
-     * @throws Exception
-     * @ignore
-     */
-    protected function renderValue(object $ast)
-    {
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        $result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null, true, '', '') : $ast->value, $this->options);
+	protected function renderNestingAtRule(object $ast, ?int $level): string
+	{
 
-        if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
+		return $this->renderRule($ast, $level);
+	}
 
-            $trailingComments = $ast->trailingcomments;
-        }
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        if (!empty($trailingComments)) {
+	protected function renderNestingRule(object $ast, ?int $level): string
+	{
 
-            $glue = $this->options['compress'] ? '' : ' ';
+		return $this->renderRule($ast, $level);
+	}
 
-            foreach ($trailingComments as $comment) {
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-                $result .= $glue . $comment;
-            }
-        }
+	protected function renderNestingMediaRule(object $ast, ?int $level): string
+	{
 
-        return $result;
-    }
+		return $this->renderAtRule($ast, $level);
+	}
 
-    /**
-     * Set output formatting
-     * @param array $options
-     * @return Renderer
-     */
-    public function setOptions(array $options)
-    {
+	/**
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @ignore
+	 */
+	protected function renderComment(object $ast, ?int $level): string
+	{
 
-        if (!empty($options['compress'])) {
+		if ($this->options['remove_comments']) {
 
-            $this->options['glue'] = '';
-            $this->options['indent'] = '';
+			if (!$this->options['preserve_license'] || !str_starts_with($ast->value, '/*!')) {
 
-            if (!$this->options['convert_color']) {
+				return '';
+			}
+		}
 
-                $this->options['convert_color'] = 'hex';
-            }
+		settype($level, 'int');
 
-            $this->options['charset'] = false;
-            $this->options['remove_comments'] = true;
-            $this->options['remove_empty_nodes'] = true;
-        } else {
+		if (!isset($this->indents[$level])) {
 
-            $this->options['glue'] = "\n";
-            $this->options['indent'] = ' ';
-        }
+			$this->indents[$level] = str_repeat($this->options['indent'], $level);
+		}
 
-        foreach ($options as $key => $value) {
+		return $this->indents[$level] . $ast->value;
+	}
 
-            if (array_key_exists($key, $this->options)) {
+	/**
+	 * render a rule
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-                $this->options[$key] = $value;
-            }
-        }
+	protected function renderSelector(object $ast, ?int $level): string
+	{
 
-        if ($this->options['convert_color'] === true) {
+		$selector = $ast->selector;
 
-            $this->options['convert_color'] = 'hex';
-        }
+		if (!isset($selector)) {
 
-        if (isset($options['allow_duplicate_declarations'])) {
+			throw new Exception('The selector cannot be empty', 400);
+		}
 
-            $this->options['allow_duplicate_declarations'] = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
-        }
+		settype($level, 'int');
 
-        $this->indents = [];
+		if (!isset($this->indents[$level])) {
 
-        return $this;
-    }
+			$this->indents[$level] = str_repeat($this->options['indent'], $level);
+		}
 
-    /**
-     * return the options
-     * @param string|null $name
-     * @param mixed $default return value
-     * @return array
-     */
-    public function getOptions($name = null, $default = null)
-    {
+		$indent = $this->indents[$level];
 
-        if (is_null($name)) {
+		if (is_array($selector)) {
 
-            return $this->options;
-        }
+			if (empty($selector)) {
 
-        return $this->options[$name] ?? $default;
-    }
+				// the selector is empty!
+				throw new \Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
+			}
 
-    /**
-     * add sourcemap entry
-     * @param string $generated
-     * @param object $ast
-     * @return Renderer
-     * @ignore
-     */
-    protected function addPosition($generated, object $ast)
-    {
+			if (is_string($selector[0])) {
 
-        if (empty($ast->src)) {
+				$selector = implode(',' . $this->options['indent'], $selector);
+			}
+		}
 
-            return $this;
-        }
+		if (is_string($selector)) {
 
-        $position = $ast->location->start ?? $ast->position ?? null;
+			$selector = Value::parse($selector, null, true, '', '');
+		}
 
-        if (is_null($position)) {
+		$result = $indent . Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
 
-            return $this;
-        }
+		if ($ast->type == 'NestingAtRule' && !$this->options['legacy_rendering']) {
 
-        $this->sourcemap->addPosition([
-            'generated' => [
-                'line' => $generated->line,
-                'column' => $generated->column,
-            ],
-            'source' => [
-                'fileName' => $ast->src,
-                'line' => $position->line - 1,
-                'column' => $position->column - 1,
-            ],
-        ]);
+			$result = $indent . '@nest' . $this->options['indent'] . ltrim($result);
+		}
 
-        return $this;
-    }
+		if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
-    /**
-     * @param object $position
-     * @param string $string
-     * @return \stdClass
-     * @ignore
-     */
-    protected function update(object $position, string $string)
-    {
+			$comments = $ast->leadingcomments;
 
-        $j = strlen($string);
+			$join = $this->options['compress'] ? '' : ' ';
 
-        for ($i = 0; $i < $j; $i++) {
+			foreach ($comments as $comment) {
 
-            if ($string[$i] == "\n") {
+				$result .= $join . $comment;
+			}
+		}
 
-                $position->line++;
-                $position->column = 0;
-            } else {
+		return $result;
+	}
 
-                $position->column++;
-            }
-        }
+	/**
+	 * @param \stdClass $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        return $position;
-    }
+	protected function renderDeclaration($ast, ?int $level): string
+	{
 
-    /**
-     * flatten nested css tree
-     * @param object $node
-     * @return object
-     * @ignore
-     */
-    protected function flattenChildren(object $node)
-    {
+		return $this->renderProperty($ast, $level);
+	}
 
-        $node = clone $node;
-        $children = array_map([$this, 'flatten'], $node->children);
+	/**
+	 * render a property
+	 * @param object $ast
+	 * @param int|null $level
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
 
-        for ($i = 0; $i < count($children); $i++) {
+	protected function renderProperty(object $ast, ?int $level): string
+	{
+		if ($ast->type == 'Comment') {
 
-            if ($children[$i]->type == 'Fragment') {
+			return empty($this->options['compress']) ? '' : $ast->value;
+		}
 
-                array_splice($children, $i, 1, $children[$i]->children ?? []);
-                $i--;
-            }
-        }
+		$name = $this->renderName($ast);
 
-        $node->children = $children;
-        return $node;
-    }
+		if (class_exists(Value::getClassName($ast->name)) || !is_string($ast->value)) {
 
-    /**
-     * @param object $node
-     * @return object
-     * @throws Exception
-     * @ignore
-     */
-    public function flatten(object $node)
-    {
+			$property = is_string($ast->value) ? Value::parse($ast->value, $ast->name) : $ast->value;
+			$value = Value::renderTokens($property, array_merge(['property' => $name], $this->options));
+		} else {
 
-        if (isset($node->children)) {
+			$value = $ast->value;
+		}
 
-            switch ($node->type) {
+		if ($value == 'none') {
 
-                case 'AtRule':
-                case 'NestingMediaRule':
+			if (in_array($name, ['border', 'border-top', 'border-right', 'border-left', 'border-bottom', 'outline'])) {
 
-                    $node = $this->flattenChildren($node);
+				$value = 0;
+			}
+		} else if (in_array($name, ['background', 'background-image', 'src'])) {
 
-                    $children = [];
-                    $frag = (object)[
+			$value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
 
-                        'type' => 'Fragment'
-                    ];
+				if (str_contains($matches[3], 'data:')) {
 
-                    foreach ($node->children as $child) {
+					return $matches[0];
+				}
 
-                        if (in_array($child->type, ['NestingMediaRule', 'AtRule']) &&
-                            $child->name == 'media'
-                        ) {
+				return $matches[1] . 'url(' . Helper::relativePath($matches[3], $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)) . ')';
+			}, $value);
+		}
 
-                            if (!empty($children)) {
+		if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-                                $clone = clone $node;
-                                $clone->children = $children;
-                                $frag->children[] = $clone;
-                                $children = [];
-                            }
+			foreach ($ast->trailingcomments as $comment) {
 
-                            $child = clone $child;
+				$value .= ' ' . $comment;
+			}
+		}
 
-                            $values = [];
+		settype($level, 'int');
 
-                            if (!empty($node->value)) {
+		if (!isset($this->indents[$level])) {
 
-                                $value = Value::renderTokens($node->value, $this->options);
+			$this->indents[$level] = str_repeat($this->options['indent'], $level);
+		}
 
-                                if ($value !== '' && $value != 'all') {
+		return $this->indents[$level] . trim($name) . ':' . $this->options['indent'] . trim($value);
+	}
 
-                                    $values[$value] = $value;
-                                }
-                            }
+	/**
+	 * render a name
+	 * @param object $ast
+	 * @return string
+	 * @ignore
+	 */
 
-                            if (isset($child->value)) {
+	protected function renderName(object $ast): string
+	{
 
-                                $value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value, null, true, '', '') : $child->value, $this->options);
+		$result = $ast->name;
 
-                                if ($value !== '' && $value != 'all') {
+		if (!empty($ast->vendor)) {
 
-                                    $values[$value] = $value;
-                                }
-                            }
+			$result = '-' . $ast->vendor . '-' . $result;
+		}
 
-                            if (!empty($values)) {
+		if (!$this->options['remove_comments'] && !empty($ast->leadingcomments)) {
 
-                                $child->value = implode(' and ', $values);
-                            }
+			$comments = $ast->leadingcomments;
 
-                            $frag->children[] = $this->flatten($child);
-                            continue;
-                        }
+			foreach ($comments as $comment) {
 
-                        $children[] = $child;
-                    }
+				$result .= ' ' . $comment;
+			}
+		}
 
-                    if (!empty($children)) {
+		return $result;
+	}
 
-                        $clone = clone $node;
-                        $clone->children = $children;
-                        $frag->children[] = $clone;
-                    }
+	/**
+	 * render a value
+	 * @param object $ast
+	 * @return string
+	 * @throws Exception
+	 * @ignore
+	 */
+	protected function renderValue(object $ast): string
+	{
 
-                    return $frag;
+		$result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null, true, '', '') : $ast->value, $this->options);
 
-                case 'NestingRule':
-                case 'NestingAtRule':
+		if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
-                    $node = $this->flattenChildren($node);
+			$trailingComments = $ast->trailingcomments;
+		}
 
-                    $children = [];
-                    $frag = (object)[
+		if (!empty($trailingComments)) {
 
-                        'type' => 'Fragment'
-                    ];
+			$glue = $this->options['compress'] ? '' : ' ';
 
-                    if (is_object($node->selector[0] ?? null)) {
+			foreach ($trailingComments as $comment) {
 
-                        $node->selector = Value::renderTokens($node->selector);
-                    }
+				$result .= $glue . $comment;
+			}
+		}
 
-                    $selector = is_array($node->selector) ? $node->selector : Value::split($node->selector, ',');
-                    $selector = count($selector) > 1 ? ':is(' . implode(', ', array_map('trim', $selector)) . ')' : $selector[0];
+		return $result;
+	}
 
-                    foreach ($node->children as $child) {
+	/**
+	 * Set output formatting
+	 * @param array $options
+	 * @return Renderer
+	 */
+	public function setOptions(array $options): static
+	{
 
-                        if (in_array($child->type, ['Rule', 'NestingRule', 'NestingAtRule'])) {
+		if (!empty($options['compress'])) {
 
-                            if (!empty($children)) {
+			$this->options['glue'] = '';
+			$this->options['indent'] = '';
 
-                                $clone = clone $node;
-                                $clone->children = $children;
-                                $children = [];
-                                $frag->children[] = $clone;
-                            }
+			if (!$this->options['convert_color']) {
 
-                            $child = clone $child;
+				$this->options['convert_color'] = 'hex';
+			}
 
-                            if (is_array($child->selector)) {
+			$this->options['charset'] = false;
+			$this->options['remove_comments'] = true;
+			$this->options['remove_empty_nodes'] = true;
+		} else {
 
-                                $child->selector = array_map(function ($value) use ($selector) {
+			$this->options['glue'] = "\n";
+			$this->options['indent'] = ' ';
+		}
 
-                                    return str_replace('&', $selector, $value);
-                                }, $child->selector);
-                            } else {
+		foreach ($options as $key => $value) {
 
-                                $child->selector = str_replace('&', $selector, $child->selector);
-                            }
+			if (array_key_exists($key, $this->options)) {
 
-                            $frag->children[] = $this->flatten($child);
-                            continue;
-                        }
+				$this->options[$key] = $value;
+			}
+		}
 
-                        if (in_array($child->type, ['NestingMediaRule', 'AtRule']) &&
-                            $child->name == 'media'
-                        ) {
+		if ($this->options['convert_color'] === true) {
 
-                            if (!empty($children)) {
+			$this->options['convert_color'] = 'hex';
+		}
 
-                                $clone = clone $node;
-                                $clone->children = $children;
-                                $children = [];
-                                $frag->children[] = $clone;
-                            }
+		if (isset($options['allow_duplicate_declarations'])) {
 
-                            $clone = clone $node;
-                            $child = clone $child;
+			$this->options['allow_duplicate_declarations'] = is_string($options['allow_duplicate_declarations']) ? [$options['allow_duplicate_declarations']] : $options['allow_duplicate_declarations'];
+		}
 
-                            $clone->children = $child->children ?? [];
-                            $child->children = [$clone];
-                            $frag->children[] = $this->flatten($child);
-                            continue;
-                        }
+		$this->indents = [];
 
-                        $children[] = $child;
-                    }
+		return $this;
+	}
 
-                    if (!empty($children)) {
+	/**
+	 * return the options
+	 * @param string|null $name
+	 * @param mixed|null $default return value
+	 * @return array
+	 */
+	public function getOptions(string $name = null, mixed $default = null): array
+	{
 
-                        $clone = clone $node;
-                        $clone->children = $children;
-                        $frag->children[] = $clone;
-                    }
+		if (is_null($name)) {
 
-                    return $frag;
+			return $this->options;
+		}
 
-                case 'Stylesheet':
+		return $this->options[$name] ?? $default;
+	}
 
-                    return $this->flattenChildren($node);
-            }
-        }
+	/**
+	 * add sourcemap entry
+	 * @param object $generated
+	 * @param object $ast
+	 * @return Renderer
+	 * @ignore
+	 */
+	protected function addPosition(object $generated, object $ast): static
+	{
 
-        return $node;
-    }
+		if (empty($ast->src)) {
+
+			return $this;
+		}
+
+		$position = $ast->location->start ?? $ast->position ?? null;
+
+		if (is_null($position)) {
+
+			return $this;
+		}
+
+		$this->sourcemap->addPosition([
+			'generated' => [
+				'line' => $generated->line,
+				'column' => $generated->column,
+			],
+			'source' => [
+				'fileName' => $ast->src,
+				'line' => $position->line - 1,
+				'column' => $position->column - 1,
+			],
+		]);
+
+		return $this;
+	}
+
+	/**
+	 * @param object $position
+	 * @param string $string
+	 * @return object
+	 * @ignore
+	 */
+	protected function update(object $position, string $string): object
+	{
+
+		$j = strlen($string);
+
+		for ($i = 0; $i < $j; $i++) {
+
+			if ($string[$i] == "\n") {
+
+				$position->line++;
+				$position->column = 0;
+			} else {
+
+				$position->column++;
+			}
+		}
+
+		return $position;
+	}
+
+	/**
+	 * flatten nested css tree
+	 * @param object $node
+	 * @return object
+	 * @ignore
+	 */
+	protected function flattenChildren(object $node): object
+	{
+
+		$node = clone $node;
+		$children = array_map([$this, 'flatten'], $node->children);
+
+		for ($i = 0; $i < count($children); $i++) {
+
+			if ($children[$i]->type == 'Fragment') {
+
+				array_splice($children, $i, 1, $children[$i]->children ?? []);
+				$i--;
+			}
+		}
+
+		$node->children = $children;
+		return $node;
+	}
+
+	/**
+	 * @param object $node
+	 * @return object
+	 * @throws Exception
+	 * @ignore
+	 */
+	public function flatten(object $node): object
+	{
+
+		if (isset($node->children)) {
+
+			switch ($node->type) {
+
+				case 'AtRule':
+				case 'NestingMediaRule':
+
+					$node = $this->flattenChildren($node);
+
+					$children = [];
+					$frag = (object)[
+
+						'type' => 'Fragment'
+					];
+
+					foreach ($node->children as $child) {
+
+						if (in_array($child->type, ['NestingMediaRule', 'AtRule']) &&
+							$child->name == 'media'
+						) {
+
+							if (!empty($children)) {
+
+								$clone = clone $node;
+								$clone->children = $children;
+								$frag->children[] = $clone;
+								$children = [];
+							}
+
+							$child = clone $child;
+
+							$values = [];
+
+							if (!empty($node->value)) {
+
+								$value = Value::renderTokens(is_string($node->value) ? Value::parse($node->value, null, true, '', '', $node->name == 'charset') : $node->value, $this->options);
+
+								if ($value !== '' && $value != 'all') {
+
+									$values[$value] = $value;
+								}
+							}
+
+							if (isset($child->value)) {
+
+								$value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value, null, true, '', '') : $child->value, $this->options);
+
+								if ($value !== '' && $value != 'all') {
+
+									$values[$value] = $value;
+								}
+							}
+
+							if (!empty($values)) {
+
+								$child->value = implode(' and ', $values);
+							}
+
+							$frag->children[] = $this->flatten($child);
+							continue;
+						}
+
+						$children[] = $child;
+					}
+
+					if (!empty($children)) {
+
+						$clone = clone $node;
+						$clone->children = $children;
+						$frag->children[] = $clone;
+					}
+
+					return $frag;
+
+				case 'NestingRule':
+				case 'NestingAtRule':
+
+					$node = $this->flattenChildren($node);
+
+					$children = [];
+					$frag = (object)[
+
+						'type' => 'Fragment'
+					];
+
+					if (is_object($node->selector[0] ?? null)) {
+
+						$node->selector = Value::renderTokens($node->selector);
+					}
+
+					$selector = is_array($node->selector) ? $node->selector : Value::split($node->selector, ',');
+					$selector = count($selector) > 1 ? ':is(' . implode(', ', array_map('trim', $selector)) . ')' : $selector[0];
+
+					foreach ($node->children as $child) {
+
+						if (in_array($child->type, ['Rule', 'NestingRule', 'NestingAtRule'])) {
+
+							if (!empty($children)) {
+
+								$clone = clone $node;
+								$clone->children = $children;
+								$children = [];
+								$frag->children[] = $clone;
+							}
+
+							$child = clone $child;
+
+							if (is_array($child->selector)) {
+
+								$child->selector = array_map(function ($value) use ($selector) {
+
+									return str_replace('&', $selector, $value);
+								}, $child->selector);
+							} else {
+
+								$child->selector = str_replace('&', $selector, $child->selector);
+							}
+
+							$frag->children[] = $this->flatten($child);
+							continue;
+						}
+
+						if (in_array($child->type, ['NestingMediaRule', 'AtRule']) &&
+							$child->name == 'media'
+						) {
+
+							if (!empty($children)) {
+
+								$clone = clone $node;
+								$clone->children = $children;
+								$children = [];
+								$frag->children[] = $clone;
+							}
+
+							$clone = clone $node;
+							$child = clone $child;
+
+							$clone->children = $child->children ?? [];
+							$child->children = [$clone];
+							$frag->children[] = $this->flatten($child);
+							continue;
+						}
+
+						$children[] = $child;
+					}
+
+					if (!empty($children)) {
+
+						$clone = clone $node;
+						$clone->children = $children;
+						$frag->children[] = $clone;
+					}
+
+					return $frag;
+
+				case 'Stylesheet':
+
+					return $this->flattenChildren($node);
+			}
+		}
+
+		return $node;
+	}
 }

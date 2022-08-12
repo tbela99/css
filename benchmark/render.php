@@ -1,15 +1,16 @@
 #!/usr/bin/php
 <?php
 
+require __DIR__.'/../test/autoload.php';
+require_once 'css.php';
+
 use TBela\CSS\Renderer;
 
-ob_start();
-require_once 'parse.php';
-ob_clean();
 
 /**
- * @var string $stylesheet
+ * @var string $css
+ * @var string $filename
  * @var array $options
  */
 
-echo (new Renderer($options))->render($stylesheet);
+echo Renderer::fromString($css, $options, $options);

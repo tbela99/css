@@ -10,6 +10,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 - multibyte characters encoding
 - sourcemap
+- multiprocessing: process large CSS input very fast
 - CSS Nesting module
 - partially implemented CSS Syntax module level 3
 - partial CSS validation
@@ -599,7 +600,7 @@ echo $renderer->render($parser->parse());
 ## Parser Options
 
 - flatten_import: process @import directive and import the content into the css document. default to false.
-- allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
+- allow_duplicate_rules: allow duplicated rules. By default, duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 
@@ -623,53 +624,64 @@ echo $renderer->render($parser->parse());
 the command line utility is located at './cli/css-parser'
 
 ```bash
-
 $ ./cli/css-parser -h
 
 Usage: 
 $ css-parser [OPTIONS] [PARAMETERS]
 
+-v, --version	print version number
 -h	print help
 --help	print extended help
 
-parse options:
+Parse options:
 
 -e, --capture-errors                    	ignore parse error
 
--f, --file                              	css file or url
+-f, --file                              	input css file or url
 
 -m, --flatten-import                    	process @import
+
+-I, --input-format                      	input format: json (ast), serialize (PHP serialized ast)
 
 -d, --parse-allow-duplicate-declarations	allow duplicate declaration
 
 -p, --parse-allow-duplicate-rules       	allow duplicate rule
 
-render options:
+-P, --parse-children-process            	maximum children process
 
--a, --ast                          	dump ast as JSON
+-M, --parse-multi-processing            	enable multi-processing parser
 
--S, --charset                      	remove @charset
+Render options:
 
--c, --compress                     	minify output
+-a, --ast                                	dump ast as JSON
 
--u, --compute-shorthand            	compute shorthand properties
+-S, --charset                            	remove @charset
 
--l, --css-level                    	css color module
+-c, --compress                           	minify output
 
--G, --legacy-rendering             	legacy rendering
+-u, --compute-shorthand                  	compute shorthand properties
 
--o, --output                       	output file name
+-t, --convert-color                      	convert colors
 
--L, --preserve-license             	preserve license comments
+-l, --css-level                          	css color module
 
--C, --remove-comments              	remove comments
+-G, --legacy-rendering                   	convert nested css syntax
 
--E, --remove-empty-nodes           	remove empty nodes
+-o, --output                             	output file name
 
--r, --render-duplicate-declarations	render duplicate declarations
+-F, --output-format                      	output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array, requires --input-format
 
--s, --sourcemap                    	generate sourcemap, require -o
+-L, --preserve-license                   	preserve license comments
 
+-C, --remove-comments                    	remove comments
+
+-E, --remove-empty-nodes                 	remove empty nodes
+
+-r, --render-allow-duplicate-declarations	render duplicate declarations
+
+-R, --render-multi-processing            	enable multi-processing renderer
+
+-s, --sourcemap                          	generate sourcemap, requires --file
 ```
 
 ### Minify inline css

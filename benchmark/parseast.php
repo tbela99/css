@@ -13,4 +13,4 @@ use TBela\CSS\Parser;
 
 $parser = (new Parser($css, $options));
 
-$ast = $parser->getAst();
+//$ast = $parser->getAst();

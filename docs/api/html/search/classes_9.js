@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['number_290',['Number',['../da/d44/classTBela_1_1CSS_1_1Value_1_1Number.html',1,'TBela::CSS::Value']]]
+  ['missingparameterexception_330',['MissingParameterException',['../da/db8/classTBela_1_1CSS_1_1Cli_1_1Exceptions_1_1MissingParameterException.html',1,'TBela::CSS::Cli::Exceptions']]]
 ];
