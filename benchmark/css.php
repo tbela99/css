@@ -19,4 +19,5 @@ $options = [
     'allow_duplicate_declarations' => true
 ];
 
-$css = file_get_contents($argv[$compress ? 2 : 1]);
+$filename = $argv[$compress ? 2 : 1];
+$css = file_get_contents($filename);

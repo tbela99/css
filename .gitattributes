@@ -5,6 +5,7 @@
 /tool/ export-ignore
 /composer.lock export-ignore
 /composer.phar export-ignore
+/.editorconfig export-ignore
 /.gitignore export-ignore
 /.gitattributes export-ignore
 /.phpunit.result.cache export-ignore
@@ -20,5 +21,10 @@
 /docs/** linguist-vendored
 /tool/** linguist-vendored
 /benchmark/** linguist-vendored
-
+#
+# do not replace lf by crlf
+*.css text
+*.php text
+*.json text
+text eol=lf
 

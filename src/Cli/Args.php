@@ -8,6 +8,8 @@ if (!class_exists('\ValueError')) {
 }
 
 
+use TBela\CSS\Cli\Exceptions\MissingParameterException;
+
 class Args
 {
 
@@ -24,13 +26,18 @@ class Args
     // command line args
     /**
      * @var Option[]
+     * @ignore
      */
     protected $flags = [];
 
+    /**
+     * @var array
+     * @ignore
+     */
+    protected $settings = [];
+
     // short flags
     protected $alias = [];
-
-//    protected string $description = '%s';
 
     // command line params
     protected $argv;
@@ -56,22 +63,24 @@ class Args
         return $this;
     }
 
-    public function getGroups() {
+    public function getGroups()
+    {
 
         return $this->groups;
     }
 
-    public function addGroup($group, $description)
+    public function addGroup($group, $description, $internal = false)
     {
 
         $this->groups[$group]['description'] = $description;
+        $this->groups[$group]['internal'] = $internal;
         return $this;
     }
 
     /**
      * @throws Exceptions\DuplicateArgumentException
      */
-    public function add($name, $description, $type, $alias = null, $multiple = true, $required = false, $defaultValue = null, array $options = null, $group = 'default')
+    public function add($name, $description, $type, $alias = null, $multiple = true, $required = false, $defaultValue = null, array $options = [], $dependsOn = null, $group = 'default')
     {
 
         if (isset($this->flags[$name])) {
@@ -84,9 +93,14 @@ class Args
 
         $this->groups[$group]['arguments'][$name]['description'] = $description;
 
+        if (!empty($dependsOn)) {
+
+            $this->settings['requires'][$name] = (array)$dependsOn;
+        }
+
         if (!is_null($alias) && $alias !== '' && $alias != []) {
 
-            foreach ((array) $alias as $a) {
+            foreach ((array)$alias as $a) {
 
                 if (!preg_match('#^[a-zA-Z]$#', $a)) {
 
@@ -125,6 +139,7 @@ class Args
 
         $args = [];
         $this->args = [];
+        $exe = basename($this->argv[0]);
 
         $flagReg = '#^((--?)([a-zA-Z][a-zA-Z\d_-]*))(=.*)?$#';
 
@@ -199,30 +214,18 @@ class Args
 
                         $option->addValue(true);
                     }
-                }
+                } catch (\ValueError $e) {
 
-                catch (\ValueError $e) {
-
-                    $exe = basename($this->argv[0]);
                     throw new \ValueError(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                }
+                } catch (\UnexpectedValueException $e) {
 
-                catch (\UnexpectedValueException $e) {
-
-                    $exe = basename($this->argv[0]);
                     throw new \UnexpectedValueException(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                }
+                } catch (Exceptions\UnknownParameterException $e) {
 
-                catch (Exceptions\UnknownParameterException $e) {
-
-                    $exe = basename($this->argv[0]);
                     throw new Exceptions\UnknownParameterException(sprintf("%s: unknown parameter -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                }
+                } catch (\InvalidArgumentException $e) {
 
-                catch (\InvalidArgumentException $e) {
-
-                    $exe = basename($this->argv[0]);
-                    throw new \InvalidArgumentException(sprintf("%s: expected string value -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
+                    throw new \InvalidArgumentException(sprintf("%s: expected value -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
                 }
 
             } else {
@@ -231,6 +234,7 @@ class Args
             }
         }
 
+        $result = [];
         foreach (array_merge($this->flags, $dynamicArgs) as $name => $option) {
 
             if (!$option->isValueSet()) {
@@ -244,9 +248,24 @@ class Args
                 throw new Exceptions\MissingParameterException(sprintf("%s: missing required parameter -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
             }
 
-            $this->args[$name] = $option->getValue();
+            $result[$name] = $option->getValue();
         }
 
+        foreach ($result as $name => $value) {
+
+            if (!empty($this->settings['requires'][$name])) {
+
+                foreach ($this->settings['requires'][$name] as $required) {
+
+                    if (!array_key_exists($required, $result)) {
+
+                        throw new MissingParameterException(sprintf("%s: missing required parameter -- '%s", $exe, $required), 400);
+                    }
+                }
+            }
+        }
+
+        $this->args = $result;
         $this->args['_'] = $args;
 
         return $this;
@@ -266,7 +285,7 @@ class Args
 
         if (isset($groups['default'])) {
 
-            $output .= $this->printGroupHelp($groups['default'], $extended) . "\n\n";
+            $output .= $this->printGroupHelp($groups['default'], $extended) . "\n";
         }
 
         $output .= "-h\tprint help\n--help\tprint extended help\n\n";
@@ -274,6 +293,11 @@ class Args
         unset($groups['default']);
 
         foreach ($groups as $def) {
+
+            if (!empty($def['internal'])) {
+
+                continue;
+            }
 
             $output .= $this->printGroupHelp($def, $extended) . "\n\n";
         }
@@ -288,7 +312,7 @@ class Args
 
         if (isset($group['description'])) {
 
-            $output .= sprintf($group['description'], basename($this->argv[0])) ;
+            $output .= sprintf($group['description'], basename($this->argv[0]));
         }
 
         $args = [];
@@ -307,7 +331,12 @@ class Args
 
             $description = $conf['description'];
 
-            $args[] = ['flags' => "\n".($rev ? '-' . implode(', -', $rev) . ', ' : '') . '--' . $option, 'description' => $description];
+            if (!empty($this->settings['requires'][$option])) {
+
+                $description .= ', requires --' . implode(', --', $this->settings['requires'][$option]);
+            }
+
+            $args[] = ['flags' => "\n" . ($rev ? '-' . implode(', -', $rev) . ', ' : '') . '--' . $option, 'description' => $description];
             $length = max($length, strlen(end($args)['flags']));
 
             if ($extended) {
@@ -341,14 +370,14 @@ class Args
 
         foreach ($args as $arg) {
 
-            $output .= str_pad($arg['flags'], $length, " ")."\t".$arg['description']."\n";
+            $output .= str_pad($arg['flags'], $length, " ") . "\t" . $arg['description'] . "\n";
         }
 
         return rtrim($output);
     }
 
     /**
-     * @param string $name
+     * @param $name
      * @param array $dynamicArgs
      * @return Option|null
      * @throws Exceptions\UnknownParameterException

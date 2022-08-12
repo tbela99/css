@@ -10,6 +10,7 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 - multibyte characters encoding
 - sourcemap
+- multiprocessing: process large CSS input very fast
 - CSS Nesting module
 - partially implemented CSS Syntax module level 3
 - partial CSS validation
@@ -597,7 +598,7 @@ echo $renderer->render($parser->parse());
 ## Parser Options
 
 - flatten_import: process @import directive and import the content into the css document. default to false.
-- allow_duplicate_rules: allow duplicated rules. By default duplicate rules except @font-face are merged
+- allow_duplicate_rules: allow duplicated rules. By default, duplicate rules except @font-face are merged
 - allow_duplicate_declarations: allow duplicated declarations in the same rule.
 - capture_errors: silently capture parse error if true, otherwise throw a parse exception. Default to true
 

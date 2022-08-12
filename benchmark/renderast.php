@@ -8,8 +8,8 @@ require_once 'parseast.php';
 ob_clean();
 
 /**
- * @var stdClass $ast
+ * @var \TBela\CSS\Parser $parser
  * @var array $options
  */
 
-echo (new Renderer($options))->renderAst($ast);
+echo (new Renderer($options))->renderAst($parser);

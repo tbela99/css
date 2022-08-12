@@ -207,7 +207,7 @@ echo 'Rendering performance (Uncompressed)'
 #
 #benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
 # "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
-benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast\t\tRenderer::fromString" "./renderSabberWorm.php" "./renderast.php" "./render.php"
 
 echo ""
 echo 'Rendering performance (Compressed)'
@@ -215,7 +215,7 @@ echo 'Rendering performance (Compressed)'
 #
 #benchmark "file${hpad}\tsize${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
 # "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
-benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"
+benchmark "file${hpad}\tsize${hpad}\t\tsabber${hpad}\t\tast\t\tRenderer::fromString" "./renderSabberWorm.php -c" "./renderast.php -c" "./render.php -c"
 
 echo ""
 #pad="\t\t"
@@ -225,7 +225,7 @@ echo 'Size (Uncompressed)'
 #
 #getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php" "./renderSabberWorm.php" "./renderast.php"
 # "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
-getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php" "./renderast.php"
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast\t\tRenderer::fromString" "./renderSabberWorm.php" "./renderast.php" "./render.php"
 
 echo ""
 echo 'Size (Compressed)'
@@ -233,4 +233,4 @@ echo 'Size (Compressed)'
 #
 #getsize "file\t${hpad}size${hpad}\telement${hpad}\t\tsabber${hpad}\t\tast" "./render.php -c" "./renderSabberWorm.php -c" "./renderast.php -c"
 # "element" involves an additional step to turn ast into element class instance, which is always slower and not fair ...
-getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast" "./renderSabberWorm.php -c" "./renderast.php -c"
+getsize "file\t${hpad}size${hpad}\t\tsabber${hpad}\t\tast\t\tRenderer::fromString" "./renderSabberWorm.php -c" "./renderast.php -c" "./render.php -c"
