@@ -2,14 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [ master, php56-backport ]
+    branches: [ php56-backport ]
   pull_request:
-    branches: [ master, php56-backport ]
+    branches: [ php56-backport ]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
