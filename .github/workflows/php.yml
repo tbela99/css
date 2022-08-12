@@ -21,10 +21,6 @@ jobs:
           php_version: "5.6"
           version: 1
 
-      - uses: php-actions/phpunit@v3
-        with:
-          version: "5.7"
-
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
 
@@ -33,6 +29,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vendor
+          version: 1
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
