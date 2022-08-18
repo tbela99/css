@@ -18,7 +18,7 @@ use function str_ireplace;
  * Css node base class
  * @package TBela\CSS
  */
-abstract class Element implements ElementInterface  {
+abstract class Element implements ElementInterface, \Stringable  {
 
     use ArrayTrait;
 
@@ -621,7 +621,7 @@ abstract class Element implements ElementInterface  {
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         try {
 

@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Parser;
 
+use TBela\CSS\Parser;
 use TBela\CSS\Property\Config;
 
 trait ParserTrait
@@ -13,8 +14,8 @@ trait ParserTrait
      * @return object
      * @ignore
      */
-    protected function update(object $position, string $string)
-    {
+    protected function update(object $position, string $string): object
+	{
 
         $j = strlen($string);
 
@@ -38,8 +39,8 @@ trait ParserTrait
      * @param bool $force
      * @return false|string
      */
-    public static function stripQuotes(string $string, bool $force = false)
-    {
+    public static function stripQuotes(string $string, bool $force = false): bool|string
+	{
 
         $q = substr($string, 0, 1);
 
@@ -54,24 +55,19 @@ trait ParserTrait
         return $string;
     }
 
-    public static function match_comment($string, $start, $end)
-    {
+    public static function match_comment($string, $start, $end): bool|string
+	{
 
         $i = $start + 1;
 
         while ($i++ < $end) {
 
-            switch ($string[$i]) {
+			if ($string[$i] == '*') {
+				if ($string[$i + 1] == '/') {
 
-                case '*':
-
-                    if ($string[$i + 1] == '/') {
-
-                        return is_array($string) ? implode('', array_slice($string, $start, $i + 2 - $start)) : substr($string, $start, $i + 2 - $start);
-                    }
-
-                    break;
-            }
+					return is_array($string) ? implode('', array_slice($string, $start, $i + 2 - $start)) : substr($string, $start, $i + 2 - $start);
+				}
+			}
         }
 
         // unterminated comment is still a valid comment
@@ -86,8 +82,8 @@ trait ParserTrait
      * @param array $char_stop
      * @return false|string
      */
-    public static function substr(string $string, int $startPosition, int $endPosition, array $char_stop)
-    {
+    public static function substr(string $string, int $startPosition, int $endPosition, array $char_stop): bool|string
+	{
 
         if ($startPosition < 0) {
 
@@ -262,8 +258,8 @@ trait ParserTrait
      * @param int $limit
      * @return array
      */
-    public static function split($string, $separator = '', int $limit = PHP_INT_MAX)
-    {
+    public static function split(string $string, string $separator = '', int $limit = PHP_INT_MAX): array
+	{
 
         $result = [];
 
@@ -419,8 +415,8 @@ trait ParserTrait
         return $result;
     }
 
-    public static function is_whitespace($char)
-    {
+    public static function is_whitespace($char): bool
+	{
 
         return preg_match("#^\s$#", $char);
     }

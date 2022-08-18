@@ -36,14 +36,20 @@
     }
   },
   "suggest": {
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-sockets": "*",
+    "ext-pcntl": "*",
+    "ext-posix": "*",
+    "ext-msgpack": "*",
+    "ext-shmop": "*"
   },
   "require": {
     "php": ">=8.0",
     "axy/sourcemap": "^0.1.5",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "symfony/process": "^6.0"
+    "symfony/process": "^6.0",
+    "opis/closure": "^3.6"
   },
   "scripts": {
     "test": "./bin/runtest.sh"

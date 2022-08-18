@@ -11,7 +11,7 @@ use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
-use TBela\CSS\Parser\MultiprocessingTrait;
+use TBela\CSS\Parser\ProcessTrait;
 use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Property\PropertyList;
 use function is_string;
@@ -23,7 +23,7 @@ use function is_string;
 class Renderer
 {
 
-	use MultiprocessingTrait;
+	use ProcessTrait;
 
 	protected array $options = [
 		'glue' => "\n",
@@ -223,7 +223,7 @@ class Renderer
 				$renderer->enQueue($buffer, $args);
 			}
 
-			$renderer->pool->wait();
+			$renderer->processPool->wait();
 
 			$result = [];
 
@@ -337,7 +337,7 @@ class Renderer
 				$i += $block_size;
 			}
 
-			$this->pool->wait();
+			$this->processPool->wait();
 
 			$result = [];
 

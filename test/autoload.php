@@ -16,6 +16,6 @@ spl_autoload_register(function  ($name) {
 
 	if (is_file($path)) {
 
-		require ($path);
+		require_once ($path);
 	}
 });

@@ -8,405 +8,416 @@ use TBela\CSS\Cli\Exceptions\MissingParameterException;
 class Args
 {
 
-    // reject unknown flags
-    protected bool $strict = false;
+	// reject unknown flags
+	protected bool $strict = false;
 
-    // command groups
-    protected array $groups = [
-        'default' => [
-            'description' => "\nUsage: \n\$ %s [OPTIONS] [PARAMETERS]\n"
-        ]
-    ];
+	// command groups
+	protected array $groups = [
+		'default' => [
+			'description' => "\nUsage: \n\$ %s [OPTIONS] [PARAMETERS]\n"
+		]
+	];
 
-    // command line args
-    /**
-     * @var Option[]
-     * @ignore
-     */
-    protected array $flags = [];
+	// command line args
+	/**
+	 * @var Option[]
+	 * @ignore
+	 */
+	protected array $flags = [];
 
-    /**
-     * @var array
-     * @ignore
-     */
-    protected array $settings = [];
+	/**
+	 * @var array
+	 * @ignore
+	 */
+	protected array $settings = [];
 
-    // short flags
-    protected array $alias = [];
+	// short flags
+	protected array $alias = [];
 
-    // command line params
-    protected array $argv;
-    protected array $args = [];
+	// command line params
+	protected array $argv;
+	protected array $args = [];
+	protected string $version;
 
-    public function __construct(array $argv)
-    {
+	protected string $exe = '';
 
-        $this->argv = $argv;
-    }
+	public function __construct(array $argv)
+	{
 
-    public function setDescription(string $description): static
-    {
+		$this->argv = $argv;
+		$this->exe = basename($argv[0]);
+	}
 
-        $this->groups['default']['description'] = sprintf($description, basename($this->argv[0]));
-        return $this;
-    }
+	public function setDescription(string $description): static
+	{
 
-    public function setStrict(bool $strict): static
-    {
+		$this->groups['default']['description'] = sprintf($description, basename($this->argv[0]));
+		return $this;
+	}
 
-        $this->strict = $strict;
-        return $this;
-    }
+	public function setStrict(bool $strict): static
+	{
 
-    public function getGroups()
-    {
+		$this->strict = $strict;
+		return $this;
+	}
 
-        return $this->groups;
-    }
+	public function getGroups()
+	{
 
-    public function addGroup(string $group, string $description, bool $internal = false): static
-    {
+		return $this->groups;
+	}
 
-        $this->groups[$group]['description'] = $description;
-        $this->groups[$group]['internal'] = $internal;
-        return $this;
-    }
+	public function addGroup(string $group, string $description, bool $internal = false): static
+	{
 
-    /**
-     * @throws Exceptions\DuplicateArgumentException
-     */
-    public function add(string $name, string $description, string $type, array|string $alias = null, $multiple = true, $required = false, $defaultValue = null, ?array $options = [], array|string|null $dependsOn = null, $group = 'default'): static
-    {
+		$this->groups[$group]['description'] = $description;
+		$this->groups[$group]['internal'] = $internal;
+		return $this;
+	}
 
-        if (isset($this->flags[$name])) {
+	/**
+	 * @throws Exceptions\DuplicateArgumentException
+	 */
+	public function add(string $name, string $description, string $type, array|string $alias = null, $multiple = true, $required = false, $defaultValue = null, ?array $options = [], array|string|null $dependsOn = null, $group = 'default'): static
+	{
 
-            $exe = basename($this->argv[0]);
-            throw new Exceptions\DuplicateArgumentException(sprintf("%s: duplicate flag: '%s'\nTry '%s --help' for more information", $exe, $name, $exe));
-        }
+		if (isset($this->flags[$name])) {
 
-        $this->flags[$name] = new Option($type, $multiple, $required, $defaultValue, $options);
+			$exe = basename($this->argv[0]);
+			throw new Exceptions\DuplicateArgumentException(sprintf("%s: duplicate flag: '%s'\nTry '%s --help' for more information", $exe, $name, $exe));
+		}
 
-        $this->groups[$group]['arguments'][$name]['description'] = $description;
+		$this->flags[$name] = new Option($type, $multiple, $required, $defaultValue, $options);
 
-        if (!empty($dependsOn)) {
+		$this->groups[$group]['arguments'][$name]['description'] = $description;
 
-            $this->settings['requires'][$name] = (array)$dependsOn;
-        }
+		if (!empty($dependsOn)) {
 
-        if (!is_null($alias) && $alias !== '' && $alias != []) {
+			$this->settings['requires'][$name] = (array)$dependsOn;
+		}
 
-            foreach ((array)$alias as $a) {
+		if (!is_null($alias) && $alias !== '' && $alias != []) {
 
-                if (!preg_match('#^[a-zA-Z]$#', $a)) {
+			foreach ((array)$alias as $a) {
 
-                    throw new \InvalidArgumentException(sprintf("command option must be a letter [a-zA-Z]: '%s'", $a));
-                }
+				if (!preg_match('#^[a-zA-Z]$#', $a)) {
 
-                if (isset($this->alias[$a])) {
+					throw new \InvalidArgumentException(sprintf("command option must be a letter [a-zA-Z]: '%s'", $a));
+				}
 
-                    throw new \InvalidArgumentException(sprintf("duplicated alias '%s' for the flag '%s' is already defined by command '%s'", $a, $name, $this->alias[$a]));
-                }
+				if (isset($this->alias[$a])) {
 
-                $this->alias[$a] = $name;
-            }
-        }
+					throw new \InvalidArgumentException(sprintf("duplicated alias '%s' for the flag '%s' is already defined by command '%s'", $a, $name, $this->alias[$a]));
+				}
 
-        return $this;
-    }
+				$this->alias[$a] = $name;
+			}
+		}
 
-    /**
-     * @throws Exceptions\MissingParameterException
-     * @throws Exceptions\UnknownParameterException
-     */
-    public function parse(): static
-    {
+		return $this;
+	}
 
-        $argc = count($this->argv);
+	/**
+	 * @throws Exceptions\MissingParameterException
+	 * @throws Exceptions\UnknownParameterException
+	 */
+	public function parse(): static
+	{
 
-        for ($i = 1; $i < $argc; $i++) {
+		$argc = count($this->argv);
 
-            if (in_array($this->argv[$i], ['-h', '--help'])) {
+		$args = [];
+		$this->args = [];
 
-                echo $this->help($this->argv[$i] == '--help');
-                exit;
-            }
-        }
+		$flagReg = '#^((--?)([a-zA-Z][a-zA-Z\d_-]*))(=.*)?$#';
 
-        $args = [];
-        $this->args = [];
-        $exe = basename($this->argv[0]);
+		$i = 0;
 
-        $flagReg = '#^((--?)([a-zA-Z][a-zA-Z\d_-]*))(=.*)?$#';
+		/**
+		 * @var Option[]
+		 */
+		$dynamicArgs = [];
 
-        $i = 0;
+		while ($i++ < $argc - 1) {
 
-        /**
-         * @var Option[]
-         */
-        $dynamicArgs = [];
+			if (preg_match($flagReg, $this->argv[$i], $matches)) {
 
-        while ($i++ < $argc - 1) {
+				$value = str_starts_with($matches[4] ?? '', '=') ? substr($matches[4], 1) : null;
+				$name = $matches[3];
+				$names = [];
 
-            if (preg_match($flagReg, $this->argv[$i], $matches)) {
+				if ($matches[2] == '-') {
 
-                // print help and exit
-                if (in_array($matches[1], ['-h', '--help'])) {
+					if (is_null($value)) {
 
-                    echo $this->help($matches[1] == '--help');
-                    exit;
-                }
+						$j = strlen($name);
 
-                $value = str_starts_with($matches[4] ?? '', '=') ? substr($matches[4], 1) : null;
-                $name = $matches[3];
-                $names = [];
+						for ($k = 1; $k < $j; $k++) {
 
-                if ($matches[2] == '-') {
+							if (!isset($this->alias[$name[$k]])) {
 
-                    if (is_null($value)) {
+								break;
+							}
+						}
 
-                        $j = strlen($name);
+						$value = substr($name, $k);
+						$name = substr($name, 0, $k);
 
-                        for ($k = 1; $k < $j; $k++) {
+						if ($value === '') {
 
-                            if (!isset($this->alias[$name[$k]])) {
+							$value = null;
+						}
+					}
 
-                                break;
-                            }
-                        }
+					$names = str_split($name);
+					$name = array_pop($names);
+				}
 
-                        $value = substr($name, $k);
-                        $name = substr($name, 0, $k);
+				try {
 
-                        if ($value === '') {
+					$option = $this->parseFlag($name, $dynamicArgs);
 
-                            $value = null;
-                        }
-                    }
+					if (is_null($value) && $option->getType() != 'bool' && $i < $argc - 1 && !preg_match($flagReg, $this->argv[$i + 1])) {
 
-                    $names = str_split($name);
-                    $name = array_pop($names);
-                }
+						$option->addValue($this->argv[++$i]);
+					} else {
 
-                try {
+						$option->addValue(is_null($value) && in_array($option->getType(), ['auto', 'bool']) ? true : $value);
+					}
 
-                    $option = $this->parseFlag($name, $dynamicArgs);
+					$k = count($names);
 
-                    if (is_null($value) && $option->getType() != 'bool' && $i < $argc - 1 && !preg_match($flagReg, $this->argv[$i + 1])) {
+					while ($k--) {
 
-                        $option->addValue($this->argv[++$i]);
-                    } else {
+						$name = $names[$k];
 
-                        $option->addValue(is_null($value) && in_array($option->getType(), ['auto', 'bool']) ? true : $value);
-                    }
+						$option = $this->parseFlag($name, $dynamicArgs);
 
-                    $k = count($names);
+						$option->addValue(true);
+					}
+				} catch (\ValueError $e) {
 
-                    while ($k--) {
+					throw new \ValueError(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				} catch (\UnexpectedValueException $e) {
 
-                        $name = $names[$k];
+					throw new \UnexpectedValueException(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				} catch (Exceptions\UnknownParameterException $e) {
 
-                        $option = $this->parseFlag($name, $dynamicArgs);
+					throw new Exceptions\UnknownParameterException(sprintf("%s: unknown parameter -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				} catch (\InvalidArgumentException $e) {
 
-                        $option->addValue(true);
-                    }
-                } catch (\ValueError $e) {
+					throw new \InvalidArgumentException(sprintf("%s: expected string value -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				}
 
-                    throw new \ValueError(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                } catch (\UnexpectedValueException $e) {
+			} else {
 
-                    throw new \UnexpectedValueException(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                } catch (Exceptions\UnknownParameterException $e) {
+				$args[] = $this->argv[$i];
+			}
+		}
 
-                    throw new Exceptions\UnknownParameterException(sprintf("%s: unknown parameter -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                } catch (\InvalidArgumentException $e) {
+		$result = [];
+		foreach (array_merge($this->flags, $dynamicArgs) as $name => $option) {
 
-                    throw new \InvalidArgumentException(sprintf("%s: expected string value -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-                }
+			if (!$option->isValueSet()) {
 
-            } else {
+				if (!$option->isRequired()) {
 
-                $args[] = $this->argv[$i];
-            }
-        }
+					continue;
+				}
 
-        $result = [];
-        foreach (array_merge($this->flags, $dynamicArgs) as $name => $option) {
+				throw new Exceptions\MissingParameterException(sprintf("%s: missing required parameter -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+			}
 
-            if (!$option->isValueSet()) {
+			$result[$name] = $option->getValue();
+		}
 
-                if (!$option->isRequired()) {
+		foreach ($result as $name => $value) {
 
-                    continue;
-                }
+			if (!empty($this->settings['requires'][$name])) {
 
-                $exe = basename($this->argv[0]);
-                throw new Exceptions\MissingParameterException(sprintf("%s: missing required parameter -- '%s'\nTry '%s --help'\n", $exe, $name, $exe), 1);
-            }
+				foreach ($this->settings['requires'][$name] as $required) {
 
-            $result[$name] = $option->getValue();
-        }
+					if (!array_key_exists($required, $result)) {
 
-        foreach ($result as $name => $value) {
+						throw new MissingParameterException(sprintf("%s: missing required parameter -- '%s", $this->exe, $required), 400);
+					}
+				}
+			}
+		}
 
-            if (!empty($this->settings['requires'][$name])) {
 
-                foreach ($this->settings['requires'][$name] as $required) {
+		if (array_key_exists('help', $result) || array_key_exists('h', $result)) {
 
-                    if (!array_key_exists($required, $result)) {
+			echo $this->help(array_key_exists($result, 'help'));
+			exit;
+		}
 
-                        throw new MissingParameterException(sprintf("%s: missing required parameter -- '%s", $exe, $required), 400);
-                    }
-                }
-            }
-        }
+		else if (array_key_exists('version', $result)) {
 
-        $this->args = $result;
-        $this->args['_'] = $args;
+			echo $this->version;
+			exit;
+		}
 
-        return $this;
-    }
+		$this->args = $result;
+		$this->args['_'] = $args;
 
-    public function getArguments(): array
-    {
+		return $this;
+	}
 
-        return $this->args;
-    }
+	public function getArguments(): array
+	{
 
-    public function help($extended = false): string
-    {
+		return $this->args;
+	}
 
-        $output = '';
-        $groups = $this->groups;
+	public function setVersion(string $info)
+	{
 
-        if (isset($groups['default'])) {
+		$this->version = $info;
+		return $this;
+	}
 
-            $output .= $this->printGroupHelp($groups['default'], $extended) . "\n";
-        }
+	public function getExe() {
 
-        $output .= "-h\tprint help\n--help\tprint extended help\n\n";
+		return $this->exe;
+	}
 
-        unset($groups['default']);
+	public function help($extended = false): string
+	{
 
-        foreach ($groups as $def) {
+		$output = '';
+		$groups = $this->groups;
 
-            if (!empty($def['internal'])) {
+		if (isset($groups['default'])) {
 
-                continue;
-            }
+			$output .= $this->printGroupHelp($groups['default'], $extended) . "\n";
+		}
 
-            $output .= $this->printGroupHelp($def, $extended) . "\n\n";
-        }
+		$output .= "-h\tprint help\n--help\tprint extended help\n\n";
 
-        return $output;
-    }
+		unset($groups['default']);
 
-    protected function printGroupHelp(array $group, bool $extended): string
-    {
+		foreach ($groups as $def) {
 
-        $output = '';
+			if (!empty($def['internal'])) {
 
-        if (isset($group['description'])) {
+				continue;
+			}
 
-            $output .= sprintf($group['description'], basename($this->argv[0]));
-        }
+			$output .= $this->printGroupHelp($def, $extended) . "\n\n";
+		}
 
-        $args = [];
-        $length = 0;
+		return $output;
+	}
 
-        $flags = $group['arguments'] ?? [];
+	protected function printGroupHelp(array $group, bool $extended): string
+	{
 
-        ksort($flags);
+		$output = '';
 
-        foreach ($flags as $option => $conf) {
+		if (isset($group['description'])) {
 
-            $rev = array_keys(array_filter($this->alias, function ($name) use ($option) {
+			$output .= sprintf($group['description'], basename($this->argv[0]));
+		}
 
-                return $name == $option;
-            }));
+		$args = [];
+		$length = 0;
 
-            $description = $conf['description'];
+		$flags = $group['arguments'] ?? [];
 
-            if (!empty($this->settings['requires'][$option])) {
+		ksort($flags);
 
-                $description .= ', requires --' . implode(', --', $this->settings['requires'][$option]);
-            }
+		foreach ($flags as $option => $conf) {
 
-            $args[] = ['flags' => "\n" . ($rev ? '-' . implode(', -', $rev) . ', ' : '') . '--' . $option, 'description' => $description];
-            $length = max($length, strlen(end($args)['flags']));
+			$rev = array_keys(array_filter($this->alias, function ($name) use ($option) {
 
-            if ($extended) {
+				return $name == $option;
+			}));
 
-                $args[] = ['flags' => " type", 'description' => $this->flags[$option]->getType()];
-                $length = max($length, strlen(end($args)['flags']));
+			$description = $conf['description'];
 
-                $args[] = ['flags' => " required", 'description' => $this->flags[$option]->isRequired() ? 'yes' : 'no'];
-                $length = max($length, strlen(end($args)['flags']));
+			if (!empty($this->settings['requires'][$option])) {
 
-                $args[] = ['flags' => " multiple", 'description' => $this->flags[$option]->isMultiple() ? 'yes' : 'no'];
-                $length = max($length, strlen(end($args)['flags']));
+				$description .= ', requires --' . implode(', --', $this->settings['requires'][$option]);
+			}
 
-                $options = $this->flags[$option]->getOptions();
+			$args[] = ['flags' => "\n" . ($rev ? '-' . implode(', -', $rev) . ', ' : '') . '--' . $option, 'description' => $description];
+			$length = max($length, strlen(end($args)['flags']));
 
-                if (!empty($options)) {
+			if ($extended) {
 
-                    $args[] = ['flags' => " valid options", 'description' => implode(', ', $options)];
-                    $length = max($length, strlen(end($args)['flags']));
-                }
+				$args[] = ['flags' => " type", 'description' => $this->flags[$option]->getType()];
+				$length = max($length, strlen(end($args)['flags']));
 
-                $defaultValue = $this->flags[$option]->getDefaultValue();
+				$args[] = ['flags' => " required", 'description' => $this->flags[$option]->isRequired() ? 'yes' : 'no'];
+				$length = max($length, strlen(end($args)['flags']));
 
-                if (isset($defaultValue)) {
+				$args[] = ['flags' => " multiple", 'description' => $this->flags[$option]->isMultiple() ? 'yes' : 'no'];
+				$length = max($length, strlen(end($args)['flags']));
 
-                    $args[] = ['flags' => " default value", 'description' => json_encode($defaultValue)];
-                    $length = max($length, strlen(end($args)['flags']));
-                }
-            }
-        }
+				$options = $this->flags[$option]->getOptions();
 
-        foreach ($args as $arg) {
+				if (!empty($options)) {
 
-            $output .= str_pad($arg['flags'], $length, " ") . "\t" . $arg['description'] . "\n";
-        }
+					$args[] = ['flags' => " valid options", 'description' => implode(', ', $options)];
+					$length = max($length, strlen(end($args)['flags']));
+				}
 
-        return rtrim($output);
-    }
+				$defaultValue = $this->flags[$option]->getDefaultValue();
 
-    /**
-     * @param string $name
-     * @param array $dynamicArgs
-     * @return Option|null
-     * @throws Exceptions\UnknownParameterException
-     */
-    protected function parseFlag(string &$name, array &$dynamicArgs): ?Option
-    {
-        if (isset($this->alias[$name])) {
+				if (isset($defaultValue)) {
 
-            $name = $this->alias[$name];
-        }
+					$args[] = ['flags' => " default value", 'description' => json_encode($defaultValue)];
+					$length = max($length, strlen(end($args)['flags']));
+				}
+			}
+		}
 
-        $option = $this->flags[$name] ?? null;
+		foreach ($args as $arg) {
 
-        if (is_null($option)) {
+			$output .= str_pad($arg['flags'], $length, " ") . "\t" . $arg['description'] . "\n";
+		}
 
-            if ($this->strict) {
+		return rtrim($output);
+	}
 
-                throw new Exceptions\UnknownParameterException(sprintf("%s: invalid option -- '%s'", basename($this->argv[0]), $name));
-            } else {
+	/**
+	 * @param string $name
+	 * @param array $dynamicArgs
+	 * @return Option|null
+	 * @throws Exceptions\UnknownParameterException
+	 */
+	protected function parseFlag(string &$name, array &$dynamicArgs): ?Option
+	{
+		if (isset($this->alias[$name])) {
 
-                if (!isset($dynamicArgs[$name])) {
+			$name = $this->alias[$name];
+		}
 
-                    $dynamicArgs[$name] = $option;
-                }
+		$option = $this->flags[$name] ?? null;
 
-                $option = $dynamicArgs[$name] ?? new Option();
+		if (is_null($option)) {
 
-                if (!isset($dynamicArgs[$name])) {
+			if ($this->strict) {
 
-                    $dynamicArgs[$name] = $option;
-                }
-            }
-        }
+				throw new Exceptions\UnknownParameterException(sprintf("%s: invalid option -- '%s'", basename($this->argv[0]), $name));
+			} else {
 
-        return $option;
-    }
+				if (!isset($dynamicArgs[$name])) {
+
+					$dynamicArgs[$name] = $option;
+				}
+
+				$option = $dynamicArgs[$name] ?? new Option();
+
+				if (!isset($dynamicArgs[$name])) {
+
+					$dynamicArgs[$name] = $option;
+				}
+			}
+		}
+
+		return $option;
+	}
 }

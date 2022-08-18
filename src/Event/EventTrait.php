@@ -16,7 +16,7 @@ trait EventTrait {
      * @param callable $callable
      * @return $this
      */
-    public function on(string $event, callable $callable) {
+    public function on(string $event, callable $callable): static {
 
         $this->events[strtolower($event)][] = $callable;
         return $this;
@@ -31,7 +31,7 @@ trait EventTrait {
      * @param callable|null $callable
      * @return $this
      */
-    public function off(string $event = null, callable $callable = null) {
+    public function off(string $event = null, callable $callable = null): static {
 
         if (is_null($event)) {
 

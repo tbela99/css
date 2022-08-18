@@ -112,8 +112,7 @@ final class MultiProcessingTest extends TestCase
     }
 
     /**
-     * @throws IOException
-     * @throws Parser\SyntaxError
+	 * @throws Parser\SyntaxError
      */
     public function loadProvider (): array
     {
@@ -123,19 +122,19 @@ final class MultiProcessingTest extends TestCase
             __DIR__.'/../nested/nested.min.css',
             __DIR__.'/../sourcemap/sourcemap.import.css',
             __DIR__.'/../perf_files/bs-mtrl.css',
-            __DIR__.'/../perf_files/bs-reboot.css',
-            __DIR__.'/../perf_files/bs.3.css',
+//            __DIR__.'/../perf_files/bs-reboot.css',
+//            __DIR__.'/../perf_files/bs.3.css',
 			__DIR__.'/../perf_files/bs.4.css',
-			__DIR__.'/../perf_files/none.css',
-			__DIR__.'/../perf_files/row.css',
-			__DIR__.'/../perf_files/row.min.css',
-			__DIR__.'/../perf_files/main.min.css',
+//			__DIR__.'/../perf_files/none.css',
+//			__DIR__.'/../perf_files/row.css',
+//			__DIR__.'/../perf_files/row.min.css',
+//			__DIR__.'/../perf_files/main.min.css',
 			__DIR__.'/../perf_files/perf.css',
-			__DIR__.'/../perf_files/php-net.css',
-			__DIR__.'/../perf_files/main.min.css',
-			__DIR__.'/../perf_files/uncut.css',
-			__DIR__.'/../perf_files/uncut.css',
-            __DIR__.'/../perf_files/uncut.min.css'
+//			__DIR__.'/../perf_files/php-net.css',
+//			__DIR__.'/../perf_files/main.min.css',
+//			__DIR__.'/../perf_files/uncut.css',
+//			__DIR__.'/../perf_files/uncut.css',
+//            __DIR__.'/../perf_files/uncut.min.css'
         ];
 
 

@@ -7,6 +7,7 @@ use Exception;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Value;
+
 class Lexer
 {
 

@@ -4,27 +4,26 @@ namespace TBela\CSS;
 
 use Closure;
 use Exception;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Interfaces\ValidatorInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\Lexer;
-use TBela\CSS\Parser\MultiprocessingTrait;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
-use TBela\CSS\Process\Pool;
+use TBela\CSS\Process\Pool as ProcessPool;
 
 /**
  * Css Parser
  * @package TBela\CSS
  * ok */
-class Parser implements ParsableInterface
+class Parser implements ParsableInterface, \Stringable
 {
 
-	use ParserTrait, MultiprocessingTrait;
+	use ParserTrait;
+
+	protected ?ProcessPool $processPool;
 
 	/**
 	 * @var ValidatorInterface[]
@@ -52,9 +51,12 @@ class Parser implements ParsableInterface
 		'flatten_import' => false,
 		'allow_duplicate_rules' => ['font-face'], // set to true for speed
 		'allow_duplicate_declarations' => true,
+//		'multi_threading' => true,
+		// 64k
+//		'multi_threading_threshold' => 65536,
 		'multi_processing' => true,
 		// buffer size 32k. higher values may break the execution
-		'multi_processing_threshold' => 32768,
+		'multi_processing_threshold' => 64 * 1024,
 //        'children_process' => 20,
 		'ast_src' => '',
 		'ast_position_line' => 1,
@@ -75,11 +77,12 @@ class Parser implements ParsableInterface
 	// TODO: remove serialize as it seams to produce warning
 	protected string $format = 'serialize';
 
+	protected array $processPoolEvents = [];
+
 	/**
 	 * Parser constructor.
 	 * @param string $css
 	 * @param array $options
-	 * @throws IOException
 	 * @throws SyntaxError
 	 */
 	public function __construct(string $css = '', array $options = [])
@@ -110,7 +113,28 @@ class Parser implements ParsableInterface
 	public function on(string $event, callable $callable): static
 	{
 
-		$this->lexer->on($event, $callable);
+		if (str_starts_with($event, 'pool.')) {
+
+			$event = substr($event, 5);
+
+			$pool = $this->threadPool ?? null;
+
+			if (isset($pool)) {
+
+				$pool->on($event, $callable);
+			}
+
+			else {
+
+				$this->processPoolEvents[$event][] = $callable;
+			}
+		}
+
+		else {
+
+			$this->lexer->on($event, $callable);
+		}
+
 		return $this;
 	}
 
@@ -126,106 +150,72 @@ class Parser implements ParsableInterface
 		return $this;
 	}
 
-	public function getCliArgs(array $options, $src, $position): array
-	{
-
-		$args = [
-			'-ac',
-			'--parse-multi-processing=off',
-			sprintf('--parse-ast-src=%s', $src)
-		];
-
-		if (!empty($position)) {
-
-			array_push($args,
-				sprintf('--parse-ast-position-index=%s', max(0, $position->index - 1)),
-				sprintf('--parse-ast-position-line=%s', $position->line),
-				sprintf('--parse-ast-position-column=%s', $position->column));
-		}
-
-		if (!$options['capture_errors']) {
-			// default is on
-			$args[] = '--capture-errors=off';
-		}
-
-		foreach ([
-					 'capture_errors' => true,
-					 'flatten_import' => false,
-					 'allow_duplicate_rules' => ['font-face'], // set to true for speed
-					 'allow_duplicate_declarations' => true,
-					 'multi_processing' => true,
-					 // 65k
-					 'multi_processing_threshold' => 32768,
-//        'children_process' => 20,
-					 'ast_src' => '',
-					 'ast_position_line' => 1,
-					 'ast_position_column' => 1,
-					 'ast_position_index' => 0
-				 ] as $key => $value) {
-
-			if (in_array($key, ['multi_processing', 'multi_processing_threshold', 'ast_src', 'ast_position_line', 'ast_position_column', 'ast_position_index'])) {
-
-				continue;
-			}
-
-			if ($key == 'allow_duplicate_rules') {
-
-				if (!$options['allow_duplicate_rules']) {
-					// default is on
-					$args[] = '--parse-allow-duplicate-rules==off';
-				}
-			} else if ($key == 'allow_duplicate_declarations') {
-
-				if (!$options['allow_duplicate_declarations']) {
-					// default is on
-					$args[] = '--parse-allow-duplicate-declarations==off';
-				}
-			} else if (isset($options[$key]) && $options[$key] !== $value) {
-
-				$args[] = sprintf('--%s=%s', str_replace('_', '-', $key), is_bool($options[$key]) ? ($options[$key] ? 'on' : 'off') : $options[$key]);
-			}
-		}
-
-		$args[] = sprintf('--output-format=%s', $this->format);
-
-		return $args;
-	}
-
-	/**     * @param string $content
+	/**
+	 * @param bool|string $content
 	 * @param object $root
 	 * @param string $file
 	 * @return void
+	 * @throws \TBela\CSS\Process\Thread\PCNTL\Exceptions\IllegalStateException
 	 */
-	protected function stream(string $content, object $root, string $file): void
+	public function parallelize(bool|string $content, object $root, string $file)
 	{
+		$data = [];
 
-		$file = Helper::absolutePath($file, Helper::getCurrentDirectory());
-		$size = max(min($this->options['multi_processing_threshold'], strlen($content) / 2), 1);
+		if (!isset($this->processPool)) {
 
-		foreach ($this->slice($content, $size, $root->location->end) as $index => $data) {
+			$this->processPool = (new ProcessPool())->
+			on('finish', function (array $result, int $index) use (&$data) {
 
-			$this->enQueue($data[0], $this->getCliArgs($this->options, $file, $data[1]));
-		}
+				$data[$index] = $result;
+			});
 
-		$this->pool->wait();
+			foreach ($this->processPoolEvents as $event => $callables) {
 
-		if (!empty($this->output)) {
+				foreach ($callables as $callable) {
 
-			if (!isset($root->children)) {
-
-				$root->children = [];
-			}
-
-			foreach ($this->output as $token) {
-
-				if (isset($token->children)) {
-
-					array_splice($root->children, count($root->children), 0, $token->children);
+					$this->processPool->on($event, $callable);
 				}
 			}
-
-			$this->output = [];
 		}
+
+		// min  65k
+		$size = min($this->options['multi_processing_threshold'], strlen($content) / 2);
+
+		$options = $this->options;
+
+		foreach ($this->slice($content, $size, $root->location->end) as $slice) {
+
+			$this->processPool->add(function () use ($file, $slice, $options): array {
+
+				$parser = new Parser($slice[0], array_merge($options, [
+					'multi_processing' => false,
+					'ast_src' => $file,
+					'ast_position_line' => $slice[1]->line,
+					'ast_position_column' => $slice[1]->column,
+					'ast_position_index' => $slice[1]->index
+				]));
+
+				return $parser->getAst()->children ?? [];
+			});
+		}
+
+		$this->processPool->wait();
+
+		ksort($data);
+
+		if (!isset($root->children)) {
+
+			$root->children = [];
+		}
+
+		foreach ($data as $datum) {
+
+//			fwrite(STDERR, sprintf("child type %s\n", gettype($datum)));
+
+			array_splice($root->children, count($root->children), 0, $datum);
+		}
+
+//		return $data;
 	}
 
 	/**
@@ -249,6 +239,21 @@ class Parser implements ParsableInterface
 
 		$file = Helper::absolutePath($file, Helper::getCurrentDirectory());
 
+		$rule = null;
+		$newContext = $this->lexer->setParentOffset((object)[
+			'line' => 1,
+			'column' => 1,
+			'index' => 0,
+			'src' => $file
+		])->createContext();
+
+		if (is_null($this->ast)) {
+
+			$this->ast = $newContext;
+		}
+
+		$this->lexer->emit('start', $this->getContext());
+
 		if (!preg_match('#^(https?:)?//#', $file) && is_file($file)) {
 
 			$content = file_get_contents($file);
@@ -261,20 +266,6 @@ class Parser implements ParsableInterface
 		if ($content === false) {
 
 			throw new IOException(sprintf('File Not Found "%s" => \'%s:%s:%s\'', $file, $context->location->src ?? null, $context->location->end->line ?? null, $context->location->end->column ?? null), 404);
-		}
-
-		$rule = null;
-
-		$newContext = $this->lexer->setParentOffset((object)[
-			'line' => 1,
-			'column' => 1,
-			'index' => 0,
-			'src' => $file
-		])->createContext();
-
-		if (is_null($this->ast)) {
-
-			$this->ast = $newContext;
 		}
 
 		if ($media !== '' && $media != 'all') {
@@ -305,10 +296,9 @@ class Parser implements ParsableInterface
 			$this->pushContext($rule);
 		}
 
-		if (function_exists('\\proc_open') && $this->options['multi_processing'] && strlen($content) > $this->options['multi_processing_threshold']) {
+		if (ProcessPool::isSupported() && $this->options['multi_processing'] && strlen($content) > $this->options['multi_processing_threshold']) {
 
-			$root = $this->getContext();
-			$this->stream($content, $root, $file);
+			$this->parallelize($content, $this->getContext(), $file);
 		} else {
 
 			$this->lexer->setContent($content)->setContext($newContext)->tokenize();
@@ -326,6 +316,7 @@ class Parser implements ParsableInterface
 			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
 		}
 
+		$this->lexer->emit('end', $this->getContext());
 		return $this;
 	}
 
@@ -338,10 +329,6 @@ class Parser implements ParsableInterface
 	 */
 	public function appendContent(string $css, string $media = ''): static
 	{
-		if ($media !== '' && $media != 'all') {
-
-			$css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
-		}
 
 		if (!$this->ast) {
 
@@ -352,14 +339,18 @@ class Parser implements ParsableInterface
 			$this->lexer->setContext($this->lexer->createContext());
 		}
 
-		if (function_exists('\\proc_open') && $this->options['multi_processing'] && strlen($css) > $this->options['multi_processing_threshold']) {
+		$this->lexer->emit('start', $this->getContext());
 
-			$this->stream($css, $this->getContext(), $this->options['ast_src']);
+		if ($media !== '' && $media != 'all') {
+			$css = '@media ' . $media . ' { ' . rtrim($css) . ' }';
+		}
+
+		if (ProcessPool::isSupported() && $this->options['multi_processing'] && strlen($css) > $this->options['multi_processing_threshold']) {
+
+			$this->parallelize($css, $this->getContext(), $this->options['ast_src']);
 		} else {
 
-			$this->lexer->
-			setContent($css)->
-			tokenize();
+			$this->lexer->setContent($css)->tokenize();
 		}
 
 		if (!empty($this->ast->children)) {
@@ -369,6 +360,7 @@ class Parser implements ParsableInterface
 			$this->lastDedupIndex = max(0, count($this->ast->children) - 2);
 		}
 
+		$this->lexer->emit('end', $this->getContext());
 		return $this;
 	}
 
@@ -491,6 +483,11 @@ class Parser implements ParsableInterface
 			}
 		}
 
+		if (empty($this->options['multi_processing'])) {
+
+			$this->processPool = null;
+		}
+
 		return $this;
 	}
 
@@ -537,100 +534,6 @@ class Parser implements ParsableInterface
 		return $this->ast;
 	}
 
-
-	public function slice($css, $size, $position): \Generator
-	{
-
-		$i = ($position->index ?? 0) - 1;
-		$j = strlen($css) - 1;
-
-		$buffer = '';
-
-		while ($i++ < $j) {
-
-			$string = Parser::substr($css, $i, $j, ['{']);
-
-			if ($string === false) {
-
-				$buffer = substr($css, $i);
-
-				$pos = clone $position;
-				$pos->index++;
-
-				yield [$buffer, $pos];
-
-				$this->update($position, $buffer);
-				$position->index += strlen($buffer);
-
-				$buffer = '';
-				break;
-			}
-
-			$string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
-			$buffer .= $string;
-
-			if (strlen($buffer) >= $size) {
-
-				$k = 0;
-				while (static::is_whitespace($buffer[$k])) {
-
-					$k++;
-				}
-
-				if ($k > 0) {
-
-					$this->update($position, substr($buffer, 0, $k));
-					$position->index += $k;
-
-					$buffer = substr($buffer, $k);
-				}
-
-				$pos = clone $position;
-				$pos->index++;
-
-				yield [$buffer, $pos];
-
-				$this->update($position, $buffer);
-				$position->index += strlen($buffer);
-
-				$buffer = '';
-			}
-
-			$i += strlen($string) - 1;
-		}
-
-		if ($buffer) {
-
-			$k = 0;
-			$l = strlen($buffer);
-			while ($k < $l && Parser::is_whitespace($buffer[$k])) {
-
-				$k++;
-			}
-
-			if ($k > 0) {
-
-				$this->update($position, substr($buffer, 0, $k));
-				$position->index += $k;
-
-				$buffer = substr($buffer, $k);
-			}
-		}
-
-		if (trim($buffer) !== '') {
-
-			$pos = clone $position;
-			$pos->index++;
-
-			yield [$buffer, $pos];
-			$this->update($position, $buffer);
-			$position->index += strlen($buffer) - 1;
-		}
-
-		$position->index = max(0, $position->index - 1);
-		$position->column = max(1, $position->column - 1);
-	}
-
 	/**
 	 * @throws IOException
 	 * @throws SyntaxError
@@ -653,7 +556,7 @@ class Parser implements ParsableInterface
 
 					if ($child->name == 'import') {
 
-						$imports[$i] = clone $child;
+						$imports[$i] = $child;
 					}
 
 					continue;
@@ -669,9 +572,11 @@ class Parser implements ParsableInterface
 
 				$pool = null;
 
-				$phpExe = (new PhpExecutableFinder())->find();
+				krsort($imports);
 
-				foreach (array_reverse($imports, true) as $key => $token) {
+				$options = $this->options;
+
+				foreach ($imports as $token) {
 
 					preg_match('#^((["\']?)([^\\2]+)\\2)(.*?$)#', is_array($token->value) ? Value::renderTokens($token->value) : $token->value, $matches);
 
@@ -684,65 +589,62 @@ class Parser implements ParsableInterface
 
 					$file = Helper::absolutePath($matches[3], dirname($token->src ?? ''));
 
-					$token->value = $media;
-
-					unset($token->isLeaf);
-
-					$token->name = 'media';
-
-					if (count($imports) > 2 && function_exists('\\proc_open')) {
-
-						$args = $this->getCliArgs($this->options, $file, null);
-
-						array_unshift($args, $phpExe, '-f', __DIR__ . '/../cli/css-parser', '--');
-
-						$args[] = '--file=' . $file;
-						$args[] = '--output-format=json';
-						$args[] = '-c';
-
-						$process = new Process($args);
-						$process->setPty(true);
+					if (count($imports) > 2 && ProcessPool::isSupported()) {
 
 						if (!isset($pool)) {
 
-							$pool = (new Pool());
+							$pool = new ProcessPool();
 						}
 
-						$pool->add($process)->then(function (Process $process, $stdout, $stderr) use ($token, $file) {
+						$pool->add(function () use($file, $options) {
 
-							if ($process->getExitCode() != 0) {
+							return (new Parser('', $options))->load($file)->getAst()->children ?? [];
+						})->then(function ($result, $index, $stderr, $exitCode /*, $thread */) use ($media, $token, $file) {
 
-								throw new \RuntimeException(sprintf("cannot resolve @import#%s\n%s", $file, $stderr));
+							if ($exitCode != 0) {
+
+								throw new \RuntimeException(sprintf("cannot resolve @import#%s (exit code #%s\n%s", $file, $exitCode, $stderr));
 							}
 
-							if (!empty($stdout)) {
+							$token->children = $result;
+							$token->value = $media;
 
-								$ast = /* $this->format == 'serialize' ? unserialize($payload) : */
-									json_decode($stdout);
+							unset($token->isLeaf);
 
-								$token->children = $ast->children ?? [];
-							}
+							$token->name = 'media';
+
 						});
+
+
 					} else {
 
 						$parser = new static(options: $this->options);
 
 						$parser->ast = $token;
 						$parser->append($file);
+
+						$token->children = $parser->getAst()->children ?? [];
+						$token->value = $media;
+
+						unset($token->isLeaf);
+
+						$token->name = 'media';
+
 					}
 				}
 
 				$pool?->wait();
 
-				foreach (array_reverse($imports, true) as $key => $token) {
+				foreach ($imports as $key => $token) {
 
 					if (empty($token->value)) {
 
 						array_splice($this->ast->children, $key, 1, $token->children ?? []);
-					} else {
-
-						$this->ast->children[$key] = $token;
 					}
+//					else {
+//
+//						$this->ast->children[$key] = $token;
+//					}
 				}
 			}
 		}
@@ -1212,7 +1114,100 @@ class Parser implements ParsableInterface
 		return $status;
 	}
 
-	public function __toString()
+	public function slice($css, $size, $position): \Generator
+	{
+
+		$i = ($position->index ?? 0) - 1;
+		$j = strlen($css) - 1;
+
+		$buffer = '';
+
+		while ($i++ < $j) {
+
+			$string = Parser::substr($css, $i, $j, ['{']);
+
+			if ($string === false) {
+
+				$buffer = substr($css, $i);
+
+				$pos = clone $position;
+				$pos->index++;
+
+				yield [$buffer, $pos];
+
+				$this->update($position, $buffer);
+				$position->index += strlen($buffer);
+
+				$buffer = '';
+				break;
+			}
+
+			$string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
+			$buffer .= $string;
+
+			if (strlen($buffer) >= $size) {
+
+				$k = 0;
+				while (static::is_whitespace($buffer[$k])) {
+
+					$k++;
+				}
+
+				if ($k > 0) {
+
+					$this->update($position, substr($buffer, 0, $k));
+					$position->index += $k;
+
+					$buffer = substr($buffer, $k);
+				}
+
+				$pos = clone $position;
+				$pos->index++;
+
+				yield [$buffer, $pos];
+
+				$this->update($position, $buffer);
+				$position->index += strlen($buffer);
+
+				$buffer = '';
+			}
+
+			$i += strlen($string) - 1;
+		}
+
+		if ($buffer) {
+
+			$k = 0;
+			$l = strlen($buffer);
+			while ($k < $l && Parser::is_whitespace($buffer[$k])) {
+
+				$k++;
+			}
+
+			if ($k > 0) {
+
+				$this->update($position, substr($buffer, 0, $k));
+				$position->index += $k;
+
+				$buffer = substr($buffer, $k);
+			}
+		}
+
+		if (trim($buffer) !== '') {
+
+			$pos = clone $position;
+			$pos->index++;
+
+			yield [$buffer, $pos];
+			$this->update($position, $buffer);
+			$position->index += strlen($buffer) - 1;
+		}
+
+		$position->index = max(0, $position->index - 1);
+		$position->column = max(1, $position->column - 1);
+	}
+
+	public function __toString(): string
 	{
 
 		try {
@@ -1226,7 +1221,7 @@ class Parser implements ParsableInterface
 
 		} catch (Exception $ex) {
 
-			fwrite(STDERR, $ex);
+			fwrite(fopen('php://stderr', 'w+'), $ex);
 			error_log($ex);
 		}
 

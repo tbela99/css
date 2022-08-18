@@ -34,19 +34,23 @@ spl_autoload_register(function ($name) {
     }
 });
 
-$exe = basename($argv[0]);
 $cli = new Args($argv);
 
 try {
 
+        $data = json_decode(file_get_contents(__DIR__ . '/../package.json'), JSON_OBJECT_AS_ARRAY);
+        $metadata = json_decode(file_get_contents(__DIR__ . '/../composer.json'), JSON_OBJECT_AS_ARRAY);
+
+        $version = sprintf("%s (version %s)
+Copyright (C) %s %s.
+Dual licensed under MIT or LGPL v3\n", $cli->getExe(), $data['version'], date('Y'), implode(', ', array_map(function ($author) {
+
+            return $author['name'];
+        }, $metadata['authors'])));
+
     $cli->
     setStrict(true)->
-    add('version', 'print version number', Option::BOOL, 'v', multiple: false)
-        ->addGroup('internal', "internal commands are used by the multithreading feature:\n", true)
-        ->add('parse-ast-src', 'src value of the ast nodes', Option::STRING, multiple: false, group: 'internal')
-        ->add('parse-ast-position-index', 'initial index position of the ast nodes', Option::INT, multiple: false, group: 'internal')
-        ->add('parse-ast-position-line', 'initial line number of the ast nodes', Option::INT, multiple: false, group: 'internal')
-        ->add('parse-ast-position-column', 'initial column number of the ast nodes', Option::INT, multiple: false, group: 'internal')
+        add('version', 'print version info', Option::BOOL, 'v', multiple: false)
         ->addGroup('parse', "Parse options:\n")
         ->add('capture-errors', 'ignore parse error', Option::BOOL, 'e', multiple: false, group: 'parse')
         ->add('flatten-import', 'process @import', Option::BOOL, 'm', multiple: false, group: 'parse')
@@ -55,7 +59,7 @@ try {
         ->add('file', 'input css file or url', Option::STRING, 'f', multiple: true, group: 'parse')
         ->add('parse-multi-processing', 'enable multi-processing parser', Option::BOOL, 'M', multiple: false, defaultValue: true, group: 'parse')
         ->add('parse-children-process', 'maximum children process', Option::INT, 'P', multiple: false, defaultValue: 20, group: 'parse')
-        ->add('input-format', 'input format: json (ast), serialize (PHP serialized ast)', Option::STRING, 'I', multiple: false, defaultValue: Option::STRING, options: [Option::STRING, 'json', 'serialize'], group: 'parse')
+        ->add('input-format', 'input format: json (ast), string (plain css)', Option::STRING, 'I', multiple: false, defaultValue: 'string', options: ['string', 'json'], group: 'parse')
         ->addGroup('render', "Render options:\n")
         ->add('css-level', 'css color module', Option::INT, 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
         ->add('charset', 'remove @charset', Option::BOOL, 'S', multiple: false, defaultValue: false, group: 'render')
@@ -70,8 +74,8 @@ try {
         ->add('convert-color', 'convert colors', Option::AUTO, 't', multiple: false, options: [true, false, 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'], group: 'render')
         ->add('output', 'output file name', Option::STRING, 'o', multiple: false, group: 'render')
         ->add('ast', 'dump ast as JSON', Option::BOOL, 'a', multiple: false, group: 'render')
-        ->add('output-format', "output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array", Option::STRING, 'F', multiple: false, defaultValue: Option::STRING, options: [Option::STRING, 'json', 'serialize', 'json-array', 'serialize-array'], dependsOn: 'input-format', group: 'render')
         ->add('render-multi-processing', "enable multi-processing renderer", Option::BOOL, 'R', multiple: false, defaultValue: true, group: 'render')
+        ->setVersion($version)
         ->parse();
 
     $parseOptions = [];
@@ -80,19 +84,6 @@ try {
     $groups = $cli->getGroups();
     $args = $cli->getArguments();
 
-    if (isset($args['version'])) {
-
-        $data = json_decode(file_get_contents(__DIR__ . '/../package.json'), JSON_OBJECT_AS_ARRAY);
-        $metadata = json_decode(file_get_contents(__DIR__ . '/../composer.json'), JSON_OBJECT_AS_ARRAY);
-
-        echo sprintf("%s (version %s)
-Copyright (C) %s %s.
-Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implode(', ', array_map(function ($author) {
-
-            return $author['name'];
-        }, $metadata['authors'])));
-        exit (0);
-    }
 
     $pipeIn = !stream_isatty(STDIN);
     $pipeOut = !stream_isatty(STDOUT);
@@ -109,7 +100,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
         if (!empty($args['_'])) {
 
-            fwrite(STDERR, "> notice: ignoring inline css\n".json_encode($args['_'], JSON_PRETTY_PRINT)."\n");
+            fwrite(STDERR, "> notice: ignoring inline css\n" . json_encode($args['_'], JSON_PRETTY_PRINT) . "\n");
         }
     }
 
@@ -134,20 +125,6 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
     }
 
-    foreach (array_keys($groups['internal']['arguments']) as $key) {
-
-        if (isset($args[$key])) {
-
-            if (str_starts_with($key, 'parse-')) {
-
-                $parseOptions[str_replace(['parse-', '-'], ['', '_'], $key)] = $args[$key];
-            } else if (str_starts_with($key, 'render-')) {
-
-                $renderOptions[str_replace(['render-', '-'], ['', '_'], $key)] = $args[$key];
-            }
-        }
-    }
-
     function read_input(array $parseOptions, $inFile): Generator
     {
 
@@ -156,13 +133,10 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
             $data = file_get_contents('php://stdin');
 
             yield match ($parseOptions['input_format']) {
-                'serialize' => unserialize($data),
                 'json' => json_decode($data),
                 default => $data,
             };
-        }
-
-        else {
+        } else {
 
             foreach ((array)$inFile as $file) {
 
@@ -170,14 +144,12 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
                     $data = file_get_contents($file);
 
-                }
-                else {
+                } else {
 
                     $data = Parser\Helper::fetchContent($file);
                 }
 
                 yield $file => match ($parseOptions['input_format']) {
-                    'serialize' => unserialize($data),
                     'json' => json_decode($data),
                     default => $data,
                 };
@@ -188,7 +160,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     $ast = [];
     $parser = new Parser(options: $parseOptions);
 
-    if ($parseOptions['input_format'] == Option::STRING) {
+    if ($parseOptions['input_format'] == 'string') {
 
         if ($inFile) {
 
@@ -212,14 +184,12 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
 
         $ast = [$parser->getAst()];
-    }
-
-    else {
+    } else {
 
         // ast
         foreach (read_input($parseOptions, $inFile) as $data) {
 
-            $ast[] = $data; // $renderer->renderAst($data);
+            $ast[] = $data;
         }
     }
 
@@ -238,40 +208,11 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     if ($outFile != STDOUT) {
 
         $renderer->save($root, $outFile);
+    } else {
+
+        fwrite($outFile, !empty($renderOptions['ast']) ? json_encode(count($ast) == 1 ? $ast[0] : $root, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0)
+            : $renderer->renderAst($root));
     }
-
-    else if (in_array($renderOptions['output_format'], ['json-array', 'serialize-array'])) {
-
-        $output = [];
-
-        foreach ($root->children as $node) {
-
-            $nodes = $node->type == 'Stylesheet' ? $node->children : [$node];
-
-            foreach ($nodes as $nod) {
-
-                $css = $renderer->renderAst($nod);
-
-                if (isset($output[$css])) {
-
-                    unset($output[$css]);
-                }
-
-                $output[$css] = $css;
-            }
-        }
-
-        fwrite($outFile, $renderOptions['output_format'] == 'serialize-array' ? serialize($output) : json_encode($output, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0));
-    }
-
-    else {
-
-        fwrite($outFile, match ($renderOptions['output_format']) {
-            'json' => json_encode(count($ast) == 1 ? $ast[0] : $root, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0),
-            'serialize' => serialize(count($ast) == 1 ? $ast[0] : $root),
-            default => $renderer->renderAst($root)});
-    }
-
 
 } catch (ValueError|UnexpectedValueException|InvalidArgumentException $e) {
 
