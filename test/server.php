@@ -18,11 +18,28 @@ function ellipsis ($string, $length = 15) {
     return mb_substr($string, 0, $length - 3).'...';
 }
 
+function toFileSize(float $size, array $units = [])
+{
+
+	if ($size == 0) return 0;
+
+	$s = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+	$e = floor(log($size) / log(1024));
+
+	return sprintf("%.2f%s", $size / pow(1024, floor($e)), $units[$e] ?? $s[$e]);
+}
+
+function toDuration(float $duration)
+{
+
+	return sprintf("%.2f%s", $duration < 1 ? $duration * 1000 : $duration, $duration < 1 ? 'ms' : 's');
+}
+
 $parser = new Parser();
 fwrite(STDERR, sprintf("\n\n\ncurl dir %s >>>\n", getcwd()));
 
 echo $parser->setOptions([
-	'multi_processing' => false,
+	'multi_processing' => true,
     'flatten_import' => true,
     'capture_errors' => false
 ])->

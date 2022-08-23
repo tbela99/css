@@ -2,11 +2,14 @@
 
 namespace TBela\CSS\Process\MultiProcessing;
 
+use Generator;
 use Opis\Closure\SerializableClosure;
 use Symfony\Component\Process\PhpProcess;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Process\Exceptions\IllegalStateException;
-use TBela\CSS\Process\IPC\IPC;
+use TBela\CSS\Process\Exceptions\TimeoutException;
+use TBela\CSS\Process\IPC\IPCInterface;
+use TBela\CSS\Process\IPC\Transport\IPCSocketServer;
 use TBela\CSS\Process\ProcessInterface;
 use TBela\CSS\Process\Serialize\Serializer;
 
@@ -16,7 +19,7 @@ class Process implements ProcessInterface
 	use EventTrait;
 	protected PhpProcess $process;
 
-	protected IPC $ipc;
+	protected IPCInterface $ipc;
 	protected Serializer $serializer;
 	protected mixed $data;
 	protected ?float $endTime = null;
@@ -26,6 +29,8 @@ class Process implements ProcessInterface
 	protected bool $started = false;
 	protected bool $running = false;
 	protected bool $stopped = false;
+	protected float $timeout = 0;
+	protected float $startTime;
 
 	public function __sleep() {
 
@@ -58,26 +63,40 @@ class Process implements ProcessInterface
 
 		$code = $serialized->getReflector()->getCode();
 
-//		if (IPCShmop::isSupported()) {
+		static $count = 0;
+
+//		if (IPCSocketServer::isSupported()) {
 //
-//			$this->ipc = new IPCShmop();
+//			$this->ipc = new IPCSocketServer();
 //			$this->serializer = Serializer::getInstance();
 //
 //			$key = $this->ipc->getKey();
 //
 //			$script .= sprintf("
+//
+//			\$log = 'debug%s.log';
+//				file_put_contents(\$log, \"started script \$log\\n\");
+//
+//			try {
+//				\$data = call_user_func(%s);
+//				file_put_contents(\$log, sprintf(\"writing data %%s\\n\", json_encode(\$data)), FILE_APPEND);
 //				\$ipc = new %s('%s');
+//
+//				file_put_contents(\$log, \"waiting for connections on \".\$ipc->getKey().\"\\n\", FILE_APPEND);
+//
 //				/**
 //				 * @var Serializer \$serializer
 //				 */
 //				\$serializer = new %s();
-//				\$ipc->write(\$serializer->encode(call_user_func(%s)));
-//			", IPCShmop::class, $key, $this->serializer::class, $code);
+//				file_put_contents(\$log, \"writing data\\n\", FILE_APPEND);
+//				\$ipc->write(\$serializer->encode(\$data));
+//				}
 //
-//			register_shutdown_function(function () {
+//			catch (Throwable \$e) {
 //
-//				$this->ipc->release();
-//			});
+//				file_put_contents(\$log, \$e, FILE_APPEND);
+//			}
+//			", $count++, $code, $this->ipc::class, $key, $this->serializer::class);
 //		}
 //
 //		else {
@@ -89,6 +108,8 @@ class Process implements ProcessInterface
 //		}
 
 		$script .= "exit;";
+
+/*		file_put_contents('script'.($count - 1).'.php', "<?php $script ?>");*/
 
 		$this->process = new PhpProcess("<?php $script ?>");
 
@@ -108,6 +129,7 @@ class Process implements ProcessInterface
 
 	public function start(): void
 	{
+		$this->startTime = microtime(true);
 		$this->process->start();
 
 		$this->started = true;
@@ -145,7 +167,7 @@ class Process implements ProcessInterface
 
 	public function getStartTime(): ?float
 	{
-		return $this->process->getStartTime();
+		return $this->starTime;
 	}
 
 	public function getEndTime(): ?float
@@ -158,27 +180,23 @@ class Process implements ProcessInterface
 		return $this->duration;
 	}
 
-	public function getExitCode(): int
+	public function getExitCode(): ?int
 	{
 		return $this->process->getExitCode();
 	}
 
 	/**
 	 * @inheritDoc
-	 * @throws IllegalStateException
+	 * @throws IllegalStateException|TimeoutException
 	 */
-	public function check(int $waitTimeout): \Generator
+	public function check(int $waitTimeout): Generator
 	{
 		if (!$this->started || !$this->running) {
 
 			throw new IllegalStateException('process must be started', 503);
 		}
 
-		while (!$this->process->isTerminated()) {
-
-//			time_nanosleep(0, $waitTimeout * 10);
-			yield "waiting";
-		}
+		fwrite(STDERR, sprintf("checking for readiness\n"));
 
 		$buffer = '';
 
@@ -188,6 +206,7 @@ class Process implements ProcessInterface
 
 				if ($status !== true && $status !== "done") {
 
+					$this->checkTimeout();
 					yield $status;
 				}
 			}
@@ -197,6 +216,14 @@ class Process implements ProcessInterface
 		}
 
 		else {
+
+			while (!$this->process->isTerminated()) {
+
+//			time_nanosleep(0, $waitTimeout * 10);
+
+				$this->checkTimeout();
+				yield "waiting";
+			}
 
 			$buffer = $this->process->getOutput();
 			$this->data = json_decode($buffer);
@@ -242,11 +269,28 @@ class Process implements ProcessInterface
 
 	public function setTimeout(float $timeout): void
 	{
+		$this->timeout = $timeout;
 		$this->process->setTimeout($timeout);
 	}
 
 	public function getTimeout(): ?float
 	{
 		return $this->process->getTimeout();
+	}
+
+	/**
+	 * @return void
+	 * @throws TimeoutException
+	 */
+	public function checkTimeout(): void
+	{
+		fwrite(STDERR, sprintf("%.2f - %.2f\n\n", microtime(true) - $this->startTime, $this->timeout));
+
+		if ($this->timeout > 0 && microtime(true) - $this->startTime >= $this->timeout) {
+
+			$this->stop();
+
+			throw new TimeoutException('the task has timed out', 500);
+		}
 	}
 }

@@ -40,8 +40,7 @@
     "ext-sockets": "*",
     "ext-pcntl": "*",
     "ext-posix": "*",
-    "ext-msgpack": "*",
-    "ext-shmop": "*"
+    "ext-msgpack": "*"
   },
   "require": {
     "php": ">=8.0",

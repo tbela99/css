@@ -4,9 +4,13 @@
 
 namespace TBela\CSS\Process\Thread\PCNTL;
 
+use Closure;
+use Generator;
+use RuntimeException;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Process\Exceptions\TimeoutException;
 use TBela\CSS\Process\IPC\IPC;
+use TBela\CSS\Process\IPC\IPCInterface;
 use TBela\CSS\Process\ProcessInterface;
 use TBela\CSS\Process\Serialize\Serializer;
 use TBela\CSS\Process\Exceptions\IllegalStateException;
@@ -16,10 +20,7 @@ class Thread implements ProcessInterface
 
 	use EventTrait;
 
-	// 32k
-	const BUFFER_SIZE = 32768;
-
-	protected \Closure $task;
+	protected Closure $task;
 
 	protected array $pair = [];
 
@@ -41,15 +42,15 @@ class Thread implements ProcessInterface
 	 */
 	protected ?float $endTime = null;
 	protected Serializer $serializer;
-	protected IPC $ipc;
+	protected IPCInterface $ipc;
 
 	protected ?int $exitCode = null;
 	protected float $timeout = 0;
 
-	public function __construct(\Closure $task)
+	public function __construct(Closure $task)
 	{
 		$this->task = $task;
-		$this->ipc = IPC::getInstance();
+		$this->ipc = IPC::getInstance(true);
 		$this->serializer = Serializer::getInstance();
 
 		register_shutdown_function(function () {
@@ -68,6 +69,7 @@ class Thread implements ProcessInterface
 
 	/**
 	 * @throws IllegalStateException
+	 * @throws TimeoutException
 	 */
 	public function start(): void
 	{
@@ -80,7 +82,7 @@ class Thread implements ProcessInterface
 		$this->running = true;
 		$this->started = true;
 		$this->terminated = false;
-		$this->startTime = hrtime(true) / 1000;
+		$this->startTime = microtime(true);
 
 		pcntl_signal(SIGCHLD, function () {
 
@@ -93,7 +95,7 @@ class Thread implements ProcessInterface
 
 		if ($this->pid == -1) {
 
-			throw new \RuntimeException('Cannot fork process', 500);
+			throw new RuntimeException('Cannot fork process', 500);
 		}
 
 		if ($this->pid === 0) {
@@ -160,7 +162,8 @@ class Thread implements ProcessInterface
 		}
 
 		$duration = $this->endTime - $this->startTime;
-		return sprintf("%.2f%s", $duration < 1000 ? $duration : $duration / 1000, $duration < 1000 ? 'ms' : 's');
+
+		return sprintf("%.2f%s", $duration < 1 ? $duration * 1000 : $duration, $duration < 1 ? 'ms' : 's');
 	}
 
 	public function getExitCode(): int
@@ -171,12 +174,12 @@ class Thread implements ProcessInterface
 
 	/**
 	 * @param int $waitTimeout timeout in nanoseconds
-	 * @return \Generator
+	 * @return Generator
 	 * @throws IllegalStateException
-	 * @throws \RuntimeException
+	 * @throws RuntimeException|TimeoutException
 	 */
 
-	public function check(int $waitTimeout): \Generator
+	public function check(int $waitTimeout): Generator
 	{
 
 		if (!$this->started || !$this->running) {
@@ -198,12 +201,7 @@ class Thread implements ProcessInterface
 
 			if ($data !== true && $data !== "done") {
 
-				if ($this->timeout > 0 && microtime(true) - $this->startTime >= $this->timeout) {
-
-					$this->stop();
-
-					throw new TimeoutException('the task has timeout', 500);
-				}
+				$this->checkTimeout();
 
 				yield $data;
 			}
@@ -215,11 +213,11 @@ class Thread implements ProcessInterface
 
 		$this->running = false;
 		$this->terminated = true;
-		$this->endTime = hrtime(true) / 1000;
+		$this->endTime = microtime(true);
 
 		if (is_null($this->data) && !empty($buffer)) {
 
-			throw new \RuntimeException(sprintf("invalid %s data?\n%s\n\n", $buffer), $this->serializer->getName(), 500);
+			throw new RuntimeException(sprintf("invalid %s data?\n%s\n\n", $this->serializer->getName(), $buffer), 500);
 		}
 
 		pcntl_waitpid($this->pid, $this->exitCode);
@@ -233,15 +231,6 @@ class Thread implements ProcessInterface
 	{
 
 		return $this->data;
-	}
-
-	public function __destruct()
-	{
-
-		if (!empty($this->pid)) {
-
-			$this->ipc->release();
-		}
 	}
 
 	public function getStdErr(): string
@@ -262,5 +251,19 @@ class Thread implements ProcessInterface
 	public function getTimeout(): ?float
 	{
 		return $this->timeout;
+	}
+
+	/**
+	 * @return void
+	 * @throws TimeoutException
+	 */
+	public function checkTimeout(): void
+	{
+		if ($this->timeout > 0 && microtime(true) - $this->startTime >= $this->timeout) {
+
+			$this->stop();
+
+			throw new TimeoutException('the task has timeout', 500);
+		}
 	}
 }

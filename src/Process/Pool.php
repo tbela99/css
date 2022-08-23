@@ -341,7 +341,7 @@ class Pool implements PoolInterface
 			call_user_func($handler, $e);
 		} else {
 
-			throw new UnhandledException($e->getMessage(), $e->getCode(), $e);
+			throw new UnhandledException("unhandled exception", $e->getCode(), $e);
 		}
 	}
 }

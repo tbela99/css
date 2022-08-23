@@ -2,6 +2,7 @@
 
 namespace TBela\CSS\Process\Serialize;
 
+use TBela\CSS\Process\Serialize\Format\JSONSerializer;
 use TBela\CSS\Process\Serialize\Format\MSGPackSerializer;
 use TBela\CSS\Process\Serialize\Format\PHPSerializer;
 
@@ -46,7 +47,7 @@ abstract class Serializer
 
 			$class = __NAMESPACE__.'\\Format\\'.strtoupper($format).'Serializer';
 
-			if (class_exists($class)) {
+			if (class_exists($class) && $class::isSupported($format)) {
 
 				return new $class;
 			}
@@ -54,14 +55,14 @@ abstract class Serializer
 			throw new \InvalidArgumentException(sprintf('unsupported format: %s', $format, 501));
 		}
 
-		if (function_exists('\msgpack_pack')) {
+		if (is_callable('\\msgpack_pack')) {
 
 			return new MSGPackSerializer();
 		}
 
-		if (function_exists('\\json_encode')) {
+		if (is_callable('\\json_encode')) {
 
-			return new MSGPackSerializer();
+			return new JSONSerializer();
 		}
 
 		return new PHPSerializer();

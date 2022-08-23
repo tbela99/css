@@ -2,16 +2,29 @@
 
 namespace TBela\CSS\Process\IPC;
 
+use TBela\CSS\Process\IPC\Transport\IPCSocketServer;
+use TBela\CSS\Process\IPC\Transport\IPCSocketPair;
+
 abstract class IPC implements IPCInterface
 {
 
-	public static function getInstance(): IPCInterface {
+	/**
+	 * @param bool $pair use socket pair
+	 * @return IPCInterface|null
+	 */
+	public static function getInstance(bool $pair = false): ?IPCInterface {
 
-		if (IPCSocket::isSupported()) {
+		// thread
+		if ($pair && IPCSocketPair::isSupported()) {
 
-			return new IPCSocket();
+			return new IPCSocketPair();
 		}
 
-		throw new \RuntimeException("No IPC driver available");
+		if (IPCSocketServer::isSupported()) {
+
+			return new IPCSocketServer();
+		}
+
+		return null;
 	}
 }
