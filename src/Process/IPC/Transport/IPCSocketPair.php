@@ -1,8 +1,10 @@
 <?php
 
-namespace TBela\CSS\Process\IPC;
+namespace TBela\CSS\Process\IPC\Transport;
 
-class IPCSocket extends IPC
+use TBela\CSS\Process\IPC\IPC;
+
+class IPCSocketPair extends IPC
 {
 
 	const BUFFER_SIZE = 32768;
@@ -11,7 +13,7 @@ class IPCSocket extends IPC
 
 	public function __construct() {
 
-		if (!socket_create_pair( /* strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' ? AF_INET : */ AF_UNIX, SOCK_STREAM, 0, $this->pair)) {
+		if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $this->pair)) {
 
 			throw new \RuntimeException("Can't create sockets pair", 500);
 		}

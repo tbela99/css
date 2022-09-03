@@ -71,25 +71,45 @@ final class MultiProcessingTest extends TestCase
 
         $parser = new Parser();
 
-        $size = 20;
-        $file = __DIR__.'/../nested/nested';
+		$size = 64 * 1024;
+		$file = __DIR__.'/../perf_files/bs.4';
 
-        $json = [];
+		$json = [];
 
-        foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
-            'line' => 1,
-            'column' => 1,
-            'index' => 0
-        ]) as $line) {
+		foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
+			'line' => 1,
+			'column' => 1,
+			'index' => 0
+		]) as $line) {
 
-            $json[] = $line;
-        }
+			$json[] = $line;
+		}
 
-        $data[] = [
+		$data[] = [
 
-            file_get_contents(__DIR__.'/../multiprocessing/nested-slice.json'),
-            json_encode($json, JSON_PRETTY_PRINT)
-        ];
+			file_get_contents(__DIR__.'/../multiprocessing/bs.4-slice.json'),
+			json_encode($json, JSON_PRETTY_PRINT)
+		];
+
+		$size = 20;
+		$file = __DIR__.'/../nested/nested';
+
+		$json = [];
+
+		foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
+			'line' => 1,
+			'column' => 1,
+			'index' => 0
+		]) as $line) {
+
+			$json[] = $line;
+		}
+
+		$data[] = [
+
+			file_get_contents(__DIR__.'/../multiprocessing/nested-slice.json'),
+			json_encode($json, JSON_PRETTY_PRINT)
+		];
 
         $json = [];
 

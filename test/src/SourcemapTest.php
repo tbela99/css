@@ -14,7 +14,6 @@ final class SourcemapTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider sourcemapProvider
-	 * @medium
      */
     public function testSourcemap($expected, $actual): void
     {
@@ -29,7 +28,6 @@ final class SourcemapTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider sourcemapImportProvider
-	 * @medium
      */
     public function testSourcemapImport($expected, $actual): void
     {
@@ -44,7 +42,6 @@ final class SourcemapTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider sourcemapUrlProvider
-	 * @medium
      */
     public function testSourcemapUrl($expected, $actual): void
     {
@@ -59,7 +56,6 @@ final class SourcemapTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider sourcemapNestedProvider
-	 * @medium
      */
     public function testSourcemapNested($expected, $actual): void
     {

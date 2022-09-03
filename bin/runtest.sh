@@ -33,7 +33,7 @@ run() {
 
   #
   #  set -x
-  php ../vendor/bin/phpunit -v --enforce-time-limit --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+  php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
   #  set +x
 }
 

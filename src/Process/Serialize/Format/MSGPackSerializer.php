@@ -20,7 +20,7 @@ class MSGPackSerializer extends Serializer
 	 */
 	public function decode(string $data): mixed
 	{
-		return \msgpack_unpack($data);
+		return \msgpack_unpack(rtrim($data));
 	}
 
 	public function getName(): string

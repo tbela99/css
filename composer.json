@@ -40,15 +40,13 @@
     "ext-sockets": "*",
     "ext-pcntl": "*",
     "ext-posix": "*",
-    "ext-msgpack": "*",
-    "ext-shmop": "*"
+    "ext-msgpack": "*"
   },
   "require": {
     "php": ">=8.0",
     "axy/sourcemap": "^0.1.5",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "symfony/process": "^6.0",
     "opis/closure": "^3.6"
   },
   "scripts": {

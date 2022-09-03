@@ -2,37 +2,32 @@
 
 namespace TBela\CSS\Process\MultiProcessing;
 
+use Closure;
 use Opis\Closure\SerializableClosure;
-use Symfony\Component\Process\PhpProcess;
+use RuntimeException;
 use TBela\CSS\Event\EventTrait;
+use TBela\CSS\Process\AbstractProcess;
 use TBela\CSS\Process\Exceptions\IllegalStateException;
-use TBela\CSS\Process\IPC\IPC;
-use TBela\CSS\Process\ProcessInterface;
+use TBela\CSS\Process\IPC\IPCInterface;
+use TBela\CSS\Process\IPC\Transport\IPCSocketClient;
+use TBela\CSS\Process\IPC\Transport\IPCSocketServer;
 use TBela\CSS\Process\Serialize\Serializer;
 
-class Process implements ProcessInterface
+class Process extends AbstractProcess
 {
 
 	use EventTrait;
-	protected PhpProcess $process;
 
-	protected IPC $ipc;
+	protected $process;
+
+	protected IPCInterface $ipc;
 	protected Serializer $serializer;
-	protected mixed $data;
-	protected ?float $endTime = null;
-	protected bool $terminated = false;
-	protected ?string $duration = null;
-	protected ?int $exitCode = null;
-	protected bool $started = false;
-	protected bool $running = false;
-	protected bool $stopped = false;
+	protected array $command;
+	protected ?array $pipes;
+	protected array $status;
 
-	public function __sleep() {
-
-		return [];
-	}
-
-	public function __construct(\Closure $closure) {
+	public function __construct(Closure $closure)
+	{
 
 		$autoload = '';
 
@@ -47,58 +42,73 @@ class Process implements ProcessInterface
 
 		$serialized = new SerializableClosure($closure);
 
-		$script = 'require "'.$autoload.'";';
+		$script = 'require "' . $autoload . '";';
 
 		$vars = $serialized->getReflector()->getUseVariables();
 
 		foreach ($vars as $key => $var) {
 
-			$script .= "\n\$$key = ".var_export($var, true).";";
+			$script .= "\n\$$key = " . var_export($var, true) . ";";
 		}
 
 		$code = $serialized->getReflector()->getCode();
 
-//		if (IPCShmop::isSupported()) {
-//
-//			$this->ipc = new IPCShmop();
-//			$this->serializer = Serializer::getInstance();
-//
-//			$key = $this->ipc->getKey();
-//
-//			$script .= sprintf("
-//				\$ipc = new %s('%s');
-//				/**
-//				 * @var Serializer \$serializer
-//				 */
-//				\$serializer = new %s();
-//				\$ipc->write(\$serializer->encode(call_user_func(%s)));
-//			", IPCShmop::class, $key, $this->serializer::class, $code);
-//
-//			register_shutdown_function(function () {
-//
-//				$this->ipc->release();
-//			});
-//		}
-//
-//		else {
+		static $count = 0;
 
-			$script .= "
-			
-				echo json_encode(call_user_func($code));
-			";
-//		}
+		if (IPCSocketServer::isSupported()) {
 
-		$script .= "exit;";
+			$this->ipc = new IPCSocketServer();
+			$this->serializer = Serializer::getInstance();
 
-		$this->process = new PhpProcess("<?php $script ?>");
+			$key = $this->ipc->getKey();
 
-		if (isset($this->ipc)) {
+			$script .= sprintf("
 
-			// disable stdin
-			$this->process->setPty(true);
-			// disable stdout
-			$this->process->disableOutput();
+			\$log = 'debug%s.log';
+				//file_put_contents(\$log, \"started script \$log\\n\");
+
+			try {
+				\$data = call_user_func(%s);
+//				file_put_contents(\$log, sprintf(\"writing data %%s\\n\", json_encode(\$data)), FILE_APPEND);
+				\$ipc = new %s(null, '%s');
+
+			//	file_put_contents(\$log, \"waiting for connections on '%s'\\n\", FILE_APPEND);
+
+				/**
+				 * @var Serializer \$serializer
+				 */
+				\$serializer = new %s();
+			//	file_put_contents(\$log, \"writing data\\n\".json_encode(\$data).\"\\n\", FILE_APPEND);
+				\$ipc->write(\$serializer->encode(\$data));
+				}
+
+			catch (Throwable \$e) {
+
+			//	file_put_contents(\$log, \$e, FILE_APPEND);
+			}
+			", $count, $code, IPCSocketClient::class, $key, $key, $this->serializer::class);
 		}
+
+		$script .= " //file_put_contents(\$log,'exiting...', FILE_APPEND);
+		exit;";
+
+		$file = tempnam(sys_get_temp_dir(), 'csr-');
+
+		register_shutdown_function(function () use ($file) {
+
+			@unlink($file);
+			$this->cleanup();
+		});
+
+/*		file_put_contents('dscript' . ($count++) . '.php', "<?php $script ?>");*/
+		file_put_contents($file, "<?php $script ?>");
+
+		$this->command = [PHP_BINARY, '-f', $file];
+	}
+
+	public function getCommand() {
+
+		return $this->status['command'] ?? implode(' ', array_map('escapeshellarg', $this->command));
 	}
 
 	public static function isSupported(): bool
@@ -108,145 +118,112 @@ class Process implements ProcessInterface
 
 	public function start(): void
 	{
-		$this->process->start();
+		$this->startTime = microtime(true);
+
+		$descriptorspec = [
+			0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+			1 => array("pipe", "wb"),  // stdout is a pipe that the child will write to
+			2 => array("pipe", "wb") // stderr is a file to write to
+		];
+
+		$this->process = proc_open(implode(' ', array_map('escapeshellarg', $this->command)), $descriptorspec, $this->pipes);
+
+		if ($this->process === false) {
+
+			throw new RuntimeException(sprintf("failed to run command: '%'", implode(' ', $this->command)), 500);
+		}
+
+		$this->startTime = microtime(true);
+
+		fclose($this->pipes[0]);
+//		stream_set_blocking($this->pipes[1], false);
+//		stream_set_blocking($this->pipes[2], false);
+
+		$this->status = proc_get_status($this->process);
+
+		$this->pid = $this->status['pid'];
 
 		$this->started = true;
 		$this->running = true;
 	}
 
+	/**
+	 * @throws IllegalStateException
+	 */
 	public function stop(float $timeout = 10, int $signal = null): void
 	{
+		if (!$this->started) {
+
+			throw new IllegalStateException('process must be started', 500);
+		}
+
 		if ($this->stopped || $this->terminated) {
 
 			return;
 		}
 
-		$this->exitCode = $this->process->stop($timeout, $signal);
+		$this->status = proc_get_status($this->process);
 
-		$this->stopped = true;
-		$this->terminated = true;
-		$this->running = false;
-	}
+		if ($this->status['running']) {
 
-	public function isStarted(): bool
-	{
-		return $this->started;
-	}
+			if (!$this->kill($this->pid)) {
 
-	public function isRunning(): bool
-	{
-		return $this->running;
-	}
+				proc_terminate($this->process, 9);
 
-	public function isTerminated(): bool
-	{
-		return $this->terminated;
-	}
+				$this->status = proc_get_status($this->process);
 
-	public function getStartTime(): ?float
-	{
-		return $this->process->getStartTime();
-	}
+				if ($this->status['running']) {
 
-	public function getEndTime(): ?float
-	{
-		return $this->endTime;
-	}
-
-	public function getDuration(): ?string
-	{
-		return $this->duration;
-	}
-
-	public function getExitCode(): int
-	{
-		return $this->process->getExitCode();
-	}
-
-	/**
-	 * @inheritDoc
-	 * @throws IllegalStateException
-	 */
-	public function check(int $waitTimeout): \Generator
-	{
-		if (!$this->started || !$this->running) {
-
-			throw new IllegalStateException('process must be started', 503);
-		}
-
-		while (!$this->process->isTerminated()) {
-
-//			time_nanosleep(0, $waitTimeout * 10);
-			yield "waiting";
-		}
-
-		$buffer = '';
-
-		if (isset($this->ipc)) {
-
-			foreach ($this->ipc->read($waitTimeout) as $status) {
-
-				if ($status !== true && $status !== "done") {
-
-					yield $status;
+					throw new RuntimeException(sprintf("cannot kill process #%s", $this->getPid()));
 				}
 			}
-
-			$buffer = $this->ipc->getData();
-			$this->data = $this->serializer->decode($buffer);
 		}
 
-		else {
-
-			$buffer = $this->process->getOutput();
-			$this->data = json_decode($buffer);
-		}
-
-		if (is_null($this->data) && !empty($buffer)) {
-
-			throw new \RuntimeException(sprintf("invalid %s data?\n%s\n\n", $buffer), $this->serializer?->getName() ?? 'json', 500);
-		}
-
-		$this->endTime = microtime(true);
-		$this->terminated = true;
-		$this->running = false;
-		$this->exitCode = $this->process->getExitCode();
-
-		$diff = $this->endTime - $this->process->getStartTime();
-		$this->duration = sprintf('%.2f%s', $diff < 1 ? $diff * 1000 : $diff, $diff < 1 ? 'ms' : 's');
-		yield true;
+		$this->cleanup();
 	}
 
-	public function getData()
-	{
-		return $this->data;
-	}
-
-	public function getStdErr(): string
-	{
-		return isset($this->ipc) ? '' : $this->process->getErrorOutput();
-	}
-
-//	public function __destruct() {
+//	public function isRunning(): bool
+//	{
+//		if ($this->pid === null) {
 //
-//		if (isset($this->ipc)) {
-//
-//			$this->ipc->release();
+//			return false;
 //		}
+//
+//		$this->status = proc_get_status($this->process);
+//		return $this->status['running'];
 //	}
 
-	public function isStopped(): bool
-	{
-		return $this->stopped;
-	}
+//	public function isTerminated(): bool
+//	{
+//
+//		return !$this->isRunning();
+//	}
 
-	public function setTimeout(float $timeout): void
+	/**
+	 * @return void
+	 */
+	public function cleanup(): void
 	{
-		$this->process->setTimeout($timeout);
-	}
+//		$this->status = proc_get_status($this->process);
 
-	public function getTimeout(): ?float
-	{
-		return $this->process->getTimeout();
+		if ($this->process) {
+
+			$this->running = false;
+			$this->terminated = true;
+			$this->endTime = microtime(true);
+
+			$this->exitCode = max(0, $this->status['exitcode']);
+
+			$this->err = stream_get_contents($this->pipes[2]);
+
+			fclose($this->pipes[1]);
+			fclose($this->pipes[2]);
+
+			proc_close($this->process);
+			$this->process = null;
+			$this->pid = null;
+
+			$this->pipes = [];
+		}
 	}
 }

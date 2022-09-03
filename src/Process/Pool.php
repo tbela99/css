@@ -10,10 +10,6 @@ use TBela\CSS\Process\Exceptions\UnhandledException;
 use TBela\CSS\Process\MultiProcessing\Process;
 use TBela\CSS\Process\Thread\PCNTL\Thread;
 
-//use TBela\CSS\Process\Thread\PCNTL\Exceptions;
-//use TBela\CSS\Process\Thread\PCNTL\Thread;
-//
-
 /**
  * Simple thread pool manager using pcntl extension
  *
@@ -50,6 +46,10 @@ class Pool implements PoolInterface
 {
 	use EventTrait;
 
+	/**
+	 * @var string|null default engine
+	 */
+	protected ?string $engine = null;
 	protected ?ProcessInterface $current = null;
 	protected ?int $startTime = null;
 
@@ -59,22 +59,13 @@ class Pool implements PoolInterface
 	/**
 	 * @var int time in nanoseconds
 	 */
-	protected int $sleepTime = 90;
+	protected int $sleepTime = 33000;
 	protected \SplObjectStorage $storage;
 
-	protected int $timeout = 15;
-
-	/**
-	 * @var ProcessInterface[]
-	 */
+	protected int $timeout = 30;
 
 	public function __construct()
 	{
-
-		if (!static::isSupported()) {
-
-			throw new \RuntimeException('"pcntl" extension is required', 500);
-		}
 
 		$this->storage = new \SplObjectStorage();
 		$this->concurrency = Helper::getCPUCount() * 2;
@@ -84,6 +75,45 @@ class Pool implements PoolInterface
 	{
 
 		return Thread::isSupported() || Process::isSupported();
+	}
+
+	public static function getAvailableEngines(): array
+	{
+
+		$result = [];
+
+		if (Thread::isSupported()) {
+
+			$result[] = 'thread';
+		}
+
+		if (Process::isSupported()) {
+
+			$result[] = 'process';
+		}
+
+		return $result;
+	}
+
+	public function getEngine(): ?string
+	{
+
+		return $this->engine;
+	}
+
+	public function setEngine(?string $engine)
+	{
+
+		if ($engine == 'thread' && Thread::isSupported()) {
+
+			$this->engine = 'thread';
+		} else if ($engine == 'process' && Process::isSupported()) {
+
+			$this->engine = 'process';
+		} else if (is_null($engine)) {
+
+			$this->engine = null;
+		}
 	}
 
 	public function createProcess(Closure $closure): ProcessInterface
@@ -102,15 +132,13 @@ class Pool implements PoolInterface
 		throw new \RuntimeException('cannot create process');
 	}
 
-	/**
-	 */
 	public function add(Closure $closure): static
 	{
 
-		$this->current = $this->createProcess($closure)->on('notify', function (ProcessInterface $thread) {
+		$this->current = $this->createProcess($closure)/* ->on('notify', function (ProcessInterface $thread) {
 
 			$this->collect($thread);
-		});
+		})*/;
 
 		$this->current->setTimeout($this->timeout);
 
@@ -161,9 +189,7 @@ class Pool implements PoolInterface
 							$running = max(0, $running - 1);
 						}
 					}
-				}
-
-				catch (\Throwable $e) {
+				} catch (\Throwable $e) {
 
 					if ($e instanceof TimeoutException) {
 
@@ -245,15 +271,13 @@ class Pool implements PoolInterface
 		} else if ($class instanceof \ReflectionNamedType) {
 
 			$data->error[$class->getName()] = $callable;
-		}
-
-		else  if ($class instanceof \ReflectionUnionType || (class_exists('\\ReflectionIntersectionType') && $data instanceof \ReflectionIntersectionType)) {
+		} else if ($class instanceof \ReflectionUnionType || (class_exists('\\ReflectionIntersectionType') && $data instanceof \ReflectionIntersectionType)) {
 
 			foreach ($class->getTypes() as $type) {
 
 				$this->assignErrorHandler($data, $callable, $type);
 			}
-	}
+		}
 	}
 
 	public function setConcurrency(int $concurrency): static
@@ -279,11 +303,8 @@ class Pool implements PoolInterface
 	public function wait(): static
 	{
 
-//		static $count = 0;
-
 		while ($this->check()) {
 
-//			fwrite(STDERR, sprintf("pool waiting %d\n", $count++));
 			time_nanosleep(0, $this->sleepTime);
 		}
 
@@ -341,7 +362,7 @@ class Pool implements PoolInterface
 			call_user_func($handler, $e);
 		} else {
 
-			throw new UnhandledException($e->getMessage(), $e->getCode(), $e);
+			throw new UnhandledException("unhandled exception", $e->getCode(), $e);
 		}
 	}
 }

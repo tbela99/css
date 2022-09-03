@@ -2,12 +2,13 @@
 
 namespace TBela\CSS\Process;
 
+use Generator;
+use RuntimeException;
 use TBela\CSS\Event\EventInterface;
 use TBela\CSS\Process\Exceptions\IllegalStateException;
 
 interface ProcessInterface extends EventInterface
 {
-
 
 	public function start(): void;
 
@@ -29,6 +30,10 @@ interface ProcessInterface extends EventInterface
 
 	public function getDuration(): ?string;
 
+	public function getPid(): ?int;
+
+//	public function kill(int $pid): bool;
+
 	public function getExitCode(): ?int;
 
 	public function setTimeout(float $timeout): void;
@@ -37,12 +42,12 @@ interface ProcessInterface extends EventInterface
 
 	/**
 	 * @param int $waitTimeout timeout in nanoseconds
-	 * @return \Generator
+	 * @return Generator
 	 * @throws IllegalStateException
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 
-	public function check(int $waitTimeout): \Generator;
+	public function check(int $waitTimeout): Generator;
 
 	public function getData();
 

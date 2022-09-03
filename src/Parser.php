@@ -4,6 +4,7 @@ namespace TBela\CSS;
 
 use Closure;
 use Exception;
+use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
@@ -23,11 +24,9 @@ class Parser implements ParsableInterface, \Stringable
 
 	use ParserTrait;
 
-	protected ?ProcessPool $processPool;
-
 	/**
 	 * @var ValidatorInterface[]
-	 */
+//	 */
 	protected static array $validators = [];
 
 	protected array $context = [];
@@ -51,9 +50,6 @@ class Parser implements ParsableInterface, \Stringable
 		'flatten_import' => false,
 		'allow_duplicate_rules' => ['font-face'], // set to true for speed
 		'allow_duplicate_declarations' => true,
-//		'multi_threading' => true,
-		// 64k
-//		'multi_threading_threshold' => 65536,
 		'multi_processing' => true,
 		// buffer size 32k. higher values may break the execution
 		'multi_processing_threshold' => 64 * 1024,
@@ -78,6 +74,11 @@ class Parser implements ParsableInterface, \Stringable
 	protected string $format = 'serialize';
 
 	protected array $processPoolEvents = [];
+
+	/**
+	 * @var array<string, callable>
+	 */
+	protected array $events = [];
 
 	/**
 	 * Parser constructor.
@@ -115,22 +116,9 @@ class Parser implements ParsableInterface, \Stringable
 
 		if (str_starts_with($event, 'pool.')) {
 
-			$event = substr($event, 5);
+			$this->processPoolEvents[substr($event, 5)][] = $callable;
 
-			$pool = $this->threadPool ?? null;
-
-			if (isset($pool)) {
-
-				$pool->on($event, $callable);
-			}
-
-			else {
-
-				$this->processPoolEvents[$event][] = $callable;
-			}
-		}
-
-		else {
+		} else {
 
 			$this->lexer->on($event, $callable);
 		}
@@ -146,49 +134,63 @@ class Parser implements ParsableInterface, \Stringable
 	public function off(string $event, callable $callable): static
 	{
 
-		$this->lexer->off($event, $callable);
+		if (str_starts_with($event, 'pool.')) {
+
+			$event = substr($event, 5);
+
+			if (isset($this->processPoolEvents[$event])) {
+
+				$this->processPoolEvents[$event] = array_filter($this->processPoolEvents[$event], function ($val) use ($callable) {
+
+					return $val != $callable;
+				});
+
+				if (empty($this->processPoolEvents[$event])) {
+
+					unset($this->processPoolEvents[$event]);
+				}
+			}
+
+		} else {
+
+			$this->lexer->on($event, $callable);
+		}
+
 		return $this;
 	}
 
 	/**
-	 * @param bool|string $content
+	 * @param string $content
 	 * @param object $root
 	 * @param string $file
 	 * @return void
-	 * @throws \TBela\CSS\Process\Thread\PCNTL\Exceptions\IllegalStateException
 	 */
-	public function parallelize(bool|string $content, object $root, string $file)
+	public function parallelize(string $content, object $root, string $file): void
 	{
 		$data = [];
 
-		if (!isset($this->processPool)) {
-
-			$this->processPool = (new ProcessPool())->
-			on('finish', function (array $result, int $index) use (&$data) {
-
-				$data[$index] = $result;
-			});
+			$processPool = (new ProcessPool());
 
 			foreach ($this->processPoolEvents as $event => $callables) {
 
 				foreach ($callables as $callable) {
 
-					$this->processPool->on($event, $callable);
+					$processPool->on($event, $callable);
 				}
 			}
-		}
 
-		// min  65k
-		$size = min($this->options['multi_processing_threshold'], strlen($content) / 2);
-
+		$len = strlen($content);
 		$options = $this->options;
+
+			// min  65k
+			$size = min($this->options['multi_processing_threshold'], $len / 2);
+			$options['multi_processing'] = false;
 
 		foreach ($this->slice($content, $size, $root->location->end) as $slice) {
 
-			$this->processPool->add(function () use ($file, $slice, $options): array {
+			$processPool->add(function () use ($file, $slice, $options): array {
 
 				$parser = new Parser($slice[0], array_merge($options, [
-					'multi_processing' => false,
 					'ast_src' => $file,
 					'ast_position_line' => $slice[1]->line,
 					'ast_position_column' => $slice[1]->column,
@@ -196,10 +198,14 @@ class Parser implements ParsableInterface, \Stringable
 				]));
 
 				return $parser->getAst()->children ?? [];
+			})->
+			then(function (array $result, int $index) use (&$data) {
+
+				$data[$index] = $result;
 			});
 		}
 
-		$this->processPool->wait();
+		$processPool->wait();
 
 		ksort($data);
 
@@ -596,7 +602,7 @@ class Parser implements ParsableInterface, \Stringable
 							$pool = new ProcessPool();
 						}
 
-						$pool->add(function () use($file, $options) {
+						$pool->add(function () use ($file, $options) {
 
 							return (new Parser('', $options))->load($file)->getAst()->children ?? [];
 						})->then(function ($result, $index, $stderr, $exitCode /*, $thread */) use ($media, $token, $file) {
@@ -1117,7 +1123,7 @@ class Parser implements ParsableInterface, \Stringable
 	public function slice($css, $size, $position): \Generator
 	{
 
-		$i = ($position->index ?? 0) - 1;
+		$i = -1; // ($position->index ?? 0) - 1;
 		$j = strlen($css) - 1;
 
 		$buffer = '';
@@ -1148,7 +1154,7 @@ class Parser implements ParsableInterface, \Stringable
 			if (strlen($buffer) >= $size) {
 
 				$k = 0;
-				while (static::is_whitespace($buffer[$k])) {
+				while ($k < $j && static::is_whitespace($buffer[$k])) {
 
 					$k++;
 				}
@@ -1162,7 +1168,8 @@ class Parser implements ParsableInterface, \Stringable
 				}
 
 				$pos = clone $position;
-				$pos->index++;
+
+				$pos->index = max(0, $pos->index - 1);
 
 				yield [$buffer, $pos];
 
@@ -1196,15 +1203,15 @@ class Parser implements ParsableInterface, \Stringable
 		if (trim($buffer) !== '') {
 
 			$pos = clone $position;
-			$pos->index++;
+//			$pos->index++;
+			$pos->index = max(0, $pos->index - 1);
+//			$pos->column = max(1, $pos->column - 1);
 
 			yield [$buffer, $pos];
 			$this->update($position, $buffer);
-			$position->index += strlen($buffer) - 1;
-		}
+			$position->index += strlen($buffer);
 
-		$position->index = max(0, $position->index - 1);
-		$position->column = max(1, $position->column - 1);
+		}
 	}
 
 	public function __toString(): string
