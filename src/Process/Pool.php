@@ -49,7 +49,7 @@ class Pool implements PoolInterface
 	/**
 	 * @var string|null default engine
 	 */
-	protected ?string $engine = null;
+	protected static ?string $engine = null;
 	protected ?ProcessInterface $current = null;
 	protected ?int $startTime = null;
 
@@ -95,24 +95,24 @@ class Pool implements PoolInterface
 		return $result;
 	}
 
-	public function getEngine(): ?string
+	public static function getEngine(): ?string
 	{
 
-		return $this->engine;
+		return static::$engine;
 	}
 
-	public function setEngine(?string $engine)
+	public static function setEngine(?string $engine)
 	{
 
 		if ($engine == 'thread' && Thread::isSupported()) {
 
-			$this->engine = 'thread';
+			static::$engine = 'thread';
 		} else if ($engine == 'process' && Process::isSupported()) {
 
-			$this->engine = 'process';
+			static::$engine = 'process';
 		} else if (is_null($engine)) {
 
-			$this->engine = null;
+			static::$engine = null;
 		}
 	}
 

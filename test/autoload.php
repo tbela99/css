@@ -19,3 +19,8 @@ spl_autoload_register(function  ($name) {
 		require_once ($path);
 	}
 });
+
+// force multithreading or multiprocessing
+
+\TBela\CSS\Process\Pool::setEngine(getenv('PROCESS_ENGINE'));
+putenv('PROCESS_ENGINE');

@@ -17,6 +17,7 @@ if [ ! -f "../vendor/bin/phpunit" ]; then
 fi
 
 unset DIR
+TEST_PCNTL=$(php -m | grep pcntl)
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -34,6 +35,12 @@ run() {
   #
   #  set -x
   php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+
+  if [ -n "$TEST_PCNTL" ]; then
+
+    PROCESS_ENGINE=process php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+    # unset $PROCESS_ENGINE
+  fi
   #  set +x
 }
 
