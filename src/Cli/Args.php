@@ -3,7 +3,11 @@
 namespace TBela\CSS\Cli;
 
 
+use InvalidArgumentException;
+use TBela\CSS\Cli\Exceptions\DuplicateArgumentException;
 use TBela\CSS\Cli\Exceptions\MissingParameterException;
+use UnexpectedValueException;
+use ValueError;
 
 class Args
 {
@@ -55,6 +59,11 @@ class Args
 		return $this;
 	}
 
+	/**
+	 * enable or disable strict mode. in strict mode, all arguments must be declared
+	 * @param bool $strict
+	 * @return $this
+	 */
 	public function setStrict(bool $strict): static
 	{
 
@@ -62,7 +71,7 @@ class Args
 		return $this;
 	}
 
-	public function getGroups()
+	public function getGroups(): array
 	{
 
 		return $this->groups;
@@ -97,22 +106,9 @@ class Args
 			$this->settings['requires'][$name] = (array)$dependsOn;
 		}
 
-		if (!is_null($alias) && $alias !== '' && $alias != []) {
+		if (!is_null($alias) && $alias !== '' && $alias !== []) {
 
-			foreach ((array)$alias as $a) {
-
-				if (!preg_match('#^[a-zA-Z]$#', $a)) {
-
-					throw new \InvalidArgumentException(sprintf("command option must be a letter [a-zA-Z]: '%s'", $a));
-				}
-
-				if (isset($this->alias[$a])) {
-
-					throw new \InvalidArgumentException(sprintf("duplicated alias '%s' for the flag '%s' is already defined by command '%s'", $a, $name, $this->alias[$a]));
-				}
-
-				$this->alias[$a] = $name;
-			}
+			$this->alias($name, $alias);
 		}
 
 		return $this;
@@ -128,6 +124,7 @@ class Args
 		$argc = count($this->argv);
 
 		$args = [];
+		$flags = [];
 		$this->args = [];
 
 		$flagReg = '#^((--?)([a-zA-Z][a-zA-Z\d_-]*))(=.*)?$#';
@@ -135,7 +132,7 @@ class Args
 		$i = 0;
 
 		/**
-		 * @var Option[]
+		 * @var Option[] $dynamicArgs
 		 */
 		$dynamicArgs = [];
 
@@ -172,6 +169,7 @@ class Args
 
 					$names = str_split($name);
 					$name = array_pop($names);
+					$flags[$name] = $name;
 				}
 
 				try {
@@ -191,23 +189,24 @@ class Args
 					while ($k--) {
 
 						$name = $names[$k];
+						$flags[$name] = $name;
 
 						$option = $this->parseFlag($name, $dynamicArgs);
 
 						$option->addValue(true);
 					}
-				} catch (\ValueError $e) {
+				} catch (ValueError) {
 
-					throw new \ValueError(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
-				} catch (\UnexpectedValueException $e) {
+					throw new ValueError(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				} catch (UnexpectedValueException) {
 
-					throw new \UnexpectedValueException(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
-				} catch (Exceptions\UnknownParameterException $e) {
+					throw new UnexpectedValueException(sprintf("%s: invalid value specified for -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+				} catch (Exceptions\UnknownParameterException) {
 
 					throw new Exceptions\UnknownParameterException(sprintf("%s: unknown parameter -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
-				} catch (\InvalidArgumentException $e) {
+				} catch (InvalidArgumentException) {
 
-					throw new \InvalidArgumentException(sprintf("%s: expected string value -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
+					throw new InvalidArgumentException(sprintf("%s: expected string value -- '%s'\nTry '%s --help'\n", $this->exe, $name, $this->exe), 1);
 				}
 
 			} else {
@@ -247,13 +246,13 @@ class Args
 		}
 
 
-		if (array_key_exists('help', $result) || array_key_exists('h', $result)) {
+		if (array_key_exists('help', $result) ) {
 
-			echo $this->help(array_key_exists($result, 'help'));
+			echo $this->showHelp(!array_key_exists('h', $flags));
 			exit;
 		}
 
-		else if (array_key_exists('version', $result)) {
+		else if (!empty($this->version) && array_key_exists('version', $result)) {
 
 			echo $this->version;
 			exit;
@@ -271,19 +270,39 @@ class Args
 		return $this->args;
 	}
 
-	public function setVersion(string $info)
+	/**
+	 * @throws DuplicateArgumentException
+	 */
+	public function setVersion(string $info, string $description = 'display version info', string $flag = 'version'): static
 	{
 
+		unset($this->flags[$flag]);
+
+		$this->add($flag, $description, Option::BOOL);
 		$this->version = $info;
+
 		return $this;
 	}
 
-	public function getExe() {
+	public function getExe(): string
+	{
 
 		return $this->exe;
 	}
 
-	public function help($extended = false): string
+	/**
+	 * @throws DuplicateArgumentException
+	 */
+	public function help(string $flag = 'help', string $description = 'display this help menu'): static
+	{
+
+		unset($this->flags[$flag]);
+
+		$this->add($flag, $description, Option::BOOL);
+		return $this;
+	}
+
+	public function showHelp($extended = false): string
 	{
 
 		$output = '';
@@ -293,8 +312,6 @@ class Args
 
 			$output .= $this->printGroupHelp($groups['default'], $extended) . "\n";
 		}
-
-		$output .= "-h\tprint help\n--help\tprint extended help\n\n";
 
 		unset($groups['default']);
 
@@ -376,7 +393,7 @@ class Args
 
 		foreach ($args as $arg) {
 
-			$output .= str_pad($arg['flags'], $length, " ") . "\t" . $arg['description'] . "\n";
+			$output .= str_pad($arg['flags'], $length) . "\t" . $arg['description'] . "\n";
 		}
 
 		return rtrim($output);
@@ -419,5 +436,30 @@ class Args
 		}
 
 		return $option;
+	}
+
+	/**
+	 * @param array|string $alias
+	 * @param string $name
+	 * @return Args
+	 */
+	public function alias(string $name, array|string $alias): static
+	{
+		foreach ((array)$alias as $a) {
+
+			if (!preg_match('#^[a-zA-Z]$#', $a)) {
+
+				throw new InvalidArgumentException(sprintf("command option must be a single letter [a-zA-Z]: '%s'", $a));
+			}
+
+			if (isset($this->alias[$a])) {
+
+				throw new InvalidArgumentException(sprintf("duplicated alias '%s' for the flag '%s' is already defined by command '%s'", $a, $name, $this->alias[$a]));
+			}
+
+			$this->alias[$a] = $name;
+		}
+
+		return $this;
 	}
 }

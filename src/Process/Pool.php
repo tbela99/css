@@ -7,8 +7,8 @@ use Opis\Closure\SerializableClosure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
+use ReflectionType;
 use ReflectionUnionType;
-use RuntimeException;
 use SplObjectStorage;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Process\Exceptions\TimeoutException;
@@ -26,9 +26,9 @@ use Throwable;
  *
  *        $pool = new Pool();
  *
- *    $pool->on('finish', function (mixed $data, int $index, ?string $stderr, int $exitCode, ProcessInterface $thread) {
+ *    $pool->on('finish', function (mixed $data, int $index, ?string $stderr, int $exitCode, ProcessInterface $process) {
  *
- *            echo "sprintf(thread $index completed in %dns\n", $thread->getDuration());
+ *            echo "sprintf(thread $index completed in %dns\n", $process->getDuration());
  *            var_dump($data);
  *    }
  *
@@ -115,7 +115,7 @@ class Pool implements PoolInterface
 		return $this;
 	}
 
-	public function getEngine()
+	public function getEngine(): string
 	{
 
 		return $this->engine;
@@ -289,7 +289,7 @@ class Pool implements PoolInterface
 		return $this;
 	}
 
-	protected function assignErrorHandler(object $data, Closure $callable, ?\ReflectionType $class)
+	protected function assignErrorHandler(object $data, Closure $callable, ?ReflectionType $class)
 	{
 
 		if (is_null($class)) {

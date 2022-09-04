@@ -31,8 +31,14 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 install using [Composer](https://getcomposer.org/)
 
+### PHP version >= 8.0
 ```bash
 $ composer require tbela99/css
+```
+
+### PHP version >= 5.6
+```bash
+$ composer require "tbela99/css:dev-php56-backport"
 ```
 
 ## Requirements

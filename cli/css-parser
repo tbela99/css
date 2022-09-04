@@ -10,7 +10,7 @@ use TBela\CSS\Renderer;
 require __DIR__ . '/../vendor/autoload.php';
 
 // only use from the cli
-if (php_sapi_name() != 'cli') {
+if (PHP_SAPI != 'cli') {
 
     fwrite(STDERR, 'this program must be executed from the cli');
     exit(1);
@@ -35,6 +35,7 @@ spl_autoload_register(function ($name) {
 });
 
 $cli = new Args($argv);
+$exe = $cli->getExe();
 
 try {
 
@@ -49,14 +50,13 @@ Dual licensed under MIT or LGPL v3\n", $cli->getExe(), $data['version'], date('Y
         }, $metadata['authors'])));
 
     $cli->
-    setStrict(true)->
-        add('version', 'print version info', Option::BOOL, 'v', multiple: false)
+    setStrict(true)
         ->addGroup('parse', "Parse options:\n")
         ->add('capture-errors', 'ignore parse error', Option::BOOL, 'e', multiple: false, group: 'parse')
         ->add('flatten-import', 'process @import', Option::BOOL, 'm', multiple: false, group: 'parse')
         ->add('parse-allow-duplicate-rules', 'allow duplicate rule', Option::BOOL, 'p', multiple: false, group: 'parse')
         ->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: Option::AUTO, alias: 'd', multiple: false, group: 'parse')
-        ->add('file', 'input css file or url', Option::STRING, 'f', multiple: true, group: 'parse')
+        ->add('file', 'input css file or url', Option::STRING, 'f', group: 'parse')
         ->add('parse-multi-processing', 'enable multi-processing parser', Option::BOOL, 'M', multiple: false, defaultValue: true, group: 'parse')
         ->add('parse-children-process', 'maximum children process', Option::INT, 'P', multiple: false, defaultValue: 20, group: 'parse')
         ->add('input-format', 'input format: json (ast), string (plain css)', Option::STRING, 'I', multiple: false, defaultValue: 'string', options: ['string', 'json'], group: 'parse')
@@ -76,6 +76,9 @@ Dual licensed under MIT or LGPL v3\n", $cli->getExe(), $data['version'], date('Y
         ->add('ast', 'dump ast as JSON', Option::BOOL, 'a', multiple: false, group: 'render')
         ->add('render-multi-processing', "enable multi-processing renderer", Option::BOOL, 'R', multiple: false, defaultValue: true, group: 'render')
         ->setVersion($version)
+        ->alias('version', 'v')
+        ->help()
+        ->alias('help', 'h')
         ->parse();
 
     $parseOptions = [];
@@ -224,7 +227,7 @@ Dual licensed under MIT or LGPL v3\n", $cli->getExe(), $data['version'], date('Y
     fwrite(STDERR, sprintf("%s: %s\nTry '%s --help'\n", $exe, $e->getMessage(), $exe));
     $code = $e->getCode();
     exit($code == 0 ? 1 : $code);
-} catch (Exception $e) {
+} catch (Throwable $e) {
 
     fwrite(STDERR, $e->getMessage() . "\n");
     exit(1);
