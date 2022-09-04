@@ -34,13 +34,21 @@ run() {
 
   #
   #  set -x
-  php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+  result="0"
+
+  PROCESS_ENGINE=process php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
+
+  if [ "$result" -gt 0 ]
+  then
+    return "$result"
+  fi
 
   if [ -n "$TEST_PCNTL" ]; then
-
-    PROCESS_ENGINE=process php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@"
+    PROCESS_ENGINE=thread php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
     # unset $PROCESS_ENGINE
   fi
+
+  return "$result"
   #  set +x
 }
 

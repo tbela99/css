@@ -18,9 +18,9 @@ class JSONSerializer extends Serializer
 	/**
 	 * @inheritDoc
 	 */
-	public function decode(string $data): mixed
+	public function decode(string $data, int $options = 0): mixed
 	{
-		return json_decode($data);
+		return json_decode($data, $options);
 	}
 
 	public function getName(): string

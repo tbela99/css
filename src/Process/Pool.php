@@ -4,11 +4,18 @@ namespace TBela\CSS\Process;
 
 use Closure;
 use Opis\Closure\SerializableClosure;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
+use ReflectionUnionType;
+use RuntimeException;
+use SplObjectStorage;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Process\Exceptions\TimeoutException;
 use TBela\CSS\Process\Exceptions\UnhandledException;
 use TBela\CSS\Process\MultiProcessing\Process;
 use TBela\CSS\Process\Thread\PCNTL\Thread;
+use Throwable;
 
 /**
  * Simple thread pool manager using pcntl extension
@@ -60,14 +67,14 @@ class Pool implements PoolInterface
 	 * @var int time in nanoseconds
 	 */
 	protected int $sleepTime = 33000;
-	protected \SplObjectStorage $storage;
+	protected SplObjectStorage $storage;
 
 	protected int $timeout = 30;
 
 	public function __construct()
 	{
 
-		$this->storage = new \SplObjectStorage();
+		$this->storage = new SplObjectStorage();
 		$this->concurrency = Helper::getCPUCount() * 2;
 	}
 
@@ -98,7 +105,7 @@ class Pool implements PoolInterface
 	public static function getEngine(): ?string
 	{
 
-		return static::$engine;
+		return static::$engine ?? current(static::getAvailableEngines());
 	}
 
 	public static function setEngine(?string $engine)
@@ -118,6 +125,13 @@ class Pool implements PoolInterface
 
 	public function createProcess(Closure $closure): ProcessInterface
 	{
+		if (!empty(static::$engine)) {
+
+			return match (static::$engine) {
+				'thread' => new Thread($closure),
+				default => new Process($closure),
+			};
+		}
 
 		if (Thread::isSupported()) {
 
@@ -129,9 +143,13 @@ class Pool implements PoolInterface
 			return new Process($closure);
 		}
 
-		throw new \RuntimeException('cannot create process');
+		throw new RuntimeException('cannot create process');
 	}
 
+	/**
+	 * @throws ReflectionException
+	 * @throws UnhandledException
+	 */
 	public function add(Closure $closure): static
 	{
 
@@ -149,7 +167,7 @@ class Pool implements PoolInterface
 	}
 
 	/**
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 * @throws UnhandledException
 	 */
 	protected function check($collect = true): bool
@@ -189,7 +207,7 @@ class Pool implements PoolInterface
 							$running = max(0, $running - 1);
 						}
 					}
-				} catch (\Throwable $e) {
+				} catch (Throwable $e) {
 
 					if ($e instanceof TimeoutException) {
 
@@ -234,7 +252,7 @@ class Pool implements PoolInterface
 		$this->emit('finish', $result, $index, $stderr, $exitCode, $duration, $thread);
 	}
 
-	public function then(\Closure $callable): static
+	public function then(Closure $callable): static
 	{
 
 		$process = $this->current;
@@ -246,7 +264,7 @@ class Pool implements PoolInterface
 		return $this;
 	}
 
-	public function catch(\Closure $callable): static
+	public function catch(Closure $callable): static
 	{
 
 		$process = $this->current;
@@ -262,16 +280,16 @@ class Pool implements PoolInterface
 		return $this;
 	}
 
-	protected function assignErrorHandler(object $data, \Closure $callable, ?\ReflectionType $class)
+	protected function assignErrorHandler(object $data, Closure $callable, ?\ReflectionType $class)
 	{
 
 		if (is_null($class)) {
 
 			$data->error['generic'] = $callable;
-		} else if ($class instanceof \ReflectionNamedType) {
+		} else if ($class instanceof ReflectionNamedType) {
 
 			$data->error[$class->getName()] = $callable;
-		} else if ($class instanceof \ReflectionUnionType || (class_exists('\\ReflectionIntersectionType') && $data instanceof \ReflectionIntersectionType)) {
+		} else if ($class instanceof ReflectionUnionType || (class_exists('\\ReflectionIntersectionType') && $data instanceof \ReflectionIntersectionType)) {
 
 			foreach ($class->getTypes() as $type) {
 
@@ -300,6 +318,10 @@ class Pool implements PoolInterface
 		return $this;
 	}
 
+	/**
+	 * @throws ReflectionException
+	 * @throws UnhandledException
+	 */
 	public function wait(): static
 	{
 
@@ -330,15 +352,15 @@ class Pool implements PoolInterface
 	}
 
 	/**
-	 * @param \Throwable $e
+	 * @param Throwable $e
 	 * @param $data
 	 * @return void
 	 * @throws UnhandledException
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
-	protected function handleException(\Throwable $e, $data): void
+	protected function handleException(Throwable $e, $data): void
 	{
-		$class = new \ReflectionClass($e::class);
+		$class = new ReflectionClass($e::class);
 
 		while ($class) {
 
@@ -362,7 +384,7 @@ class Pool implements PoolInterface
 			call_user_func($handler, $e);
 		} else {
 
-			throw new UnhandledException("unhandled exception", $e->getCode(), $e);
+			throw new UnhandledException(sprintf("unhandled exception in task #%d", $data->index), $e->getCode(), $e);
 		}
 	}
 }

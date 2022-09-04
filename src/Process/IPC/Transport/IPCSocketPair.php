@@ -2,6 +2,8 @@
 
 namespace TBela\CSS\Process\IPC\Transport;
 
+use Generator;
+use RuntimeException;
 use TBela\CSS\Process\IPC\IPC;
 
 class IPCSocketPair extends IPC
@@ -15,7 +17,7 @@ class IPCSocketPair extends IPC
 
 		if (!socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $this->pair)) {
 
-			throw new \RuntimeException("Can't create sockets pair", 500);
+			throw new RuntimeException("Can't create sockets pair", 500);
 		}
 	}
 
@@ -46,7 +48,7 @@ class IPCSocketPair extends IPC
 		}
 	}
 
-	public function read(int $waitTimeout = 1): \Generator
+	public function read(int $waitTimeout = 1): Generator
 	{
 
 		$buffer = '';
@@ -58,7 +60,7 @@ class IPCSocketPair extends IPC
 			$write = null;
 			$except = null;
 
-			$changed = socket_select($read, $write, $except, $seconds, $waitTimeout - 1000 * $seconds);
+			$changed = @socket_select($read, $write, $except, $seconds, $waitTimeout - 1000 * $seconds);
 
 			if ($changed === false) {
 
@@ -66,7 +68,7 @@ class IPCSocketPair extends IPC
 
 				if ($status) {
 
-					throw new \RuntimeException(socket_strerror($status), 500);
+					throw new RuntimeException(socket_strerror($status), 500);
 				}
 			}
 

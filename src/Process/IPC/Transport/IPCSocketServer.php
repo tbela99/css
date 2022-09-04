@@ -2,6 +2,8 @@
 
 namespace TBela\CSS\Process\IPC\Transport;
 
+use Generator;
+use RuntimeException;
 use TBela\CSS\Process\IPC\IPC;
 
 class IPCSocketServer extends IPC
@@ -17,7 +19,7 @@ class IPCSocketServer extends IPC
 
 		if (!($this->socket = socket_create(AF_UNIX, strcasecmp(substr(PHP_OS, 0, 3), 'win') === 0 ? SOCK_STREAM : SOCK_DGRAM, 0))) {
 
-			throw new \RuntimeException("Can't create socket", 500);
+			throw new RuntimeException("Can't create socket", 500);
 		}
 
 		if (is_null($path)) {
@@ -36,12 +38,12 @@ class IPCSocketServer extends IPC
 
 		if (!socket_bind($this->socket, $this->path)) {
 
-			throw new \RuntimeException("socket can't bind to $this->path", 500);
+			throw new RuntimeException("socket can't bind to $this->path", 500);
 		}
 
 		if (!socket_set_nonblock($this->socket)) {
 
-			throw new \RuntimeException("socket can't set non blocking socket", 500);
+			throw new RuntimeException("socket can't set non blocking socket", 500);
 		}
 	}
 
@@ -61,7 +63,7 @@ class IPCSocketServer extends IPC
 	{
 	}
 
-	public function read(int $waitTimeout = 1): \Generator
+	public function read(int $waitTimeout = 1): Generator
 	{
 
 		$buffer = '';
@@ -76,7 +78,7 @@ class IPCSocketServer extends IPC
 
 			if ($changed === false) {
 
-				throw new \RuntimeException(socket_strerror(socket_last_error($this->socket)), 500);
+				throw new RuntimeException(socket_strerror(socket_last_error($this->socket)), 500);
 			}
 
 			if (empty($read)) {
@@ -89,7 +91,7 @@ class IPCSocketServer extends IPC
 
 			if ($bytes_received === false) {
 
-				throw new \RuntimeException(sprintf("Can't read from socket: %s", socket_strerror(socket_last_error($this->socket))), 500);
+				throw new RuntimeException(sprintf("Can't read from socket: %s", socket_strerror(socket_last_error($this->socket))), 500);
 			}
 
 			$buffer .= $data;

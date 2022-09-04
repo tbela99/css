@@ -4,15 +4,15 @@ namespace TBela\CSS;
 
 use axy\sourcemap\SourceMap;
 use Exception;
-use Generator;
+use stdClass;
 use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
-use TBela\CSS\Parser\ProcessTrait;
 use TBela\CSS\Parser\SyntaxError;
+use TBela\CSS\Process\Pool as ProcessPool;
 use TBela\CSS\Property\PropertyList;
 use function is_string;
 
@@ -22,8 +22,6 @@ use function is_string;
  */
 class Renderer
 {
-
-	use ProcessTrait;
 
 	protected array $options = [
 		'glue' => "\n",
@@ -53,9 +51,6 @@ class Renderer
 	protected array $indents = [];
 	protected ?SourceMap $sourcemap;
 
-	// 'serialize-array' or 'json-array'
-	protected string $format = 'serialize-array';
-
 	/**
 	 * Identity constructor.
 	 * @param array $options
@@ -67,143 +62,11 @@ class Renderer
 		$this->setOptions($options);
 	}
 
-	public function getCliArgs(array $parseOptions, array $renderOptions): array
-	{
-
-		$args = [
-			'--parse-multi-processing=off'
-		];
-
-		if (empty($parseOptions['capture_errors'])) {
-			// default is on
-			$args[] = '--capture-errors=off';
-		}
-
-		if (!empty($parseOptions['ast_src'])) {
-			// default is on
-			$args[] = sprintf('--parse-ast-src=%s', $parseOptions['ast_src']);
-		}
-
-		if (!empty($parseOptions['flatten_import'])) {
-			// default is off
-			$args[] = '--flatten-import=on';
-		}
-
-		if ($parseOptions['ast_src'] ?? '') {
-			// default is off
-			$args[] = '--parse-ast-src=' . $parseOptions['ast_src'];
-		}
-
-		if (empty($parseOptions['allow_duplicate_declarations'])) {
-			// default is on
-			$args[] = '--parse-allow-duplicate-declarations==off';
-		}
-
-		$args[] = '--render-multi-processing=off';
-
-		foreach ([
-//					 'glue' => "\n",
-//					 'indent' => ' ',
-//					 'css_level' => 4,
-//					 'separator' => ' ',
-					 'charset' => false,
-					 'compress' => false,
-//					 'sourcemap' => false,
-					 'convert_color' => false,
-					 'remove_comments' => false,
-					 'preserve_license' => false,
-					 'legacy_rendering' => false,
-					 'compute_shorthand' => true,
-					 'remove_empty_nodes' => false,
-					 'allow_duplicate_declarations' => false,
-					 'multi_processing' => true
-				 ] as $key => $value) {
-
-			if (!isset($renderOptions[$key]) || $renderOptions[$key] === $value) {
-
-				continue;
-			}
-
-			$args[] = sprintf('--%s%s=%s', $key == 'allow_duplicate_declarations' ? 'render-' : '', str_replace('_', '-', $key), is_bool($renderOptions[$key]) ? ($renderOptions[$key] ? 'on' : 'off') : $renderOptions[$key]);
-		}
-
-		$args[] = '--output-format=' . $this->format;
-
-		return $args;
-	}
-
-	public function slice($css, $size): Generator
-	{
-
-		$i = -1;
-		$j = strlen($css) - 1;
-
-		$buffer = '';
-
-		while ($i++ < $j) {
-
-			$string = Parser::substr($css, $i, $j, ['{']);
-
-			if ($string === false) {
-
-				$buffer = substr($css, $i);
-
-				yield $buffer;
-
-				$buffer = '';
-				break;
-			}
-
-			$string .= Parser::_close($css, '}', '{', $i + strlen($string), $j);
-			$buffer .= $string;
-
-			if (strlen($buffer) >= $size) {
-
-				$k = 0;
-				while (Parser::is_whitespace($buffer[$k])) {
-
-					$k++;
-				}
-
-				if ($k > 0) {
-
-					$buffer = substr($buffer, $k);
-				}
-
-				yield $buffer;
-				$buffer = '';
-			}
-
-			$i += strlen($string) - 1;
-		}
-
-		if ($buffer) {
-
-			$k = 0;
-			$l = strlen($buffer);
-			while ($k < $l && Parser::is_whitespace($buffer[$k])) {
-
-				$k++;
-			}
-
-			if ($k > 0) {
-
-				$buffer = substr($buffer, $k);
-			}
-		}
-
-		if (trim($buffer) !== '') {
-
-			yield $buffer;
-		}
-	}
-
 	/**
 	 * @param string $css
 	 * @param array $renderOptions
 	 * @param array $parseOptions
 	 * @return string
-	 * @throws IOException
 	 * @throws SyntaxError
 	 * @throws Exception
 	 */
@@ -211,38 +74,41 @@ class Renderer
 	{
 
 		$parser = new Parser(options: $parseOptions);
-		$renderer = new static($renderOptions);
+		$renderer = new Renderer($renderOptions);
 		$size = max(1, min($parser->getOptions('multi_processing_threshold'), strlen($css) / 2));
 
-		if (function_exists('\\proc_open') && $renderer->options['multi_processing'] && empty($renderer->options['sourcemap']) && strlen($css) > $size) {
+		if (ProcessPool::isSupported() && strlen($css) > $size) {
 
-			$args = $renderer->getCliArgs($parser->getOptions(), $renderer->options);
+			$processPool = new ProcessPool();
 
-			foreach ($renderer->slice($css, $size) as $buffer) {
+			$parseOptions['multi_processing'] = false;
+			$renderOptions['multi_processing'] = false;
 
-				$renderer->enQueue($buffer, $args);
+			$data = [];
+			$root = $parser->getAst();
+
+			foreach ($parser->slice($css, $size, $root->location->end) as $slice) {
+
+				$processPool->add(function () use ($slice, $parseOptions, $renderOptions): array {
+
+					$parser = new Parser($slice[0], array_merge($parseOptions, [
+//						'ast_src' => $file,
+						'ast_position_line' => $slice[1]->line,
+						'ast_position_column' => $slice[1]->column,
+						'ast_position_index' => $slice[1]->index
+					]));
+
+					return (new Renderer($renderOptions))->renderChildNodes($parser->getAst()->children ?? []);
+				})->
+				then(function (array $result, int $index) use (&$data) {
+
+					$data[$index] = $result;
+				});
 			}
 
-			$renderer->processPool->wait();
+			$processPool->wait();
 
-			$result = [];
-
-			foreach ($renderer->output as $sets) {
-
-				foreach ($sets as $key => $value) {
-
-					if (isset($result[$key])) {
-
-						unset($result[$key]);
-					}
-
-					$result[$key] = $value;
-				}
-			}
-
-			$renderer->output = [];
-
-			return implode($renderer->options['glue'], $result);
+			return $renderer->renderChildData($data);
 		}
 
 		return $renderer->renderAst($parser->setContent($css));
@@ -279,6 +145,38 @@ class Renderer
 	}
 
 	/**
+	 * @param array $data
+	 * @return string
+	 */
+	public function renderChildData(array $data): string
+	{
+		ksort($data);
+
+		$output = [];
+
+		foreach ($data as $results) {
+
+			foreach ($results as $r) {
+
+				if ($r->type != 'Comment') {
+
+					if (isset($output[$r->css])) {
+
+						unset($output[$r->css]);
+					}
+
+					$output[$r->css] = $r->css;
+				} else {
+
+					$output[] = $r->css;
+				}
+			}
+		}
+
+		return implode($this->options['glue'], $output);
+	}
+
+	/**
 	 * render an ElementInterface or a Property
 	 * @param RenderableInterface $element the element to render
 	 * @param null|int $level indention level
@@ -299,13 +197,13 @@ class Renderer
 	}
 
 	/**
-	 * @param \stdClass|ParsableInterface $ast
+	 * @param stdClass|ParsableInterface $ast
 	 * @param int|null $level
 	 * @return string
 	 * @throws Exception
 	 */
 
-	public function renderAst(\stdClass|ParsableInterface $ast, ?int $level = null): string
+	public function renderAst(stdClass|ParsableInterface $ast, ?int $level = null): string
 	{
 
 		$this->outFile = '';
@@ -320,43 +218,36 @@ class Renderer
 			$ast = $this->flatten($ast);
 		}
 
-		$block_size = 1500;
+		$block_size = $this->options['multi_processing_threshold'];
 
-		if (function_exists('\\proc_open') && $this->options['multi_processing'] && empty($this->options['sourcemap']) && $ast->type == 'Stylesheet' && isset($ast->children) && count($ast->children) > $block_size) {
+		if (isset($ast->children) && count($ast->children) > $block_size) {
 
-			$args = $this->getCliArgs([], $this->options);
+			$block_size = min($block_size, count($ast->children) / 2);
 
-			$args[] = '--input-format=serialize';
+			$processPool = new ProcessPool();
 
-			$j = count($ast->children);
-			$i = 0;
+			$data = [];
 
-			while ($i < $j) {
+			$renderer = $this;
 
-				$this->enQueue(serialize((object)['type' => 'Stylesheet', 'children' => array_slice($ast->children, $i, $block_size)]), $args);
-				$i += $block_size;
+			$options = $this->options;
+			$options['multi_processing'] = false;
+
+			foreach (array_chunk($ast->children, $block_size) as $slice) {
+
+				$processPool->add(function () use ($slice, $options): array {
+
+					return (new Renderer($options))->renderChildNodes($slice);
+				})->
+				then(function (array $result, int $index) use (&$data) {
+
+					$data[$index] = $result;
+				});
 			}
 
-			$this->processPool->wait();
+			$processPool->wait();
 
-			$result = [];
-
-			foreach ($this->output as $sets) {
-
-				foreach ($sets as $key => $value) {
-
-					if (isset($result[$key])) {
-
-						unset($result[$key]);
-					}
-
-					$result[$key] = $value;
-				}
-			}
-
-			$this->output = [];
-
-			return implode($this->options['glue'], $result);
+			return $renderer->renderChildData($data);
 		}
 
 		switch ($ast->type) {
@@ -561,6 +452,48 @@ class Renderer
 	}
 
 	/**
+	 * @param array $children
+	 * @return array
+	 * @throws Exception
+	 */
+	public function renderChildNodes(array $children): array
+	{
+
+		$result = [];
+
+		foreach ($children as $child) {
+
+			$css = $this->renderAst($child);
+
+			if ($css !== '') {
+
+				if ($child->type != 'Comment') {
+
+					if (isset($result[$css])) {
+
+						unset($result[$css]);
+					}
+
+					$result[$css] = (object)[
+
+						'type' => $child->type,
+						'css' => $css
+					];
+				} else {
+
+					$result[] = (object)[
+
+						'type' => $child->type,
+						'css' => $css
+					];
+				}
+			}
+		}
+
+		return array_values($result);
+	}
+
+	/**
 	 * @param object $ast
 	 * @param int|null $level
 	 * @return string
@@ -761,12 +694,20 @@ class Renderer
 
 			$output .= in_array($el->type, ['Declaration', 'Property']) ? ';' : '';
 
-			if (isset($result[$output])) {
+			if ($el->type != 'Comment') {
 
-				unset($result[$output]);
+				if (isset($result[$output])) {
+
+					unset($result[$output]);
+				}
+
+				$result[$output] = [$output, $el];
 			}
 
-			$result[$output] = [$output, $el];
+			else {
+
+				$result[] = [$output, $el];
+			}
 		}
 
 		if ($this->options['remove_empty_nodes'] && $count == 0) {
@@ -890,7 +831,7 @@ class Renderer
 			if (empty($selector)) {
 
 				// the selector is empty!
-				throw new \Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
+				throw new Exception(sprintf('the selector is empty: %s:%s:%s', $ast->src ?? '', $ast->position->line ?? '', $ast->position->column ?? ''), 400);
 			}
 
 			if (is_string($selector[0])) {
@@ -901,7 +842,7 @@ class Renderer
 
 		if (is_string($selector)) {
 
-			$selector = Value::parse($selector, null, true, '', '');
+			$selector = Value::parse($selector);
 		}
 
 		$result = $indent . Value::renderTokens($selector, ['omit_unit' => false, 'compress' => $this->options['compress']], $this->options['glue'] . $indent);
@@ -927,14 +868,14 @@ class Renderer
 	}
 
 	/**
-	 * @param \stdClass $ast
+	 * @param stdClass $ast
 	 * @param int|null $level
 	 * @return string
 	 * @throws Exception
 	 * @ignore
 	 */
 
-	protected function renderDeclaration($ast, ?int $level): string
+	protected function renderDeclaration(stdClass $ast, ?int $level): string
 	{
 
 		return $this->renderProperty($ast, $level);
@@ -1044,7 +985,7 @@ class Renderer
 	protected function renderValue(object $ast): string
 	{
 
-		$result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null, true, '', '') : $ast->value, $this->options);
+		$result = Value::renderTokens(is_string($ast->value) ? Value::parse($ast->value, in_array($ast->type, ['Property', 'Declaration']) ? $ast->name : null) : $ast->value, $this->options);
 
 		if (!$this->options['remove_comments'] && !empty($ast->trailingcomments)) {
 
@@ -1273,7 +1214,7 @@ class Renderer
 
 							if (isset($child->value)) {
 
-								$value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value, null, true, '', '') : $child->value, $this->options);
+								$value = Value::renderTokens(is_string($child->value) ? Value::parse($child->value) : $child->value, $this->options);
 
 								if ($value !== '' && $value != 'all') {
 

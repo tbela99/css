@@ -4,7 +4,9 @@ namespace TBela\CSS;
 
 use Closure;
 use Exception;
-use TBela\CSS\Event\EventTrait;
+use Generator;
+use RuntimeException;
+use Stringable;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
@@ -19,7 +21,7 @@ use TBela\CSS\Process\Pool as ProcessPool;
  * Css Parser
  * @package TBela\CSS
  * ok */
-class Parser implements ParsableInterface, \Stringable
+class Parser implements ParsableInterface, Stringable
 {
 
 	use ParserTrait;
@@ -67,18 +69,7 @@ class Parser implements ParsableInterface, \Stringable
 	 */
 	protected ?int $lastDedupIndex = null;
 
-	/**
-	 * @var string serialize | json
-	 */
-	// TODO: remove serialize as it seams to produce warning
-	protected string $format = 'serialize';
-
 	protected array $processPoolEvents = [];
-
-	/**
-	 * @var array<string, callable>
-	 */
-	protected array $events = [];
 
 	/**
 	 * Parser constructor.
@@ -489,11 +480,6 @@ class Parser implements ParsableInterface, \Stringable
 			}
 		}
 
-		if (empty($this->options['multi_processing'])) {
-
-			$this->processPool = null;
-		}
-
 		return $this;
 	}
 
@@ -541,7 +527,6 @@ class Parser implements ParsableInterface, \Stringable
 	}
 
 	/**
-	 * @throws IOException
 	 * @throws SyntaxError
 	 * @throws Exception
 	 */
@@ -609,7 +594,7 @@ class Parser implements ParsableInterface, \Stringable
 
 							if ($exitCode != 0) {
 
-								throw new \RuntimeException(sprintf("cannot resolve @import#%s (exit code #%s\n%s", $file, $exitCode, $stderr));
+								throw new RuntimeException(sprintf("cannot resolve @import#%s (exit code #%s\n%s", $file, $exitCode, $stderr));
 							}
 
 							$token->children = $result;
@@ -990,7 +975,7 @@ class Parser implements ParsableInterface, \Stringable
 	protected function popContext(): void
 	{
 
-		array_pop($this->context);;
+		array_pop($this->context);
 	}
 
 	/**
@@ -1120,7 +1105,7 @@ class Parser implements ParsableInterface, \Stringable
 		return $status;
 	}
 
-	public function slice($css, $size, $position): \Generator
+	public function slice($css, $size, $position): Generator
 	{
 
 		$i = -1; // ($position->index ?? 0) - 1;

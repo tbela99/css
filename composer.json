@@ -38,9 +38,7 @@
   "suggest": {
     "ext-curl": "*",
     "ext-sockets": "*",
-    "ext-pcntl": "*",
-    "ext-posix": "*",
-    "ext-msgpack": "*"
+    "ext-pcntl": "*"
   },
   "require": {
     "php": ">=8.0",

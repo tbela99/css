@@ -53,44 +53,28 @@ class Process extends AbstractProcess
 
 		$code = $serialized->getReflector()->getCode();
 
-		static $count = 0;
+		$this->ipc = new IPCSocketServer();
+		$this->serializer = Serializer::getInstance();
 
-		if (IPCSocketServer::isSupported()) {
+		$key = $this->ipc->getKey();
 
-			$this->ipc = new IPCSocketServer();
-			$this->serializer = Serializer::getInstance();
-
-			$key = $this->ipc->getKey();
-
-			$script .= sprintf("
-
-			\$log = 'debug%s.log';
-				//file_put_contents(\$log, \"started script \$log\\n\");
+		$script .= sprintf("
 
 			try {
 				\$data = call_user_func(%s);
-//				file_put_contents(\$log, sprintf(\"writing data %%s\\n\", json_encode(\$data)), FILE_APPEND);
 				\$ipc = new %s(null, '%s');
 
-			//	file_put_contents(\$log, \"waiting for connections on '%s'\\n\", FILE_APPEND);
-
-				/**
-				 * @var Serializer \$serializer
-				 */
 				\$serializer = new %s();
-			//	file_put_contents(\$log, \"writing data\\n\".json_encode(\$data).\"\\n\", FILE_APPEND);
 				\$ipc->write(\$serializer->encode(\$data));
 				}
 
 			catch (Throwable \$e) {
 
-			//	file_put_contents(\$log, \$e, FILE_APPEND);
+			 fwrite(STDERR, \$e);
 			}
-			", $count, $code, IPCSocketClient::class, $key, $key, $this->serializer::class);
-		}
+			", $code, IPCSocketClient::class, $key, $this->serializer::class);
 
-		$script .= " //file_put_contents(\$log,'exiting...', FILE_APPEND);
-		exit;";
+		$script .= "exit;";
 
 		$file = tempnam(sys_get_temp_dir(), 'csr-');
 
@@ -100,20 +84,13 @@ class Process extends AbstractProcess
 			$this->cleanup();
 		});
 
-/*		file_put_contents('dscript' . ($count++) . '.php', "<?php $script ?>");*/
 		file_put_contents($file, "<?php $script ?>");
-
-		$this->command = [PHP_BINARY, '-f', $file];
-	}
-
-	public function getCommand() {
-
-		return $this->status['command'] ?? implode(' ', array_map('escapeshellarg', $this->command));
+		$this->command = [PHP_BINARY, '-f', escapeshellarg($file)];
 	}
 
 	public static function isSupported(): bool
 	{
-		return function_exists('\\proc_open');
+		return function_exists('\\proc_open') && extension_loaded('sockets');
 	}
 
 	public function start(): void
@@ -126,7 +103,7 @@ class Process extends AbstractProcess
 			2 => array("pipe", "wb") // stderr is a file to write to
 		];
 
-		$this->process = proc_open(implode(' ', array_map('escapeshellarg', $this->command)), $descriptorspec, $this->pipes);
+		$this->process = proc_open(implode(' ', $this->command), $descriptorspec, $this->pipes);
 
 		if ($this->process === false) {
 
@@ -181,23 +158,6 @@ class Process extends AbstractProcess
 
 		$this->cleanup();
 	}
-
-//	public function isRunning(): bool
-//	{
-//		if ($this->pid === null) {
-//
-//			return false;
-//		}
-//
-//		$this->status = proc_get_status($this->process);
-//		return $this->status['running'];
-//	}
-
-//	public function isTerminated(): bool
-//	{
-//
-//		return !$this->isRunning();
-//	}
 
 	/**
 	 * @return void
