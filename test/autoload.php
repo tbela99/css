@@ -21,7 +21,7 @@ spl_autoload_register(function  ($name) {
 });
 
 // force multithreading or multiprocessing
-\TBela\CSS\Process\Pool::setEngine(getenv('PROCESS_ENGINE'));
+\TBela\CSS\Process\Pool::setDefaultEngine(getenv('PROCESS_ENGINE'));
 
-fwrite(STDERR, sprintf("current engine: %s\n", \TBela\CSS\Process\Pool::getEngine()));
+fwrite(STDERR, sprintf("current engine: %s\n", \TBela\CSS\Process\Pool::getDefaultEngine()));
 putenv('PROCESS_ENGINE');

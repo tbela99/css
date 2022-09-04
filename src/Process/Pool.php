@@ -56,7 +56,7 @@ class Pool implements PoolInterface
 	/**
 	 * @var string|null default engine
 	 */
-	protected static ?string $engine = null;
+	protected static ?string $defaultEngine = null;
 	protected ?ProcessInterface $current = null;
 	protected ?int $startTime = null;
 
@@ -70,12 +70,14 @@ class Pool implements PoolInterface
 	protected SplObjectStorage $storage;
 
 	protected int $timeout = 30;
+	protected string $engine;
 
 	public function __construct()
 	{
 
 		$this->storage = new SplObjectStorage();
 		$this->concurrency = Helper::getCPUCount() * 2;
+		$this->engine = static::getDefaultEngine();
 	}
 
 	public static function isSupported(): bool
@@ -102,48 +104,54 @@ class Pool implements PoolInterface
 		return $result;
 	}
 
-	public static function getEngine(): ?string
+	public function setEngine(string $engine): static
 	{
 
-		return static::$engine ?? current(static::getAvailableEngines());
+		if (in_array($engine, static::getAvailableEngines())) {
+
+			$this->engine = $engine;
+		}
+
+		return $this;
 	}
 
-	public static function setEngine(?string $engine)
+	public function getEngine()
+	{
+
+		return $this->engine;
+	}
+
+	public static function getDefaultEngine(): ?string
+	{
+
+		return static::$defaultEngine ?? current(static::getAvailableEngines());
+	}
+
+	public static function setDefaultEngine(?string $engine)
 	{
 
 		if ($engine == 'thread' && Thread::isSupported()) {
 
-			static::$engine = 'thread';
+			static::$defaultEngine = 'thread';
 		} else if ($engine == 'process' && Process::isSupported()) {
 
-			static::$engine = 'process';
+			static::$defaultEngine = 'process';
 		} else if (is_null($engine)) {
 
-			static::$engine = null;
+			static::$defaultEngine = null;
 		}
 	}
 
+	/**
+	 * @param Closure $closure
+	 * @return ProcessInterface
+	 */
 	public function createProcess(Closure $closure): ProcessInterface
 	{
-		if (!empty(static::$engine)) {
-
-			return match (static::$engine) {
-				'thread' => new Thread($closure),
-				default => new Process($closure),
-			};
-		}
-
-		if (Thread::isSupported()) {
-
-			return new Thread($closure);
-		}
-
-		if (Process::isSupported()) {
-
-			return new Process($closure);
-		}
-
-		throw new RuntimeException('cannot create process');
+		return match ($this->engine) {
+			'thread' => new Thread($closure),
+			default => new Process($closure),
+		};
 	}
 
 	/**
@@ -156,7 +164,8 @@ class Pool implements PoolInterface
 		$this->current = $this->createProcess($closure)/* ->on('notify', function (ProcessInterface $thread) {
 
 			$this->collect($thread);
-		})*/;
+		})*/
+		;
 
 		$this->current->setTimeout($this->timeout);
 
