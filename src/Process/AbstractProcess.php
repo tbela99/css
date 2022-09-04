@@ -99,17 +99,10 @@ abstract class AbstractProcess implements ProcessInterface
 
 	/**
 	 * @return void
-	 * @throws TimeoutException|IllegalStateException
+	 * @throws TimeoutException
 	 */
 	public function checkTimeout(): void
 	{
-//		if ($this->timeout > 0) {
-//
-//			static $count = 0;
-//
-//			fwrite(STDERR, sprintf("%2d - %.2f%%\n\n", $count++, (microtime(true) - $this->startTime) / $this->timeout));
-//		}
-
 		if ($this->timeout > 0 && microtime(true) - $this->startTime >= $this->timeout) {
 
 			$this->stop();
@@ -203,7 +196,6 @@ abstract class AbstractProcess implements ProcessInterface
 		$this->ipc->release();
 
 		$this->cleanup();
-//		$this->emit('notify', $this);
 
 		yield true;
 	}

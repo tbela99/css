@@ -37,7 +37,7 @@ class Thread extends AbstractProcess
 	public static function isSupported(): bool
 	{
 
-		return 'cli' == PHP_SAPI &&	extension_loaded('pcntl');
+		return 'cli' == PHP_SAPI && extension_loaded('pcntl');
 	}
 
 	/**

@@ -113,8 +113,6 @@ class Process extends AbstractProcess
 		$this->startTime = microtime(true);
 
 		fclose($this->pipes[0]);
-//		stream_set_blocking($this->pipes[1], false);
-//		stream_set_blocking($this->pipes[2], false);
 
 		$this->status = proc_get_status($this->process);
 
@@ -164,8 +162,6 @@ class Process extends AbstractProcess
 	 */
 	public function cleanup(): void
 	{
-//		$this->status = proc_get_status($this->process);
-
 		if ($this->process) {
 
 			$this->running = false;

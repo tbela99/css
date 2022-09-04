@@ -32,7 +32,7 @@ interface ProcessInterface extends EventInterface
 
 	public function getPid(): ?int;
 
-//	public function kill(int $pid): bool;
+	public function kill(int $pid): bool;
 
 	public function getExitCode(): ?int;
 

@@ -161,11 +161,7 @@ class Pool implements PoolInterface
 	public function add(Closure $closure): static
 	{
 
-		$this->current = $this->createProcess($closure)/* ->on('notify', function (ProcessInterface $thread) {
-
-			$this->collect($thread);
-		})*/
-		;
+		$this->current = $this->createProcess($closure);
 
 		$this->current->setTimeout($this->timeout);
 
