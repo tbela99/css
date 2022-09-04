@@ -61,9 +61,7 @@ class Thread extends AbstractProcess
 
 			if ($this->running) {
 
-//				fwrite(STDERR, "SIGCHLD received\n");
 				$this->stopped = true;
-//				$this->check(1);
 			}
 		});
 
