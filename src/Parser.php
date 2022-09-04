@@ -5,6 +5,7 @@ namespace TBela\CSS;
 use Closure;
 use Exception;
 use Generator;
+use ReflectionException;
 use RuntimeException;
 use Stringable;
 use TBela\CSS\Exceptions\IOException;
@@ -15,6 +16,7 @@ use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\Lexer;
 use TBela\CSS\Parser\ParserTrait;
 use TBela\CSS\Parser\SyntaxError;
+use TBela\CSS\Process\Exceptions\UnhandledException;
 use TBela\CSS\Process\Pool as ProcessPool;
 
 /**
@@ -155,6 +157,8 @@ class Parser implements ParsableInterface, Stringable
 	 * @param object $root
 	 * @param string $file
 	 * @return void
+	 * @throws UnhandledException
+	 * @throws ReflectionException
 	 */
 	public function parallelize(string $content, object $root, string $file): void
 	{
@@ -207,12 +211,8 @@ class Parser implements ParsableInterface, Stringable
 
 		foreach ($data as $datum) {
 
-//			fwrite(STDERR, sprintf("child type %s\n", gettype($datum)));
-
 			array_splice($root->children, count($root->children), 0, $datum);
 		}
-
-//		return $data;
 	}
 
 	/**
