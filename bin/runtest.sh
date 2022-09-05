@@ -18,6 +18,14 @@ fi
 
 unset DIR
 TEST_PCNTL=$(php -m | grep pcntl)
+
+php=$(command -v php"$PHP_VER")
+
+if [ -z "$php" ]
+then
+  echo "php$PHP_VER is not installed"
+  exit 1
+fi
 #
 #
 #../phpunit.phar --bootstrap autoload.php src/*.php
@@ -36,7 +44,7 @@ run() {
   #  set -x
   result="0"
 
-  PROCESS_ENGINE=process php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
+  PROCESS_ENGINE=process "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
 
   if [ "$result" -gt 0 ]
   then
@@ -44,7 +52,7 @@ run() {
   fi
 
   if [ -n "$TEST_PCNTL" ]; then
-    PROCESS_ENGINE=thread php ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
+    PROCESS_ENGINE=thread "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-skipped --fail-on-risky --fail-on-incomplete "$@" || result="1"
     # unset $PROCESS_ENGINE
   fi
 
