@@ -1,6 +1,6 @@
 <?php
 
-//declare(ticks=1);
+declare(ticks=1);
 
 namespace TBela\CSS\Process\Thread\PCNTL;
 

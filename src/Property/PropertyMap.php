@@ -87,12 +87,12 @@ class PropertyMap
     /**
      * set property value
      * @param string $name
-     * @param array|string $value
+     * @param object[]|string $value
      * @param array|null $leadingcomments
      * @param array|null $trailingcomments
      * @return PropertyMap
      */
-    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null)
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $src = null)
     {
 
         // is valid property
@@ -114,6 +114,11 @@ class PropertyMap
                 $this->properties[$name] = new Property($name);
             }
 
+			if ($src !== null) {
+
+				$this->properties[$name]->setSrc($src);
+			}
+
             $this->properties[$name]->setValue($value)->
             setLeadingComments($leadingcomments)->
             setTrailingComments($trailingcomments);
@@ -125,7 +130,12 @@ class PropertyMap
         setLeadingComments($leadingcomments)->
         setTrailingComments($trailingcomments);
 
-        $separator = Config::getPath('map.' . $this->shorthand . '.separator');
+		if ($src !== null) {
+
+			$this->properties[$name]->setSrc($src);
+		}
+
+		$separator = Config::getPath('map.' . $this->shorthand . '.separator');
 
         $all = [];
 

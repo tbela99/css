@@ -39,7 +39,7 @@ class Renderer
 		'remove_empty_nodes' => false,
 		'allow_duplicate_declarations' => false,
 		'multi_processing' => false,
-		'multi_processing_threshold' => 400
+		'multi_processing_threshold' => 1500
 	];
 
 	/**
@@ -651,7 +651,7 @@ class Renderer
 						$properties->remove($name);
 					}
 
-					$properties->set($name, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, null, $child->vendor ?? null);
+					$properties->set($name, $child->value, $child->type, $child->leadingcomments ?? null, $child->trailingcomments ?? null, $child->src ?? null, $child->vendor ?? null);
 				} else {
 
 					$children[] = $child;
@@ -916,11 +916,16 @@ class Renderer
 			}
 		} else if (in_array($name, ['background', 'background-image', 'src'])) {
 
-			$value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) {
+			$value = preg_replace_callback('#(^|\s)url\(\s*(["\']?)([^)\\2]+)\\2\)#', function ($matches) use ($ast) {
 
-				if (str_contains($matches[3], 'data:')) {
+				if (str_starts_with($matches[3], 'data:')) {
 
 					return $matches[0];
+				}
+
+				if (!empty($ast->src)) {
+
+					$matches[3] = Helper::absolutePath($matches[3], $ast->src);
 				}
 
 				return $matches[1] . 'url(' . Helper::relativePath($matches[3], $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)) . ')';
@@ -1059,9 +1064,9 @@ class Renderer
 	 * return the options
 	 * @param string|null $name
 	 * @param mixed|null $default return value
-	 * @return array
+	 * @return array|string|bool
 	 */
-	public function getOptions(string $name = null, mixed $default = null): array
+	public function getOptions(string $name = null, mixed $default = null): array|string|bool
 	{
 
 		if (is_null($name)) {

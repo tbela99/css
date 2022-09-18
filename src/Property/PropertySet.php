@@ -87,7 +87,7 @@ class PropertySet
      * @param null $vendor
      * @return PropertySet
      */
-    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $vendor = null)
+    public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $vendor = null, $src = null)
     {
 
         $propertyName = ($vendor ? '-' . $vendor . '-' : '') . $name;
@@ -115,7 +115,7 @@ class PropertySet
 
             if ($result === false) {
 
-                $this->setProperty($name, $value, $vendor);
+                $this->setProperty($name, $value, $vendor, $src);
                 return $this;
             }
 
@@ -125,7 +125,7 @@ class PropertySet
                 unset($this->properties[$this->shorthand]);
             } else {
 
-                $this->setProperty($name, $value, $vendor);
+                $this->setProperty($name, $value, $vendor, $src);
 
                 if (!is_null($leadingcomments)) {
 
@@ -160,7 +160,7 @@ class PropertySet
                 unset($this->properties[$this->shorthand]);
             }
 
-            $this->setProperty($name, $value, $vendor);
+            $this->setProperty($name, $value, $vendor, $src);
 
             if (!is_null($leadingcomments)) {
 
@@ -357,7 +357,7 @@ class PropertySet
      * @return PropertySet
      * @ignore
      */
-    protected function setProperty($name, $value, $vendor = null)
+    protected function setProperty($name, $value, $vendor = null, $src = null)
     {
 
         $propertyName = ($vendor && substr($name, 0, strlen($vendor) + 2) != '-' . $vendor . '-' ? '-' . $vendor . '-' : '') . $name;
@@ -367,10 +367,15 @@ class PropertySet
             $this->properties[$propertyName] = new Property($name);
         }
 
-        if ($vendor) {
+        if ($vendor !== null) {
 
             $this->properties[$propertyName]->setVendor($vendor);
         }
+
+		if ($src !== null) {
+
+			$this->properties[$propertyName]->setSrc($src);
+		}
 
         $this->properties[$propertyName]->setValue($value);
 

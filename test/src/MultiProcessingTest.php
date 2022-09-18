@@ -229,8 +229,7 @@ final class MultiProcessingTest extends TestCase
 
     /**
      * @throws Parser\SyntaxError
-     * @throws IOException
-     */
+	 */
     public function astProvider (): array
     {
 
@@ -242,7 +241,6 @@ final class MultiProcessingTest extends TestCase
 //            __DIR__.'/../perf_files/row.css',
 //            __DIR__.'/../perf_files/row.min.css'
         ];
-
 
         $data = [];
 
@@ -259,7 +257,6 @@ final class MultiProcessingTest extends TestCase
                     'ast_src' => $file,
                     'flatten_import' => true
                 ]))->appendContent($content)->getAst(), JSON_PRETTY_PRINT)
-
             ];
         }
 
