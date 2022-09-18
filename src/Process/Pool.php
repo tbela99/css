@@ -69,7 +69,7 @@ class Pool implements PoolInterface
 	protected int $sleepTime = 33000;
 	protected SplObjectStorage $storage;
 
-	protected int $timeout = 30;
+	protected int $timeout = 60;
 	protected string $engine;
 
 	public function __construct()
