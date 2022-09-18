@@ -2,7 +2,6 @@
 
 namespace TBela\CSS;
 
-use Closure;
 use Exception;
 use Generator;
 use ReflectionException;
@@ -75,15 +74,14 @@ class Parser implements ParsableInterface, Stringable
 
 	protected array $queue = [];
 
-	protected int $queuSize = 0;
-
 	/**
 	 * Parser constructor.
 	 * @param string $css
 	 * @param array $options
-	 * @throws SyntaxError
+	 * @param string $media
+	 * @throws Exception
 	 */
-	public function __construct(string $css = '', array $options = [], $media = '')
+	public function __construct(string $css = '', array $options = [], string $media = '')
 	{
 		$this->setOptions($options);
 		$this->lexer = (new Lexer())->
@@ -261,6 +259,12 @@ class Parser implements ParsableInterface, Stringable
 		return $this;
 	}
 
+	/**
+	 * @throws ReflectionException
+	 * @throws UnhandledException
+	 * @throws SyntaxError
+	 * @throws Exception
+	 */
 	protected function doParse()
 	{
 
@@ -287,7 +291,7 @@ class Parser implements ParsableInterface, Stringable
 
 					'type' => 'AtRule',
 					'name' => 'media',
-					'value' => $media !== '' ? Value::parse($media) : ''
+					'value' => Value::parse($media)
 				];
 
 				$rule->location = (object)[
@@ -408,7 +412,7 @@ class Parser implements ParsableInterface, Stringable
 	 * @param string $css
 	 * @param string $media
 	 * @return Parser
-	 * @throws SyntaxError|Exception
+	 * @throws Exception
 	 */
 	public function setContent(string $css, string $media = ''): static
 	{
@@ -1059,7 +1063,6 @@ class Parser implements ParsableInterface, Stringable
 	 * parse event handler
 	 * @param object $token
 	 * @return void
-	 * @throws SyntaxError
 	 * @ignore
 	 */
 	protected function exitNode(object $token): void
@@ -1090,7 +1093,8 @@ class Parser implements ParsableInterface, Stringable
 			$context = $this->getContext();
 
 			array_pop($context->children);
-			array_splice($context->children, count($context->children), 0, $token->children);
+//			array_splice($context->children, count($context->children), 0, $token->children);
+			$context->children = array_merge($context->children, $token->children);
 
 		}
 	}

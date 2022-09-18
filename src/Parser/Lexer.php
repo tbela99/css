@@ -6,7 +6,7 @@ use Exception;
 
 use Generator;
 use TBela\CSS\Event\EventTrait;
-use TBela\CSS\Interfaces\ValidatorInterface;
+use TBela\CSS\Interfaces\InvalidTokenInterface;
 use TBela\CSS\Value;
 
 class Lexer
@@ -360,6 +360,9 @@ class Lexer
                                     // invalid declaration
                                     if ($isValidDeclaration) {
 
+										/**
+										 * @var InvalidTokenInterface $className
+										 */
                                         $className = Value::getClassName($value->type);
                                         $data[$key] = $className::doRecover($value);
                                     }
@@ -590,7 +593,6 @@ class Lexer
                     if (!$ignoreRule) {
 
 						yield 'enter' => [$rule, $context, $parentStylesheet];
-
 						$validRule = !str_starts_with($rule->type, 'Invalid');
                     }
                 }

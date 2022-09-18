@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Event\Event as EventTest;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
@@ -65,7 +64,8 @@ final class MultiProcessingTest extends TestCase
         );
     }
 
-    public function sliceProvider () {
+    public function sliceProvider (): array
+	{
 
         $data = [];
 
@@ -131,9 +131,10 @@ final class MultiProcessingTest extends TestCase
         return $data;
     }
 
-    /**
+	/**
 	 * @throws Parser\SyntaxError
-     */
+	 * @throws Exception
+	 */
     public function loadProvider (): array
     {
 
@@ -183,6 +184,7 @@ final class MultiProcessingTest extends TestCase
 	/**
 	 * @throws Parser\SyntaxError
 	 * @throws IOException
+	 * @throws Exception
 	 */
 	public function fromProvider (): array
 	{
@@ -212,8 +214,6 @@ final class MultiProcessingTest extends TestCase
 
 		foreach ($files as $file) {
 
-//			$content = file_get_contents($file);
-
 			$data[] = [
 				Renderer::fromFile($file, parseOptions: [
 					'flatten_import' => true
@@ -227,8 +227,9 @@ final class MultiProcessingTest extends TestCase
 		return $data;
 	}
 
-    /**
-     * @throws Parser\SyntaxError
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws Exception
 	 */
     public function astProvider (): array
     {

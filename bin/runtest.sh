@@ -9,7 +9,7 @@
 ##
 #set -x
 DIR=$(cd -P -- "$(dirname $(readlink -f "$0"))" && pwd -P)
-cd "$DIR"
+cd "$DIR" || exit 1
 
 if [ ! -f "../vendor/bin/phpunit" ]; then
   echo "please go to "$(dirname "$DIR")" and run 'composer install'"
@@ -68,12 +68,12 @@ testName() {
   fname=$(basename "$1" | awk -F . '{print $1}')
 
   # strip the Test suffix
-  echo ""${fname%Test}
+  echo "${fname%Test}"
 }
 
 #
 #
-cd ../test
+cd ../test || exit 1
 #pwd
 #
 #
