@@ -55,7 +55,7 @@ TEST_PCNTL=$(php -m | grep pcntl)
 
 php=$(command -v php"$PHP_VER")
 
-test_timeout=180
+test_timeout=300
 
 if [ -z "$php" ]
 then
