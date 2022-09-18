@@ -1,4 +1,4 @@
-name: PHP5.6-CI
+name: PHP8.0-CI
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '5.6'
+          php-version: '8.0'
           extensions: mbstring, xml, curl
           tools: phpunit, composer
 
