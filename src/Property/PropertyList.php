@@ -110,7 +110,7 @@ class PropertyList implements IteratorAggregate
     /**
      * set property
      * @param string|null $name
-     * @param Value|string $value
+     * @param object[]|string $value
      * @param string|null $propertyType
      * @param array|null $leadingcomments
      * @param array|null $trailingcomments
@@ -119,7 +119,7 @@ class PropertyList implements IteratorAggregate
      * @return $this
      */
 
-    public function set($name, $value, $propertyType = null, array $leadingcomments = null, array $trailingcomments = null, $src = '', $vendor = null)
+    public function set($name, $value, $propertyType = null, array $leadingcomments = null, array $trailingcomments = null, $src = null, $vendor = null)
     {
 
         if ($propertyType == 'Comment') {
@@ -222,13 +222,13 @@ class PropertyList implements IteratorAggregate
 
                 $this->properties[$shorthand] = new PropertySet($shorthand, $config);
 
-                if (!is_null($src)) {
-
-                    $this->properties[$shorthand]->setSrc($src);
-                }
+//                if (!is_null($src)) {
+//
+//                    $this->properties[$shorthand]->setSrc($src);
+//                }
             }
 
-            $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments, $vendor);
+            $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments, $vendor, $src);
         }
 
         else {
@@ -244,13 +244,13 @@ class PropertyList implements IteratorAggregate
 
                     $this->properties[$shorthand] = new PropertyMap($shorthand, $config);
 
-                    if (!is_null($src)) {
-
-                        $this->properties[$shorthand]->setSrc($src);
-                    }
+//                    if (!is_null($src)) {
+//
+//                        $this->properties[$shorthand]->setSrc($src);
+//                    }
                 }
 
-                $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments);
+                $this->properties[$shorthand]->set($name, $value, $leadingcomments, $trailingcomments, $src);
             }
 
             else {
@@ -267,6 +267,11 @@ class PropertyList implements IteratorAggregate
 
                     $property->setVendor($vendor);
                 }
+
+				if (!is_null($src)) {
+
+					$property->setSrc($src);
+				}
 
                 if (!empty($leadingcomments)) {
 

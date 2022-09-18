@@ -19,7 +19,6 @@ final class RendererTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider provider
-	 * @medium
      */
     public function test($expected, $actual)
     {

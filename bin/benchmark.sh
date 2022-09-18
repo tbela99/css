@@ -1,5 +1,16 @@
 ##!/bin/bash -x -v
-#set -x
+
+# css files
+if [ $# -gt 0 ]; then
+
+  files=()
+
+  while [ $# -gt 0 ]; do
+    files+=($(realpath "$1"))
+    shift
+  done
+fi
+
 cd $(dirname "$0")
 cd ../benchmark
 
@@ -9,8 +20,9 @@ if [ ! -d ./vendor/sabberworm ]; then
   exit 1
 fi
 
-# css files
-files=$(ls -d ../test/perf_files/*.css)
+if [ -z "$files" ]; then
+  files=$(ls -d ../test/perf_files/*.css)
+fi
 # files size
 sizes=()
 # measure test time
@@ -26,7 +38,7 @@ size() {
   # shellcheck disable=SC2046
   result=$($(echo "$prog" | cut -f1 -d ' ') $(echo "$prog" | cut -f2 -s -d ' ') "$@" 2>&1)
   output=$(convert_file_size "${#result}")
-#  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
+  #  echo $(lpad "$output" 6)" ("$(lpad $(echo "scale=2; ${#result} * 100 / "$(stat -c%s $(echo "$@" | rev | cut -d ' ' -f1 | rev)) | bc) 5)"%)"
   echo $(lpad "$output" 9)
 }
 # left pad with '\ ', will pipe to sed 's/\\ //g' to display the actual space character

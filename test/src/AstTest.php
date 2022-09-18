@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
@@ -38,10 +39,16 @@ final class AstTest extends TestCase
         );
     }
 
-    public function identifierProvider() {
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public function identifierProvider()
+	{
 
         $data = [];
-        
+
         $parser = new TBela\CSS\Parser('
  * {
   text-shadow: none!important /* comment 7 */;
@@ -190,7 +197,12 @@ final class AstTest extends TestCase
         return $data;
     }
 
-    public function mediaAllProvider() {
+	/**
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public function mediaAllProvider()
+	{
 
         $data = [];
 

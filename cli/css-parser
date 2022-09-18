@@ -11,7 +11,7 @@ require __DIR__ . '/../vendor/autoload.php';
 require __DIR__.'/../src/compat.php';
 
 // only use from the cli
-if (php_sapi_name() != 'cli') {
+if (PHP_SAPI != 'cli') {
 
     fwrite(STDERR, 'this program must be executed from the cli');
     exit(1);
@@ -35,12 +35,23 @@ spl_autoload_register(function ($name) {
     }
 });
 
-$exe = basename($argv[0]);
 $cli = new Args($argv);
+$exe = $cli->getExe();
 
 try {
 
+        $data = json_decode(file_get_contents(__DIR__ . '/../package.json'), JSON_OBJECT_AS_ARRAY);
+        $metadata = json_decode(file_get_contents(__DIR__ . '/../composer.json'), JSON_OBJECT_AS_ARRAY);
+
+        $version = sprintf("%s (version %s)
+Copyright (C) %s %s.
+Dual licensed under MIT or LGPL v3\n", $cli->getExe(), $data['version'], date('Y'), implode(', ', array_map(function ($author) {
+
+            return $author['name'];
+        }, $metadata['authors'])));
+
     $cli->
+<<<<<<< HEAD
     setStrict(true)->
     add('version', 'print version number', Option::BOOL, 'v', false)
         ->addGroup('internal', "internal commands are used by the multithreading feature:\n", true)
@@ -73,6 +84,37 @@ try {
         ->add('ast', 'dump ast as JSON', Option::BOOL, 'a', false, false, null, [], null,'render')
         ->add('output-format', "output export format. string (css), json (ast), serialize (PHP serialized ast), json-array, serialize-array", Option::STRING, 'F', false, false, Option::STRING, [Option::STRING, 'json', 'serialize', 'json-array', 'serialize-array'], 'input-format', 'render')
         ->add('render-multi-processing', "enable multi-processing renderer", Option::BOOL, 'R', false, false,  true, [], null, 'render')
+=======
+    setStrict(true)
+        ->addGroup('parse', "Parse options:\n")
+        ->add('capture-errors', 'ignore parse error', Option::BOOL, 'e', multiple: false, group: 'parse')
+        ->add('flatten-import', 'process @import', Option::BOOL, 'm', multiple: false, group: 'parse')
+        ->add('parse-allow-duplicate-rules', 'allow duplicate rule', Option::BOOL, 'p', multiple: false, group: 'parse')
+        ->add('parse-allow-duplicate-declarations', 'allow duplicate declaration', type: Option::AUTO, alias: 'd', multiple: false, group: 'parse')
+        ->add('file', 'input css file or url', Option::STRING, 'f', group: 'parse')
+        ->add('parse-multi-processing', 'enable multi-processing parser', Option::BOOL, 'M', multiple: false, defaultValue: true, group: 'parse')
+        ->add('parse-children-process', 'maximum children process', Option::INT, 'P', multiple: false, defaultValue: 20, group: 'parse')
+        ->add('input-format', 'input format: json (ast), string (plain css)', Option::STRING, 'I', multiple: false, defaultValue: 'string', options: ['string', 'json'], group: 'parse')
+        ->addGroup('render', "Render options:\n")
+        ->add('css-level', 'css color module', Option::INT, 'l', multiple: false, defaultValue: 4, options: [3, 4], group: 'render')
+        ->add('charset', 'remove @charset', Option::BOOL, 'S', multiple: false, defaultValue: false, group: 'render')
+        ->add('compress', 'minify output', Option::BOOL, 'c', multiple: false, group: 'render')
+        ->add('sourcemap', 'generate sourcemap', Option::BOOL, 's', multiple: false, dependsOn: 'file', group: 'render')
+        ->add('remove-comments', 'remove comments', Option::BOOL, 'C', multiple: false, group: 'render')
+        ->add('preserve-license', 'preserve license comments', Option::BOOL, 'L', multiple: false, group: 'render')
+        ->add('legacy-rendering', 'convert nested css syntax', Option::BOOL, 'G', multiple: false, group: 'render')
+        ->add('compute-shorthand', 'compute shorthand properties', Option::BOOL, 'u', multiple: false, group: 'render')
+        ->add('remove-empty-nodes', 'remove empty nodes', Option::BOOL, 'E', multiple: false, group: 'render')
+        ->add('render-allow-duplicate-declarations', 'render duplicate declarations', Option::BOOL, 'r', multiple: false, group: 'render')
+        ->add('convert-color', 'convert colors', Option::AUTO, 't', multiple: false, options: [true, false, 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'device-cmyk'], group: 'render')
+        ->add('output', 'output file name', Option::STRING, 'o', multiple: false, group: 'render')
+        ->add('ast', 'dump ast as JSON', Option::BOOL, 'a', multiple: false, group: 'render')
+        ->add('render-multi-processing', "enable multi-processing renderer", Option::BOOL, 'R', multiple: false, defaultValue: true, group: 'render')
+        ->setVersion($version)
+        ->alias('version', 'v')
+        ->help()
+        ->alias('help', 'h')
+>>>>>>> ba887b9f9f9c8efe3e2cf318c92afb782e93d4f5
         ->parse();
 
     $parseOptions = [];
@@ -81,19 +123,6 @@ try {
     $groups = $cli->getGroups();
     $args = $cli->getArguments();
 
-    if (isset($args['version'])) {
-
-        $data = json_decode(file_get_contents(__DIR__ . '/../package.json'), JSON_OBJECT_AS_ARRAY);
-        $metadata = json_decode(file_get_contents(__DIR__ . '/../composer.json'), JSON_OBJECT_AS_ARRAY);
-
-        echo sprintf("%s (version %s)
-Copyright (C) %s %s.
-Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implode(', ', array_map(function ($author) {
-
-            return $author['name'];
-        }, $metadata['authors'])));
-        exit (0);
-    }
 
     $pipeIn = !stream_isatty(STDIN);
     $pipeOut = !stream_isatty(STDOUT);
@@ -110,7 +139,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
         if (!empty($args['_'])) {
 
-            fwrite(STDERR, "> notice: ignoring inline css\n".json_encode($args['_'], JSON_PRETTY_PRINT)."\n");
+            fwrite(STDERR, "> notice: ignoring inline css\n" . json_encode($args['_'], JSON_PRETTY_PRINT) . "\n");
         }
     }
 
@@ -135,6 +164,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
     }
 
+<<<<<<< HEAD
     foreach (array_keys($groups['internal']['arguments']) as $key) {
 
         if (isset($args[$key])) {
@@ -150,12 +180,16 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     }
 
     function read_input(array $parseOptions, $inFile)
+=======
+    function read_input(array $parseOptions, $inFile): Generator
+>>>>>>> ba887b9f9f9c8efe3e2cf318c92afb782e93d4f5
     {
 
         if ($inFile == STDIN) {
 
             $data = file_get_contents('php://stdin');
 
+<<<<<<< HEAD
             switch ($parseOptions['input_format']) {
                 case   'serialize':
                     yield unserialize($data);
@@ -170,6 +204,13 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
 
         else {
+=======
+            yield match ($parseOptions['input_format']) {
+                'json' => json_decode($data),
+                default => $data,
+            };
+        } else {
+>>>>>>> ba887b9f9f9c8efe3e2cf318c92afb782e93d4f5
 
             foreach ((array)$inFile as $file) {
 
@@ -177,12 +218,12 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
 
                     $data = file_get_contents($file);
 
-                }
-                else {
+                } else {
 
                     $data = Parser\Helper::fetchContent($file);
                 }
 
+<<<<<<< HEAD
                 switch($parseOptions['input_format']) {
                     case 'serialize':
                         yield  $file =>unserialize($data);
@@ -193,6 +234,11 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
                     default:
                         yield $file =>$data;
                         break;
+=======
+                yield $file => match ($parseOptions['input_format']) {
+                    'json' => json_decode($data),
+                    default => $data,
+>>>>>>> ba887b9f9f9c8efe3e2cf318c92afb782e93d4f5
                 };
             }
         }
@@ -201,7 +247,7 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     $ast = [];
     $parser = new Parser('', $parseOptions);
 
-    if ($parseOptions['input_format'] == Option::STRING) {
+    if ($parseOptions['input_format'] == 'string') {
 
         if ($inFile) {
 
@@ -225,14 +271,12 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
         }
 
         $ast = [$parser->getAst()];
-    }
-
-    else {
+    } else {
 
         // ast
         foreach (read_input($parseOptions, $inFile) as $data) {
 
-            $ast[] = $data; // $renderer->renderAst($data);
+            $ast[] = $data;
         }
     }
 
@@ -251,8 +295,13 @@ Dual licensed under MIT or LGPL v3\n", $exe, $data['version'], date('Y'), implod
     if ($outFile != STDOUT) {
 
         $renderer->save($root, $outFile);
+    } else {
+
+        fwrite($outFile, !empty($renderOptions['ast']) ? json_encode(count($ast) == 1 ? $ast[0] : $root, empty($renderOptions['compress']) ? JSON_PRETTY_PRINT : 0)
+            : $renderer->renderAst($root));
     }
 
+<<<<<<< HEAD
     else if (in_array($renderOptions['output_format'], ['json-array', 'serialize-array'])) {
 
         $output = [];
@@ -310,6 +359,9 @@ catch (UnexpectedValueException $e) {
     exit($code == 0 ? 1 : $code);
 }
 catch (InvalidArgumentException $e) {
+=======
+} catch (ValueError|UnexpectedValueException|InvalidArgumentException $e) {
+>>>>>>> ba887b9f9f9c8efe3e2cf318c92afb782e93d4f5
 
     fwrite(STDERR, $e->getMessage() . "\n");
     $code = $e->getCode();
@@ -319,7 +371,7 @@ catch (InvalidArgumentException $e) {
     fwrite(STDERR, sprintf("%s: %s\nTry '%s --help'\n", $exe, $e->getMessage(), $exe));
     $code = $e->getCode();
     exit($code == 0 ? 1 : $code);
-} catch (Exception $e) {
+} catch (Throwable $e) {
 
     fwrite(STDERR, $e->getMessage() . "\n");
     exit(1);
