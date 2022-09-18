@@ -67,7 +67,6 @@ final class MultiProcessingTest extends TestCase
 	{
 
         $data = [];
-
         $parser = new Parser();
 
 		$size = 64 * 1024;
@@ -207,7 +206,6 @@ final class MultiProcessingTest extends TestCase
 			__DIR__.'/../perf_files/uncut.css',
 			__DIR__.'/../perf_files/uncut.min.css'
 		];
-
 
 		$data = [];
 

@@ -10,12 +10,12 @@ class IPCSocketClient extends IPC
 {
 
 	const BUFFER_SIZE = 32768;
-	protected \Socket|false|null $socket;
-	protected string $path;
-	protected string $data;
-	protected string $server;
+	protected $socket;
+	protected $path;
+	protected $data;
+	protected $server;
 
-	public function __construct(?string $path, string $server)
+	public function __construct($path, $server)
 	{
 
 		if (!($this->socket = socket_create(AF_UNIX, strcasecmp(substr(PHP_OS, 0, 3), 'win') === 0 ? SOCK_STREAM : SOCK_DGRAM, 0))) {
@@ -52,19 +52,19 @@ class IPCSocketClient extends IPC
 		$this->server = $server;
 	}
 
-	public function getKey(): string
+	public function getKey()
 	{
 
 		return $this->path;
 	}
 
-	public static function isSupported(): bool
+	public static function isSupported()
 	{
 
 		return function_exists('\\socket_create');
 	}
 
-	public function write(string $data): void
+	public function write($data)
 	{
 
 		$j = strlen($data) - 1;
@@ -88,11 +88,11 @@ class IPCSocketClient extends IPC
 		}
 	}
 
-	public function read(int $waitTimeout = 1): Generator
+	public function read($waitTimeout = 1)
 	{
 	}
 
-	public function getData(): string
+	public function getData()
 	{
 
 		return $this->data;

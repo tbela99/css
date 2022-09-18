@@ -10,8 +10,8 @@ class IPCSocketPair extends IPC
 {
 
 	const BUFFER_SIZE = 32768;
-	protected array $pair = [];
-	protected string $data;
+	protected $pair = [];
+	protected $data;
 
 	public function __construct() {
 
@@ -94,7 +94,7 @@ class IPCSocketPair extends IPC
 		yield "done";
 	}
 
-	public function getData(): string
+	public function getData()
 	{
 
 		return $this->data;

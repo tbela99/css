@@ -15,7 +15,7 @@ use TBela\CSS\Process\Exceptions\TimeoutException;
 use TBela\CSS\Process\Exceptions\UnhandledException;
 use TBela\CSS\Process\MultiProcessing\Process;
 use TBela\CSS\Process\Thread\PCNTL\Thread;
-use Throwable;
+use Exception;
 
 /**
  * Simple thread pool manager using pcntl extension
@@ -83,7 +83,6 @@ class Pool implements PoolInterface
 	public static function isSupported()
 	{
 
-		return false;
 		return Thread::isSupported() || Process::isSupported();
 	}
 

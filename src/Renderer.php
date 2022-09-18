@@ -107,7 +107,7 @@ class Renderer
 
 					return (new Renderer($renderOptions))->renderChildNodes($ast->children);
 				})->
-				then(function (array $result, int $index) use (&$data) {
+				then(function (array $result, $index) use (&$data) {
 
 					$data[$index] = $result;
 				});
@@ -246,7 +246,7 @@ class Renderer
 
 					return (new Renderer($options))->renderChildNodes($slice);
 				})->
-				then(function (array $result, int $index) use (&$data) {
+				then(function (array $result, $index) use (&$data) {
 
 					$data[$index] = $result;
 				});

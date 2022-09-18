@@ -5,6 +5,7 @@ namespace TBela\CSS\Parser;
 use Exception;
 
 use Generator;
+use stdClass;
 use TBela\CSS\Event\EventTrait;
 use TBela\CSS\Interfaces\InvalidTokenInterface;
 use TBela\CSS\Value;
@@ -76,7 +77,7 @@ class Lexer
     }
 
 	/**
-	 * @return Lexer|Generator
+	 * @return Generator
 	 * @throws Exception
 	 */
 
@@ -658,7 +659,7 @@ class Lexer
         $context->location->end->column = max($context->location->end->column - 1, 1);
     }
 
-    public function setParentOffset(\stdClass $parentOffset)
+    public function setParentOffset(stdClass $parentOffset)
     {
 
         $this->parentOffset = clone $parentOffset;
@@ -693,7 +694,7 @@ class Lexer
 	/**
 	 * @throws Exception
 	 */
-	protected function parseComments(\stdClass $token)
+	protected function parseComments(stdClass $token)
 	{
 
         $property = property_exists($token, 'name') ? 'name' : (property_exists($token, 'selector') ? 'selector' : null);

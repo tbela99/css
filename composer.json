@@ -46,7 +46,8 @@
     "php": ">=5.6.40",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "opis/closure": "^3.6"
+    "opis/closure": "^3.6",
+    "axy/sourcemap": "^0.1.5"
   },
   "scripts": {
     "test": "./bin/runtest.sh"

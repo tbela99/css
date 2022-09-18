@@ -48,7 +48,7 @@ class Process extends AbstractProcess
 
 		foreach ($vars as $key => $var) {
 
-			$script .= "\n\$$key = " . var_export($var, true) . ";";
+			$script .= "\n\$$key = unserialize(" .var_export(serialize($var), true). ");";
 		}
 
 		$code = $serialized->getReflector()->getCode();
@@ -68,7 +68,7 @@ class Process extends AbstractProcess
 				\$ipc->write(\$serializer->encode(\$data));
 				}
 
-			catch (Throwable \$e) {
+			catch (Exception \$e) {
 
 			 fwrite(STDERR, \$e);
 			}

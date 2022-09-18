@@ -168,7 +168,7 @@ class Args
 						$value = substr($name, $k);
 						$name = substr($name, 0, $k);
 
-						if ($value === '') {
+						if ($value === '' || $value === false) {
 
 							$value = null;
 						}
