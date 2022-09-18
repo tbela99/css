@@ -175,7 +175,7 @@ final class PathTest extends TestCase
         shell_exec(sprintf("cd %s && nohup php -S %s:%s -t . %s > /dev/null 2>&1 &", escapeshellarg(__DIR__.'/..'), '127.0.0.1', $port, 'server.php'));
 
         // wait for the server to start
-        sleep(3);
+        sleep(6);
 
         $data[] = [
 

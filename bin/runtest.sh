@@ -55,7 +55,7 @@ TEST_PCNTL=$(php -m | grep pcntl)
 
 php=$(command -v php"$PHP_VER")
 
-#test_timeout=60
+test_timeout=180
 
 if [ -z "$php" ]
 then
@@ -79,8 +79,8 @@ run() {
   #
   #  set -x
   result="0"
-# timeout $test_timeout
-  PROCESS_ENGINE="process" "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-risky "$@" || result="1"
+
+  PROCESS_ENGINE="process" timeout $test_timeout "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-risky "$@" || result="1"
 
   if [ "$result" -gt 0 ]
   then
@@ -88,8 +88,8 @@ run() {
   fi
 
   if [ -n "$TEST_PCNTL" ]; then
-#     timeout $test_timeout
-    PROCESS_ENGINE="thread" "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-risky "$@" || result="1"
+
+    PROCESS_ENGINE="thread" timeout $test_timeout "$php" ../vendor/bin/phpunit -v --colors=always --bootstrap autoload.php --testdox --fail-on-risky "$@" || result="1"
     # unset $PROCESS_ENGINE
   fi
 
