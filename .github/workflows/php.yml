@@ -1,4 +1,4 @@
-name: CI
+name: PHP5.6-CI
 
 on:
   push:

@@ -2,19 +2,20 @@
 
 namespace TBela\CSS\Parser;
 
+use TBela\CSS\Parser;
 use TBela\CSS\Property\Config;
 
 trait ParserTrait
 {
 
-	/**
-	 * @param \stdClass $position
-	 * @param string $string
-	 * @return object
-	 * @ignore
-	 */
-    protected function update(\stdClass $position, $string)
-    {
+    /**
+     * @param object $position
+     * @param $string
+     * @return object
+     * @ignore
+     */
+    protected function update($position, $string)
+	{
 
         $j = strlen($string);
 
@@ -34,12 +35,12 @@ trait ParserTrait
     }
 
     /**
-     * @param string $string
-     * @param bool $force
+     * @param $string
+     * @param $force
      * @return false|string
      */
     public static function stripQuotes($string, $force = false)
-    {
+	{
 
         $q = substr($string, 0, 1);
 
@@ -55,7 +56,7 @@ trait ParserTrait
     }
 
     public static function match_comment($string, $start, $end)
-    {
+	{
 
         $i = $start + 1;
 
@@ -74,15 +75,15 @@ trait ParserTrait
     }
 
     /**
-     * read a string until it encounter any of the $char_stop characters and return the corresponding substring
-     * @param string $string
-     * @param int $startPosition
-     * @param int $endPosition
+     * read a until it encounter any of the $char_stop characters and return the corresponding substring
+     * @param $string
+     * @param $startPosition
+     * @param $endPosition
      * @param array $char_stop
      * @return false|string
      */
     public static function substr($string, $startPosition, $endPosition, array $char_stop)
-    {
+	{
 
         if ($startPosition < 0) {
 
@@ -222,7 +223,7 @@ trait ParserTrait
 
                     break;
 
-                // in string matching
+                // in matching
                 case '"':
                 case "'":
 
@@ -252,13 +253,13 @@ trait ParserTrait
     }
 
     /**
-     * @param string $string
-     * @param string $separator
-     * @param int $limit
+     * @param $string
+     * @param $separator
+     * @param $limit
      * @return array
      */
     public static function split($string, $separator = '', $limit = PHP_INT_MAX)
-    {
+	{
 
         $result = [];
 
@@ -415,7 +416,7 @@ trait ParserTrait
     }
 
     public static function is_whitespace($char)
-    {
+	{
 
         return preg_match("#^\s$#", $char);
     }

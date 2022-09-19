@@ -12,7 +12,6 @@ final class VendorTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider vendorProvider
-	 * @small
      */
     public function testVendor($expected, $actual)
     {

@@ -54,7 +54,7 @@ final class CliTest extends TestCase
             [
 
                 (new Args([__FILE__, '-a', '1']))->setStrict(false)->parse()->getArguments(),
-                ["a" => 1, '_' => []]
+                ["a" => "1", '_' => []]
             ],
             [
 

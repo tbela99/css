@@ -7,6 +7,8 @@
     "parser",
     "minifier",
     "beautifier",
+    "css-parser",
+    "stylesheet",
     "Ast",
     "PHP"
   ],
@@ -36,13 +38,16 @@
     }
   },
   "suggest": {
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-sockets": "*",
+    "ext-pcntl": "*"
   },
   "require": {
     "php": ">=5.6.40",
     "ext-json": "*",
-    "axy/sourcemap": "^0.1.5",
-    "symfony/process": "^3.4"
+    "ext-mbstring": "*",
+    "opis/closure": "^3.6",
+    "axy/sourcemap": "^0.1.5"
   },
   "scripts": {
     "test": "./bin/runtest.sh"

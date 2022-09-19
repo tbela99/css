@@ -59,7 +59,7 @@ class Helper
     public static function getCurrentDirectory()
     {
 
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI == 'cli') {
 
             return static::format(getcwd());
         }
@@ -143,7 +143,7 @@ class Helper
     public static function absolutePath($file, $ref)
 	{
 
-		if (php_sapi_name() != 'cli' && preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
+		if (PHP_SAPI != 'cli' && preg_match('#^/([^/]|$)#', $file) && is_file($file)) {
 
 			$file = preg_replace('#'.preg_quote(getcwd()).'#', '', $file);
 		}
@@ -152,7 +152,7 @@ class Helper
         $ref = static::format($ref);
 
         // web server environment
-        if (\str_starts_with($ref, '/') && php_sapi_name() != 'cli') {
+        if (str_starts_with($ref, '/') && PHP_SAPI != 'cli') {
 
             if (\str_starts_with($file, '/') &&
                 substr($file, 1, 1) != '/') {
