@@ -26,10 +26,10 @@ function toFileSize(float $size, array $units = [])
 	$s = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 	$e = floor(log($size) / log(1024));
 
-	return sprintf("%.2f%s", $size / pow(1024, floor($e)), $units[$e] ?? $s[$e]);
+	return sprintf("%.2f%s", $size / pow(1024, floor($e)), isset($units[$e]) ? $units[$e] : $s[$e]);
 }
 
-function toDuration(float $duration)
+function toDuration($duration)
 {
 
 	return sprintf("%.2f%s", $duration < 1 ? $duration * 1000 : $duration, $duration < 1 ? 'ms' : 's');
@@ -107,14 +107,14 @@ on('exit', function ($token) {
         ));
     }
 })->
-on('pool.start', function (int $index, $thread) use (&$parsingStartTime) {
+on('pool.start', function ($index, $thread) use (&$parsingStartTime) {
 
-	fwrite(STDERR, sprintf("starting %s #%d - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', $thread::class), $index, toDuration(microtime(true) - $parsingStartTime)));
+	fwrite(STDERR, sprintf("starting %s #%d - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', get_class($thread)), $index, toDuration(microtime(true) - $parsingStartTime)));
 	fwrite(STDERR, sprintf("memory usage: %s peak: %s\n", toFileSize(memory_get_usage(true)), toFileSize(memory_get_peak_usage(true))));
 })->
-on('pool.finish', function (array|string $result, int $index, ?string $stderr, ?int $exitCode, ?string $duration, $process) use (&$parsingStartTime) {
+on('pool.finish', function ($result, $index, $stderr, $exitCode, $duration, $process) use (&$parsingStartTime) {
 
-	fwrite(STDERR, sprintf("%s %d finished in %s and exited with status %s - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', $process::class), $index, $duration, $exitCode, toDuration(microtime(true) - $parsingStartTime)));
+	fwrite(STDERR, sprintf("%s %d finished in %s and exited with status %s - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', get_class($process)), $index, $duration, $exitCode, toDuration(microtime(true) - $parsingStartTime)));
 	fwrite(STDERR, sprintf("memory usage: %s peak: %s\n", toFileSize(memory_get_usage(true)), toFileSize(memory_get_peak_usage(true))));
 })->
 load($_SERVER['REQUEST_URI']);
