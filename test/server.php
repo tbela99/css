@@ -18,11 +18,28 @@ function ellipsis ($string, $length = 15) {
     return mb_substr($string, 0, $length - 3).'...';
 }
 
+function toFileSize(float $size, array $units = [])
+{
+
+	if ($size == 0) return 0;
+
+	$s = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+	$e = floor(log($size) / log(1024));
+
+	return sprintf("%.2f%s", $size / pow(1024, floor($e)), $units[$e] ?? $s[$e]);
+}
+
+function toDuration(float $duration)
+{
+
+	return sprintf("%.2f%s", $duration < 1 ? $duration * 1000 : $duration, $duration < 1 ? 'ms' : 's');
+}
+
 $parser = new Parser();
-fwrite(STDERR, sprintf("curl dir %s >>>\n", getcwd()));
+fwrite(STDERR, sprintf("\n\n\ncurl dir %s >>>\n", getcwd()));
 
 echo $parser->setOptions([
-	'multi_processing' => false,
+	'multi_processing' => true,
     'flatten_import' => true,
     'capture_errors' => false
 ])->
@@ -89,5 +106,15 @@ on('exit', function ($token) {
             $token->location->end->column
         ));
     }
+})->
+on('pool.start', function (int $index, $thread) use (&$parsingStartTime) {
+
+	fwrite(STDERR, sprintf("starting %s #%d - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', $thread::class), $index, toDuration(microtime(true) - $parsingStartTime)));
+	fwrite(STDERR, sprintf("memory usage: %s peak: %s\n", toFileSize(memory_get_usage(true)), toFileSize(memory_get_peak_usage(true))));
+})->
+on('pool.finish', function (array|string $result, int $index, ?string $stderr, ?int $exitCode, ?string $duration, $process) use (&$parsingStartTime) {
+
+	fwrite(STDERR, sprintf("%s %d finished in %s and exited with status %s - elapsed %s\n", preg_replace('#.*\\\\(.+)$#', '$1', $process::class), $index, $duration, $exitCode, toDuration(microtime(true) - $parsingStartTime)));
+	fwrite(STDERR, sprintf("memory usage: %s peak: %s\n", toFileSize(memory_get_usage(true)), toFileSize(memory_get_peak_usage(true))));
 })->
 load($_SERVER['REQUEST_URI']);

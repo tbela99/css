@@ -4,9 +4,11 @@ namespace TBela\CSS\Parser;
 
 use Exception;
 
+use Generator;
 use TBela\CSS\Event\EventTrait;
-use TBela\CSS\Interfaces\ValidatorInterface;
+use TBela\CSS\Interfaces\InvalidTokenInterface;
 use TBela\CSS\Value;
+
 class Lexer
 {
 
@@ -73,21 +75,33 @@ class Lexer
         return $this;
     }
 
-    /**
-     * @return Lexer
-     * @throws Exception
-     */
+	/**
+	 * @return Lexer|Generator
+	 * @throws Exception
+	 */
 
-    public function tokenize(): static
+    public function tokenize(): Lexer|Generator
 	{
 
-        return $this->doTokenize($this->css, $this->src, $this->recover, $this->context, $this->parentStylesheet, $this->parentMediaRule);
+        foreach($this->doTokenize($this->css, $this->src, $this->recover, $this->context, $this->parentStylesheet, $this->parentMediaRule) as $key => $value) {
+
+			yield $key => $value;
+		}
+
+		$this->css = '';
     }
 
 	/**
+	 * @param $css
+	 * @param $src
+	 * @param $recover
+	 * @param $context
+	 * @param $parentStylesheet
+	 * @param $parentMediaRule
+	 * @return Generator
 	 * @throws Exception
 	 */
-	public function doTokenize($css, $src, $recover, $context, $parentStylesheet, $parentMediaRule): static
+	public function doTokenize($css, $src, $recover, $context, $parentStylesheet, $parentMediaRule): Generator
 	{
 
         $position = $context->location->end;
@@ -183,7 +197,7 @@ class Lexer
                     $token->src = $src;
                 }
 
-                $this->emit('enter', $token, $context, $parentStylesheet);
+				yield 'enter' => [$token, $context, $parentStylesheet];
 
                 $this->update($position, $comment);
                 $position->index += strlen($comment);
@@ -237,7 +251,7 @@ class Lexer
                             'value' => rtrim($declaration, "\n\r\t ")
                         ];
 
-                        $this->emit('enter', $token, $context, $parentStylesheet);
+						yield 'enter' => [$token, $context, $parentStylesheet];
 
                     } else {
 
@@ -346,6 +360,9 @@ class Lexer
                                     // invalid declaration
                                     if ($isValidDeclaration) {
 
+										/**
+										 * @var InvalidTokenInterface $className
+										 */
                                         $className = Value::getClassName($value->type);
                                         $data[$key] = $className::doRecover($value);
                                     }
@@ -360,8 +377,8 @@ class Lexer
                             }
                         }
 
-                        $this->emit('enter', $declaration, $context, $parentStylesheet);
-                    }
+						yield 'enter' => [$declaration, $context, $parentStylesheet];
+					}
                 }
 
                 $this->update($position, $name);
@@ -489,7 +506,7 @@ class Lexer
                         $rule->location->end->line = max(1, $rule->location->end->line - 1);
                         $rule->location->end->column = max($rule->location->end->column - 1, 1);
 
-                        $this->emit('enter', $rule, $context, $parentStylesheet);
+						yield 'enter' => [$rule, $context, $parentStylesheet];
 
                         $i += strlen($name) - 1;
                         continue;
@@ -504,7 +521,8 @@ class Lexer
                         $rule->location->end->index = max(1, $rule->location->end->index - 1);
 
                         $this->parseComments($rule);
-                        $this->emit('enter', $rule, $context, $parentStylesheet);
+
+						yield 'enter' => [$rule, $context, $parentStylesheet];
 
                         $i += strlen($name) - 1;
                         continue;
@@ -563,7 +581,8 @@ class Lexer
                         $validRule = false;
                         $rule->type = 'InvalidRule';
                         $rule->value = $body;
-                        $this->emit('enter', $rule, $context, $parentStylesheet);
+
+						yield 'enter' => [$rule, $context, $parentStylesheet];
                     }
                 }
 
@@ -573,7 +592,8 @@ class Lexer
 
                     if (!$ignoreRule) {
 
-                        $validRule = $this->getStatus('enter', $rule, $context, $parentStylesheet) == ValidatorInterface::VALID;
+						yield 'enter' => [$rule, $context, $parentStylesheet];
+						$validRule = !str_starts_with($rule->type, 'Invalid');
                     }
                 }
 
@@ -609,7 +629,10 @@ class Lexer
                         $parentStylesheet->type = 'NestingRule';
                     }
 
-                    $this->doTokenize($recover ? $body : substr($body, 0, -1), $src, $recover, $rule, $newParentStyleSheet, $newParentMediaRule);
+                    foreach ($this->doTokenize($recover ? $body : substr($body, 0, -1), $src, $recover, $rule, $newParentStyleSheet, $newParentMediaRule) as $event => $data) {
+
+						yield $event => $data;
+					}
                 }
 
                 $string = $name . $body;
@@ -625,15 +648,14 @@ class Lexer
                 if (!$ignoreRule) {
 
                     $this->parseComments($rule);
-                    $this->emit('exit', $rule, $context, $parentStylesheet);
+
+					yield 'exit' => [$rule, $context, $parentStylesheet];
                 }
             }
         }
 
         $context->location->end->index = max(1, $context->location->end->index - 1);
         $context->location->end->column = max($context->location->end->column - 1, 1);
-
-        return $this;
     }
 
     public function setParentOffset(object $parentOffset): static
@@ -795,25 +817,5 @@ class Lexer
         }
 
         return ['name' => $str];
-    }
-
-	/**
-	 * @param string $event
-	 * @param object $rule
-	 * @param $context
-	 * @param $parentStylesheet
-	 * @return int
-	 */
-    protected function getStatus(string $event, object $rule, $context, $parentStylesheet): int
-    {
-        foreach ($this->emit($event, $rule, $context, $parentStylesheet) as $status) {
-
-            if (is_int($status)) {
-
-                return $status;
-            }
-        }
-
-        return ValidatorInterface::VALID;
     }
 }

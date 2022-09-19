@@ -31,8 +31,14 @@ A CSS parser, beautifier and minifier written in PHP. It supports the following 
 
 install using [Composer](https://getcomposer.org/)
 
+### PHP version >= 8.0
 ```bash
 $ composer require tbela99/css
+```
+
+### PHP version >= 5.6
+```bash
+$ composer require "tbela99/css:dev-php56-backport"
 ```
 
 ## Requirements
@@ -578,6 +584,19 @@ $stylesheet->append('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/
 
 ## Performance
 
+### Utility methods
+
+The renderer class provides utility methods to format css data
+
+```php
+
+$css = \TBela\CSS\Renderer::fromFile($url_or_file, $renderOptions = [], $parseOptions = []);
+#
+$css = \TBela\CSS\Renderer::fromString($css, $renderOptions = [], $parseOptions = []);
+```
+
+### Manual parsing and rendering
+
 parsing and rendering ast is 3x faster than parsing an element.
 
 ```php
@@ -592,9 +611,12 @@ echo (string) $parser;
 
 // or render minified css
 $renderer = new Renderer(['compress' => true]);
-echo $renderer->renderAst($parser->getAst());
 
-// slower - will build an Element
+echo $renderer->renderAst($parser);
+# or 
+echo $renderer->renderAst($parser->getAst());
+# or
+// slower - will build a stylesheet object
 echo $renderer->render($parser->parse());
 ```
 ## Parser Options

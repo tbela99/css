@@ -1,4 +1,4 @@
-name: CI
+name: PHP8.0-CI
 
 on:
   push:

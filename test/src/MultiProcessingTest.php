@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Event\Event as EventTest;
 use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
@@ -65,31 +64,52 @@ final class MultiProcessingTest extends TestCase
         );
     }
 
-    public function sliceProvider () {
+    public function sliceProvider (): array
+	{
 
         $data = [];
 
         $parser = new Parser();
 
-        $size = 20;
-        $file = __DIR__.'/../nested/nested';
+		$size = 64 * 1024;
+		$file = __DIR__.'/../perf_files/bs.4';
 
-        $json = [];
+		$json = [];
 
-        foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
-            'line' => 1,
-            'column' => 1,
-            'index' => 0
-        ]) as $line) {
+		foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
+			'line' => 1,
+			'column' => 1,
+			'index' => 0
+		]) as $line) {
 
-            $json[] = $line;
-        }
+			$json[] = $line;
+		}
 
-        $data[] = [
+		$data[] = [
 
-            file_get_contents(__DIR__.'/../multiprocessing/nested-slice.json'),
-            json_encode($json, JSON_PRETTY_PRINT)
-        ];
+			file_get_contents(__DIR__.'/../multiprocessing/bs.4-slice.json'),
+			json_encode($json, JSON_PRETTY_PRINT)
+		];
+
+		$size = 20;
+		$file = __DIR__.'/../nested/nested';
+
+		$json = [];
+
+		foreach ($parser->slice(css: file_get_contents($file.'.css'), size: $size, position: (object) [
+			'line' => 1,
+			'column' => 1,
+			'index' => 0
+		]) as $line) {
+
+			$json[] = $line;
+		}
+
+		$data[] = [
+
+			file_get_contents(__DIR__.'/../multiprocessing/nested-slice.json'),
+			json_encode($json, JSON_PRETTY_PRINT)
+		];
 
         $json = [];
 
@@ -111,10 +131,10 @@ final class MultiProcessingTest extends TestCase
         return $data;
     }
 
-    /**
-     * @throws IOException
-     * @throws Parser\SyntaxError
-     */
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws Exception
+	 */
     public function loadProvider (): array
     {
 
@@ -123,19 +143,19 @@ final class MultiProcessingTest extends TestCase
             __DIR__.'/../nested/nested.min.css',
             __DIR__.'/../sourcemap/sourcemap.import.css',
             __DIR__.'/../perf_files/bs-mtrl.css',
-            __DIR__.'/../perf_files/bs-reboot.css',
-            __DIR__.'/../perf_files/bs.3.css',
+//            __DIR__.'/../perf_files/bs-reboot.css',
+//            __DIR__.'/../perf_files/bs.3.css',
 			__DIR__.'/../perf_files/bs.4.css',
-			__DIR__.'/../perf_files/none.css',
-			__DIR__.'/../perf_files/row.css',
-			__DIR__.'/../perf_files/row.min.css',
-			__DIR__.'/../perf_files/main.min.css',
+//			__DIR__.'/../perf_files/none.css',
+//			__DIR__.'/../perf_files/row.css',
+//			__DIR__.'/../perf_files/row.min.css',
+//			__DIR__.'/../perf_files/main.min.css',
 			__DIR__.'/../perf_files/perf.css',
-			__DIR__.'/../perf_files/php-net.css',
-			__DIR__.'/../perf_files/main.min.css',
-			__DIR__.'/../perf_files/uncut.css',
-			__DIR__.'/../perf_files/uncut.css',
-            __DIR__.'/../perf_files/uncut.min.css'
+//			__DIR__.'/../perf_files/php-net.css',
+//			__DIR__.'/../perf_files/main.min.css',
+//			__DIR__.'/../perf_files/uncut.css',
+//			__DIR__.'/../perf_files/uncut.css',
+//            __DIR__.'/../perf_files/uncut.min.css'
         ];
 
 
@@ -164,6 +184,7 @@ final class MultiProcessingTest extends TestCase
 	/**
 	 * @throws Parser\SyntaxError
 	 * @throws IOException
+	 * @throws Exception
 	 */
 	public function fromProvider (): array
 	{
@@ -193,8 +214,6 @@ final class MultiProcessingTest extends TestCase
 
 		foreach ($files as $file) {
 
-//			$content = file_get_contents($file);
-
 			$data[] = [
 				Renderer::fromFile($file, parseOptions: [
 					'flatten_import' => true
@@ -208,10 +227,10 @@ final class MultiProcessingTest extends TestCase
 		return $data;
 	}
 
-    /**
-     * @throws Parser\SyntaxError
-     * @throws IOException
-     */
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws Exception
+	 */
     public function astProvider (): array
     {
 
@@ -223,7 +242,6 @@ final class MultiProcessingTest extends TestCase
 //            __DIR__.'/../perf_files/row.css',
 //            __DIR__.'/../perf_files/row.min.css'
         ];
-
 
         $data = [];
 
@@ -240,7 +258,6 @@ final class MultiProcessingTest extends TestCase
                     'ast_src' => $file,
                     'flatten_import' => true
                 ]))->appendContent($content)->getAst(), JSON_PRETTY_PRINT)
-
             ];
         }
 

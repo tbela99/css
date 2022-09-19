@@ -12,7 +12,6 @@ final class SelectorTest extends TestCase
      * @param string $expected
      * @param string $actual
      * @dataProvider selectorRemoveProvider
-	 * @medium
      */
     public function testSelectorRemove(string $expected, string $actual): void
     {
@@ -27,7 +26,6 @@ final class SelectorTest extends TestCase
 	 * @param string $expected
 	 * @param string $actual
 	 * @dataProvider selectorSiblingProvider
-	 * @medium
 	 */
 	public function testSelectorSibling(string $expected, string $actual): void
 	{

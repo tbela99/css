@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Exceptions\IOException;
 use TBela\CSS\Parser;
 use TBela\CSS\Renderer;
 
@@ -16,7 +17,7 @@ final class AstTest extends TestCase
      * @covers \TBela\CSS\Parser
      * @covers \TBela\CSS\Renderer
      */
-    public function testIdentifier($expected, $actual): void
+    public function testIdentifier(string $expected, string $actual): void
     {
 
         $this->assertEquals(
@@ -30,7 +31,7 @@ final class AstTest extends TestCase
      * @param string $actual
      * @dataProvider mediaAllProvider
      */
-    public function testMediaAll($expected, $actual): void
+    public function testMediaAll(string $expected, string $actual): void
     {
 
         $this->assertEquals(
@@ -39,10 +40,16 @@ final class AstTest extends TestCase
         );
     }
 
-    public function identifierProvider() {
+	/**
+	 * @throws Parser\SyntaxError
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public function identifierProvider(): array
+	{
 
         $data = [];
-        
+
         $parser = new TBela\CSS\Parser('
  * {
   text-shadow: none!important /* comment 7 */;
@@ -191,7 +198,12 @@ final class AstTest extends TestCase
         return $data;
     }
 
-    public function mediaAllProvider() {
+	/**
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public function mediaAllProvider(): array
+	{
 
         $data = [];
 
