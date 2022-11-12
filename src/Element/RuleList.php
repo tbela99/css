@@ -6,11 +6,11 @@ use ArrayIterator;
 use InvalidArgumentException;
 use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Element;
+use TBela\CSS\Element\Declaration\Property;
+use TBela\CSS\Element\Declaration\PropertyList;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser;
-use TBela\CSS\Property\Property;
-use TBela\CSS\Property\PropertyList;
 use Traversable;
 use function in_array;
 

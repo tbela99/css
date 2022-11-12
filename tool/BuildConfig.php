@@ -10,7 +10,7 @@
 require __DIR__ . '/../test/autoload.php';
 
 // properties order is important!
-use TBela\CSS\Property\Config;
+use TBela\CSS\Element\Declaration\Config;
 
 $config = [
     // shorthand that can be computed only when every shorthand property is defined because it will override properties that are not directly handled.
@@ -60,18 +60,6 @@ $config['map'] = array_merge($config['map'], makePropertySet('background', ['bac
     ]
 ], ','));
 
-//$config['map'] = array_merge($config['map'], makePropertySet('background-attachment', ['background-attachment'], [
-//        ['background-attachment',
-//            ['type' => 'background-attachment', 'optional' => true]
-//    ]
-//], ',', false));
-
-//$config['properties'] = array_merge($config['properties'], makePropertySet('background-image', ['background-image'], [
-//    ['background-image',
-//        ['type' => 'background-image', 'optional' => true]
-//    ]
-//], ',', false, null, 'background'));
-
 $config['properties'] = array_merge($config['properties'], makePropertySet('background-size', ['background-size', 'unit unit'], [], ',', false, null,'background'));
 $config['properties'] = array_merge($config['properties'], makePropertySet('background-color', ['background-color'], [], ',', false, null,'background'));
 $config['properties'] = array_merge($config['properties'], makePropertySet('background-image', ['background-image'], [], ',', false, null,'background'));
@@ -116,19 +104,25 @@ $config['map'] = array_merge($config['map'], makePropertySet('outline', ['outlin
      *compute shorthand property
      */
     ['compute' => true]));
-//
-//$config['properties'] = array_merge($config['properties'], makePropertySet('background-position',
-//    [
-//        'background-position-x background-position-y',
-//        'background-position-y background-position-x'
-//    ], [
-//        ['background-position-x',
-//            ['type' => 'background-position-x', 'multiple' => true, 'separator' => ',', 'optional' => true]
-//        ],
-//        ['background-position-y',
-//            ['type' => 'background-position-y', 'multiple' => true, 'separator' => ',', 'optional' => true]
-//        ]
-//    ], ',', false));
+
+$config['map'] = array_merge($config['map'], makePropertySet('text-decoration', ['text-decoration-line text-decoration-color text-decoration-style text-decoration-thickness'], [
+	['text-decoration-thickness',
+		['type' => 'unit']
+	],
+	['text-decoration-line',
+		['type' => 'text-decoration-line', 'multiple' => true]
+	],
+	['text-decoration-color',
+		['type' => 'color']
+	],
+	['text-decoration-style',
+		['type' => 'text-decoration-style']
+	]
+], null, false,
+	/**
+	 *compute shorthand property
+	 */
+	['compute' => true, 'optional-shorthand' => true]));
 
 $config['properties'] = array_merge($config['properties'], makePropertySet('margin', ['unit unit unit unit'], [
     ['margin-top', 'unit'],
@@ -267,13 +261,13 @@ foreach ($config['alias'] as $alias => $data) {
 
 unset($config['alias']);
 
-$file = dirname(__DIR__) . '/src/TBela/CSS/config.json';
-file_put_contents($file, json_encode($config));
-
-echo "the configuration has been stored in '$file' ...\n";
+$file = dirname(__DIR__) . '/src/config.json';
 
 
-function addAlias($property)
+echo file_put_contents($file, json_encode($config))?  "the configuration has been stored in '$file' ...\n" : "failed to save the confg file in $file\n";
+
+
+function addAlias(string $property): array
 {
     $result = [];
     $args = func_get_args();
@@ -303,15 +297,16 @@ function addAlias($property)
  * @param array $pattern
  * @param array $props
  * @param null|string $separator
- * @param bool $map_properties
+ * @param bool $map_properties remove properties with identical values: margin: 2px 2px 2px => margin: 2px
  * @param array|null $settings
- * @param string|null
+ * @param string|null $shorthandOverride
  * @return array
  */
-function makePropertySet(string $shorthand, array $pattern, array $props, ?string $separator = null, bool $map_properties = true, ?array $settings = null, $shorthandOverride = null): array
+function makePropertySet(string $shorthand, array $pattern, array $props, ?string $separator = null, bool $map_properties = true, ?array $settings = null, string $shorthandOverride = null): array
 {
 
     $properties = [];
+
     foreach ($props as $key => $prop) {
 
         // properties definition

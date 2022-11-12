@@ -13,7 +13,11 @@ use TBela\CSS\Value;
 class Color extends Value
 {
 
-    /**
+	use ParsableTrait;
+
+	protected static string $propertyType = 'color';
+
+	/**
      * @inheritDoc
      */
     protected static function validate($data):bool
@@ -34,16 +38,6 @@ class Color extends Value
     {
 
         return $type == 'color';
-    }
-
-	/**
-	 * @inheritDoc
-	 * @throws \Exception
-	 */
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
     }
 
     /**

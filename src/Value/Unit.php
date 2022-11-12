@@ -26,14 +26,14 @@ class Unit extends Number {
         return $dataType == static::type() || ($type == 'number' && $data->value == 0);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
+	/**
+	 * @inheritDoc
+	 */
+	public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+	{
 
-        return static::doRender($this->data, $options);
-    }
+		return $token->type == 'unit' || in_array($token->value, static::$keywords) || $token->type == static::type();
+	}
 
     public static function doRender(object $data, array $options = []) {
 
@@ -82,4 +82,26 @@ class Unit extends Number {
 
         return $data->value.$unit;
     }
+
+	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
+	protected static function doParse(string $string, bool $capture_whitespace = true, $context = '', $contextName = '', $preserve_quotes = false)
+	{
+
+		$type = static::type();
+		$tokens = static::getTokens($string, $capture_whitespace, $context, $contextName);
+
+		foreach ($tokens as $token) {
+
+			if (static::matchToken($token)) {
+
+				$token->value = static::stripQuotes($token->value);
+				$token->type = $type;
+			}
+		}
+
+		return static::reduce($tokens);
+	}
 }

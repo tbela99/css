@@ -27,11 +27,6 @@ class BackgroundImage extends CssFunction
         return isset($data->name) && isset($data->arguments) && is_array($data->arguments);
     }
 
-    public function render(array $options = []): string
-    {
-        return $this->data->value ?? parent::render($options);
-    }
-
     public static function doRender(object $data, array $options = [])
     {
         return $data->value ?? parent::doRender($data, $options);

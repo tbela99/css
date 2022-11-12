@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use TBela\CSS\Element\Declaration\PropertyList;
 use TBela\CSS\Parser;
-use TBela\CSS\Property\PropertyList;
 use TBela\CSS\Value;
 
 final class BackgroundTest extends TestCase

@@ -6,11 +6,8 @@ use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Compiler;
 use TBela\CSS\Element\AtRule;
 use TBela\CSS\Element\Declaration;
-use TBela\CSS\Property\PropertyList;
-use TBela\CSS\Renderer as RendererClass;
 use TBela\CSS\Interfaces\ObjectInterface;
-use TBela\CSS\Value;
-use TBela\CSS\Value\CSSFunction;
+use TBela\CSS\Renderer as RendererClass;
 
 require_once __DIR__.'/../bootstrap.php';
 

@@ -34,15 +34,6 @@ class FontWeight extends Value
 
     protected static array $defaults = ['normal', '400', 'regular'];
 
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = [])
     {
 

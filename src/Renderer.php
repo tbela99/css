@@ -6,14 +6,14 @@ use axy\sourcemap\SourceMap;
 use Exception;
 use stdClass;
 use TBela\CSS\Ast\Traverser;
+use TBela\CSS\Element\Declaration\PropertyList;
 use TBela\CSS\Exceptions\IOException;
+use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\ParsableInterface;
 use TBela\CSS\Interfaces\RenderableInterface;
-use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Parser\Helper;
 use TBela\CSS\Parser\SyntaxError;
 use TBela\CSS\Process\Pool as ProcessPool;
-use TBela\CSS\Property\PropertyList;
 use function is_string;
 
 /**

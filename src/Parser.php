@@ -197,6 +197,9 @@ class Parser implements ParsableInterface, Stringable
 			then(function (array $result, int $index) use (&$data) {
 
 				$data[$index] = $result;
+			})->catch(function (\Throwable $t) use($file, $slice) {
+
+				echo new Exception(sprintf("error parsing %s:%s:%s:%s", $file, $slice[0]->line, $slice[0]->column, $slice[0]->index), $t->getCode(), $t);
 			});
 		}
 
@@ -1093,9 +1096,7 @@ class Parser implements ParsableInterface, Stringable
 			$context = $this->getContext();
 
 			array_pop($context->children);
-//			array_splice($context->children, count($context->children), 0, $token->children);
 			$context->children = array_merge($context->children, $token->children);
-
 		}
 	}
 

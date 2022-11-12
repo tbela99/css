@@ -2,9 +2,9 @@
 
 namespace TBela\CSS\Value;
 
-use \Exception;
-use TBela\CSS\Property\Config;
-use \TBela\CSS\Value;
+use Exception;
+use TBela\CSS\Element\Declaration\Config;
+use TBela\CSS\Value;
 
 /**
  * parse shorthand
@@ -88,14 +88,8 @@ class ShortHand extends Value
 
             $j = count($tokens);
             $previous = null;
-            $next = null;
 
-            for ($i = 0; $i < $j; $i++) {
-
-                if (!isset($tokens[$i]->type)) {
-
-                    echo new Exception('empty type not allowed');
-                }
+			for ($i = 0; $i < $j; $i++) {
 
                 if (in_array($tokens[$i]->type, ['separator', 'whitespace'])) {
 
@@ -120,7 +114,7 @@ class ShortHand extends Value
                         $next = $tokens[++$k] ?? null;
                     }
 
-                    if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous, $tokens[$i + 1] ?? null, $next, $i, $tokens)) {
+					if (call_user_func($className, $tokens[$i], $tokens[$i - 1] ?? null, $previous, $tokens[$i + 1] ?? null, $next, $i, $tokens)) {
 
                         $tokens[$i]->type = $pattern['type'];
                         $previous = $tokens[$i];

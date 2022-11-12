@@ -5,10 +5,10 @@ namespace TBela\CSS;
 use InvalidArgumentException;
 use JsonSerializable;
 use stdClass;
+use TBela\CSS\Element\Declaration\Config;
 use TBela\CSS\Interfaces\ObjectInterface;
-use TBela\CSS\Property\Config;
-use TBela\CSS\Value\Number;
 use TBela\CSS\Parser\ParserTrait;
+use TBela\CSS\Value\Number;
 
 /**
  * CSS value base class
@@ -94,6 +94,9 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case 'background-size':
                 case 'background-repeat':
                 case 'background-attachment':
+				case 'text-decoration':
+				case 'text-decoration-line':
+				case 'text-decoration-style':
 
                     $result .= $token->value;
 
@@ -141,6 +144,8 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case 'background-image':
                 case 'background-origin':
                 case 'background-position':
+				case 'text-decoration-color':
+				case 'text-decoration-thickness':
 
                     $className = static::getClassName($token->type);
                     $result .= $className::doRender($token, $options);
@@ -341,7 +346,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $options
      * @return string
      */
-    public function render(array $options = []): string
+    final public function render(array $options = []): string
     {
 
         return $this->data->value;
@@ -1322,10 +1327,10 @@ abstract class Value implements JsonSerializable, ObjectInterface
         if (substr($token, 0, 1) != '#' && is_numeric($token)) {
 
             $type->type = 'number';
-        } else if ($token == 'currentcolor' || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
+        } else if (strncasecmp($token, 'currentcolor', 12) === 0 || isset(Color::COLORS_NAMES[$token]) || preg_match('#^\#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})$#i', $token)) {
 
             $type->type = 'color';
-            $type->colorType = $token == 'currentcolor' ? 'keyword' : 'hex';
+            $type->colorType = strncasecmp($token, 'currentcolor', 12) === 0 ? 'keyword' : 'hex';
         } else if (preg_match('#^(((\+|-)?(?=\d*[.eE])([0-9]+\.?[0-9]*|\.[0-9]+)([eE](\+|-)?[0-9]+)?)|(\d+|(\d*\.\d+)))([a-zA-Z]+|%)$#', $token, $matches)) {
 
             $type->type = 'unit';

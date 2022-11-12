@@ -54,14 +54,6 @@ class LineHeight extends Value
         return $token->type == static::type();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = []): string
 	{
         $value = $data->value;
