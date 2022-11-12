@@ -2,10 +2,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Element;
 use TBela\CSS\Compiler;
+use TBela\CSS\Element\Declaration\PropertyList;
 use TBela\CSS\Parser;
-use TBela\CSS\Property\PropertyList;
 
 final class FontTest extends TestCase
 {

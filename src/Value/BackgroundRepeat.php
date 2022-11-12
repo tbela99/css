@@ -2,7 +2,7 @@
 
 namespace TBela\CSS\Value;
 
-use TBela\CSS\Property\Config;
+use TBela\CSS\Element\Declaration\Config;
 use TBela\CSS\Value;
 
 /**

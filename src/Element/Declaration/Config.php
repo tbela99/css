@@ -1,8 +1,8 @@
 <?php
 
-namespace TBela\CSS\Property;
+namespace TBela\CSS\Element\Declaration;
 
-$file = dirname(__DIR__).'/config.json';
+$file = dirname(__DIR__.'/../../..').'/config.json';
 
 if (is_file($file)) {
 
@@ -29,7 +29,8 @@ final class Config {
      * load properties configuration from a JSON file
      * @param string $file
      */
-    public static function load($file) {
+    public static function load(string $file): void
+	{
 
         Config::$config = json_decode(file_get_contents($file), true) ?? [];
     }
@@ -39,7 +40,8 @@ final class Config {
      * @param string $path
      * @return bool
      */
-    public static function exists($path) {
+    public static function exists(string $path): bool
+	{
 
         $found = true;
         $item = Config::$config['alias'];
@@ -83,7 +85,8 @@ final class Config {
      * @return mixed|null
      * @ignore
      */
-    public static function getPath($path, $default = null) {
+    public static function getPath(string $path, mixed $default = null): mixed
+	{
 
         $data = Config::$config;
 
@@ -106,7 +109,8 @@ final class Config {
      * @param mixed|null $default
      * @return array|mixed|null
      */
-    public static function getProperty ($name = null, $default = null) {
+    public static function getProperty (string $name = null, mixed $default = null): mixed
+	{
 
         if (is_null($name)) {
 
@@ -136,7 +140,8 @@ final class Config {
      * @return array
      * @ignore
      */
-    public static function addSet ($shorthand, $pattern, array $properties, $separator = null, $shorthandOverride = null) {
+    public static function addSet ($shorthand, $pattern, array $properties, string $separator = null, string $shorthandOverride = null): array
+	{
 
         $config = [];
 
@@ -157,7 +162,7 @@ final class Config {
         // build value map
         foreach ($properties as $property => $data) {
 
-            if (strpos($property, '.') !== false) {
+            if (str_contains($property, '.')) {
 
                 continue;
             }
@@ -167,7 +172,7 @@ final class Config {
 
         foreach ($properties as $property => $data) {
 
-            if (strpos($property, '.') !== false) {
+            if (str_contains($property, '.')) {
 
                 $config[$shorthand][preg_replace('#^[^.]+\.#', '', $property)] = $data;
                 continue;
@@ -177,7 +182,7 @@ final class Config {
 
             if (isset($data['value_map'])) {
 
-                $map_keys = $value_map_keys[$properties[$property]['type']];
+                $map_keys = $value_map_keys[$data['type']];
 
                 $config[$shorthand]['value_map'][$property] = array_map(function ($value) use ($map_keys) {
 

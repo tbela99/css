@@ -2,8 +2,7 @@
 
 namespace TBela\CSS\Parser;
 
-use TBela\CSS\Parser;
-use TBela\CSS\Property\Config;
+use TBela\CSS\Element\Declaration\Config;
 
 trait ParserTrait
 {

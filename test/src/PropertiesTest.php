@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use TBela\CSS\Property\PropertyList;
+use TBela\CSS\Element\Declaration\PropertyList;
 
 require_once __DIR__.'/../bootstrap.php';
 
@@ -114,12 +114,19 @@ final class PropertiesTest extends TestCase
         $data[] = [$property1, 'margin-left', '0', 'margin: 15px 0'];
         $data[] = [$property1, 'margin', '0 auto', 'margin: 0 auto'];
 
-        $property4 = new PropertyList();
+		$property4 = new PropertyList();
 
-        $data[] = [$property4, 'margin-top', '5px \\9', 'margin-top: 5px \\9'];
-        $data[] = [$property4, 'margin-left', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9"];
-        $data[] = [$property4, 'margin-bottom', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9;\nmargin-bottom: 5px \\9"];
-        $data[] = [$property4, 'margin-right', '5px \\9', 'margin: 5px \\9'];
+		$data[] = [$property4, 'margin-top', '5px \\9', 'margin-top: 5px \\9'];
+		$data[] = [$property4, 'margin-left', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9"];
+		$data[] = [$property4, 'margin-bottom', '5px \\9', "margin-top: 5px \\9;\nmargin-left: 5px \\9;\nmargin-bottom: 5px \\9"];
+		$data[] = [$property4, 'margin-right', '5px \\9', 'margin: 5px \\9'];
+
+		$property5 = new PropertyList();
+
+		$data[] = [$property5, 'text-decoration-line', 'line-through ', 'text-decoration-line: line-through'];
+		$data[] = [$property5, 'text-decoration-color', 'red ', "text-decoration-line: line-through;\ntext-decoration-color: red"];
+		$data[] = [$property5, 'text-decoration-style', ' double', "text-decoration-line: line-through;\ntext-decoration-color: red;\ntext-decoration-style: double"];
+		$data[] = [$property5, 'text-decoration-thickness', ' 3px ', "text-decoration: line-through red double 3px"];
 
         return $data;
     }

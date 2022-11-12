@@ -198,12 +198,6 @@ class BackgroundPosition extends Value
         return true;
     }
 
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = []) {
 
         if (isset($data->unit)) {

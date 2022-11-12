@@ -190,7 +190,7 @@ class Pool implements PoolInterface
 				break;
 			}
 
-			$data = $this->storage[$thread]->data;
+			$data = $this->storage[$thread];
 
 			if ($collect && $thread->isTerminated()) {
 
@@ -225,7 +225,7 @@ class Pool implements PoolInterface
 			} else if (!$thread->isStarted()) {
 
 				$thread->start();
-				$this->emit('start', $data->index, $thread);
+				$this->emit('start', $data->data->index, $thread);
 				$running++;
 			}
 		}
@@ -366,30 +366,31 @@ class Pool implements PoolInterface
 	protected function handleException(Throwable $e, $data): void
 	{
 		$class = new ReflectionClass($e::class);
+		$handler = null;
 
-		while ($class) {
+		foreach ($data->error as $name => $h) {
 
-			if (isset($data->error[$class->getName()])) {
+			if ($class->isSubclassOf($name)) {
 
+				$handler = $h;
 				break;
 			}
-
-			$class = $class->getParentClass();
 		}
 
-		if ($class === false) {
+		if (is_null($handler)) {
 
-			$class = null;
+			if (isset($data->error['generic'])) {
+
+				$handler = $data->error['generic'];
+			}
 		}
-
-		$handler = $data->error[$class?->getName()] ?? $data->error['generic'] ?? null;
 
 		if (is_callable($handler)) {
 
 			call_user_func($handler, $e);
 		} else {
 
-			throw new UnhandledException(sprintf("unhandled exception in task #%d", $data->index), $e->getCode(), $e);
+			throw new UnhandledException(sprintf("unhandled exception in task #%d", $data->data->index), $e->getCode(), $e);
 		}
 	}
 }

@@ -1,10 +1,9 @@
 <?php
 
-namespace TBela\CSS\Property;
+namespace TBela\CSS\Element\Declaration;
 
 use ArrayIterator;
 use IteratorAggregate;
-use TBela\CSS\Value;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\RuleList;
 
