@@ -41,7 +41,7 @@ final class DataUriTest extends TestCase
 
         $parser = new TBela\CSS\Parser;
 
-        $parser->load(__DIR__.'/../data/uri.css');
+        $parser->load(__DIR__.'/../fixtures/data/uri.css');
 
         $data = [];
 
@@ -63,7 +63,7 @@ final class DataUriTest extends TestCase
 
         $parser = new TBela\CSS\Parser;
 
-        $parser->load(__DIR__.'/../data/uri.css');
+        $parser->load(__DIR__.'/../fixtures/data/uri.css');
 
         $data = [];
 

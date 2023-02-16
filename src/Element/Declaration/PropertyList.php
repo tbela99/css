@@ -9,7 +9,7 @@ use TBela\CSS\Element\RuleList;
 
 /**
  * Property list
- * @package CSS
+ * @package TBela\CSS\Element\Declaration
  */
 class PropertyList implements IteratorAggregate
 {

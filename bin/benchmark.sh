@@ -21,7 +21,7 @@ if [ ! -d ./vendor/sabberworm ]; then
 fi
 
 if [ -z "$files" ]; then
-  files=$(ls -d ../test/perf_files/*.css)
+  files=$(ls -d ../test/fixtures/perf_files/*.css)
 fi
 # files size
 sizes=()

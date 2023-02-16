@@ -6,7 +6,7 @@ chdir(__DIR__);
 
 define('STDERR', fopen('php://stderr', 'w'));
 
-require 'autoload.php';
+require __DIR__.'/../autoload.php';
 
 function ellipsis ($string, $length = 15) {
 

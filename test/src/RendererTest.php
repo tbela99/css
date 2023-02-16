@@ -36,11 +36,11 @@ final class RendererTest extends TestCase
   src: url("/static/styles/libs/font-awesome/fonts/fontawesome-webfont.fdf491ce5ff5.woff");
 }
 .pic {
-background: no-repeat url("imgs/lizard.png");
+background: no-repeat url("fixtures/imgs/lizard.png");
 }
 .element {
-background-image: url("imgs/lizard.png"),
-                  url("imgs/star.png");
+background-image: url("fixtures/imgs/lizard.png"),
+                  url("fixtures/imgs/star.png");
 }')->parse();
 
         $renderer = new RendererClass();
@@ -87,10 +87,10 @@ background-image: url("imgs/lizard.png"),
         $data = [];
 
         $data[] = [".pic {
- background: no-repeat url(/imgs/lizard.png)
+ background: no-repeat url(/fixtures/imgs/lizard.png)
 }
 .element {
- background-image: url(/imgs/lizard.png), url(/imgs/star.png)
+ background-image: url(/fixtures/imgs/lizard.png), url(/fixtures/imgs/star.png)
 }",
             $renderer->render($traverser->traverse($element))];
 

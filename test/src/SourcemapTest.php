@@ -70,15 +70,15 @@ final class SourcemapTest extends TestCase
 
         $data = [];
 
-        $element = (new Parser())->load(__DIR__ . '/../sourcemap/sourcemap.css')->
-        append(__DIR__ . '/../sourcemap/sourcemap.2.css')->
-        append(__DIR__ . '/../sourcemap/sourcemap.media.css');
+        $element = (new Parser())->load(__DIR__ . '/../fixtures/sourcemap/sourcemap.css')->
+        append(__DIR__ . '/../fixtures/sourcemap/sourcemap.2.css')->
+        append(__DIR__ . '/../fixtures/sourcemap/sourcemap.media.css');
 
         $renderer = new Renderer([
             'sourcemap' => true
         ]);
 
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.test.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.test.css';
         $renderer->save($element, $outFile);
 
         $data[] = ['body {
@@ -125,7 +125,7 @@ body {
 
         $data[] = ['AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;AC7BA;;;AAIA;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.test.min.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.test.min.css';
 
         $renderer->setOptions([
             'compress' => true
@@ -147,13 +147,13 @@ body {
         $element = (new Parser('', [
             'flatten_import' => true,
             'capture_errors' => false
-        ]))->load(__DIR__ . '/../sourcemap/sourcemap.import.css');
+        ]))->load(__DIR__ . '/../fixtures/sourcemap/sourcemap.import.css');
 
         $renderer = new Renderer([
             'sourcemap' => true
         ]);
 
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.import.test.css';
         $renderer->save($element, $outFile);
 
         $data[] = ["/*! this is supposed to be the license. */
@@ -202,7 +202,7 @@ body {
 
         $data[] = [';AACA;;;;;;;;;AAaA;;;;;;;;;;;;;;;AAgBA;;;;AC7BA;;;AAIA;;;;;ACFI', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
 
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.import.test.min.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.import.test.min.css';
 
         $renderer->setOptions([
             'compress' => true
@@ -224,13 +224,13 @@ body {
         $element = 
 $parser = (new Parser('', [
         'flatten_import' => true
-]))->load(__DIR__.'/../sourcemap/sourcemap-url.css')->parse();
+]))->load(__DIR__.'/../fixtures/sourcemap/sourcemap-url.css')->parse();
 
         $renderer = new Renderer([
             'sourcemap' => true
         ]);
 
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.url.test.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.url.test.css';
         $renderer->save($element, $outFile);
 
         $data[] = ['/*!
@@ -253,7 +253,7 @@ $parser = (new Parser('', [
         ];
 
         $data[] = [';;;;AAIA;;;;;;;AAAgb', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
-        $outFile = __DIR__.'/../sourcemap/generated/sourcemap.generated.url.test.min.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/sourcemap.generated.url.test.min.css';
 
         $renderer->setOptions([
             'compress' => true
@@ -274,7 +274,7 @@ $parser = (new Parser('', [
         $parser = (new Parser('', [
             'flatten_import' => true,
             'capture_errors' => true
-        ]))->load(__DIR__.'/../nested/nested.css');
+        ]))->load(__DIR__.'/../fixtures/nested/nested.css');
 
         $renderer = new Renderer([
 
@@ -283,7 +283,7 @@ $parser = (new Parser('', [
             'legacy_rendering' => true
         ]);
 
-        $outFile = __DIR__.'/../sourcemap/generated/nested.test.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/nested.test.css';
         $renderer->save($parser, $outFile);
 
         $data[] = ['/* this row */
@@ -329,7 +329,7 @@ table.colortable th {
         ];
 
         $data[] = [';AACA;;;;;;AAOI;;;AAEE;;;;AAKF;;;;;;AAME;;;;;AASN;;;AAEA;;;AAEA;;;;AAIA', json_decode(file_get_contents($outFile.'.map'), true)['mappings']];
-        $outFile = __DIR__.'/../sourcemap/generated/nested.test.min.css';
+        $outFile = __DIR__.'/../fixtures/sourcemap/generated/nested.test.min.css';
         $renderer->setOptions([
             'compress' => true
         ])->save($parser, $outFile);

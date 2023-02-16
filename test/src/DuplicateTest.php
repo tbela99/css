@@ -50,14 +50,14 @@ final class DuplicateTest extends TestCase
 
         $data = [];
 
-        $file = __DIR__.'/../css/color.css';
+        $file = __DIR__.'/../fixtures/css/color.css';
         $parser->setOptions(['allow_duplicate_declarations' => true]);
         $renderer->setOptions(['allow_duplicate_declarations' => true, 'convert_color' => 'hex']);
 
             $data[] = [
 
                 $renderer->renderAst($parser->load($file)),
-                __DIR__. '/../output/color.duplicate.css'
+                __DIR__. '/../fixtures/output/color.duplicate.css'
             ];
 
         return $data;

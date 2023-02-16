@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 
 /**
  * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of the same type. example margin, margin-left, margin-top, margin-right, margin-bottom
- * @package TBela\CSS\Property
+ * @package TBela\CSS\Element\Declaration
  */
 class PropertySet
 {

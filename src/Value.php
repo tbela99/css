@@ -85,6 +85,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case 'font':
                 case 'operator':
                 case 'separator':
+				case 'list-style':
                 case 'background':
                 case 'font-style':
                 case 'font-family':
@@ -134,6 +135,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case 'css-url':
                 case 'font-size':
                 case 'css-string':
+				case 'list-style':
                 case 'line-height':
                 case 'font-weight':
                 case 'outline-color':
@@ -141,6 +143,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
                 case 'css-src-format':
                 case 'outline-width':
                 case 'background-color':
+				case 'list-style-image':
                 case 'background-image':
                 case 'background-origin':
                 case 'background-position':
@@ -151,6 +154,8 @@ abstract class Value implements JsonSerializable, ObjectInterface
                     $result .= $className::doRender($token, $options);
                     break;
                 case 'Comment':
+				case 'list-style-type':
+				case 'list-style-position':
                     $result .= $token->value;
                     break;
                 default:
@@ -166,7 +171,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param bool $preserve_quotes
      * @return void
      */
-    private static function parseString(stdClass $type, $preserve_quotes): void
+    private static function parseString(stdClass $type, bool $preserve_quotes): void
     {
         if (!$preserve_quotes && strlen($type->value) > 2 &&
             in_array($type->value[0], ['"', "'"]) &&
@@ -274,7 +279,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return bool
      * @ignore
      */
-    protected static function matchDefaults($token): bool
+    public static function matchDefaults(object $token): bool
     {
 
         return isset($token->value) && in_array(strtolower($token->value), static::$defaults);

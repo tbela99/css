@@ -16,8 +16,8 @@ final class PropertiesTest extends TestCase
      * @return void
      * @dataProvider PropertyComposeProvider
      */
-    public function testPropertyCompose(PropertyList $propertylist, $name, $value, $expected)
-    {
+    public function testPropertyCompose(PropertyList $propertylist, $name, $value, $expected): void
+	{
 
         $propertylist->set($name, $value);
         $this->assertEquals($expected, (string)$propertylist);
@@ -59,8 +59,8 @@ final class PropertiesTest extends TestCase
         );
     }
 
-    public function propertyComposeProvider()
-    {
+    public function propertyComposeProvider(): array
+	{
 
         $propertylist = new PropertyList();
         return [
@@ -75,8 +75,8 @@ final class PropertiesTest extends TestCase
         ];
     }
 
-    public function propertySetProvider()
-    {
+    public function propertySetProvider(): array
+	{
 
         $property = new PropertyList();
 
@@ -128,11 +128,19 @@ final class PropertiesTest extends TestCase
 		$data[] = [$property5, 'text-decoration-style', ' double', "text-decoration-line: line-through;\ntext-decoration-color: red;\ntext-decoration-style: double"];
 		$data[] = [$property5, 'text-decoration-thickness', ' 3px ', "text-decoration: line-through red double 3px"];
 
+		$property6 = new PropertyList();
+
+		$data[] = [$property6, 'list-style', 'inside', 'list-style: inside'];
+		$data[] = [$property6, 'list-style-type', '"\\1F44D"', 'list-style: inside "\\1F44D"'];
+		$data[] = [$property6, 'list-style-image', "url('/media/examples/rocket.svg')", "list-style: url('/media/examples/rocket.svg') inside \"\\1F44D\""];
+		$data[] = [$property6, 'list-style-image', ' none ', "list-style: inside \"\\1F44D\""];
+		$data[] = [$property6, 'list-style-type', ' none ', "list-style: inside"];
+
         return $data;
     }
 
-    public function propertyHackProvider()
-    {
+    public function propertyHackProvider(): array
+	{
 
         $property = new PropertyList();
 

@@ -47,12 +47,12 @@ final class CommentTest extends TestCase
             'compress' => false
         ]);
 
-        $element = (new Parser())->load(__DIR__.'/../query/comments.css')->parse();
+        $element = (new Parser())->load(__DIR__.'/../fixtures/query/comments.css')->parse();
 
         $data = [];
 
         $data[] = [$renderer->render($element),
-            file_get_contents(__DIR__.'/../query/comments_parsed.css')
+            file_get_contents(__DIR__.'/../fixtures/query/comments_parsed.css')
         ];
 
         $data[] = [$renderer->setOptions(([
@@ -60,7 +60,7 @@ final class CommentTest extends TestCase
             'remove_comments' => true,
             'compress' => true
         ]))->render($element),
-            file_get_contents(__DIR__.'/../query/comments_parsed.min.css')
+            file_get_contents(__DIR__.'/../fixtures/query/comments_parsed.min.css')
         ];
 
         $data[] = [$renderer->setOptions(([
@@ -68,7 +68,7 @@ final class CommentTest extends TestCase
             'remove_comments' => true,
             'compress' => false
         ]))->render($element),
-            file_get_contents(__DIR__.'/../query/comments_all.css')
+            file_get_contents(__DIR__.'/../fixtures/query/comments_all.css')
         ];
 
         $data[] = [$renderer->setOptions(([
@@ -76,7 +76,7 @@ final class CommentTest extends TestCase
             'remove_comments' => true,
             'compress' => true
         ]))->render($element),
-            file_get_contents(__DIR__.'/../query/comments_all.min.css')
+            file_get_contents(__DIR__.'/../fixtures/query/comments_all.min.css')
         ];
 
         $data[] = [$renderer->setOptions(([
@@ -84,7 +84,7 @@ final class CommentTest extends TestCase
             'remove_comments' => true,
             'compress' => true
         ]))->render($element),
-            file_get_contents(__DIR__.'/../query/comments_all.min.css')
+            file_get_contents(__DIR__.'/../fixtures/query/comments_all.min.css')
         ];
 
         $data[] = [$renderer->setOptions(([

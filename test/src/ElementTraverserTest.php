@@ -26,7 +26,7 @@ final class ElementTraverserTest extends TestCase
 
         $data = [];
         
-        $parser = (new Parser())->load(__DIR__.'/../ast/media.css');
+        $parser = (new Parser())->load(__DIR__.'/../fixtures/ast/media.css');
         $traverser = new Traverser();
         $renderer = new Renderer(['remove_empty_nodes' => true]);
 

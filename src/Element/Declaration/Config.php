@@ -11,7 +11,7 @@ if (is_file($file)) {
 
 /**
  * Property configuration manager class
- * @package TBela\CSS\Property
+ * @package TBela\CSS\Element\Declaration
  * @ignore
  */
 final class Config {

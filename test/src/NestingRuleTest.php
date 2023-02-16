@@ -96,7 +96,7 @@ final class NestingRuleTest extends TestCase
 
         $data = [];
 
-        $parser = (new Parser())->load(__DIR__ . '/../nested/nested.css');
+        $parser = (new Parser())->load(__DIR__ . '/../fixtures/nested/nested.css');
         $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['/* this row */
@@ -198,7 +198,7 @@ table.colortable {
 
         $data = [];
 
-        $parser = (new Parser())->load(__DIR__ . '/../nested/rule.css');
+        $parser = (new Parser())->load(__DIR__ . '/../fixtures/nested/rule.css');
         $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['.foo {
@@ -243,7 +243,7 @@ p .foo {
 
         $data = [];
 
-        $parser = (new Parser())->load(__DIR__ . '/../nested/at-rule.css');
+        $parser = (new Parser())->load(__DIR__ . '/../fixtures/nested/at-rule.css');
         $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['@media (min-width:540px) {
@@ -288,7 +288,7 @@ p .foo {
 
         $data = [];
 
-        $parser = (new Parser())->load(__DIR__ . '/../nested/at-rule2.css');
+        $parser = (new Parser())->load(__DIR__ . '/../fixtures/nested/at-rule2.css');
         $renderer = new Renderer(['legacy_rendering' => true]);
 
         $data[] = ['.foo {
@@ -337,7 +337,7 @@ p .foo {
 
         $data = [];
 
-        $parser = (new Parser())->load(__DIR__ . '/../nested/invalid.css');
+        $parser = (new Parser())->load(__DIR__ . '/../fixtures/nested/invalid.css');
         $renderer = new Renderer();
 
         $data[] = ['/* invalid */

@@ -2,6 +2,9 @@
 
 namespace TBela\CSS\Element\Declaration;
 
+/**
+ * @package TBela\CSS\Element\Declaration
+ */
 trait PropertyTrait
 {
 

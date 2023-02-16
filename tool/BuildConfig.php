@@ -103,7 +103,8 @@ $config['map'] = array_merge($config['map'], makePropertySet('outline', ['outlin
     /**
      *compute shorthand property
      */
-    ['compute' => true]));
+    ['compute' => true]
+));
 
 $config['map'] = array_merge($config['map'], makePropertySet('text-decoration', ['text-decoration-line text-decoration-color text-decoration-style text-decoration-thickness'], [
 	['text-decoration-thickness',
@@ -122,7 +123,30 @@ $config['map'] = array_merge($config['map'], makePropertySet('text-decoration', 
 	/**
 	 *compute shorthand property
 	 */
-	['compute' => true, 'optional-shorthand' => true]));
+	[
+		'compute' => true,
+		'optional-shorthand' => true
+	]));
+
+
+$config['map'] = array_merge($config['map'], makePropertySet('list-style', ['list-style-image list-style-position list-style-type'], [
+	['list-style-image',
+		['type' => 'list-style-image']
+	],
+	['list-style-position',
+		['type' => 'list-style-position']
+	],
+	['list-style-type',
+		['type' => 'list-style-type']
+	]
+], null, false,
+	/**
+	 *compute shorthand property
+	 */
+	[
+		'compute' => true,
+		'optional-shorthand' => true
+	]));
 
 $config['properties'] = array_merge($config['properties'], makePropertySet('margin', ['unit unit unit unit'], [
     ['margin-top', 'unit'],
@@ -262,6 +286,14 @@ foreach ($config['alias'] as $alias => $data) {
 unset($config['alias']);
 
 $file = dirname(__DIR__) . '/src/config.json';
+
+// sort keys
+foreach ($config as $k => $map) {
+
+	ksort($map);
+
+	$config[$k] = $map;
+}
 
 
 echo file_put_contents($file, json_encode($config))?  "the configuration has been stored in '$file' ...\n" : "failed to save the confg file in $file\n";

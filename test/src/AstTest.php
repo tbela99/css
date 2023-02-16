@@ -141,18 +141,18 @@ final class AstTest extends TestCase
 
         $data[] = [(string) $parser, (string) $parser->parse()];
 
-        $parser->load(__DIR__.'/../perf_files/php-net.css');
+        $parser->load(__DIR__.'/../fixtures/perf_files/php-net.css');
         $data[] = [(string) $parser,
             (string) $parser->parse()];
 
-        $parser->load(__DIR__.'/../css/template.css');
+        $parser->load(__DIR__.'/../fixtures/css/template.css');
         $data[] = [(string) $parser, (string) $parser->parse()];
 
-        $parser->setOptions(['flatten_import' => true])->load(__DIR__.'/../files/test_2.css');
+        $parser->setOptions(['flatten_import' => true])->load(__DIR__.'/../fixtures/files/test_2.css');
 
         $data[] = [
 
-            file_get_contents(__DIR__.'/../files/test_2_parsed_comments.css'),
+            file_get_contents(__DIR__.'/../fixtures/files/test_2_parsed_comments.css'),
             (string) $parser->parse()
         ];
 
@@ -234,7 +234,7 @@ final class AstTest extends TestCase
  text-rendering: auto
 }
 .bg {
- background: no-repeat url(sourcemap/images/bg.png) 50% 50%/cover
+ background: no-repeat url(fixtures/sourcemap/images/bg.png) 50% 50%/cover
 }
 .fa-bahai {
  display: inline-block
@@ -247,9 +247,9 @@ body {
  /*font-size: 14px*/
  line-height: 1.3
 }',
-(string) (new Parser())->load(__DIR__ . '/../sourcemap/sourcemap.css')->
-append(__DIR__ . '/../sourcemap/sourcemap.2.css')->
-append(__DIR__ . '/../sourcemap/sourcemap.media.css')
+(string) (new Parser())->load(__DIR__ . '/../fixtures/sourcemap/sourcemap.css')->
+append(__DIR__ . '/../fixtures/sourcemap/sourcemap.2.css')->
+append(__DIR__ . '/../fixtures/sourcemap/sourcemap.media.css')
      ];
 
         return $data;

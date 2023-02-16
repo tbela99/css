@@ -72,7 +72,7 @@ final class MultiProcessingTest extends TestCase
         $parser = new Parser();
 
 		$size = 64 * 1024;
-		$file = __DIR__.'/../perf_files/bs.4';
+		$file = __DIR__.'/../fixtures/perf_files/bs.4';
 
 		$json = [];
 
@@ -87,12 +87,12 @@ final class MultiProcessingTest extends TestCase
 
 		$data[] = [
 
-			file_get_contents(__DIR__.'/../multiprocessing/bs.4-slice.json'),
+			file_get_contents(__DIR__.'/../fixtures/multiprocessing/bs.4-slice.json'),
 			json_encode($json, JSON_PRETTY_PRINT)
 		];
 
 		$size = 20;
-		$file = __DIR__.'/../nested/nested';
+		$file = __DIR__.'/../fixtures/nested/nested';
 
 		$json = [];
 
@@ -107,7 +107,7 @@ final class MultiProcessingTest extends TestCase
 
 		$data[] = [
 
-			file_get_contents(__DIR__.'/../multiprocessing/nested-slice.json'),
+			file_get_contents(__DIR__.'/../fixtures/multiprocessing/nested-slice.json'),
 			json_encode($json, JSON_PRETTY_PRINT)
 		];
 
@@ -124,7 +124,7 @@ final class MultiProcessingTest extends TestCase
 
         $data[] = [
 
-            file_get_contents(__DIR__.'/../multiprocessing/nested-slice.min.json'),
+            file_get_contents(__DIR__.'/../fixtures/multiprocessing/nested-slice.min.json'),
             json_encode($json, JSON_PRETTY_PRINT)
         ];
 
@@ -139,23 +139,23 @@ final class MultiProcessingTest extends TestCase
     {
 
         $files = [
-            __DIR__.'/../nested/nested.css',
-            __DIR__.'/../nested/nested.min.css',
-            __DIR__.'/../sourcemap/sourcemap.import.css',
-            __DIR__.'/../perf_files/bs-mtrl.css',
-//            __DIR__.'/../perf_files/bs-reboot.css',
-//            __DIR__.'/../perf_files/bs.3.css',
-			__DIR__.'/../perf_files/bs.4.css',
-//			__DIR__.'/../perf_files/none.css',
-//			__DIR__.'/../perf_files/row.css',
-//			__DIR__.'/../perf_files/row.min.css',
-//			__DIR__.'/../perf_files/main.min.css',
-			__DIR__.'/../perf_files/perf.css',
-//			__DIR__.'/../perf_files/php-net.css',
-//			__DIR__.'/../perf_files/main.min.css',
-//			__DIR__.'/../perf_files/uncut.css',
-//			__DIR__.'/../perf_files/uncut.css',
-//            __DIR__.'/../perf_files/uncut.min.css'
+            __DIR__.'/../fixtures/nested/nested.css',
+            __DIR__.'/../fixtures/nested/nested.min.css',
+            __DIR__.'/../fixtures/sourcemap/sourcemap.import.css',
+            __DIR__.'/../fixtures/perf_files/bs-mtrl.css',
+//            __DIR__.'/../fixtures/perf_files/bs-reboot.css',
+//            __DIR__.'/../fixtures/perf_files/bs.3.css',
+			__DIR__.'/../fixtures/perf_files/bs.4.css',
+//			__DIR__.'/../fixtures/perf_files/none.css',
+//			__DIR__.'/../fixtures/perf_files/row.css',
+//			__DIR__.'/../fixtures/perf_files/row.min.css',
+//			__DIR__.'/../fixtures/perf_files/main.min.css',
+			__DIR__.'/../fixtures/perf_files/perf.css',
+//			__DIR__.'/../fixtures/perf_files/php-net.css',
+//			__DIR__.'/../fixtures/perf_files/main.min.css',
+//			__DIR__.'/../fixtures/perf_files/uncut.css',
+//			__DIR__.'/../fixtures/perf_files/uncut.css',
+//            __DIR__.'/../fixtures/perf_files/uncut.min.css'
         ];
 
 
@@ -190,23 +190,23 @@ final class MultiProcessingTest extends TestCase
 	{
 
 		$files = [
-			__DIR__.'/../nested/nested.css',
-			__DIR__.'/../nested/nested.min.css',
-			__DIR__.'/../sourcemap/sourcemap.import.css',
-			__DIR__.'/../perf_files/bs-mtrl.css',
-			__DIR__.'/../perf_files/bs-reboot.css',
-			__DIR__.'/../perf_files/bs.3.css',
-			__DIR__.'/../perf_files/bs.4.css',
-			__DIR__.'/../perf_files/none.css',
-			__DIR__.'/../perf_files/row.css',
-			__DIR__.'/../perf_files/row.min.css',
-			__DIR__.'/../perf_files/main.min.css',
-			__DIR__.'/../perf_files/perf.css',
-			__DIR__.'/../perf_files/php-net.css',
-			__DIR__.'/../perf_files/main.min.css',
-			__DIR__.'/../perf_files/uncut.css',
-			__DIR__.'/../perf_files/uncut.css',
-			__DIR__.'/../perf_files/uncut.min.css'
+			__DIR__.'/../fixtures/nested/nested.css',
+			__DIR__.'/../fixtures/nested/nested.min.css',
+			__DIR__.'/../fixtures/sourcemap/sourcemap.import.css',
+			__DIR__.'/../fixtures/perf_files/bs-mtrl.css',
+			__DIR__.'/../fixtures/perf_files/bs-reboot.css',
+			__DIR__.'/../fixtures/perf_files/bs.3.css',
+			__DIR__.'/../fixtures/perf_files/bs.4.css',
+			__DIR__.'/../fixtures/perf_files/none.css',
+			__DIR__.'/../fixtures/perf_files/row.css',
+			__DIR__.'/../fixtures/perf_files/row.min.css',
+			__DIR__.'/../fixtures/perf_files/main.min.css',
+			__DIR__.'/../fixtures/perf_files/perf.css',
+			__DIR__.'/../fixtures/perf_files/php-net.css',
+			__DIR__.'/../fixtures/perf_files/main.min.css',
+			__DIR__.'/../fixtures/perf_files/uncut.css',
+			__DIR__.'/../fixtures/perf_files/uncut.css',
+			__DIR__.'/../fixtures/perf_files/uncut.min.css'
 		];
 
 
@@ -235,12 +235,12 @@ final class MultiProcessingTest extends TestCase
     {
 
         $files = [
-            __DIR__.'/../nested/nested.css',
-            __DIR__.'/../nested/nested.min.css',
-            __DIR__.'/../sourcemap/sourcemap.import.css',
+            __DIR__.'/../fixtures/nested/nested.css',
+            __DIR__.'/../fixtures/nested/nested.min.css',
+            __DIR__.'/../fixtures/sourcemap/sourcemap.import.css',
             // too large for phpunit to handle
-//            __DIR__.'/../perf_files/row.css',
-//            __DIR__.'/../perf_files/row.min.css'
+//            __DIR__.'/../fixtures/perf_files/row.css',
+//            __DIR__.'/../fixtures/perf_files/row.min.css'
         ];
 
         $data = [];

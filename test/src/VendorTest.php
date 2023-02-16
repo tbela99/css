@@ -35,14 +35,14 @@ final class VendorTest extends TestCase
  color: var(--body-color);
  text-align: var(--body-text-align);
  -webkit-text-size-adjust: 100%
-}', (string) (new Parser())->load(__DIR__.'/../var/style.css')];
+}', (string) (new Parser())->load(__DIR__.'/../fixtures/var/style.css')];
 
         $data[] = ['body {
  box-shadow: inset 0 0 0 9999px var(--table-accent-bg)
 }
 .box {
  -webkit-box-shadow: 0 0 0 .25rem rgba(var(--cassiopeia-color-primary), .25)
-}', (string) (new Parser())->load(__DIR__.'/../var/var.css')];
+}', (string) (new Parser())->load(__DIR__.'/../fixtures/var/var.css')];
 
         $data[] = ['.site-grid>[class*=" container-"],
 .site-grid>[class^=container-] {

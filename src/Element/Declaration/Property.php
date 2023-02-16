@@ -11,7 +11,7 @@ use TBela\CSS\Value;
 
 /**
  * Css property
- * @package CSS
+ * @package TBela\CSS\Element\Declaration
  */
 class Property implements ArrayAccess, RenderableInterface, RenderablePropertyInterface
 {

@@ -7,7 +7,7 @@ use TBela\CSS\Value;
 
 /**
  * Compute shorthand properties. Used internally by PropertyList to compute shorthand for properties of different types
- * @package TBela\CSS\Property
+ * @package TBela\CSS\Element\Declaration
  */
 class PropertyMap
 {
@@ -87,12 +87,13 @@ class PropertyMap
 	/**
 	 * set property value
 	 * @param string $name
-	 * @param object[]|string $value
+	 * @param string|object[] $value
 	 * @param array|null $leadingcomments
 	 * @param array|null $trailingcomments
+	 * @param string|null $src
 	 * @return PropertyMap
 	 */
-	public function set(string $name, $value, ?array $leadingcomments = null, ?array $trailingcomments = null, $src = null)
+	public function set(string $name, array|string $value, ?array $leadingcomments = null, ?array $trailingcomments = null, string $src = null): static
 	{
 
 		// is valid property
@@ -101,7 +102,7 @@ class PropertyMap
 			throw new InvalidArgumentException('Invalid property ' . $name, 400);
 		}
 
-		$optionalShorthand = isset($this->config['settings']['optional-shorthand']);
+		$optionalShorthand = !empty($this->config['settings']['optional-shorthand']);
 
 		// if all properties are present, is it safe to use the shorthand?
 		// font -> no?
@@ -167,6 +168,7 @@ class PropertyMap
 			$all = [$this->properties[$this->shorthand]->getValue()];
 		} else {
 
+			// shorthand is set
 			if (!is_array($value)) {
 
 				$value = Value::parse($value, $name, true, '', '', true);
@@ -270,7 +272,7 @@ class PropertyMap
 
 			foreach ($props as $k => $prop) {
 
-				if ($name == $this->shorthand) {
+				if ($name === $this->shorthand) {
 
 					continue;
 				}
@@ -292,9 +294,33 @@ class PropertyMap
 				}
 			}
 
+
 			if (empty($patterns)) {
 
-				return $this;
+				// custom properties
+				foreach (array_keys($data) as $key) {
+
+					if (!isset($this->config[$key])) {
+
+						return $this;
+					}
+				}
+
+				if (isset($this->properties[$this->shorthand]) && isset($data[$name]) && $name != $this->shorthand) {
+
+					$className = Value::getClassName($name);
+
+					if (count($data[$name]) == 1 && is_callable($className . '::matchDefaults') && call_user_func($className . '::matchDefaults', $data[$name][0])) {
+
+						unset($this->properties[$name]);
+					}
+				}
+
+				else {
+
+					var_dump(123);
+					return $this;
+				}
 			}
 
 			//
@@ -356,7 +382,7 @@ class PropertyMap
 							break;
 						}
 
-						if ($res[$j]->type != $properties[$token]['prefix'][0]['type']) {
+						if ($res[$j]->type !== $properties[$token]['prefix'][0]['type']) {
 
 							return $this;
 						}

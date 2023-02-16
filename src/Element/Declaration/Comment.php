@@ -6,7 +6,7 @@ use TBela\CSS\Interfaces\RenderableInterface;
 
 /**
  * Comment property class
- * @package TBela\CSS\Property
+ * @package TBela\CSS\Element\Declaration
  */
 class Comment extends Property {
 
