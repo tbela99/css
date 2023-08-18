@@ -10,7 +10,7 @@ class NestingRule extends Rule
     /**
      * @inheritDoc
      */
-    public function support(ElementInterface $child)
+    public function support(ElementInterface $child): bool
     {
 
         return true;
