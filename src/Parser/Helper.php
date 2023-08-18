@@ -265,11 +265,6 @@ class Helper
             }
         }
 
-        if (count($file) < count($ref)) {
-
-            return static::toUrl($fileUrl);
-        }
-
         while ($ref) {
 
             $r = $ref[0];
