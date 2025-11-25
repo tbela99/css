@@ -360,6 +360,7 @@ class PropertyList implements IteratorAggregate
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->getProperties();
