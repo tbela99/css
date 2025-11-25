@@ -44,7 +44,7 @@ trait ArrayTrait
      * @param string $value
      * @ignore
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
 
         if (is_callable([$this, 'set' . $offset])) {
@@ -58,7 +58,7 @@ trait ArrayTrait
      * @return bool
      * @ignore
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return is_callable([$this, 'get' . $offset]) ||
             is_callable([$this, 'set' . $offset]) ||
@@ -69,7 +69,7 @@ trait ArrayTrait
      * @param string $offset
      * @ignore
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
 
         if (is_callable([$this, 'set' . $offset])) {
@@ -83,7 +83,7 @@ trait ArrayTrait
      * @return mixed|null
      * @ignore
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
 
         if (is_callable([$this, 'get' . $offset])) {

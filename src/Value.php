@@ -586,13 +586,13 @@ abstract class Value implements JsonSerializable, ObjectInterface
             return $string;
         }
 
-        if (trim($property) === '') {
+        if (trim((string)$property) === '') {
 
             $property = null;
         }
 
         $string = trim($string);
-        $property = strtolower($property);
+        $property = strtolower((string)$property);
 
         if ($property !== '') {
 
@@ -1471,7 +1471,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
         return $this->render();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->render();
     }

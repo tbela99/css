@@ -359,7 +359,7 @@ class PropertyList implements IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->getProperties();
     }

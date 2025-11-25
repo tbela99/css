@@ -100,7 +100,7 @@ class AtRule extends RuleSet {
      * @return \stdClass
      * @ignore
      */
-    public function jsonSerialize () {
+    public function jsonSerialize (): mixed {
 
         $ast = parent::jsonSerialize();
 

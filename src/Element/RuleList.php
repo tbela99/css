@@ -281,7 +281,7 @@ abstract class RuleList extends Element implements RuleListInterface
      * return an iterator of child nodes
      * @return ArrayIterator|Traversable
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
 
         return new ArrayIterator($this->ast->children ?? []);
