@@ -342,19 +342,19 @@ class Color
 
         switch (strlen($hex)) {
 
-            case 4;
+            case 4:
 
                 return [hexdec($hex[1] . $hex[1]), hexdec($hex[2] . $hex[2]), hexdec($hex[3] . $hex[3])];
 
-            case 5;
+            case 5:
 
                 return [hexdec($hex[1] . $hex[1]), hexdec($hex[2] . $hex[2]), hexdec($hex[3] . $hex[3]), ValueNumber::compress(round(hexdec($hex[4] . $hex[4]) / 255, 2))];
 
-            case 7;
+            case 7:
 
                 return [hexdec($hex[1] . $hex[2]), hexdec($hex[3] . $hex[4]), hexdec($hex[5] . $hex[6])];
 
-            case 9;
+            case 9:
 
                 return [hexdec($hex[1] . $hex[2]), hexdec($hex[3] . $hex[4]), hexdec($hex[5] . $hex[6]), ValueNumber::compress(round(hexdec($hex[7] . $hex[8]) / 255, 2))];
         }
