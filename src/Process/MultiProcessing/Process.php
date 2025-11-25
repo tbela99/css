@@ -125,7 +125,7 @@ class Process extends AbstractProcess
 	/**
 	 * @throws IllegalStateException
 	 */
-	public function stop(float $timeout = 10, int $signal = null): void
+	public function stop(float $timeout = 10, ?int $signal = null): void
 	{
 		if (!$this->started) {
 

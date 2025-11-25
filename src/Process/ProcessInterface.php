@@ -12,7 +12,7 @@ interface ProcessInterface extends EventInterface
 
 	public function start(): void;
 
-	public function stop(float $timeout = 10, int $signal = null): void;
+	public function stop(float $timeout = 10, ?int $signal = null): void;
 
 	public static function isSupported(): bool;
 

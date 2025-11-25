@@ -285,7 +285,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @param array $tokens
      * @return bool
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         return $token->type == static::type() || isset($token->value) && static::matchKeyword($token->value);
@@ -1380,7 +1380,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
      * @return string|null
      * @ignore
      */
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword(string $string, ?array $keywords = null): ?string
     {
 
         if (is_null($keywords)) {

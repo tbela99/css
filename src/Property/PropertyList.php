@@ -36,7 +36,7 @@ class PropertyList implements IteratorAggregate
      * @param RuleList|null $list
      * @param array $options
      */
-    public function __construct(RuleList $list = null, array $options = [])
+    public function __construct(?RuleList $list = null, array $options = [])
     {
 
         $this->options = array_merge($this->options, $options);

@@ -34,7 +34,7 @@ class BackgroundSize extends Value
         ]
     ];
 
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword(string $string, ?array $keywords = null): ?string
     {
         $string = trim($string, ";\n\t\r ");
         $string = preg_replace('#\s+#', ' ', $string);
@@ -47,7 +47,7 @@ class BackgroundSize extends Value
         return parent::matchKeyword($string, $keywords);
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         return $token->type == 'unit' || ($token->type == 'css-string' && in_array($token->value, static::$keywords));
