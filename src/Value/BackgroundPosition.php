@@ -117,7 +117,7 @@ class BackgroundPosition extends Value
         switch (count($values)) {
 
             // two values
-            case 1;
+            case 1:
 
                 // must not be the same coordinates
                 if (in_array($values[0]->value, static::$x)) {
