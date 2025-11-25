@@ -8,7 +8,10 @@ namespace TBela\CSS\Value;
  */
 class FontFamily extends ShortHand
 {
-	use ParsableTrait;
+    /**
+     * @inheritDoc
+     */
+    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool {
 
 	protected static string $propertyType = 'css-string';
 }

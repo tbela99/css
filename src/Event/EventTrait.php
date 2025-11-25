@@ -31,7 +31,7 @@ trait EventTrait {
      * @param callable|null $callable
      * @return $this
      */
-    public function off(string $event = null, callable $callable = null): static {
+    public function off(?string $event = null, ?callable $callable = null): static {
 
         if (is_null($event)) {
 

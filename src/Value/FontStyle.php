@@ -34,7 +34,7 @@ class FontStyle extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool {
+    public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool {
 
         if ($token->type == 'css-string' && in_array(strtolower($token->value), static::$keywords)) {
 

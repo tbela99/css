@@ -32,7 +32,7 @@ class BackgroundImage extends CssFunction
         return $data->value ?? parent::doRender($data, $options);
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         return $token->type == static::type() || (isset($token->name) &&

@@ -36,7 +36,7 @@ class Lexer
      * @param string $css
      * @param object|null $context
      */
-    public function __construct(string $css = '', object $context = null)
+    public function __construct(string $css = '', ?object $context = null)
     {
 
         $this->css = rtrim($css);

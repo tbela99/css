@@ -51,7 +51,7 @@ class BackgroundRepeat extends Value
      */
     protected static array $defaults = ['repeat'];
 
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword(string $string, ?array $keywords = null): ?string
     {
 
         $key = preg_replace('~(\s+)~', ' ', trim($string, ";\n\t\r "));

@@ -1066,7 +1066,7 @@ class Renderer
 	 * @param mixed|null $default return value
 	 * @return array|string|bool
 	 */
-	public function getOptions(string $name = null, mixed $default = null): array|string|bool
+	public function getOptions(?string $name = null, mixed $default = null): array|string|bool
 	{
 
 		if (is_null($name)) {

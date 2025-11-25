@@ -31,7 +31,7 @@ class BackgroundColor extends Color
         return static::reduce($tokens);
     }
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
         return $token->type == 'color';
     }
