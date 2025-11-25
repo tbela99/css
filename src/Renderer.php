@@ -1105,7 +1105,7 @@ class Renderer
 				'column' => $generated->column,
 			],
 			'source' => [
-				'fileName' => $ast->src,
+				'fileName' => Helper::relativePath($ast->src, $this->outFile === '' ? Helper::getCurrentDirectory() : dirname($this->outFile)),
 				'line' => $position->line - 1,
 				'column' => $position->column - 1,
 			],
