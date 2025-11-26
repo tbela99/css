@@ -2,8 +2,6 @@
 
 namespace TBela\CSS\Value;
 
-use \TBela\CSS\Value;
-
 /**
  * Css string value
  * @package TBela\CSS\Value
@@ -44,14 +42,5 @@ class FontSize extends Unit
         }
 
         return $token->type == static::type();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
     }
 }

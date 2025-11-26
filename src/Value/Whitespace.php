@@ -29,7 +29,7 @@ class Whitespace extends Value {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
+    public static function doRender(object $data, array $options = []): string
     {
         return ' ';
     }

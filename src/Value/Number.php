@@ -48,11 +48,12 @@ class Number extends Value
         return isset($data->value) && is_numeric($data->value) && $data->value !== '';
     }
 
-    /**
-     * @param string $value
-     * @return string
-     * @ignore
-     */
+	/**
+	 * @param string $value
+	 * @param array $options
+	 * @return string
+	 * @ignore
+	 */
     public static function compress(string $value, array $options = []): string
     {
 
@@ -95,17 +96,8 @@ class Number extends Value
         return implode('.', $value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = [])
     {
-
 
         if (!empty($options['compress'])) {
 

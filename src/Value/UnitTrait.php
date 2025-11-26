@@ -13,27 +13,6 @@ trait UnitTrait
      * @inheritDoc
      */
 
-    public function render(array $options = []): string
-    {
-
-        if (isset($this->data->unit)) {
-
-            if ($this->data->value == '0') {
-
-                return '0';
-            }
-
-            if (!empty($options['compress'])) {
-
-                return Number::compress($this->data->value) . $this->data->unit;
-            }
-
-            return $this->data->value . $this->data->unit;
-        }
-
-        return $this->data->value;
-    }
-
     public static function doRender(object $data, array $options = []) {
 
         $value = $data->value;

@@ -6,11 +6,11 @@ use ArrayIterator;
 use InvalidArgumentException;
 use TBela\CSS\Ast\Traverser;
 use TBela\CSS\Element;
+use TBela\CSS\Element\Declaration\Property;
+use TBela\CSS\Element\Declaration\PropertyList;
 use TBela\CSS\Interfaces\ElementInterface;
 use TBela\CSS\Interfaces\RuleListInterface;
 use TBela\CSS\Parser;
-use TBela\CSS\Property\Property;
-use TBela\CSS\Property\PropertyList;
 use Traversable;
 use function in_array;
 
@@ -281,7 +281,8 @@ abstract class RuleList extends Element implements RuleListInterface
      * return an iterator of child nodes
      * @return ArrayIterator|Traversable
      */
-    public function getIterator()
+    #[\ReturnTypeWillChange]
+    public function getIterator(): \Traversable
     {
 
         return new ArrayIterator($this->ast->children ?? []);

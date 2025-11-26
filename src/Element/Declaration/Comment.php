@@ -1,9 +1,8 @@
 <?php
 
-namespace TBela\CSS\Property;
+namespace TBela\CSS\Element\Declaration;
 
 use TBela\CSS\Interfaces\RenderableInterface;
-use TBela\CSS\Value;
 
 /**
  * Comment property class

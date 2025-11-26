@@ -32,10 +32,10 @@ class InvalidCssString extends Value implements InvalidTokenInterface
      * @inheritDoc
      * @ignore
      */
-    public function render(array $options = []): string
+    public static function doRender(object $data, array $options = []): string
     {
 
-        return $this->data->q.$this->data->value;
+        return $data->q.$data->value;
     }
 
     public static function doRecover(object $data):object {

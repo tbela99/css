@@ -79,7 +79,7 @@ class Thread extends AbstractProcess
 		}
 	}
 
-	public function stop(float $timeout = 10, int $signal = null): void
+	public function stop(float $timeout = 10, ?int $signal = null): void
 	{
 		if ($this->stopped || $this->terminated) {
 

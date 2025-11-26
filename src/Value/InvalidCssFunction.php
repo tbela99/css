@@ -22,9 +22,9 @@ class InvalidCssFunction extends Value implements InvalidTokenInterface {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string {
+    public static function doRender(object $data, array $options = []): string {
 
-        return $this->data->name.'('. $this->data->arguments->render($options);
+        return $data->name.'('. $data->arguments->render($options);
     }
 
     /**

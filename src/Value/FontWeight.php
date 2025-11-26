@@ -34,15 +34,6 @@ class FontWeight extends Value
 
     protected static array $defaults = ['normal', '400', 'regular'];
 
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = [])
     {
 
@@ -81,7 +72,7 @@ class FontWeight extends Value
     /**
      * @inheritDoc
      */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         if ($token->type == 'number' && $token->value > 0 && $token->value <= 1000) {

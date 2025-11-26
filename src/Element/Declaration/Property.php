@@ -1,6 +1,6 @@
 <?php
 
-namespace TBela\CSS\Property;
+namespace TBela\CSS\Element\Declaration;
 
 use ArrayAccess;
 use TBela\CSS\ArrayTrait;

@@ -71,7 +71,7 @@ class BackgroundPosition extends Value
      * @inheritDoc
      */
 
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         $test = false;
@@ -117,7 +117,7 @@ class BackgroundPosition extends Value
         switch (count($values)) {
 
             // two values
-            case 1;
+            case 1:
 
                 // must not be the same coordinates
                 if (in_array($values[0]->value, static::$x)) {
@@ -196,12 +196,6 @@ class BackgroundPosition extends Value
         }
 
         return true;
-    }
-
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
     }
 
     public static function doRender(object $data, array $options = []) {

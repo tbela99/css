@@ -23,7 +23,7 @@ class LineHeight extends Value
 	 * @inheritDoc
 	 * @throws Exception
 	 */
-    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool
+    public static function matchToken($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool
     {
 
         if (!is_null($previousToken) && $previousToken->type != 'separator' && (!isset($previousToken->value) || $previousToken->value != '/')) {
@@ -52,14 +52,6 @@ class LineHeight extends Value
         }
 
         return $token->type == static::type();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function render(array $options = []): string
-    {
-        return static::doRender($this->data, $options);
     }
 
     public static function doRender(object $data, array $options = []): string

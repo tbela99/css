@@ -33,12 +33,13 @@ class FontStretch extends Value
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string
-    {
+	public static function doRender(object $data, array $options = [])
+	{
 
-        if (!empty($options['compress'])) {
 
-            $value = $this->data->value;
+		if (!empty($options['compress'])) {
+
+            $value = $data->value;
 
             if (isset(static::$keywords[$value])) {
 
@@ -46,7 +47,7 @@ class FontStretch extends Value
             }
         }
 
-        return $this->data->value;
+        return $data->value;
     }
 
     /**

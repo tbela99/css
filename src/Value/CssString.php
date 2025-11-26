@@ -37,16 +37,6 @@ class CssString extends Value
         parent::__construct($data);
     }
 
-    /**
-     * @inheritDoc
-     * @ignore
-     */
-    public function render(array $options = []): string
-    {
-
-        return static::doRender($this->data, $options);
-    }
-
     public static function doRender(object $data, array $options = []) {
 
         $q = $data->q ?? '';

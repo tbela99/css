@@ -15,11 +15,6 @@ class CssAttribute extends Value {
         return isset($data->arguments) && is_array($data->arguments);
     }
 
-    public function render(array $options = []): string {
-
-        return '['. $this->data->arguments->render($options).']';
-    }
-
     public static function doRender(object $data, array $options = []) {
 
         return '['. Value::renderTokens($data->arguments, $options).']';

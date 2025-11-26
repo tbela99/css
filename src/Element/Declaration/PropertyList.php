@@ -1,10 +1,9 @@
 <?php
 
-namespace TBela\CSS\Property;
+namespace TBela\CSS\Element\Declaration;
 
 use ArrayIterator;
 use IteratorAggregate;
-use TBela\CSS\Value;
 use TBela\CSS\Element\Rule;
 use TBela\CSS\Element\RuleList;
 
@@ -36,7 +35,7 @@ class PropertyList implements IteratorAggregate
      * @param RuleList|null $list
      * @param array $options
      */
-    public function __construct(RuleList $list = null, array $options = [])
+    public function __construct(?RuleList $list = null, array $options = [])
     {
 
         $this->options = array_merge($this->options, $options);
@@ -360,7 +359,8 @@ class PropertyList implements IteratorAggregate
     /**
      * @inheritDoc
      */
-    public function getIterator()
+    #[\ReturnTypeWillChange]
+    public function getIterator(): \Traversable
     {
         return $this->getProperties();
     }

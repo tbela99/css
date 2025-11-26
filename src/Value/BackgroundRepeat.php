@@ -2,7 +2,7 @@
 
 namespace TBela\CSS\Value;
 
-use TBela\CSS\Property\Config;
+use TBela\CSS\Element\Declaration\Config;
 use TBela\CSS\Value;
 
 /**
@@ -51,7 +51,7 @@ class BackgroundRepeat extends Value
      */
     protected static array $defaults = ['repeat'];
 
-    public static function matchKeyword(string $string, array $keywords = null): ?string
+    public static function matchKeyword(string $string, ?array $keywords = null): ?string
     {
 
         $key = preg_replace('~(\s+)~', ' ', trim($string, ";\n\t\r "));

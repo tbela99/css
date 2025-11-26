@@ -3,8 +3,7 @@
 namespace TBela\CSS\Value;
 
 // pattern font-style font-variant font-weight font-stretch font-size / line-height <'font-family'>
-use TBela\CSS\Property\Config;
-use TBela\CSS\Value;
+use TBela\CSS\Element\Declaration\Config;
 
 /**
  * parse font

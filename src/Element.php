@@ -613,7 +613,8 @@ abstract class Element implements ElementInterface, \Stringable  {
      * @return stdClass
      * @ignore
      */
-    public function jsonSerialize () {
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize (): mixed {
 
         return $this->getAst();
     }

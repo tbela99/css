@@ -21,14 +21,6 @@ class CssFunction extends Value {
     /**
      * @inheritDoc
      */
-    public function render(array $options = []): string {
-
-        return $this->data->name.'('. $this->data->arguments->render($options).')';
-    }
-
-    /**
-     * @inheritDoc
-     */
     public static function doRender(object $data, array $options = [])
     {
         return $data->name.'('. Value::renderTokens($data->arguments, $options).')';
