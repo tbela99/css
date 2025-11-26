@@ -281,6 +281,7 @@ abstract class RuleList extends Element implements RuleListInterface
      * return an iterator of child nodes
      * @return ArrayIterator|Traversable
      */
+    #[\ReturnTypeWillChange]
     public function getIterator(): \Traversable
     {
 

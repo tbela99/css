@@ -1471,6 +1471,7 @@ abstract class Value implements JsonSerializable, ObjectInterface
         return $this->render();
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(): mixed
     {
         return $this->render();
