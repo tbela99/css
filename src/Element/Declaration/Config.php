@@ -109,7 +109,7 @@ final class Config {
      * @param mixed|null $default
      * @return array|mixed|null
      */
-    public static function getProperty (string $name = null, mixed $default = null): mixed
+    public static function getProperty (?string $name = null, mixed $default = null): mixed
 	{
 
         if (is_null($name)) {
@@ -140,7 +140,7 @@ final class Config {
      * @return array
      * @ignore
      */
-    public static function addSet ($shorthand, $pattern, array $properties, string $separator = null, string $shorthandOverride = null): array
+    public static function addSet ($shorthand, $pattern, array $properties, ?string $separator = null, ?string $shorthandOverride = null): array
 	{
 
         $config = [];

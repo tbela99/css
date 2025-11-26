@@ -8,7 +8,7 @@ trait ParsableTrait
 	/**
 	 * @inheritDoc
 	 */
-	public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, int $index = null, array $tokens = []): bool {
+	public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool {
 
 		return $token->type == static::$propertyType || (isset($token->value) && in_array($token->value, static::$keywords)) || $token->type == static::type();
 	}

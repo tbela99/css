@@ -12,6 +12,8 @@ class FontFamily extends ShortHand
      * @inheritDoc
      */
     public static function matchToken ($token, $previousToken = null, $previousValue = null, $nextToken = null, $nextValue = null, ?int $index = null, array $tokens = []): bool {
+        return false;
+    }
 
 	protected static string $propertyType = 'css-string';
 }
